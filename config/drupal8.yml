@@ -1,8 +1,8 @@
 imports:
-    - { resource: "../vendor/rector/rector/config/level/coding-style/coding-style.yaml" }
-    - { resource: "../vendor/rector/rector/config/level/code-quality/code-quality.yaml" }
-    - { resource: "../vendor/rector/rector/config/level/dead-code/dead-code.yaml" }
-    - { resource: "../vendor/rector/rector/config/level/phpstan/phpstan.yaml" }
+    - { resource: "../../../rector/rector/config/level/coding-style/coding-style.yaml" }
+    - { resource: "../../../rector/rector/config/level/code-quality/code-quality.yaml" }
+    - { resource: "../../../rector/rector/config/level/dead-code/dead-code.yaml" }
+    - { resource: "../../../rector/rector/config/level/phpstan/phpstan.yaml" }
 
 parameters:
     exclude_rectors:

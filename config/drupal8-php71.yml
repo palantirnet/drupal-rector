@@ -1,7 +1,7 @@
 imports:
     - { resource: "drupal8.yml" }
-    - { resource: "../vendor/rector/rector/config/level/php/php70.yaml" }
-    - { resource: "../vendor/rector/rector/config/level/php/php71.yaml" }
+    - { resource: "../../../rector/rector/config/level/php/php70.yaml" }
+    - { resource: "../../../rector/rector/config/level/php/php71.yaml" }
 
 parameters:
     exclude_rectors:
