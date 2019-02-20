@@ -44,4 +44,4 @@ install:
 
 script:
   - set -e
-  - ./vendor/bin/rector process $ANALYZE --dry-run --autoload-file .travis/vendor/autoload.php
+  - ./vendor/bin/rector process $ANALYZE --dry-run
