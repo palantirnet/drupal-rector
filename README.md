@@ -2,6 +2,8 @@
 
 Apply automatic fixes on your Drupal 8 code.
 
+Check it in action on [Travis CI](https://travis-ci.org/mxr576/drupal8-rector/builds).
+
 ## Usage
 
 Install the library.
