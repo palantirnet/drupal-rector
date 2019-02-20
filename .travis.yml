@@ -32,9 +32,8 @@ env:
 install:
   - echo -en "max_execution_time = 0\nxdebug.default_enable = 0" >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
   - composer global require hirak/prestissimo:^0.3.7 zaporylie/composer-drupal-optimizations:^1.1
-  - cd /tmp
-  - travis_retry composer create-project drupal-composer/drupal-project:8.x-dev drupal --no-interaction && cd drupal
-  - composer config repositories.0 path /home/travis/build/mxr576/drupal8-rector
+  - cd /tmp && travis_retry composer create-project drupal-composer/drupal-project:8.x-dev drupal --no-interaction && cd drupal
+  - composer config repositories.drupal8-rector path /home/travis/build/mxr576/drupal8-rector
   - composer remove --dev webflo/drupal-core-require-dev
   # Installed PHPUnit version and Rector has a conflict in dependencies.
   - composer require mxr576/drupal8-rector
