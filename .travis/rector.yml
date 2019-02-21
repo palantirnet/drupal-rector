@@ -1,5 +1,6 @@
 imports:
     - { resource: "vendor/mxr576/drupal8-rector/config/drupal8.yml" }
+    - { resource: "vendor/mxr576/drupal8-rector/config/drupal86-deprecations.yml" }
 
 parameters:
     autoload_paths:
