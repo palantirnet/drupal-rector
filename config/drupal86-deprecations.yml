@@ -5,3 +5,5 @@ services:
             url: toUrl
             urlInfo: toUrl
             link: toLink
+        Drupal\Core\Entity\Entity:
+            entityManager: entityTypeManager
