@@ -18,6 +18,23 @@ use Rector\RectorDefinition\RectorDefinition;
  */
 final class PropertyNameVariableNameRector extends AbstractRector
 {
+
+    private $variableNameBlacklist = [
+        // PHP super globals should not be renamed.
+        'GLOBALS',
+        '_SERVER',
+        '_REQUEST',
+        '_POST',
+        '_GET',
+        '_FILES',
+        '_ENV',
+        '_COOKIE',
+        '_SESSION',
+        // $_entity should not be renamed to $entity sometimes.
+        // https://github.com/drupal/core/blob/17557c97a816bc78e70989a86064c562bc27027f/lib/Drupal/Core/Entity/Controller/EntityController.php#L255
+        '_entity',
+    ];
+
     /**
      * @inheritDoc
      */
@@ -54,7 +71,7 @@ final class PropertyNameVariableNameRector extends AbstractRector
 
     public function getDefinition(): RectorDefinition
     {
-        return new RectorDefinition('Fixes property names according to Drupal 8 code style.', [
+        return new RectorDefinition('Fixes property and variable names according to Drupal 8 code style.', [
             new CodeSample(
                 '$someObject->property_name;',
                 '$someObject->propertyName;'
@@ -112,6 +129,9 @@ final class PropertyNameVariableNameRector extends AbstractRector
 
     private function rectorVariable(Node\Expr\Variable $node)
     {
+        if (in_array($node->name, $this->variableNameBlacklist)) {
+            return $node;
+        }
         if ('this' === $node->name) {
             // rectorPropertyFetch() takes care of this variable
             // (which is actually a class property call).
@@ -140,12 +160,13 @@ final class PropertyNameVariableNameRector extends AbstractRector
                     }
                     $isInherited = false;
                     $parentClass = $node->name->getAttribute(Attribute::PARENT_CLASS_NAME);
-                    if ($parentClass && 0 === strpos($parentClass, 'Drupal\Core')) {
+                    if ($parentClass) {
                         $rc = new \ReflectionClass($parentClass);
                         $isInherited = $rc->hasProperty($node->name->name);
                     }
 
-                    // Inherited snake cased class properties from Drupal 8 entities
+                    // Inherited snake cased properties from parent classes
+                    // (especially from Drupal core parent classes)
                     // should not renamed.
                     if (!$isInherited) {
                         // It should be lowerCamelCased.
