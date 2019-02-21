@@ -1,0 +1,7 @@
+# Contains automatic fixes for some deprecations introduced before Drupal 8.7.
+services:
+    Rector\Rector\MethodCall\MethodNameReplacerRector:
+        Drupal\Core\Entity\EntityInterface:
+            url: toUrl
+            urlInfo: toUrl
+            link: toLink
