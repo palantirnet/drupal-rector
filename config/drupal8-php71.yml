@@ -1,5 +1,5 @@
+# Drupal 8 ruleset extras for PHP >= 7.1 code.
 imports:
-    - { resource: "drupal8.yml" }
     - { resource: "../../../rector/rector/config/level/php/php70.yaml" }
     - { resource: "../../../rector/rector/config/level/php/php71.yaml" }
 

@@ -1,3 +1,4 @@
+# General ruleset for Drupal 8. Compatible with PHP 5.6 and above.
 imports:
     - { resource: "../../../rector/rector/config/level/coding-style/coding-style.yaml" }
     - { resource: "../../../rector/rector/config/level/code-quality/code-quality.yaml" }
