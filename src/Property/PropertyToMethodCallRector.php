@@ -73,6 +73,13 @@ CODE_SAMPLE
                         continue;
                     }
 
+                    if ($node->getAttribute(Attribute::METHOD_NAME) === $propertyToMethod[$node->name->name]) {
+                        // Sanity check.
+                        // Do not replace the property within the method that
+                        // should replace the property.
+                        continue;
+                    }
+
                     return $this->createMethodCall($node->var, $propertyToMethod[$node->name->name], []);
                 }
             }
