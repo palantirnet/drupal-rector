@@ -1,10 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Mxr576\Rector\CodeStyle;
 
 use Jawira\CaseConverter\Convert;
 use PhpParser\Comment;
-use PhpParser\Comment\Doc;
 use PhpParser\Node;
 use Rector\NodeTypeResolver\Node\Attribute;
 use Rector\Rector\AbstractRector;
@@ -18,7 +19,6 @@ use Rector\RectorDefinition\RectorDefinition;
  */
 final class PropertyNameVariableNameRector extends AbstractRector
 {
-
     private $variableNameBlacklist = [
         // PHP super globals should not be renamed.
         'GLOBALS',
@@ -34,6 +34,24 @@ final class PropertyNameVariableNameRector extends AbstractRector
         // https://github.com/drupal/core/blob/17557c97a816bc78e70989a86064c562bc27027f/lib/Drupal/Core/Entity/Controller/EntityController.php#L255
         '_entity',
     ];
+
+    /**
+     * Array of classes and interfaces that properties should not be renamed.
+     *
+     * @var string[]
+     */
+    private $skipPropertyRename = [];
+
+    /**
+     * PropertyNameVariableNameRector constructor.
+     *
+     * @param string[] $doNotRenameProperties
+     *   Array of classes and interfaces that properties should not be renamed.
+     */
+    public function __construct(array $doNotRenameProperties = [])
+    {
+        $this->skipPropertyRename = $doNotRenameProperties;
+    }
 
     /**
      * @inheritDoc
@@ -56,10 +74,10 @@ final class PropertyNameVariableNameRector extends AbstractRector
     {
         if ($node instanceof Node\Stmt\PropertyProperty) {
             $this->rectorProperty($node);
-        } elseif ($node instanceof Node\Stmt\ClassMethod) {
-            $this->rectorClassMethod($node);
         } elseif ($node instanceof Node\Expr\PropertyFetch) {
             $this->rectorPropertyFetch($node);
+        } elseif ($node instanceof Node\Stmt\ClassMethod) {
+            $this->rectorClassMethod($node);
         } elseif ($node instanceof Node\Stmt\Function_) {
             $this->rectorFunction($node);
         } elseif ($node instanceof Node\Expr\Variable) {
@@ -81,7 +99,54 @@ final class PropertyNameVariableNameRector extends AbstractRector
 
     private function rectorProperty(Node\Stmt\PropertyProperty $property): void
     {
-        $property->name = $this->convertToLowerCamelCase($property->name);
+        foreach ($this->skipPropertyRename as $classOrInterface) {
+            if ($this->isType($property->getAttribute(Attribute::CLASS_NODE), $classOrInterface)) {
+                return;
+            }
+        }
+
+        $property->name->name = $this->convertToLowerCamelCase($property->name->name);
+    }
+
+    private function rectorPropertyFetch(Node\Expr\PropertyFetch $node): void
+    {
+        // Do not rename field name properties that calls magic getters, also
+        // ignore variables that are not variables,
+        // ex.: $entities[$id] = $cache[$cid]->data; (PhpParser\Node\Expr\ArrayDimFetch)
+        if ($node->var instanceof Node\Expr\Variable && 'this' === $node->var->name) {
+            // Ignore cases when name is not an identifier, ex.:
+            // $foo->bar()->{BAZ} = 'foobarbaz'; // ConstFetch
+            if ($node->name instanceof Node\Identifier) {
+                if ($node->var instanceof Node\Expr\MethodCall) {
+                    // Magic getter, should be snake_case.
+                    $node->name = $this->convertToSnakeCase($node->name);
+                } else {
+                    if ($node->name instanceof Node\Expr\MethodCall) {
+                        // Ignore method names.
+                        return;
+                    }
+                    foreach ($this->skipPropertyRename as $classOrInterface) {
+                        if ($this->isType($node, $classOrInterface)) {
+                            return;
+                        }
+                    }
+                    $isInherited = false;
+                    $parentClass = $node->name->getAttribute(Attribute::PARENT_CLASS_NAME);
+                    if ($parentClass) {
+                        $rc = new \ReflectionClass($parentClass);
+                        $isInherited = $rc->hasProperty($node->name->name);
+                    }
+
+                    // Inherited snake cased properties from parent classes
+                    // (especially from Drupal core parent classes)
+                    // should not renamed.
+                    if (!$isInherited) {
+                        // It should be lowerCamelCased.
+                        $node->name->name = $this->convertToLowerCamelCase($node->name->name);
+                    }
+                }
+            }
+        }
     }
 
     private function rectorClassMethod(Node\Stmt\ClassMethod $node): void
@@ -106,7 +171,7 @@ final class PropertyNameVariableNameRector extends AbstractRector
         $node->setAttribute('comments', $cleanComments);
     }
 
-    private function rectorComment(Comment $comment)
+    private function rectorComment(Comment $comment): Comment
     {
         $matches = [];
         preg_match_all('/\$[a-zA-z0-9-_]+/', $comment->getText(), $matches);
@@ -124,57 +189,23 @@ final class PropertyNameVariableNameRector extends AbstractRector
             $text = str_replace($old_var_name, $new_var_name, $text);
         }
 
-        return new Doc($text, $comment->getLine(), $comment->getFilePos(), $comment->getTokenPos());
+        $rc = new \ReflectionClass(get_class($comment));
+
+        return $rc->newInstance($text, $comment->getLine(), $comment->getFilePos(), $comment->getTokenPos());
     }
 
-    private function rectorVariable(Node\Expr\Variable $node)
+    private function rectorVariable(Node\Expr\Variable $node): void
     {
         if (in_array($node->name, $this->variableNameBlacklist)) {
-            return $node;
+            return;
         }
         if ('this' === $node->name) {
             // rectorPropertyFetch() takes care of this variable
             // (which is actually a class property call).
-            return $node;
+            return;
         }
         // It should be snake_cased because it is a parameter.
         $node->name = $this->convertToSnakeCase($node->name);
-    }
-
-    private function rectorPropertyFetch(Node\Expr\PropertyFetch $node)
-    {
-        // Do not rename field name properties that calls magic getters, also
-        // ignore variables that are not variables,
-        // ex.: $entities[$id] = $cache[$cid]->data; (PhpParser\Node\Expr\ArrayDimFetch)
-        if ($node->var instanceof Node\Expr\Variable && 'this' === $node->var->name) {
-            // Ignore cases when name is not an identifier, ex.:
-            // $foo->bar()->{BAZ} = 'foobarbaz'; // ConstFetch
-            if ($node->name instanceof Node\Identifier) {
-                if ($node->var instanceof Node\Expr\MethodCall) {
-                    // Magic getter, should be snake_case.
-                    $node->name = $this->convertToSnakeCase($node->name);
-                } else {
-                    if ($node->name instanceof Node\Expr\MethodCall) {
-                        // Ignore method names.
-                        return $node;
-                    }
-                    $isInherited = false;
-                    $parentClass = $node->name->getAttribute(Attribute::PARENT_CLASS_NAME);
-                    if ($parentClass) {
-                        $rc = new \ReflectionClass($parentClass);
-                        $isInherited = $rc->hasProperty($node->name->name);
-                    }
-
-                    // Inherited snake cased properties from parent classes
-                    // (especially from Drupal core parent classes)
-                    // should not renamed.
-                    if (!$isInherited) {
-                        // It should be lowerCamelCased.
-                        $node->name = $this->convertToLowerCamelCase($node->name);
-                    }
-                }
-            }
-        }
     }
 
     private function convertToLowerCamelCase(string $string): string
