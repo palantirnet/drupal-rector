@@ -78,3 +78,8 @@ services:
             # annotations.
             - Drupal\Core\Entity\Annotation\EntityType
             - Drupal\Core\Entity\EntityType
+    Mxr576\Rector\Property\PropertyToMethodCallRector:
+        Drupal\Core\Messenger\MessengerTrait:
+            messenger: messenger
+        Drupal\Core\Controller\ControllerBase:
+            entityTypeManager: entityTypeManager
