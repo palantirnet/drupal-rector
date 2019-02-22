@@ -71,6 +71,7 @@ parameters:
 
 services:
     Mxr576\Rector\CodeStyle\DefineToConstRector: ~
+
     Mxr576\Rector\CodeStyle\PropertyNameVariableNameRector:
         $doNotRenameProperties:
             # Snake cased property names should not be changed in entity types
@@ -78,8 +79,28 @@ services:
             # annotations.
             - Drupal\Core\Entity\Annotation\EntityType
             - Drupal\Core\Entity\EntityType
+
     Mxr576\Rector\Property\PropertyToMethodCallRector:
+        # Traits with properties that can be null therefore it is safer to call
+        # their getter methods that ensure they do not.
         Drupal\Core\Messenger\MessengerTrait:
             messenger: messenger
         Drupal\Core\Controller\ControllerBase:
             entityTypeManager: entityTypeManager
+        Drupal\Core\Entity\EntityHandlerBase:
+            moduleHandler: moduleHandler
+        Drupal\Core\StringTranslation\StringTranslationTrait:
+            stringTranslation: getStringTranslation
+        Drupal\Core\Logger\LoggerChannelTrait:
+            loggerFactory: getLogger
+        Drupal\Core\TypedData\TypedDataTrait:
+            typedDataManager: getTypedDataManager
+        Drupal\Core\Routing\RedirectDestinationTrait:
+            redirectDestination: getRedirectDestination
+        Drupal\Core\Routing\LocalAwareRedirectResponseTrait:
+            requestContext: getRequestContext
+        # Deprecated traits.
+        # Drupal\Core\Routing\UrlGeneratorTrait:
+        #    urlGenerator: getUrlGenerator
+        # Drupal\Core\Routing\LinkGeneratorTrait
+        #   linkGenerator: getLinkGenerator
