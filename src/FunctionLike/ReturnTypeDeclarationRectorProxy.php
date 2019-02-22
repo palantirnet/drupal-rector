@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Mxr576\Rector\FunctionLike;
 
 use PhpParser\Node;
