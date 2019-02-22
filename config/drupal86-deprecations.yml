@@ -6,4 +6,10 @@ services:
             urlInfo: toUrl
             link: toLink
         Drupal\Core\Entity\Entity:
+            # Note, you may need the "entity_field.manager" service instead of
+            # entity_type.manager.
+            entityManager: entityTypeManager
+        Drupal\Core\Controller\ControllerBase:
+            # Note, you may need the "entity_field.manager" service instead of
+            # entity_type.manager.
             entityManager: entityTypeManager
