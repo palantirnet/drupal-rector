@@ -10,6 +10,7 @@ use PhpParser\Node;
 use Rector\NodeTypeResolver\Node\Attribute;
 use Rector\Rector\AbstractRector;
 use Rector\RectorDefinition\CodeSample;
+use Rector\RectorDefinition\ConfiguredCodeSample;
 use Rector\RectorDefinition\RectorDefinition;
 
 /**
@@ -40,7 +41,7 @@ final class PropertyNameVariableNameRector extends AbstractRector
      *
      * @var string[]
      */
-    private $skipPropertyRename = [];
+    private $doNotRenameProperties = [];
 
     /**
      * PropertyNameVariableNameRector constructor.
@@ -50,7 +51,7 @@ final class PropertyNameVariableNameRector extends AbstractRector
      */
     public function __construct(array $doNotRenameProperties = [])
     {
-        $this->skipPropertyRename = $doNotRenameProperties;
+        $this->doNotRenameProperties = $doNotRenameProperties;
     }
 
     /**
@@ -89,17 +90,94 @@ final class PropertyNameVariableNameRector extends AbstractRector
 
     public function getDefinition(): RectorDefinition
     {
-        return new RectorDefinition('Fixes property and variable names according to Drupal 8 code style.', [
+        return new RectorDefinition('Fixes and unifies property and variable names according to Drupal 8 code style.', [
             new CodeSample(
-                '$someObject->property_name;',
-                '$someObject->propertyName;'
+                <<<'CODE_SAMPLE'
+class Foo {
+    protected $variable_one;
+    
+    public __constructor(string $inputVariable) {
+        $this->variable_one = $inputVariable;
+    }
+    
+    public function doSomething(string $inputVariable) {
+        $meaningOfLife = 42;
+        $this->variable_one = $inputVariable;
+    }
+}
+CODE_SAMPLE
+                ,
+                <<<'CODE_SAMPLE'
+class Foo {
+    protected $variableOne;
+    
+    public __constructor(string $input_variable) {
+        $this->variableOne = $input_variable;
+    }
+    
+    public function doSomething(string $input_variable) {
+        $meaning_of_life = 42;
+        $this->variableOne = $input_variable;
+    }
+}
+CODE_SAMPLE
+            ),
+            new CodeSample(
+                <<<'CODE_SAMPLE'
+function my_module_foo(string $inputVariable) {
+    $variableOne = 'bar';
+}
+CODE_SAMPLE
+                ,
+                <<<'CODE_SAMPLE'
+function my_module_foo(string $input_variable) {
+    $variable_one = 'bar';
+}
+CODE_SAMPLE
+            ),
+            new ConfiguredCodeSample(
+                <<<'CODE_SAMPLE'
+class Foo extend Bar\Baz {
+    protected $variable_one;
+    
+    public __constructor(string $inputVariable) {
+        $this->variable_one = $inputVariable;
+    }
+    
+    public function doSomething(string $inputVariable) {
+        $meaningOfLife = 42;
+        $this->variable_one = $inputVariable;
+    }
+}
+CODE_SAMPLE
+                ,
+                <<<'CODE_SAMPLE'
+class Foo extend Bar\Baz {
+    protected $variable_one;
+    
+    public __constructor(string $input_variable) {
+        $this->variable_one = $input_variable;
+    }
+    
+    public function doSomething(string $input_variable) {
+        $meaning_of_life = 42;
+        $this->variable_one = $input_variable;
+    }
+}
+CODE_SAMPLE
+                ,
+                [
+                    '$doNotRenameProperties' => [
+                        'Bar\Baz',
+                    ],
+                ]
             ),
         ]);
     }
 
     private function rectorProperty(Node\Stmt\PropertyProperty $property): void
     {
-        foreach ($this->skipPropertyRename as $classOrInterface) {
+        foreach ($this->doNotRenameProperties as $classOrInterface) {
             if ($this->isType($property->getAttribute(Attribute::CLASS_NODE), $classOrInterface)) {
                 return;
             }
@@ -125,7 +203,7 @@ final class PropertyNameVariableNameRector extends AbstractRector
                         // Ignore method names.
                         return;
                     }
-                    foreach ($this->skipPropertyRename as $classOrInterface) {
+                    foreach ($this->doNotRenameProperties as $classOrInterface) {
                         if ($this->isType($node, $classOrInterface)) {
                             return;
                         }
