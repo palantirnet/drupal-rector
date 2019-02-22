@@ -49,8 +49,4 @@ You can find more information about Rector [here](https://github.com/rectorphp/r
 
 This is just a POC at this moment but it has a great potential to become an actual tool for Drupal 8 developers.
 
-#### Some ideas:
-* Automatically replace all usage of deprecated functions/methods
-* Ensure [MODULE_NAME].api.php defines all alter hooks that a module defines (with up-to-date parameter list).
-
-*Do you have an idea? Please share it. Pull requests are also warmly welcomed!*
+*Do you have an idea about what else this tool could do? Please share it in the issue queue. Pull requests are also warmly welcomed!*
