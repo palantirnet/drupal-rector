@@ -66,7 +66,12 @@ CODE_SAMPLE
     {
         /* @var \PhpParser\Node\Expr\PropertyFetch $node **/
         foreach ($this->propertyToMethod as $type => $propertyToMethod) {
-            if ($this->isType($node->getAttribute(Attribute::CLASS_NODE), $type)) {
+            $classNode = $node->getAttribute(Attribute::CLASS_NODE);
+            // Ignore procedural code.
+            if ($classNode === NULL) {
+                return $node;
+            }
+            if ($this->isType($classNode, $type)) {
                 if (array_key_exists($node->name->name, $propertyToMethod)) {
                     // Ignore non method calls.
                     if (null === $node->getAttribute(Attribute::NEXT_NODE) || !$node->getAttribute(Attribute::NEXT_NODE) instanceof Identifier) {
@@ -85,6 +90,6 @@ CODE_SAMPLE
             }
         }
 
-        return null;
+        return $node;
     }
 }
