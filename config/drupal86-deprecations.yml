@@ -13,3 +13,5 @@ services:
             # Note, you may need the "entity_field.manager" service instead of
             # entity_type.manager.
             entityManager: entityTypeManager
+
+    Mxr576\Rector\Deprecation\UrlGeneratorTraitRector: ~
