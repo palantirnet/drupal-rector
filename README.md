@@ -4,7 +4,7 @@ Apply automatic fixes on your Drupal 8 code.
 
 Check it in action on [Travis CI](https://travis-ci.org/mxr576/drupal8-rector/builds).
 
-## Usage
+## Installation
 
 Install the library.
 
@@ -36,17 +36,45 @@ services:
     # because it may cause problems.
     # Mxr576\Rector\FunctionLike\ReturnTypeDeclarationRectorProxy: ~
 ```
+# Suggested workflow
 
-Analyze your code with Rector:
+1. Analyze your code with Rector and review suggested changes:
 
 ```sh
 $ vendor/bin/rector process web/modules/contrib/[YOUR_MODULE] --dry-run
 ```
 
+2. Apply suggested changes:
+
+```sh
+$ vendor/bin/rector process web/modules/contrib/[YOUR_MODULE]
+```
+
+3. Automatically correct code style violations with PHPCBF:
+
+```sh
+$ vendor/bin/phpcbf --standard=web/core/phpcs.xml.dist web/modules/contrib/[YOUR_MODULE] -s --colors
+```
+4. Look for remaining code style violations with PHPCS:
+
+```sh
+$ vendor/bin/phpcs --standard=web/core/phpcs.xml.dist web/modules/contrib/[YOUR_MODULE] -s --colors
+```
+
+5. Run automated tests to ensure the optimized code is still correct:
+
+```sh
+$ vendor/bin/phpunit -c web/core --printer="\Drupal\Tests\Listeners\HtmlOutputPrinter" -v --debug web/modules/contrib/[YOUR_MODULE]/tests
+```
+
 You can find more information about Rector [here](https://github.com/rectorphp/rector).
+
+## Known issues
+
+* Rector conflict with the PHPUnit version (^6.5 required by webflo/drupal-core-require-dev package) on the required minimum version from sebastian/diff package. Possible solution: temporarily remove webflo/drupal-core-require-dev package while you are testing this library.
 
 ## Roadmap
 
-This is just a POC at this moment but it has a great potential to become an actual tool for Drupal 8 developers.
+This is just a POC at this moment but it has a great potential to become an actual development tool for Drupal 8.
 
 *Do you have an idea about what else this tool could do? Please share it in the issue queue. Pull requests are also warmly welcomed!*
