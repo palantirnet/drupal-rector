@@ -10,16 +10,14 @@ use Rector\RectorDefinition\RectorDefinition;
 
 /**
  * Replaces deprecated UrlGeneratorTrait trait.
- *
- * TODO Import Drupal\Core\Url in a refactored class.
- *
- * @see https://github.com/rectorphp/rector/issues/1117
  */
 final class UrlGeneratorTraitRector extends AbstractRector
 {
-    private const TRAIT_NAME = 'Drupal\Core\Routing\UrlGeneratorTrait';
+    private const REPLACED_TRAIT_FQN = 'Drupal\Core\Routing\UrlGeneratorTrait';
 
-    private const CLASS_NAME = 'Drupal\Core\Url';
+    private const URL_CLASS_FQCN = 'Drupal\Core\Url';
+
+    private const REDIRECT_RESPONSE_FQCN = 'Symfony\Component\HttpFoundation\RedirectResponse';
 
     /**
      * Associative array where keys are class FQCNs and values are trait FQCNs.
@@ -36,22 +34,49 @@ final class UrlGeneratorTraitRector extends AbstractRector
     private $methodsByTrait = [];
 
     /**
-     * UrlGeneratorTraitRector constructor.
+     * Array of name nodes keyed by classes based on $replaceWithFqn value.
+     *
+     * @var \PhpParser\Node\Name[]
      */
-    public function __construct()
+    private $replacementClassesNames = [];
+
+    /**
+     * Whether to replace methods by using FQN or not.
+     *
+     * @var bool
+     */
+    private $replaceWithFqn;
+
+    /**
+     * UrlGeneratorTraitRector constructor.
+     *
+     * @param bool $replaceWithFqn
+     *   Whether to replace depreocated methods with fully qualified method
+     *   names or not. If it is false this rector adds new imports to all
+     *   classes that used the replaced trait - even if the trait method was
+     *   in use in the class. An external tool (for example PHPCBF) should
+     *   optimize and remove unnecessary imports
+     */
+    public function __construct(bool $replaceWithFqn = false)
     {
-        $rc = new \ReflectionClass(self::TRAIT_NAME);
+        $rc = new \ReflectionClass(self::REPLACED_TRAIT_FQN);
         $this->methodsByTrait = array_map(function (\ReflectionMethod $method) {
             return $method->getName();
         }, $rc->getMethods());
+        $this->replacementClassesNames = [
+            self::URL_CLASS_FQCN => $replaceWithFqn ? new Node\Name\FullyQualified(self::URL_CLASS_FQCN) : new Node\Name('Url'),
+            self::REDIRECT_RESPONSE_FQCN => $replaceWithFqn ? new Node\Name\FullyQualified(self::REDIRECT_RESPONSE_FQCN) : new Node\Name('RedirectResponse'),
+        ];
+        $this->replaceWithFqn = $replaceWithFqn;
     }
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     public function getNodeTypes(): array
     {
         return [
+            Node\Stmt\Namespace_::class,
             Node\Stmt\TraitUse::class,
             Node\Stmt\Return_::class,
             Node\Expr\Assign::class,
@@ -61,14 +86,49 @@ final class UrlGeneratorTraitRector extends AbstractRector
     }
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     public function refactor(Node $node): ?Node
     {
-        if ($node instanceof Node\Stmt\TraitUse) {
+        if ($node instanceof Node\Stmt\Namespace_ && !$this->replaceWithFqn) {
+            $classNode = null;
+            $urlClassExists = false;
+            $responseClassExists = false;
+            // Probably the last stmt is the class.
+            foreach (array_reverse($node->stmts) as $stmt) {
+                // Exit from loop as early as we can.
+                if ($classNode && $urlClassExists && $responseClassExists) {
+                    break;
+                }
+
+                if ($stmt instanceof Node\Stmt\Use_) {
+                    foreach ($stmt->uses as $use) {
+                        if (self::URL_CLASS_FQCN === (string) $use->name) {
+                            $urlClassExists = true;
+                        } elseif (self::REDIRECT_RESPONSE_FQCN === (string) $use->name) {
+                            $responseClassExists = true;
+                        }
+                    }
+                } elseif ($stmt instanceof Node\Stmt\Class_) {
+                    $classNode = $stmt;
+                }
+            }
+            // Ignore interfaces, etc.
+            if ($classNode && $this->isTraitInUse((string) $classNode->namespacedName)) {
+                // This adds these namespaces to all files even if no method
+                // is called from these classes. An external tool should
+                // optimize and remove created unnecessary imports.
+                if (!$urlClassExists) {
+                    array_unshift($node->stmts, new Node\Stmt\Use_([new Node\Stmt\UseUse(new Node\Name\FullyQualified(self::URL_CLASS_FQCN))]));
+                }
+                if (!$responseClassExists) {
+                    array_unshift($node->stmts, new Node\Stmt\Use_([new Node\Stmt\UseUse(new Node\Name\FullyQualified(self::REDIRECT_RESPONSE_FQCN))]));
+                }
+            }
+        } elseif ($node instanceof Node\Stmt\TraitUse) {
             $rekey = false;
             foreach ($node->traits as $id => $trait) {
-                if (self::TRAIT_NAME === (string) $trait) {
+                if (self::REPLACED_TRAIT_FQN === (string) $trait) {
                     unset($node->traits[$id]);
                     $rekey = true;
                 }
@@ -111,9 +171,12 @@ final class UrlGeneratorTraitRector extends AbstractRector
         return $node;
     }
 
+    /**
+     * @inheritdoc
+     */
     public function getDefinition(): RectorDefinition
     {
-        // FIXME return $this->decorated->getDefinition();
+        return new RectorDefinition(sprintf('Removes usages of deprecated %s trait', self::REPLACED_TRAIT_FQN));
     }
 
     /**
@@ -148,12 +211,12 @@ final class UrlGeneratorTraitRector extends AbstractRector
     private function processMethodCall(Node\Expr\MethodCall $node): ?Node\Expr
     {
         $result = null;
-        $classNode = $node->getAttribute(Attribute::CLASS_NAME);
+        $className = $node->getAttribute(Attribute::CLASS_NAME);
         // Ignore procedural code because traits can not be used there.
-        if (null === $classNode) {
+        if (null === $className) {
             return $result;
         }
-        if (in_array(self::TRAIT_NAME, $this->getTraits($classNode))) {
+        if ($this->isTraitInUse($className)) {
             $method_name = $node->name->name;
             if (in_array($method_name, $this->methodsByTrait)) {
                 if ('redirect' === $method_name) {
@@ -166,14 +229,14 @@ final class UrlGeneratorTraitRector extends AbstractRector
                     if (array_key_exists(2, $node->args)) {
                         $urlFromRouteArgs[] = $node->args[2];
                     }
-                    $urlFromRouteExpr = new Node\Expr\StaticCall(new Node\Name\FullyQualified(self::CLASS_NAME), 'urlFromRoute', $urlFromRouteArgs);
+                    $urlFromRouteExpr = new Node\Expr\StaticCall($this->replacementClassesNames[self::URL_CLASS_FQCN], 'urlFromRoute', $urlFromRouteArgs);
                     $redirectResponseArgs = [$urlFromRouteExpr];
                     if (array_key_exists(3, $node->args)) {
                         $redirectResponseArgs[] = $node->args[3];
                     }
-                    $result = new Node\Expr\New_(new Node\Name('Symfony\Component\HttpFoundation\RedirectResponse'), $redirectResponseArgs);
+                    $result = new Node\Expr\New_($this->replacementClassesNames[self::REDIRECT_RESPONSE_FQCN], $redirectResponseArgs);
                 } elseif ('url' === $method_name) {
-                    $result = new Node\Expr\StaticCall(new Node\Name\FullyQualified(self::CLASS_NAME), 'fromRoute', $node->args);
+                    $result = new Node\Expr\StaticCall($this->replacementClassesNames[self::URL_CLASS_FQCN], 'fromRoute', $node->args);
                 } elseif ('getUrlGenerator' === $method_name) {
                     $result = new Node\Expr\StaticCall(new Node\Name\FullyQualified('Drupal'), 'service', [new Node\Arg(new Node\Scalar\String_('url_generator'))]);
                 } elseif ('setUrlGenerator' === $method_name) {
@@ -186,5 +249,15 @@ final class UrlGeneratorTraitRector extends AbstractRector
         }
 
         return $result;
+    }
+
+    /**
+     * @param string $fqcn
+     *
+     * @return bool
+     */
+    private function isTraitInUse(string $fqcn): bool
+    {
+        return in_array(self::REPLACED_TRAIT_FQN, $this->getTraits($fqcn));
     }
 }
