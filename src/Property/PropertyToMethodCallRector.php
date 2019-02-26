@@ -68,7 +68,7 @@ CODE_SAMPLE
         foreach ($this->propertyToMethod as $type => $propertyToMethod) {
             $classNode = $node->getAttribute(Attribute::CLASS_NODE);
             // Ignore procedural code.
-            if ($classNode === NULL) {
+            if (null === $classNode) {
                 return $node;
             }
             if ($this->isType($classNode, $type)) {

@@ -23,8 +23,9 @@ final class DefineToConstRector extends AbstractRector
     public function getDefinition(): RectorDefinition
     {
         return new RectorDefinition('Replaces define() with const.', [
-      new CodeSample('define("FOOO", "BAR");', 'const FOOO = "BAR";'),
-    ]);
+            new CodeSample('define("FOOO", "BAR");', 'const FOOO = "BAR";'),
+            ]
+        );
     }
 
     /**
