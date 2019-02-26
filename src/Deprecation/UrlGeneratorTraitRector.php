@@ -79,6 +79,7 @@ final class UrlGeneratorTraitRector extends AbstractRector
             Node\Stmt\Namespace_::class,
             Node\Stmt\TraitUse::class,
             Node\Stmt\Return_::class,
+            Node\Stmt\Expression::class,
             Node\Expr\Assign::class,
             Node\Expr\ArrayItem::class,
             Node\Expr\MethodCall::class,
@@ -142,29 +143,24 @@ final class UrlGeneratorTraitRector extends AbstractRector
             }
         } elseif ($node instanceof Node\Stmt\Return_) {
             if ($node->expr instanceof Node\Expr\MethodCall) {
-                if ($processed = $this->processMethodCall($node->expr)) {
-                    $node->expr = $processed;
-                }
+                $node->expr = $this->refactor($node->expr);
             }
+        } elseif ($node instanceof Node\Stmt\Expression) {
+            $node->expr = $this->refactor($node->expr);
         } elseif ($node instanceof Node\Expr\Assign) {
-            if ($node->expr instanceof Node\Expr\MethodCall) {
-                if ($processed = $this->processMethodCall($node->expr)) {
-                    $node->expr = $processed;
-                }
-            }
+            $node->expr = $this->refactor($node->expr);
         } elseif ($node instanceof Node\Expr\ArrayItem) {
             if ($node->value instanceof Node\Expr\MethodCall) {
-                if ($processed = $this->processMethodCall($node->value)) {
-                    $node->value = $processed;
-                }
+                $node->value = $this->refactor($node->value);
             }
         } elseif ($node instanceof Node\Expr\MethodCall) {
-            if ($processed = $this->processMethodCall($node)) {
-                // $this->setUrlGenerator() should not be replaced with $this.
-                if ('setUrlGenerator' !== $node->name->name) {
-                    $this->addNodeAfterNode($processed, $node);
-                }
+            // Sanity check, single "$this->setUrlGenerator()" should be
+            // removed.
+            $parentNode = $node->getAttribute(Attribute::PARENT_NODE);
+            if ('setUrlGenerator' === $node->name->name && $parentNode instanceof Node\Stmt\Expression && $parentNode->expr === $node) {
                 $this->removeNode($node);
+            } elseif ($processed = $this->processMethodCall($node)) {
+                return $processed;
             }
         }
 
