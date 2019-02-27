@@ -48,6 +48,13 @@ final class UrlGeneratorTraitRector extends AbstractRector
     private $replaceWithFqn;
 
     /**
+     * Add urlGenerator property to classes that used UrlGeneratorTrait.
+     *
+     * @var bool
+     */
+    private $addUrlGeneratorProperty;
+
+    /**
      * UrlGeneratorTraitRector constructor.
      *
      * @param bool $replaceWithFqn
@@ -56,8 +63,11 @@ final class UrlGeneratorTraitRector extends AbstractRector
      *   classes that used the replaced trait - even if the trait method was
      *   in use in the class. An external tool (for example PHPCBF) should
      *   optimize and remove unnecessary imports
+     * @param bool $addUrlGeneratorProperty
+     *   Add urlGenerator property to classes that used UrlGeneratorTrait.
+     *   Disabled by default because it requires more deep clean-up.
      */
-    public function __construct(bool $replaceWithFqn = false)
+    public function __construct(bool $replaceWithFqn = false, bool $addUrlGeneratorProperty = false)
     {
         $rc = new \ReflectionClass(self::REPLACED_TRAIT_FQN);
         $this->methodsByTrait = array_map(function (\ReflectionMethod $method) {
@@ -68,6 +78,7 @@ final class UrlGeneratorTraitRector extends AbstractRector
             self::REDIRECT_RESPONSE_FQCN => $replaceWithFqn ? new Node\Name\FullyQualified(self::REDIRECT_RESPONSE_FQCN) : new Node\Name('RedirectResponse'),
         ];
         $this->replaceWithFqn = $replaceWithFqn;
+        $this->addUrlGeneratorProperty = $addUrlGeneratorProperty;
     }
 
     /**
@@ -127,7 +138,7 @@ final class UrlGeneratorTraitRector extends AbstractRector
                     array_unshift($node->stmts, new Node\Stmt\Use_([new Node\Stmt\UseUse(new Node\Name\FullyQualified(self::REDIRECT_RESPONSE_FQCN))]));
                 }
             }
-        } elseif ($node instanceof Node\Stmt\Class_) {
+        } elseif ($node instanceof Node\Stmt\Class_ && $this->addUrlGeneratorProperty) {
             if ($this->isTraitInUse($node->namespacedName)) {
                 $hasUrlGeneratorProperty = false;
                 $firstPropertyPosition = null;
@@ -146,7 +157,12 @@ final class UrlGeneratorTraitRector extends AbstractRector
                 }
 
                 if (!$hasUrlGeneratorProperty) {
-                    $node->stmts = array_merge(array_slice($node->stmts, 0, $firstPropertyPosition), [new Node\Stmt\Property(Node\Stmt\Class_::MODIFIER_PROTECTED, [new Node\Stmt\PropertyProperty(new Node\VarLikeIdentifier('urlGenerator'))])], array_slice($node->stmts, $firstPropertyPosition));
+                    $urlGeneratorProperty = new Node\Stmt\Property(Node\Stmt\Class_::MODIFIER_PROTECTED, [new Node\Stmt\PropertyProperty(new Node\VarLikeIdentifier('urlGenerator'))]);
+                    if (null === $firstPropertyPosition) {
+                        array_unshift($node->stmts, $urlGeneratorProperty);
+                    } else {
+                        $node->stmts = array_merge(array_slice($node->stmts, 0, $firstPropertyPosition), [$urlGeneratorProperty], array_slice($node->stmts, $firstPropertyPosition));
+                    }
                 }
             }
         } elseif ($node instanceof Node\Stmt\TraitUse) {
