@@ -77,6 +77,7 @@ final class UrlGeneratorTraitRector extends AbstractRector
     {
         return [
             Node\Stmt\Namespace_::class,
+            Node\Stmt\Class_::class,
             Node\Stmt\TraitUse::class,
             Node\Stmt\Return_::class,
             Node\Stmt\Expression::class,
@@ -124,6 +125,28 @@ final class UrlGeneratorTraitRector extends AbstractRector
                 }
                 if (!$responseClassExists) {
                     array_unshift($node->stmts, new Node\Stmt\Use_([new Node\Stmt\UseUse(new Node\Name\FullyQualified(self::REDIRECT_RESPONSE_FQCN))]));
+                }
+            }
+        } elseif ($node instanceof Node\Stmt\Class_) {
+            if ($this->isTraitInUse($node->namespacedName)) {
+                $hasUrlGeneratorProperty = false;
+                $firstPropertyPosition = null;
+                foreach ($node->stmts as $i => $stmt) {
+                    if ($stmt instanceof Node\Stmt\Property) {
+                        if (null === $firstPropertyPosition) {
+                            $firstPropertyPosition = $i;
+                        }
+                        foreach ($stmt->props as $property) {
+                            if ('urlGenerator' === (string) $property->name) {
+                                $hasUrlGeneratorProperty = true;
+                                break 2;
+                            }
+                        }
+                    }
+                }
+
+                if (!$hasUrlGeneratorProperty) {
+                    $node->stmts = array_merge(array_slice($node->stmts, 0, $firstPropertyPosition), [new Node\Stmt\Property(Node\Stmt\Class_::MODIFIER_PROTECTED, [new Node\Stmt\PropertyProperty(new Node\VarLikeIdentifier('urlGenerator'))])], array_slice($node->stmts, $firstPropertyPosition));
                 }
             }
         } elseif ($node instanceof Node\Stmt\TraitUse) {
