@@ -178,7 +178,8 @@ CODE_SAMPLE
     private function rectorProperty(Node\Stmt\PropertyProperty $property): void
     {
         foreach ($this->doNotRenameProperties as $classOrInterface) {
-            if ($this->isType($property->getAttribute(Attribute::CLASS_NODE), $classOrInterface)) {
+            $classNode = $property->getAttribute(Attribute::CLASS_NODE);
+            if ($classNode === NULL || $this->isType($classNode, $classOrInterface)) {
                 return;
             }
         }
