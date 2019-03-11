@@ -72,20 +72,21 @@ CODE_SAMPLE
                 return $node;
             }
             if ($this->isType($classNode, $type)) {
-                if (array_key_exists($node->name->name, $propertyToMethod)) {
+                $propertyName = (string) $node->name->name;
+                if (array_key_exists($propertyName, $propertyToMethod)) {
                     // Ignore non method calls.
                     if (null === $node->getAttribute(Attribute::NEXT_NODE) || !$node->getAttribute(Attribute::NEXT_NODE) instanceof Identifier) {
                         continue;
                     }
 
-                    if ($node->getAttribute(Attribute::METHOD_NAME) === $propertyToMethod[$node->name->name]) {
+                    if ($node->getAttribute(Attribute::METHOD_NAME) === $propertyToMethod[$propertyName]) {
                         // Sanity check.
                         // Do not replace the property within the method that
                         // should replace the property.
                         continue;
                     }
 
-                    return $this->createMethodCall($node->var, $propertyToMethod[$node->name->name], []);
+                    return $this->createMethodCall($node->var, $propertyToMethod[$propertyName], []);
                 }
             }
         }
