@@ -179,7 +179,7 @@ CODE_SAMPLE
     {
         foreach ($this->doNotRenameProperties as $classOrInterface) {
             $classNode = $property->getAttribute(Attribute::CLASS_NODE);
-            if ($classNode === NULL || $this->isType($classNode, $classOrInterface)) {
+            if (null === $classNode || $this->isType($classNode, $classOrInterface)) {
                 return;
             }
         }
