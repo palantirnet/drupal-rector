@@ -25,12 +25,14 @@ env:
     - COMPOSER_OPTIONS="--no-suggest --no-interaction"
     - COMPOSER_PROCESS_TIMEOUT=0
   matrix:
-    - ANALYZE="web/core/modules/node"
-    - ANALYZE="web/core/modules/system"
-    - ANALYZE="web/modules/contrib/commerce"
-    - ANALYZE="web/modules/contrib/apigee_edge"
-    - EXPERIMENTAL=false
-    - EXPERIMENTAL=true
+    - EXPERIMENTAL=false ANALYZE="web/core/modules/node"
+    - EXPERIMENTAL=true ANALYZE="web/core/modules/node"
+    - EXPERIMENTAL=false ANALYZE="web/core/modules/system"
+    - EXPERIMENTAL=true ANALYZE="web/core/modules/system"
+    - EXPERIMENTAL=false ANALYZE="web/modules/contrib/commerce"
+    - EXPERIMENTAL=true ANALYZE="web/modules/contrib/commerce"
+    - EXPERIMENTAL=false ANALYZE="web/modules/contrib/apigee_edge"
+    - EXPERIMENTAL=true ANALYZE="web/modules/contrib/apigee_edge"
 install:
   - echo -en "max_execution_time = 0\nxdebug.default_enable = 0" >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
   - composer global require hirak/prestissimo:^0.3.7 zaporylie/composer-drupal-optimizations:^1.1
