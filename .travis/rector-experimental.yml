@@ -1,2 +1,3 @@
 imports:
     - { resource: "vendor/mxr576/drupal8-rector/.travis/shared-config.yml" }
+    - { resource: "vendor/mxr576/drupal8-rector/config/drupal8-experimental.yml" }

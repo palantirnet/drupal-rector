@@ -29,15 +29,17 @@ env:
     - ANALYZE="web/core/modules/system"
     - ANALYZE="web/modules/contrib/commerce"
     - ANALYZE="web/modules/contrib/apigee_edge"
+    - EXPERIMENTAL=false
+    - EXPERIMENTAL=true
 install:
   - echo -en "max_execution_time = 0\nxdebug.default_enable = 0" >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
   - composer global require hirak/prestissimo:^0.3.7 zaporylie/composer-drupal-optimizations:^1.1
   - cd /tmp && travis_retry composer create-project drupal-composer/drupal-project:8.x-dev drupal --no-interaction && cd drupal
   - composer config repositories.drupal8-rector path /home/travis/build/mxr576/drupal8-rector
+    # Installed PHPUnit version and Rector has a conflict on required sebastian/diff version.
   - composer remove --dev webflo/drupal-core-require-dev
-  # Installed PHPUnit version and Rector has a conflict in dependencies.
   - composer require mxr576/drupal8-rector
-  - cp vendor/mxr576/drupal8-rector/.travis/rector.yml .
+  - if [[ "$EXPERIMENTAL" = true ]]; then ln -s vendor/mxr576/drupal8-rector/.travis/rector-experimental.yml rector.yml; else ln -s vendor/mxr576/drupal8-rector/.travis/rector.yml rector.yml; fi
   - if [[ "$ANALYZE" = "web/modules/contrib/commerce" ]]; then composer require drupal/commerce; fi
   - if [[ "$ANALYZE" = "web/modules/contrib/apigee_edge" ]]; then composer require drupal/apigee_edge; fi
 

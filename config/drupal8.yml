@@ -72,14 +72,6 @@ parameters:
 services:
     Mxr576\Rector\CodeStyle\DefineToConstRector: ~
 
-    Mxr576\Rector\CodeStyle\PropertyNameVariableNameRector:
-        $doNotRenameProperties:
-            # Snake cased property names should not be changed in entity types
-            # because those are mapped to snake cased keys in entity
-            # annotations.
-            - Drupal\Core\Entity\Annotation\EntityType
-            - Drupal\Core\Entity\EntityType
-
     Mxr576\Rector\Property\PropertyToMethodCallRector:
         # Traits with properties that can be null therefore it is safer to call
         # their getter methods that ensure they do not.
