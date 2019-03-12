@@ -180,18 +180,14 @@ final class UrlGeneratorTraitRector extends AbstractRector
                     $node->traits = array_values($node->traits);
                 }
             }
-        } elseif ($node instanceof Node\Stmt\Return_) {
-            if ($node->expr instanceof Node\Expr\MethodCall) {
-                $node->expr = $this->refactor($node->expr);
-            }
+        } elseif ($node instanceof Node\Stmt\Return_ && null !== $node->expr) {
+            $node->expr = $this->refactor($node->expr);
         } elseif ($node instanceof Node\Stmt\Expression) {
             $node->expr = $this->refactor($node->expr);
         } elseif ($node instanceof Node\Expr\Assign) {
             $node->expr = $this->refactor($node->expr);
-        } elseif ($node instanceof Node\Expr\ArrayItem) {
-            if ($node->value instanceof Node\Expr\MethodCall) {
-                $node->value = $this->refactor($node->value);
-            }
+        } elseif ($node instanceof Node\Expr\ArrayItem && null !== $node->value) {
+            $node->value = $this->refactor($node->value);
         } elseif ($node instanceof Node\Expr\MethodCall) {
             // Sanity check, single "$this->setUrlGenerator()" should be
             // removed.
