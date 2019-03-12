@@ -1,9 +1,12 @@
+parameters:
+    Mxr576\Rector\CodeStyle\PropertyNameVariableNameRector:
+        # Snake cased property names should not be changed in entity types
+        # because those are mapped to snake cased keys in entity
+        # annotations.
+        - Drupal\Core\Entity\Annotation\EntityType
+        - Drupal\Core\Entity\EntityType
+
 # Set of EXPERIMENTAL rectors, use them on your own risk!
 services:
     Mxr576\Rector\CodeStyle\PropertyNameVariableNameRector:
-        $doNotRenameProperties:
-            # Snake cased property names should not be changed in entity types
-            # because those are mapped to snake cased keys in entity
-            # annotations.
-            - Drupal\Core\Entity\Annotation\EntityType
-            - Drupal\Core\Entity\EntityType
+        arguments: ['%Mxr576\Rector\CodeStyle\PropertyNameVariableNameRector%']

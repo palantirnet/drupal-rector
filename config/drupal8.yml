@@ -69,9 +69,6 @@ parameters:
         #         "".
         - Rector\PHPStan\Rector\Assign\PHPStormVarAnnotationRector
 
-services:
-    Mxr576\Rector\CodeStyle\DefineToConstRector: ~
-
     Mxr576\Rector\Property\PropertyToMethodCallRector:
         # Traits with properties that can be null therefore it is safer to call
         # their getter methods that ensure they do not.
@@ -96,3 +93,9 @@ services:
         #    urlGenerator: getUrlGenerator
         # Drupal\Core\Routing\LinkGeneratorTrait
         #   linkGenerator: getLinkGenerator
+
+services:
+    Mxr576\Rector\CodeStyle\DefineToConstRector: ~
+
+    Mxr576\Rector\Property\PropertyToMethodCallRector:
+        arguments: ['%Mxr576\Rector\Property\PropertyToMethodCallRector%']

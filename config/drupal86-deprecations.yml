@@ -1,5 +1,4 @@
-# Contains automatic fixes for some deprecations introduced before Drupal 8.7.
-services:
+parameters:
     Rector\Rector\MethodCall\MethodNameReplacerRector:
         Drupal\Core\Entity\EntityInterface:
             url: toUrl
@@ -13,6 +12,11 @@ services:
             # Note, you may need the "entity_field.manager" service instead of
             # entity_type.manager.
             entityManager: entityTypeManager
+
+# Contains automatic fixes for some deprecations introduced before Drupal 8.7.
+services:
+    Rector\Rector\MethodCall\MethodNameReplacerRector:
+        arguments: ['%Rector\Rector\MethodCall\MethodNameReplacerRector%']
 
     # Do not forget to optimize imports after this rector.
     Mxr576\Rector\Deprecation\UrlGeneratorTraitRector: ~
