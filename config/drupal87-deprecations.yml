@@ -1,0 +1,9 @@
+parameters:
+    Rector\Rector\MethodCall\MethodNameReplacerRector:
+        Drupal\Core\Theme\ActiveTheme:
+            getBaseThemes: getBaseThemeExtensions
+        Drupal\Core\Config\ConfigManagerInterface:
+            getEntityManager: getEntityTypeManager
+
+# Contains automatic fixes for some deprecations introduced in Drupal 8.7.
+services:

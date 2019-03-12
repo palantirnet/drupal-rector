@@ -13,7 +13,7 @@ parameters:
             # entity_type.manager.
             entityManager: entityTypeManager
 
-# Contains automatic fixes for some deprecations introduced before Drupal 8.7.
+# Contains automatic fixes for some deprecations introduced _before_ and in Drupal 8.6.
 services:
     Rector\Rector\MethodCall\MethodNameReplacerRector:
         arguments: ['%Rector\Rector\MethodCall\MethodNameReplacerRector%']
