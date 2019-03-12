@@ -16,13 +16,13 @@ Create a rector.yml file in the Drupal 8 root.
 
 ```yml
 imports:
-  - { resource: "vendor/mxr576/drupal8-rector/config/drupal8.yml" }
-  - { resource: "vendor/mxr576/drupal8-rector/config/drupal86-deprecations.yml" }
+  - { resource: "%vendor_dir%/mxr576/drupal8-rector/config/drupal8.yml" }
+  - { resource: "%vendor_dir%/mxr576/drupal8-rector/config/drupal86-deprecations.yml" }
   # Import drupal8-php71.yml ruleset if your module's minimum requirement
   # is PHP >= 7.1.
-  # - { resource: "vendor/mxr576/drupal8-rector/config/drupal8-php71.yml" }
+  # - { resource: "%vendor_dir%/mxr576/drupal8-rector/config/drupal8-php71.yml" }
   # Enable EXPERIMENTAL rectors.
-  # - { resource: "vendor/mxr576/drupal8-rector/config/drupal8-experimental.yml" }
+  # - { resource: "%vendor_dir%/mxr576/drupal8-rector/config/drupal8-experimental.yml" }
 
 parameters:
   autoload_paths:

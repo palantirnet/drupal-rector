@@ -1,7 +1,7 @@
 # Drupal 8 ruleset extras for PHP >= 7.1 code.
 imports:
-    - { resource: "../../../rector/rector/config/level/php/php70.yaml" }
-    - { resource: "../../../rector/rector/config/level/php/php71.yaml" }
+    - { resource: "%vendor_dir%/rector/rector/config/level/php/php70.yaml" }
+    - { resource: "%vendor_dir%/rector/rector/config/level/php/php71.yaml" }
 
 parameters:
     exclude_rectors:
