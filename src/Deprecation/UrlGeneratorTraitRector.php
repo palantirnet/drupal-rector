@@ -260,7 +260,7 @@ final class UrlGeneratorTraitRector extends AbstractRector
                     if (array_key_exists(2, $node->args)) {
                         $urlFromRouteArgs[] = $node->args[2];
                     }
-                    $urlFromRouteExpr = new Node\Expr\StaticCall($this->replacementClassesNames[self::URL_CLASS_FQCN], 'urlFromRoute', $urlFromRouteArgs);
+                    $urlFromRouteExpr = new Node\Expr\StaticCall($this->replacementClassesNames[self::URL_CLASS_FQCN], 'fromRoute', $urlFromRouteArgs);
                     $redirectResponseArgs = [$urlFromRouteExpr];
                     if (array_key_exists(3, $node->args)) {
                         $redirectResponseArgs[] = $node->args[3];
