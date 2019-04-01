@@ -38,6 +38,7 @@ install:
   - composer global require hirak/prestissimo:^0.3.7 zaporylie/composer-drupal-optimizations:^1.1
   - cd /tmp && travis_retry composer create-project drupal-composer/drupal-project:8.x-dev drupal --no-interaction && cd drupal
   - composer config repositories.drupal8-rector path /home/travis/build/mxr576/drupal8-rector
+  - composer config extra.enable-patching true
     # Installed PHPUnit version and Rector has a conflict on required sebastian/diff version.
   - composer remove --dev webflo/drupal-core-require-dev
   - composer require mxr576/drupal8-rector

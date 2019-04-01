@@ -9,3 +9,5 @@ parameters:
     exclude_paths:
         - '*/tests/*'
         - '*/Tests/*'
+    file_extensions:
+        - module
