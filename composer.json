@@ -3,11 +3,11 @@
     "description": "Instant fixes for your Drupal 8 code by using Rector.",
     "type": "library",
     "keywords": [
-      "code style",
-      "rector",
-      "drupal 8",
-      "phpcs",
-      "ast"
+        "code style",
+        "rector",
+        "drupal 8",
+        "phpcs",
+        "ast"
     ],
     "require": {
         "cweagans/composer-patches": "^1.6.5",
@@ -15,7 +15,7 @@
         "rector/rector": "0.4.4"
     },
     "require-dev": {
-      "friendsofphp/php-cs-fixer": "^2.14"
+        "friendsofphp/php-cs-fixer": "^2.14"
     },
     "license": "MIT",
     "authors": [
@@ -25,21 +25,21 @@
         }
     ],
     "autoload": {
-      "psr-4": {
-        "Mxr576\\Rector\\": "src"
-      }
+        "psr-4": {
+            "Mxr576\\Rector\\": "src"
+        }
     },
     "config": {
-      "optimize-autoloader": true,
-      "update-with-dependencies": true,
-      "preferred-install": "dist",
-      "sort-packages": true
+        "optimize-autoloader": true,
+        "update-with-dependencies": true,
+        "preferred-install": "dist",
+        "sort-packages": true
     },
     "minimum-stability": "dev",
     "prefer-stable": true,
     "scripts": {
-      "check-style": "php-cs-fixer fix --config=./.php_cs.dist --dry-run",
-      "fix-style": "php-cs-fixer fix --config=./.php_cs.dist"
+        "check-style": "php-cs-fixer fix --config=./.php_cs.dist --dry-run",
+        "fix-style": "php-cs-fixer fix --config=./.php_cs.dist",
     },
     "extra": {
         "patches": {
