@@ -4,8 +4,9 @@ imports:
 
 parameters:
     autoload_paths:
-        - 'web/core/modules'
-        - 'web/modules'
+        - '.drupal/web/autoload.php'
+        - '.drupal/web/core/modules'
+        - '.drupal/web/modules'
     exclude_paths:
         - '*/tests/*'
         - '*/Tests/*'

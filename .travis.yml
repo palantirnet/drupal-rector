@@ -25,27 +25,23 @@ env:
     - COMPOSER_OPTIONS="--no-suggest --no-interaction"
     - COMPOSER_PROCESS_TIMEOUT=0
   matrix:
-    - EXPERIMENTAL=false ANALYZE="web/core/modules/node"
-    - EXPERIMENTAL=true ANALYZE="web/core/modules/node"
-    - EXPERIMENTAL=false ANALYZE="web/core/modules/system"
-    - EXPERIMENTAL=true ANALYZE="web/core/modules/system"
-    - EXPERIMENTAL=false ANALYZE="web/modules/contrib/commerce"
-    - EXPERIMENTAL=true ANALYZE="web/modules/contrib/commerce"
-    - EXPERIMENTAL=false ANALYZE="web/modules/contrib/apigee_edge"
-    - EXPERIMENTAL=true ANALYZE="web/modules/contrib/apigee_edge"
+    - CONFIG=rector.yml ANALYZE=".drupal/web/core/modules/node"
+    - CONFIG=rector-experimental.yml ANALYZE=".drupal/web/core/modules/node"
+    - CONFIG=rector.yml ANALYZE=".drupal/web/core/modules/system"
+    - CONFIG=rector-experimental.yml ANALYZE=".drupal/web/core/modules/system"
+    - CONFIG=rector.yml ANALYZE=".drupal/web/modules/contrib/commerce"
+    - CONFIG=rector-experimental.yml ANALYZE=".drupal/web/modules/contrib/commerce"
+    - CONFIG=rector.yml ANALYZE=".drupal/web/modules/contrib/apigee_edge"
+    - CONFIG=rector-experimental.yml ANALYZE=".drupal/web/modules/contrib/apigee_edge"
 install:
   - echo -en "max_execution_time = 0\nxdebug.default_enable = 0" >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
+  # Speed up Drupal core installation.
   - composer global require hirak/prestissimo:^0.3.7 zaporylie/composer-drupal-optimizations:^1.1
-  - cd /tmp && travis_retry composer create-project drupal-composer/drupal-project:8.x-dev drupal --no-interaction && cd drupal
-  - composer config repositories.drupal8-rector path /home/travis/build/mxr576/drupal8-rector
-  - composer config extra.enable-patching true
-    # Installed PHPUnit version and Rector has a conflict on required sebastian/diff version.
-  - composer remove --dev webflo/drupal-core-require-dev
-  - composer require mxr576/drupal8-rector
-  - if [[ "$EXPERIMENTAL" = true ]]; then ln -s vendor/mxr576/drupal8-rector/.travis/rector-experimental.yml rector.yml; else ln -s vendor/mxr576/drupal8-rector/.travis/rector.yml rector.yml; fi
-  - if [[ "$ANALYZE" = "web/modules/contrib/commerce" ]]; then composer require drupal/commerce; fi
-  - if [[ "$ANALYZE" = "web/modules/contrib/apigee_edge" ]]; then composer require drupal/apigee_edge; fi
+  - composer install
+  - composer download-drupal-core
+  - if [[ "$ANALYZE" = ".drupal/web/modules/contrib/commerce" ]]; then composer require drupal/commerce -d .drupal; fi
+  - if [[ "$ANALYZE" = ".drupal/web/modules/contrib/apigee_edge" ]]; then composer require drupal/apigee_edge -d .drupal; fi
 
 script:
   - set -e
-  - ./vendor/bin/rector process $ANALYZE --dry-run
+  - ./vendor/bin/rector process -c .travis/$CONFIG $ANALYZE --dry-run
