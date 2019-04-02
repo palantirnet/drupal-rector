@@ -27,11 +27,13 @@ final class UrlGeneratorTraitRector extends AbstractRector
     private $traitsByClasses = [];
 
     /**
-     * Methods (method names) provided by the deprecated trait.
+     * Cached methods (method names) provided by the deprecated trait.
      *
-     * @var string[]
+     * Use getMethodsByTrait() instead.
+     *
+     * @var string[]|null
      */
-    private $methodsByTrait = [];
+    private $_methodsByTrait;
 
     /**
      * Array of name nodes keyed by classes based on $replaceWithFqn value.
@@ -69,10 +71,6 @@ final class UrlGeneratorTraitRector extends AbstractRector
      */
     public function __construct(bool $replaceWithFqn = false, bool $addUrlGeneratorProperty = false)
     {
-        $rc = new \ReflectionClass(self::REPLACED_TRAIT_FQN);
-        $this->methodsByTrait = array_map(function (\ReflectionMethod $method) {
-            return $method->getName();
-        }, $rc->getMethods());
         $this->replacementClassesNames = [
             self::URL_CLASS_FQCN => $replaceWithFqn ? new Node\Name\FullyQualified(self::URL_CLASS_FQCN) : new Node\Name('Url'),
             self::REDIRECT_RESPONSE_FQCN => $replaceWithFqn ? new Node\Name\FullyQualified(self::REDIRECT_RESPONSE_FQCN) : new Node\Name('RedirectResponse'),
@@ -210,6 +208,18 @@ final class UrlGeneratorTraitRector extends AbstractRector
         return new RectorDefinition(sprintf('Removes usages of deprecated %s trait', self::REPLACED_TRAIT_FQN));
     }
 
+    private function getMethodsByTrait(): array
+    {
+        if (null === $this->_methodsByTrait) {
+            $rc = new \ReflectionClass(self::REPLACED_TRAIT_FQN);
+            $this->_methodsByTrait = array_map(function (\ReflectionMethod $method) {
+                return $method->getName();
+            }, $rc->getMethods());
+        }
+
+        return $this->_methodsByTrait;
+    }
+
     /**
      * @param string $class
      *
@@ -249,7 +259,7 @@ final class UrlGeneratorTraitRector extends AbstractRector
         }
         if ($this->isTraitInUse($className)) {
             $method_name = $node->name->name;
-            if (in_array($method_name, $this->methodsByTrait)) {
+            if (in_array($method_name, $this->getMethodsByTrait())) {
                 if ('redirect' === $method_name) {
                     $urlFromRouteArgs = [
                         $node->args[0],
