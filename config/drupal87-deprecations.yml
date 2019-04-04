@@ -1,5 +1,5 @@
 parameters:
-    Rector\Rector\MethodCall\MethodNameReplacerRector:
+    Rector\Rector\MethodCall\RenameMethodRector:
         Drupal\Core\Theme\ActiveTheme:
             getBaseThemes: getBaseThemeExtensions
         Drupal\Core\Config\ConfigManagerInterface:
