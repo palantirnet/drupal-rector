@@ -48,7 +48,6 @@
             "rector/rector": {
                 "Process files with not .php extension": "https://github.com/rectorphp/rector/pull/1285.diff"
             }
-        },
-        "enable-patching": "true"
+        }
     }
 }
