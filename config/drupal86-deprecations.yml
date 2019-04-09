@@ -67,3 +67,5 @@ services:
 
     # Do not forget to optimize imports after this rector.
     Mxr576\Rector\Deprecation\UrlGeneratorTraitRector: ~
+
+    Mxr576\Rector\Deprecation\DrupalSetMessageRector: ~
