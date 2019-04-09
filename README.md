@@ -80,3 +80,7 @@ You can find more information about Rector [here](https://github.com/rectorphp/r
 This is just a POC at this moment but it has a great potential to become an actual development tool for Drupal 8.
 
 *Do you have an idea about what else this tool could do? Please share it in the issue queue. Pull requests are also warmly welcomed!*
+
+## Credits
+
+Initial development is sponsored by [Pronovix](https://pronovix.com).
