@@ -2,6 +2,7 @@
 
 namespace Mxr576\Rector\Deprecation;
 
+use Mxr576\Rector\Utility\TraitsByClassHelperTrait;
 use PhpParser\Node;
 use Rector\Exception\ShouldNotHappenException;
 use Rector\NodeTypeResolver\Node\Attribute;
@@ -13,18 +14,13 @@ use Rector\RectorDefinition\RectorDefinition;
  */
 final class UrlGeneratorTraitRector extends AbstractRector
 {
+    use TraitsByClassHelperTrait;
+
     private const REPLACED_TRAIT_FQN = 'Drupal\Core\Routing\UrlGeneratorTrait';
 
     private const URL_CLASS_FQCN = 'Drupal\Core\Url';
 
     private const REDIRECT_RESPONSE_FQCN = 'Symfony\Component\HttpFoundation\RedirectResponse';
-
-    /**
-     * Associative array where keys are class FQCNs and values are trait FQCNs.
-     *
-     * @var string[][]
-     */
-    private $traitsByClasses = [];
 
     /**
      * Cached methods (method names) provided by the deprecated trait.
@@ -221,25 +217,6 @@ final class UrlGeneratorTraitRector extends AbstractRector
     }
 
     /**
-     * @param string $class
-     *
-     * @return string[]
-     *   Array of trait FQCNs implemented by a class and its parents.
-     */
-    private function getTraits(string $class)
-    {
-        if (!array_key_exists($class, $this->traitsByClasses)) {
-            $this->traitsByClasses[$class] = [];
-            $rc = new \ReflectionClass($class);
-            do {
-                $this->traitsByClasses[$class] = array_merge($this->traitsByClasses[$class], array_keys($rc->getTraits()));
-            } while ($rc = $rc->getParentClass());
-        }
-
-        return $this->traitsByClasses[$class];
-    }
-
-    /**
      * Process method calls.
      *
      * @param \PhpParser\Node\Expr\MethodCall$node
@@ -299,6 +276,6 @@ final class UrlGeneratorTraitRector extends AbstractRector
      */
     private function isTraitInUse(string $fqcn): bool
     {
-        return in_array(self::REPLACED_TRAIT_FQN, $this->getTraits($fqcn));
+        return in_array(self::REPLACED_TRAIT_FQN, $this->getTraitsByClass($fqcn));
     }
 }
