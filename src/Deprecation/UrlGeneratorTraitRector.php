@@ -182,7 +182,10 @@ final class UrlGeneratorTraitRector extends AbstractRector
             $node->expr = $this->refactor($node->expr);
         } elseif ($node instanceof Node\Expr\ArrayItem && null !== $node->value) {
             $node->value = $this->refactor($node->value);
-        } elseif ($node instanceof Node\Expr\MethodCall) {
+        }
+        // Ignore non-trivial identifiers, like when method name is created with concatenation.
+        // @see https://git.drupalcode.org/project/features/blob/8.x-3.8/modules/features_ui/src/Form/FeaturesEditForm.php#L643
+        elseif ($node instanceof Node\Expr\MethodCall && $node->name instanceof Node\Identifier) {
             // Sanity check, single "$this->setUrlGenerator()" should be
             // removed.
             $parentNode = $node->getAttribute(Attribute::PARENT_NODE);
