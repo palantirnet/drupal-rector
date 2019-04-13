@@ -1,5 +1,5 @@
 {
-    "name": "mxr576/drupal8-rector",
+    "name": "drupal8-rector/drupal8-rector",
     "description": "Instant fixes for your Drupal 8 code by using Rector.",
     "type": "library",
     "keywords": [
