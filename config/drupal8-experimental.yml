@@ -1,5 +1,5 @@
 parameters:
-    Mxr576\Rector\CodeStyle\PropertyNameVariableNameRector:
+    Drupal8Rector\Rector\CodeStyle\PropertyNameVariableNameRector:
         # Snake cased property names should not be changed in entity types
         # because those are mapped to snake cased keys in entity
         # annotations.
@@ -8,5 +8,5 @@ parameters:
 
 # Set of EXPERIMENTAL rectors, use them on your own risk!
 services:
-    Mxr576\Rector\CodeStyle\PropertyNameVariableNameRector:
-        arguments: ['%Mxr576\Rector\CodeStyle\PropertyNameVariableNameRector%']
+    Drupal8Rector\Rector\CodeStyle\PropertyNameVariableNameRector:
+        arguments: ['%Drupal8Rector\Rector\CodeStyle\PropertyNameVariableNameRector%']

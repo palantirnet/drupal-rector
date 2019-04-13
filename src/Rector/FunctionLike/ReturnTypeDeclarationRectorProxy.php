@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Mxr576\Rector\FunctionLike;
+namespace Drupal8Rector\Rector\FunctionLike;
 
 use PhpParser\Node;
 use Rector\Application\AppliedRectorCollector;

@@ -13,7 +13,7 @@ parameters:
             # entity_type.manager.
             entityManager: entityTypeManager
 
-    Mxr576\Rector\Deprecation\ConstToClassConstFetchRector:
+    Drupal8Rector\Rector\Deprecation\ConstToClassConstFetchRector:
         AGGREGATOR_CLEAR_NEVER: Drupal\aggregator\FeedStorageInterface::CLEAR_NEVER
         COMMENT_ANONYMOUS_MAYNOT_CONTACT: Drupal\comment\CommentInterface::ANONYMOUS_MAYNOT_CONTACT
         COMMENT_ANONYMOUS_MAY_CONTACT: Drupal\comment\CommentInterface::ANONYMOUS_MAY_CONTACT
@@ -62,10 +62,10 @@ services:
     Rector\Rector\MethodCall\RenameMethodRector:
         arguments: ['%Rector\Rector\MethodCall\RenameMethodRector%']
 
-    Mxr576\Rector\Deprecation\ConstToClassConstFetchRector:
-        arguments: ['%Mxr576\Rector\Deprecation\ConstToClassConstFetchRector%']
+    Drupal8Rector\Rector\Deprecation\ConstToClassConstFetchRector:
+        arguments: ['%Drupal8Rector\Rector\Deprecation\ConstToClassConstFetchRector%']
 
     # Do not forget to optimize imports after this rector.
-    Mxr576\Rector\Deprecation\UrlGeneratorTraitRector: ~
+    Drupal8Rector\Rector\Deprecation\UrlGeneratorTraitRector: ~
 
-    Mxr576\Rector\Deprecation\DrupalSetMessageRector: ~
+    Drupal8Rector\Rector\Deprecation\DrupalSetMessageRector: ~

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Mxr576\Rector\CodeStyle;
+namespace Drupal8Rector\Rector\CodeStyle;
 
 use PhpParser\Node;
 use PhpParser\Node\Expr\FuncCall;

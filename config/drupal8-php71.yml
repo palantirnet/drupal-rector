@@ -26,6 +26,6 @@ parameters:
     # Disabled because adding return type declaration to methods that overrides
     # Drupal 8 core methods can be still problematic sometimes.
     # You can re-enable this in your rector.yml by adding
-    # Mxr576\Rector\FunctionLike\ReturnTypeDeclarationRectorProxy rector to
+    # Drupal8Rector\Rector\FunctionLike\ReturnTypeDeclarationRectorProxy rector to
     # services.
     - Rector\Php\Rector\FunctionLike\ReturnTypeDeclarationRector

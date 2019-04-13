@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Mxr576\Rector\CodeStyle;
+namespace Drupal8Rector\Rector\CodeStyle;
 
 use Jawira\CaseConverter\Convert;
 use PhpParser\Comment;

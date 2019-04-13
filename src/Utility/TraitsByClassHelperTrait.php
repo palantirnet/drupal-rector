@@ -1,6 +1,6 @@
 <?php
 
-namespace Mxr576\Rector\Utility;
+namespace Drupal8Rector\Utility;
 
 /**
  * Helps to figure out which traits are used by a class.

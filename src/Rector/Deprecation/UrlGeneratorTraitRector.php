@@ -1,8 +1,8 @@
 <?php
 
-namespace Mxr576\Rector\Deprecation;
+namespace Drupal8Rector\Rector\Deprecation;
 
-use Mxr576\Rector\Utility\TraitsByClassHelperTrait;
+use Drupal8Rector\Utility\TraitsByClassHelperTrait;
 use PhpParser\Node;
 use Rector\Exception\ShouldNotHappenException;
 use Rector\NodeTypeResolver\Node\Attribute;

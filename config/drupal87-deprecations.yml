@@ -5,7 +5,7 @@ parameters:
         Drupal\Core\Config\ConfigManagerInterface:
             getEntityManager: getEntityTypeManager
 
-    Mxr576\Rector\Deprecation\ConstToClassConstFetchRector:
+    Drupal8Rector\Rector\Deprecation\ConstToClassConstFetchRector:
         FILE_CREATE_DIRECTORY: Drupal\Core\File\FileSystemInterface::CREATE_DIRECTORY
         FILE_EXISTS_ERROR: Drupal\Core\File\FileSystemInterface::EXISTS_ERROR
         FILE_EXISTS_RENAME: Drupal\Core\File\FileSystemInterface::EXISTS_RENAME

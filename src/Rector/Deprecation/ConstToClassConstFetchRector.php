@@ -17,7 +17,7 @@
  * MA 02110-1301, USA.
  */
 
-namespace Mxr576\Rector\Deprecation;
+namespace Drupal8Rector\Rector\Deprecation;
 
 use PhpParser\Node;
 use Rector\Rector\AbstractRector;

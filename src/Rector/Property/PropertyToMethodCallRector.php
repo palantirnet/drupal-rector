@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Mxr576\Rector\Property;
+namespace Drupal8Rector\Rector\Property;
 
 use PhpParser\Node;
 use PhpParser\Node\Expr\PropertyFetch;
