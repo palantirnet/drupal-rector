@@ -7,7 +7,7 @@ namespace Drupal8Rector\Rector\Property;
 use PhpParser\Node;
 use PhpParser\Node\Expr\PropertyFetch;
 use PhpParser\Node\Identifier;
-use Rector\NodeTypeResolver\Node\Attribute;
+use Rector\NodeTypeResolver\Node\AttributeKey;
 use Rector\Rector\AbstractRector;
 use Rector\RectorDefinition\ConfiguredCodeSample;
 use Rector\RectorDefinition\RectorDefinition;
@@ -66,7 +66,7 @@ CODE_SAMPLE
     {
         /* @var \PhpParser\Node\Expr\PropertyFetch $node **/
         foreach ($this->propertyToMethod as $type => $propertyToMethod) {
-            $classNode = $node->getAttribute(Attribute::CLASS_NODE);
+            $classNode = $node->getAttribute(AttributeKey::CLASS_NODE);
             // Ignore procedural code.
             if (null === $classNode) {
                 return $node;
@@ -75,11 +75,11 @@ CODE_SAMPLE
                 $propertyName = (string) $node->name->name;
                 if (array_key_exists($propertyName, $propertyToMethod)) {
                     // Ignore non method calls.
-                    if (null === $node->getAttribute(Attribute::NEXT_NODE) || !$node->getAttribute(Attribute::NEXT_NODE) instanceof Identifier) {
+                    if (null === $node->getAttribute(AttributeKey::NEXT_NODE) || !$node->getAttribute(AttributeKey::NEXT_NODE) instanceof Identifier) {
                         continue;
                     }
 
-                    if ($node->getAttribute(Attribute::METHOD_NAME) === $propertyToMethod[$propertyName]) {
+                    if ($node->getAttribute(AttributeKey::METHOD_NAME) === $propertyToMethod[$propertyName]) {
                         // Sanity check.
                         // Do not replace the property within the method that
                         // should replace the property.

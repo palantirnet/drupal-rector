@@ -5,7 +5,7 @@ namespace Drupal8Rector\Rector\Deprecation;
 use Drupal8Rector\Utility\TraitsByClassHelperTrait;
 use PhpParser\Node;
 use Rector\Exception\ShouldNotHappenException;
-use Rector\NodeTypeResolver\Node\Attribute;
+use Rector\NodeTypeResolver\Node\AttributeKey;
 use Rector\Rector\AbstractRector;
 use Rector\RectorDefinition\RectorDefinition;
 
@@ -188,7 +188,7 @@ final class UrlGeneratorTraitRector extends AbstractRector
         elseif ($node instanceof Node\Expr\MethodCall && $node->name instanceof Node\Identifier) {
             // Sanity check, single "$this->setUrlGenerator()" should be
             // removed.
-            $parentNode = $node->getAttribute(Attribute::PARENT_NODE);
+            $parentNode = $node->getAttribute(AttributeKey::PARENT_NODE);
             if ('setUrlGenerator' === $node->name->name && $parentNode instanceof Node\Stmt\Expression && $parentNode->expr === $node) {
                 $this->removeNode($node);
             } elseif ($processed = $this->processMethodCall($node)) {
@@ -232,7 +232,7 @@ final class UrlGeneratorTraitRector extends AbstractRector
     private function processMethodCall(Node\Expr\MethodCall $node): ?Node\Expr
     {
         $result = null;
-        $className = $node->getAttribute(Attribute::CLASS_NAME);
+        $className = $node->getAttribute(AttributeKey::CLASS_NAME);
         // Ignore procedural code because traits can not be used there.
         if (null === $className) {
             return $result;

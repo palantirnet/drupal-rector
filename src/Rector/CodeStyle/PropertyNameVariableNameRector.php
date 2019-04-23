@@ -7,7 +7,7 @@ namespace Drupal8Rector\Rector\CodeStyle;
 use Jawira\CaseConverter\Convert;
 use PhpParser\Comment;
 use PhpParser\Node;
-use Rector\NodeTypeResolver\Node\Attribute;
+use Rector\NodeTypeResolver\Node\AttributeKey;
 use Rector\Rector\AbstractRector;
 use Rector\RectorDefinition\CodeSample;
 use Rector\RectorDefinition\ConfiguredCodeSample;
@@ -178,7 +178,7 @@ CODE_SAMPLE
     private function rectorProperty(Node\Stmt\PropertyProperty $property): void
     {
         foreach ($this->doNotRenameProperties as $classOrInterface) {
-            $classNode = $property->getAttribute(Attribute::CLASS_NODE);
+            $classNode = $property->getAttribute(AttributeKey::CLASS_NODE);
             if (null === $classNode || $this->isType($classNode, $classOrInterface)) {
                 return;
             }
@@ -210,7 +210,7 @@ CODE_SAMPLE
                         }
                     }
                     $isInherited = false;
-                    $parentClass = $node->name->getAttribute(Attribute::PARENT_CLASS_NAME);
+                    $parentClass = $node->name->getAttribute(AttributeKey::PARENT_CLASS_NAME);
                     if ($parentClass) {
                         $rc = new \ReflectionClass($parentClass);
                         $isInherited = $rc->hasProperty($node->name->name);

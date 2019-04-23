@@ -4,7 +4,7 @@ namespace Drupal8Rector\Rector\Deprecation;
 
 use Drupal8Rector\Utility\TraitsByClassHelperTrait;
 use PhpParser\Node;
-use Rector\NodeTypeResolver\Node\Attribute;
+use Rector\NodeTypeResolver\Node\AttributeKey;
 use Rector\Rector\AbstractRector;
 use Rector\RectorDefinition\RectorDefinition;
 
@@ -35,7 +35,7 @@ final class DrupalSetMessageRector extends AbstractRector
         /** @var Node\Expr\FuncCall $node */
         // Ignore those complex cases when function name specified by a variable.
         if ($node->name instanceof Node\Name && 'drupal_set_message' === (string) $node->name) {
-            $className = $node->getAttribute(Attribute::CLASS_NAME);
+            $className = $node->getAttribute(AttributeKey::CLASS_NAME);
             // If drupal_set_message() called in a class and class uses the MessengerTrait trait then do not replace
             // the function call with a method call on the static \Drupal:messenger() method.
             if ($className && in_array(self::MESSENGER_TRAIT, $this->getTraitsByClass($className))) {
