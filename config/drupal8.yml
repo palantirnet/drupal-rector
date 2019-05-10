@@ -14,6 +14,9 @@ parameters:
         # +    if ($user !== null) {
         - Rector\CodingStyle\Rector\If_\NullableCompareToNullRector
 
+        # Disabled until https://github.com/rectorphp/rector/pull/1412 gets merged.
+        - Rector\CodingStyle\Rector\Namespace_\ImportFullyQualifiedNamesRector
+
         # Disabled because it could not deal with the following code:
         # -use Foo\Bar\Entity\EntityInterface as FooBarEntityInterface;
         # -use Drupal\Core\Entity\EntityInterface as DrupalEntityInterface;
