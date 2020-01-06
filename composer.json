@@ -10,11 +10,11 @@
         "ast"
     ],
     "require": {
-        "jawira/case-converter": "^1.1",
-        "rector/rector-prefixed": "^0.3.5"
+        "jawira/case-converter": "^1.1"
     },
     "require-dev": {
-        "friendsofphp/php-cs-fixer": "^2.14"
+        "friendsofphp/php-cs-fixer": "^2.14",
+        "rector/rector-prefixed": "^0.6.2"
     },
     "license": "MIT",
     "authors": [
