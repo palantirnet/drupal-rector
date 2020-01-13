@@ -1,9 +1,9 @@
 # General ruleset for Drupal 8. Compatible with PHP 5.6 and above.
 imports:
-    # - { resource: "%vendor_dir%/rector/rector/config/level/coding-style/coding-style.yaml" }
-    # - { resource: "%vendor_dir%/rector/rector/config/level/code-quality/code-quality.yaml" }
-    # - { resource: "%vendor_dir%/rector/rector/config/level/dead-code/dead-code.yaml" }
-    # - { resource: "%vendor_dir%/rector/rector/config/level/phpstan/phpstan.yaml" }
+    - { resource: "%vendor_dir%/../../config/set/coding-style/coding-style.yaml" }
+    - { resource: "%vendor_dir%/../../config/set/code-quality/code-quality.yaml" }
+    - { resource: "%vendor_dir%/../../config/set/dead-code/dead-code.yaml" }
+    - { resource: "%vendor_dir%/../../config/set/phpstan/phpstan.yaml" }
 
 parameters:
     exclude_rectors:
