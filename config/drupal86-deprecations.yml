@@ -1,5 +1,5 @@
 parameters:
-    Rector\Rector\MethodCall\RenameMethodRector:
+    Rector\Renaming\Rector\MethodCall\RenameMethodRector:
         Drupal\Core\Entity\EntityInterface:
             url: toUrl
             urlInfo: toUrl
@@ -59,8 +59,8 @@ parameters:
 
 # Contains automatic fixes for some deprecations introduced _before_ and in Drupal 8.6.
 services:
-    Rector\Rector\MethodCall\RenameMethodRector:
-        arguments: ['%Rector\Rector\MethodCall\RenameMethodRector%']
+    Rector\Renaming\Rector\MethodCall\RenameMethodRector:
+        arguments: ['%Rector\Renaming\Rector\MethodCall\RenameMethodRector%']
 
     Drupal8Rector\Rector\Deprecation\ConstToClassConstFetchRector:
         arguments: ['%Drupal8Rector\Rector\Deprecation\ConstToClassConstFetchRector%']

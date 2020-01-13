@@ -1,9 +1,9 @@
 # General ruleset for Drupal 8. Compatible with PHP 5.6 and above.
 imports:
-    - { resource: "%vendor_dir%/rector/rector/config/level/coding-style/coding-style.yaml" }
-    - { resource: "%vendor_dir%/rector/rector/config/level/code-quality/code-quality.yaml" }
-    - { resource: "%vendor_dir%/rector/rector/config/level/dead-code/dead-code.yaml" }
-    - { resource: "%vendor_dir%/rector/rector/config/level/phpstan/phpstan.yaml" }
+    # - { resource: "%vendor_dir%/rector/rector/config/level/coding-style/coding-style.yaml" }
+    # - { resource: "%vendor_dir%/rector/rector/config/level/code-quality/code-quality.yaml" }
+    # - { resource: "%vendor_dir%/rector/rector/config/level/dead-code/dead-code.yaml" }
+    # - { resource: "%vendor_dir%/rector/rector/config/level/phpstan/phpstan.yaml" }
 
 parameters:
     exclude_rectors:
@@ -30,7 +30,7 @@ parameters:
         # object is being created with reflection:
         # -    return $rc->newInstance($entity_type, $conjunction, $this->namespaces, $this->entityTypeManager);
         # +    return $rc->newInstance($entity_type, $this->entityTypeManager);
-        - Rector\Php\Rector\FuncCall\RemoveExtraParametersRector
+        - Rector\Php71\Rector\FuncCall\RemoveExtraParametersRector
 
         # Disabled because it was unable to parse a file.
         # [ERROR] Could not process "..." file by

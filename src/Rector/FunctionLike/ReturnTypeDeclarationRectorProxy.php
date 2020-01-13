@@ -9,7 +9,7 @@ use Rector\Application\AppliedRectorCollector;
 use Rector\Application\RemovedFilesCollector;
 use Rector\NodeTypeResolver\Application\ClassLikeNodeCollector;
 use Rector\NodeTypeResolver\PhpDoc\NodeAnalyzer\DocBlockAnalyzer;
-use Rector\Php\Rector\FunctionLike\AbstractTypeDeclarationRector;
+use Rector\TypeDeclaration\Rector\FunctionLike\AbstractTypeDeclarationRector;
 use Rector\Php\Rector\FunctionLike\ReturnTypeDeclarationRector;
 use Rector\PhpParser\Node\Commander\NodeAddingCommander;
 use Rector\PhpParser\Node\Commander\NodeRemovingCommander;
