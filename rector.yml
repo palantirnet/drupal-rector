@@ -1,14 +1,6 @@
 imports:
-  # - { resource: "vendor/drupal8-rector/drupal8-rector/config/drupal8.yml" }
-  - { resource: "config/drupal8.yml" }
-  # - { resource: "vendor/drupal8-rector/drupal8-rector/config/drupal86-deprecations.yml" }
-  - { resource: "config/drupal86-deprecations.yml" }
-  # Import drupal8-php71.yml ruleset if your module's minimum requirement
-  # is PHP >= 7.1.
-  # - { resource: "vendor/drupal8-rector/drupal8-rector/config/drupal8-php71.yml" }
-  - { resource: "config/drupal8-php71.yml" }
-  # Enable EXPERIMENTAL rectors.
-  # - { resource: "%vendor_dir%/drupal8-rector/drupal8-rector/config/drupal8-experimental.yml" }
+  - { resource: "vendor/drupal8-rector/drupal8-rector/config/drupal8.yml" }
+  # - { resource: "config/drupal8.yml" }
 
 parameters:
   autoload_paths:
@@ -19,7 +11,3 @@ parameters:
     - '*/Tests/*'
 
 services:
-    # Optionally enable ReturnTypeDeclarationRector rector if your
-    # code is PHP >= 7.1 compatible. It is disabled by default
-    # because it may cause problems.
-    # Drupal8Rector\Rector\FunctionLike\ReturnTypeDeclarationRectorProxy: ~

@@ -1,3 +1,17 @@
+# Contains automatic fixes for some deprecations introduced _before_ and in Drupal 8.6.
+services:
+    Rector\Renaming\Rector\MethodCall\RenameMethodRector:
+        arguments: ['%Rector\Renaming\Rector\MethodCall\RenameMethodRector%']
+
+    Drupal8Rector\Rector\Deprecation\ConstToClassConstFetchRector:
+        arguments: ['%Drupal8Rector\Rector\Deprecation\ConstToClassConstFetchRector%']
+
+    # Do not forget to optimize imports after this rector.
+    Drupal8Rector\Rector\Deprecation\UrlGeneratorTraitRector: ~
+
+    Drupal8Rector\Rector\Deprecation\DrupalSetMessageRector: ~
+
+
 parameters:
     Rector\Renaming\Rector\MethodCall\RenameMethodRector:
         Drupal\Core\Entity\EntityInterface:
@@ -56,16 +70,3 @@ parameters:
         USER_REGISTER_ADMINISTRATORS_ONLY: Drupal\user\UserInterface::REGISTER_ADMINISTRATORS_ONLY
         USER_REGISTER_VISITORS: Drupal\user\UserInterface::REGISTER_VISITORS
         USER_REGISTER_VISITORS_ADMINISTRATIVE_APPROVAL: Drupal\user\UserInterface::REGISTER_VISITORS_ADMINISTRATIVE_APPROVAL
-
-# Contains automatic fixes for some deprecations introduced _before_ and in Drupal 8.6.
-services:
-    Rector\Renaming\Rector\MethodCall\RenameMethodRector:
-        arguments: ['%Rector\Renaming\Rector\MethodCall\RenameMethodRector%']
-
-    Drupal8Rector\Rector\Deprecation\ConstToClassConstFetchRector:
-        arguments: ['%Drupal8Rector\Rector\Deprecation\ConstToClassConstFetchRector%']
-
-    # Do not forget to optimize imports after this rector.
-    Drupal8Rector\Rector\Deprecation\UrlGeneratorTraitRector: ~
-
-    Drupal8Rector\Rector\Deprecation\DrupalSetMessageRector: ~
