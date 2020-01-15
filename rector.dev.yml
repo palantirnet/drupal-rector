@@ -1,5 +1,5 @@
 imports:
-  # - { resource: "vendor/drupal8-rector/drupal8-rector/config/drupal8.yml" }
+  # - { resource: "vendor/palantirnet/drupal8-rector/config/drupal8.yml" }
   - { resource: "config/drupal8.yml" }
 
 parameters:

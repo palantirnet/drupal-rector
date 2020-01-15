@@ -1,5 +1,5 @@
 {
-    "name": "drupal8-rector/drupal8-rector",
+    "name": "palantirnet/drupal8-rector",
     "description": "Instant fixes for your Drupal 8 code by using Rector.",
     "type": "library",
     "keywords": [
@@ -21,6 +21,14 @@
         {
             "name": "Dezső Biczó",
             "email": "mxr576@gmail.com"
+        },
+        {
+            "name": "Ofer Shaal",
+            "email": "shaal@palantir.net"
+        },
+        {
+            "name": "Daniel Montgomery",
+            "email": "montgomery@palantir.net"
         }
     ],
     "autoload": {
@@ -33,6 +41,9 @@
         "update-with-dependencies": true,
         "preferred-install": "dist",
         "sort-packages": true
+    },
+    "replace": {
+        "drupal8-rector/drupal8-rector": "*"
     },
     "minimum-stability": "dev",
     "prefer-stable": true,
