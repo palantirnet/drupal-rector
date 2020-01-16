@@ -2,27 +2,20 @@
 
 Apply automatic fixes on your Drupal 8 code.
 
-Check it in action on [Travis CI](https://travis-ci.org/drupal8-rector/drupal8-rector/builds).
-
 ## Installation
 
 Install the library.
 
 ```bash
-$ composer require --dev drupal8-rector/drupal8-rector
+$ composer require --dev palantirnet/drupal8-rector
 ```
 
 Create a rector.yml file in the Drupal 8 root.
 
 ```yml
 imports:
-  - { resource: "%vendor_dir%/drupal8-rector/drupal8-rector/config/drupal8.yml" }
-  - { resource: "%vendor_dir%/drupal8-rector/drupal8-rector/config/drupal86-deprecations.yml" }
-  # Import drupal8-php71.yml ruleset if your module's minimum requirement
-  # is PHP >= 7.1.
-  # - { resource: "%vendor_dir%/drupal8-rector/drupal8-rector/config/drupal8-php71.yml" }
-  # Enable EXPERIMENTAL rectors.
-  # - { resource: "%vendor_dir%/drupal8-rector/drupal8-rector/config/drupal8-experimental.yml" }
+  - { resource: "vendor/palantirnet/drupal8-rector/config/drupal8.yml" }
+  # - { resource: "config/drupal8.yml" }
 
 parameters:
   autoload_paths:
@@ -33,11 +26,8 @@ parameters:
     - '*/Tests/*'
 
 services:
-    # Optionally enable ReturnTypeDeclarationRector rector if your
-    # code is PHP >= 7.1 compatible. It is disabled by default
-    # because it may cause problems.
-    # Drupal8Rector\Rector\FunctionLike\ReturnTypeDeclarationRectorProxy: ~
 ```
+
 # Suggested workflow
 
 1. Analyze your code with Rector and review suggested changes:
@@ -71,10 +61,6 @@ $ vendor/bin/phpunit -c web/core --printer="\Drupal\Tests\Listeners\HtmlOutputPr
 
 You can find more information about Rector [here](https://github.com/rectorphp/rector).
 
-## Known issues
-
-* Rector conflict with the PHPUnit version (^6.5 required by webflo/drupal-core-require-dev package) on the required minimum version from sebastian/diff package. Possible solution: temporarily remove webflo/drupal-core-require-dev package while you are testing this library.
-
 ## Roadmap
 
 This is just a POC at this moment but it has a great potential to become an actual development tool for Drupal 8.
@@ -83,4 +69,5 @@ This is just a POC at this moment but it has a great potential to become an actu
 
 ## Credits
 
-Initial development is sponsored by [Pronovix](https://pronovix.com).
+Initial development is sponsored by [Pronovix](https://pronovix.com).<br/>
+Additional development is sponsored by [Palantir.net](https://www.palantir.net).
