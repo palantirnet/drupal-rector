@@ -1,18 +1,2 @@
-
 # Contains automatic fixes for some deprecations introduced in Drupal 8.7.
-services:
-
-
-parameters:
-    Rector\Rector\MethodCall\RenameMethodRector:
-        Drupal\Core\Theme\ActiveTheme:
-            getBaseThemes: getBaseThemeExtensions
-        Drupal\Core\Config\ConfigManagerInterface:
-            getEntityManager: getEntityTypeManager
-
-    Drupal8Rector\Rector\Deprecation\ConstToClassConstFetchRector:
-        FILE_CREATE_DIRECTORY: Drupal\Core\File\FileSystemInterface::CREATE_DIRECTORY
-        FILE_EXISTS_ERROR: Drupal\Core\File\FileSystemInterface::EXISTS_ERROR
-        FILE_EXISTS_RENAME: Drupal\Core\File\FileSystemInterface::EXISTS_RENAME
-        FILE_EXISTS_REPLACE: Drupal\Core\File\FileSystemInterface::EXISTS_REPLACE
-        FILE_MODIFY_PERMISSIONS: Drupal\Core\File\FileSystemInterface::MODIFY_PERMISSIONS
+services: ~
