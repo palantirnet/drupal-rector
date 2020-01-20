@@ -1,3 +1,6 @@
 services:
-  rector_examples.drupal_set_message:
-    class: Drupal\rector_examples\DrupalSetMessage
+  rector_examples.drupal_set_message_static:
+    class: Drupal\rector_examples\DrupalSetMessageStatic
+
+  rector_examples.drupal_set_message_with_trait:
+    class: Drupal\rector_examples\DrupalSetMessageWithTrait

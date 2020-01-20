@@ -2,17 +2,17 @@
 
 /**
  * @file
- * Contains \Drupal\rector_examples\DrupalSetMessage.
+ * Contains \Drupal\rector_examples\DrupalSetMessageStatic.
  */
 
 namespace Drupal\rector_examples;
 
-class DrupalSetMessage {
+class DrupalSetMessageStatic {
 
   /**
-   * Return an example data structure.
+   * Example of static method calls from a class.
    *
-   * @return array
+   * @return null
    */
   public function example() {
     drupal_set_message('example message');
@@ -22,6 +22,8 @@ class DrupalSetMessage {
     drupal_set_message('example status', 'status');
 
     drupal_set_message('example warning', 'warning');
+
+    drupal_set_message('example warning', 'status', TRUE);
 
     return NULL;
   }
