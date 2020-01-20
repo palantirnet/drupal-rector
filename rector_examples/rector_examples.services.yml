@@ -1,0 +1,3 @@
+services:
+  rector_examples.drupal_set_message:
+    class: Drupal\rector_examples\DrupalSetMessage
