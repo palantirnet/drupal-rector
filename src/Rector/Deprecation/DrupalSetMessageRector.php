@@ -6,16 +6,35 @@ use Drupal8Rector\Utility\TraitsByClassHelperTrait;
 use PhpParser\Node;
 use Rector\NodeTypeResolver\Node\AttributeKey;
 use Rector\Rector\AbstractRector;
+use Rector\RectorDefinition\CodeSample;
 use Rector\RectorDefinition\RectorDefinition;
 
 /**
  * Replaces deprecated drupal_set_message() calls.
+ *
+ * See https://www.drupal.org/node/2774931 for change record.
  */
 final class DrupalSetMessageRector extends AbstractRector
 {
     use TraitsByClassHelperTrait;
 
-    private const MESSENGER_TRAIT = 'Drupal\Core\Messenger\MessengerTrait';
+    /**
+     * @inheritdoc
+     */
+    public function getDefinition(): RectorDefinition
+    {
+        return new RectorDefinition('Fixes deprecated drupal_set_message() calls',[
+            new CodeSample(
+                <<<'CODE_BEFORE'
+drupal_set_message('example status', 'status');
+CODE_BEFORE
+                ,
+                <<<'CODE_AFTER'
+\Drupal::messenger()->addStatus('example status');
+CODE_AFTER
+            )
+        ]);
+    }
 
     /**
      * @inheritdoc
@@ -33,52 +52,44 @@ final class DrupalSetMessageRector extends AbstractRector
     public function refactor(Node $node): ?Node
     {
         /** @var Node\Expr\FuncCall $node */
-        // Ignore those complex cases when function name specified by a variable.
         if ($node->name instanceof Node\Name && 'drupal_set_message' === (string) $node->name) {
-            $className = $node->getAttribute(AttributeKey::CLASS_NAME);
-            // If drupal_set_message() called in a class and class uses the MessengerTrait trait then do not replace
-            // the function call with a method call on the static \Drupal:messenger() method.
-            if ($className && in_array(self::MESSENGER_TRAIT, $this->getTraitsByClass($className))) {
-                $baseMethod = new Node\Expr\MethodCall(new Node\Expr\Variable('this'), new Node\Identifier('messenger'));
+            $class_name = $node->getAttribute(AttributeKey::CLASS_NAME);
+
+            if ($class_name && in_array('Drupal\Core\Messenger\MessengerTrait', $this->getTraitsByClass($class_name))) {
+                $messenger_service = new Node\Expr\MethodCall(new Node\Expr\Variable('this'), new Node\Identifier('messenger'));
             } else {
-                $baseMethod = new Node\Expr\StaticCall(new Node\Name\FullyQualified('Drupal'), 'messenger');
+                // TODO: Add the messanger trait to a class that doesn't have it.
+                // For now, we are using a static call.
+                $messenger_service = new Node\Expr\StaticCall(new Node\Name\FullyQualified('Drupal'), 'messenger');
             }
 
-            $methodArgs = [$node->args[0]];
+            $method_name = 'addStatus';
+            $method_arguments = [$node->args[0]];
 
-            // Message's type parameter is optional.
+            // Message's type parameter is optional. Use it if present.
             if (array_key_exists(1, $node->args)) {
                 if (method_exists($node->args[1]->value, '__toString')) {
-                    $methodNameSuffixByMessageType = (string) $node->args[1]->value;
+                    $method_name = 'add' . ucfirst((string) $node->args[1]->value);
                 } elseif ($node->args[1]->value instanceof Node\Scalar\String_) {
-                    $methodNameSuffixByMessageType = $node->args[1]->value->value;
+                    $method_name = 'add' . ucfirst($node->args[1]->value->value);
                 } else {
+                    // TODO: Address more complex situations.
                     // Unable to identify type, because it coming from a variable or such.
                     // https://git.drupalcode.org/project/devel/blob/8.x-2.0/devel.module#L151
                     // https://git.drupalcode.org/project/devel/blob/8.x-2.0/devel.module#L265
-                    $methodNameSuffixByMessageType = 'message';
-                    $methodArgs[] = $node->args[1]->value;
                 }
-            } else {
-                $methodNameSuffixByMessageType = 'status';
             }
 
-            // $clear_queue ($repeat) parameter is optional.
+            // Add the third argument if present.
             if (array_key_exists(2, $node->args)) {
-                $methodArgs[] = $node->args[2];
+                $method_arguments[] = $node->args[2];
             }
 
-            $node = new Node\Expr\MethodCall($baseMethod, new Node\Identifier('add' . ucfirst($methodNameSuffixByMessageType)), $methodArgs);
+            $method = new Node\Identifier($method_name);
+
+            $node = new Node\Expr\MethodCall($messenger_service, $method, $method_arguments);
         }
 
         return $node;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function getDefinition(): RectorDefinition
-    {
-        return new RectorDefinition(sprintf('Fixes deprecated drupal_set_message() calls'));
     }
 }
