@@ -64,7 +64,12 @@ CODE_AFTER
             }
 
             $method_name = 'addStatus';
-            $method_arguments = [$node->args[0]];
+
+            $message = $node->args[0];
+
+            $method_arguments = [
+                $message,
+            ];
 
             // Message's type parameter is optional. Use it if present.
             if (array_key_exists(1, $node->args)) {
@@ -73,10 +78,32 @@ CODE_AFTER
                 } elseif ($node->args[1]->value instanceof Node\Scalar\String_) {
                     $method_name = 'add' . ucfirst($node->args[1]->value->value);
                 } else {
-                    // TODO: Address more complex situations.
-                    // Unable to identify type, because it coming from a variable or such.
-                    // https://git.drupalcode.org/project/devel/blob/8.x-2.0/devel.module#L151
-                    // https://git.drupalcode.org/project/devel/blob/8.x-2.0/devel.module#L265
+                    /*
+                     * For now, if we hit a more complex situation, we don't process this instance of the depracation.
+                     *
+                     * TODO: Address more complex situations.
+                     *
+                     * Unable to identify type, because it coming from a variable that might exist at runtime.
+                     * We would need to do a more complex rule like adding a switch statement around the variable to determine what method to call.
+                     *
+                     * We could add the switch statement or at least add a message to the user to address this.
+                     *
+                     * The switch statement might be something like,
+                     *
+                     * switch($type) {
+                     *   case 'warning':
+                     *     $this->messenger()->addWarning($message);
+                     *     break;
+                     *   case 'error':
+                     *     $this->messenger()->addError($message);
+                     *     break;
+                     *   default:
+                     *     $this->messenger()->addStatus($message);
+                     * }
+                     * https://git.drupalcode.org/project/devel/blob/8.x-2.0/devel.module#L151
+                     * https://git.drupalcode.org/project/devel/blob/8.x-2.0/devel.module#L265
+                     */
+                    return $node;
                 }
             }
 

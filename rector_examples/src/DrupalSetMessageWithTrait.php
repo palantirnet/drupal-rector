@@ -29,6 +29,12 @@ class DrupalSetMessageWithTrait {
 
     drupal_set_message('example warning', 'status', TRUE);
 
+    $message = 'example message from variable';
+
+    $type = 'warning';
+
+    drupal_set_message($message, $type);
+
     return NULL;
   }
 
