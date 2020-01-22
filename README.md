@@ -4,7 +4,7 @@ Apply automatic fixes on your Drupal 8 code.
 
 ## Installation
 
-Install the library.
+Install the library inside a drupal8 project.
 
 ```bash
 $ composer require --dev palantirnet/drupal8-rector
