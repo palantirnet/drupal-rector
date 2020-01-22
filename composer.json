@@ -6,15 +6,11 @@
         "code style",
         "rector",
         "drupal 8",
-        "phpcs",
         "ast"
     ],
     "require": {
         "jawira/case-converter": "^1.1",
         "rector/rector-prefixed": "^0.6.10"
-    },
-    "require-dev": {
-        "friendsofphp/php-cs-fixer": "^2.14"
     },
     "license": "MIT",
     "authors": [
@@ -46,11 +42,5 @@
         "drupal8-rector/drupal8-rector": "*"
     },
     "minimum-stability": "dev",
-    "prefer-stable": true,
-    "scripts": {
-        "check-style": "php-cs-fixer fix --config=./.php_cs.dist --dry-run",
-        "fix-style": "php-cs-fixer fix --config=./.php_cs.dist",
-        "download-drupal-core": "@composer create-project drupal-composer/drupal-project:8.x-dev .drupal --no-interaction",
-        "update-drupal-core": "@composer update drupal/core webflo/drupal-core-require-dev --with-dependencies -d .drupal"
-    }
+    "prefer-stable": true
 }

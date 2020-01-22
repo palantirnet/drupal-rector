@@ -1,0 +1,3 @@
+name: Rector examples
+type: module
+description: Examples of deprecated code to test with Rector

@@ -4,7 +4,7 @@ Apply automatic fixes on your Drupal 8 code.
 
 ## Installation
 
-Install the library.
+Install the library inside a drupal8 project.
 
 ```bash
 $ composer require --dev palantirnet/drupal8-rector
@@ -14,18 +14,27 @@ Create a rector.yml file in the Drupal 8 root.
 
 ```yml
 imports:
-  - { resource: "vendor/palantirnet/drupal8-rector/config/drupal8.yml" }
-  # - { resource: "config/drupal8.yml" }
+  - { resource: "vendor/palantirnet/drupal8-rector/config/drupal-8/drupal-8-all-deprecations.yml" }
+  # includes:
+  # - { resource: "vendor/palantirnet/drupal8-rector/config/drupal-8/drupal-8.5-deprecations.yml" }
+  # - { resource: "vendor/palantirnet/drupal8-rector/config/drupal-8/drupal-8.6-deprecations.yml" }
+  # - { resource: "vendor/palantirnet/drupal8-rector/config/drupal-8/drupal-8.7-deprecations.yml" }
 
 parameters:
   autoload_paths:
+    - 'web/core'
     - 'web/core/modules'
     - 'web/modules'
-  exclude_paths:
-    - '*/tests/*'
-    - '*/Tests/*'
+    - 'web/profiles'
+  file_extensions:
+    - module
+    - theme
+    - install
+    - profile
+    - inc
+    - engine
 
-services:
+services: ~
 ```
 
 # Suggested workflow
@@ -60,6 +69,12 @@ $ vendor/bin/phpunit -c web/core --printer="\Drupal\Tests\Listeners\HtmlOutputPr
 ```
 
 You can find more information about Rector [here](https://github.com/rectorphp/rector).
+
+## Development
+
+We recommend using our `drupal8-rector-sandbox` development environment [https://github.com/palantirnet/drupal8-rector-sandbox](https://github.com/palantirnet/drupal8-rector-sandbox)
+
+Alternatively, you can use your existing Drupal8 project and follow the instructions in [README](https://github.com/palantirnet/drupal8-rector-sandbox/blob/master/README.md#developing-with-drupal-rector)
 
 ## Roadmap
 
