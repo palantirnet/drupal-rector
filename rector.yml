@@ -9,11 +9,9 @@ parameters:
   autoload_paths:
     - 'web/core'
     - 'web/core/modules'
-     - 'web/modules'
-     - 'web/profiles'
-  exclude_paths:
-    - '*/tests/*'
-    - '*/Tests/*'
+    - 'web/modules'
+    - 'web/profiles'
+
   file_extensions:
     - module
     - theme
