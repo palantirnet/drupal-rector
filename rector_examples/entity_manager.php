@@ -27,6 +27,8 @@ function example() {
   $entity_manager->getDefinition($entity_type_id, $exception_on_invalid);
   $entity_manager->getDefinitions();
 
+  $definitions = \Drupal::entityManager()->getDefinitions();
+
   $entity_manager = \Drupal::entityManager();
 
   $group = FALSE;
@@ -34,6 +36,8 @@ function example() {
 
   $entity_manager->getEntityTypeLabels($group);
   $entity_manager->getEntityTypeFromClass($class_name);
+
+  $entity_manager = \Drupal::entityManager()->getEntityTypeLabels($group);
 }
 
 function updated() {
