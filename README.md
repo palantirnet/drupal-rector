@@ -1,24 +1,24 @@
-# Rector for Drupal 8
+# Rector for Drupal
 
-Apply automatic fixes on your Drupal 8 code.
+Apply automatic fixes on your Drupal code.
 
 ## Installation
 
-Install the library inside a drupal8 project.
+Install the library inside a drupal project.
 
 ```bash
-$ composer require --dev palantirnet/drupal8-rector
+$ composer require --dev palantirnet/drupal-rector
 ```
 
-Create a rector.yml file in the Drupal 8 root.
+Create a rector.yml file in the Drupal root.
 
 ```yml
 imports:
-  - { resource: "vendor/palantirnet/drupal8-rector/config/drupal-8/drupal-8-all-deprecations.yml" }
+  - { resource: "vendor/palantirnet/drupal-rector/config/drupal-8/drupal-8-all-deprecations.yml" }
   # includes:
-  # - { resource: "vendor/palantirnet/drupal8-rector/config/drupal-8/drupal-8.5-deprecations.yml" }
-  # - { resource: "vendor/palantirnet/drupal8-rector/config/drupal-8/drupal-8.6-deprecations.yml" }
-  # - { resource: "vendor/palantirnet/drupal8-rector/config/drupal-8/drupal-8.7-deprecations.yml" }
+  # - { resource: "vendor/palantirnet/drupal-rector/config/drupal-8/drupal-8.5-deprecations.yml" }
+  # - { resource: "vendor/palantirnet/drupal-rector/config/drupal-8/drupal-8.6-deprecations.yml" }
+  # - { resource: "vendor/palantirnet/drupal-rector/config/drupal-8/drupal-8.7-deprecations.yml" }
 
 parameters:
   autoload_paths:
@@ -72,9 +72,9 @@ You can find more information about Rector [here](https://github.com/rectorphp/r
 
 ## Development
 
-We recommend using our `drupal8-rector-sandbox` development environment [https://github.com/palantirnet/drupal8-rector-sandbox](https://github.com/palantirnet/drupal8-rector-sandbox)
+We recommend using our `drupal-rector-sandbox` development environment [https://github.com/palantirnet/drupal-rector-sandbox](https://github.com/palantirnet/drupal-rector-sandbox)
 
-Alternatively, you can use your existing Drupal8 project and follow the instructions in [README](https://github.com/palantirnet/drupal8-rector-sandbox/blob/master/README.md#developing-with-drupal-rector)
+Alternatively, you can use your existing Drupal project and follow the instructions in [README](https://github.com/palantirnet/drupal-rector-sandbox/blob/master/README.md#developing-with-drupal-rector)
 
 ## Roadmap
 
