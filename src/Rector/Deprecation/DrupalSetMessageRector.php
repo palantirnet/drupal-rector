@@ -1,8 +1,8 @@
 <?php
 
-namespace Drupal8Rector\Rector\Deprecation;
+namespace DrupalRector\Rector\Deprecation;
 
-use Drupal8Rector\Utility\TraitsByClassHelperTrait;
+use DrupalRector\Utility\TraitsByClassHelperTrait;
 use PhpParser\Node;
 use Rector\NodeTypeResolver\Node\AttributeKey;
 use Rector\Core\Rector\AbstractRector;

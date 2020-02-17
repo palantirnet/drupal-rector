@@ -1,9 +1,9 @@
 imports:
-  - { resource: "vendor/palantirnet/drupal8-rector/config/drupal-8/drupal-8-all-deprecations.yml" }
+  - { resource: "vendor/palantirnet/drupal-rector/config/drupal-8/drupal-8-all-deprecations.yml" }
   # includes:
-  # - { resource: "vendor/palantirnet/drupal8-rector/config/drupal-8/drupal-8.5-deprecations.yml" }
-  # - { resource: "vendor/palantirnet/drupal8-rector/config/drupal-8/drupal-8.6-deprecations.yml" }
-  # - { resource: "vendor/palantirnet/drupal8-rector/config/drupal-8/drupal-8.7-deprecations.yml" }
+  # - { resource: "vendor/palantirnet/drupal-rector/config/drupal-8/drupal-8.5-deprecations.yml" }
+  # - { resource: "vendor/palantirnet/drupal-rector/config/drupal-8/drupal-8.6-deprecations.yml" }
+  # - { resource: "vendor/palantirnet/drupal-rector/config/drupal-8/drupal-8.7-deprecations.yml" }
 
 parameters:
   autoload_paths:

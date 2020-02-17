@@ -1,11 +1,12 @@
 {
-    "name": "palantirnet/drupal8-rector",
-    "description": "Instant fixes for your Drupal 8 code by using Rector.",
+    "name": "palantirnet/drupal-rector",
+    "description": "Instant fixes for your Drupal code by using Rector.",
     "type": "library",
     "keywords": [
         "code style",
         "rector",
         "drupal 8",
+        "drupal 9",
         "ast"
     ],
     "require": {
@@ -29,7 +30,7 @@
     ],
     "autoload": {
         "psr-4": {
-            "Drupal8Rector\\": "src"
+            "DrupalRector\\": "src"
         }
     },
     "config": {
@@ -39,6 +40,7 @@
         "sort-packages": true
     },
     "replace": {
+        "palantirnet/drupal8-rector": "*",
         "drupal8-rector/drupal8-rector": "*"
     },
     "minimum-stability": "dev",
