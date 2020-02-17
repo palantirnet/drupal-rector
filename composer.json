@@ -11,7 +11,7 @@
     ],
     "require": {
         "jawira/case-converter": "^1.1",
-        "rector/rector-prefixed": "^0.6.10"
+        "rector/rector-prefixed": "0.6.13"
     },
     "license": "MIT",
     "authors": [
