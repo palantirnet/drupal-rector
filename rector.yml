@@ -11,9 +11,6 @@ parameters:
     - 'web/core/modules'
     - 'web/modules'
     - 'web/profiles'
-  exclude_paths:
-    - '*/tests/*'
-    - '*/Tests/*'
 
   file_extensions:
     - module
