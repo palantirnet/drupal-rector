@@ -2,6 +2,14 @@
 
 Apply automatic fixes on your Drupal code.
 
+## Introduction
+
+https://www.palantir.net/blog/jumpstart-your-drupal-9-upgrade-drupal-rector
+
+## Issues are managed on d.o
+
+https://www.drupal.org/project/rector
+
 ## Installation
 
 Install the library inside a drupal project.
