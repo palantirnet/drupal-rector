@@ -7,3 +7,6 @@ services:
 
   rector_examples.get_mock:
     class: Drupal\rector_examples\GetMock
+
+  rector_examples.entity_manager_static:
+    class: Drupal\rector_examples\EntityManagerStatic
