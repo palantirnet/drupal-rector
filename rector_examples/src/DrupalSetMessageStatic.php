@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\rector_examples\DrupalSetMessageStatic.
- */
-
 namespace Drupal\rector_examples;
 
 class DrupalSetMessageStatic {
