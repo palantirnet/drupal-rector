@@ -52,20 +52,25 @@ CODE_AFTER
     {
         /** @var Node\Expr\FuncCall $exp */
         $exp = $node->expr;
-        if ($exp->name instanceof Node\Name && 'db_query' === (string) $exp->name) {
+        if (!empty($exp->name) && $exp->name instanceof Node\Name && 'db_query' === (string) $exp->name) {
             $name = new Node\Name('Database');
             $call = new Node\Name('getConnection');
             $method_arguments = [];
-            // Pass options if they exist.
+            // DEBUGGING:
+            if (array_key_exists(2, $exp->args)) {
+                // DAN: this returns PhpParser\Node\Expr\Variable, not an
+                //  array class, as I expected.
+                var_dump(get_class($exp->args[2]->value));
+            }
+            // END DEBUGGING
+
+            // Check to see if a target array is passed.
             if (array_key_exists(2, $exp->args) and !empty($exp->args[2]->items)) {
-                var_dump('here');
                 foreach ($exp->args[2]->items as $item) {
                   if ((string) $item->key === 'target') {
                     $method_arguments[] = (string) $item->value;
                   }
                 }
-                // Make targets call.
-
             }
             $var = new Node\Expr\StaticCall($name, $call, $method_arguments);
             $name = new Node\Name('query');
