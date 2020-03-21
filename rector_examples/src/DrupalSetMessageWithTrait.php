@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\rector_examples\DrupalSetMessageWithTrait.
- */
-
 namespace Drupal\rector_examples;
 
 use Drupal\Core\Messenger\MessengerTrait;

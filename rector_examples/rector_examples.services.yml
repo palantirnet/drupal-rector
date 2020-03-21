@@ -5,5 +5,8 @@ services:
   rector_examples.drupal_set_message_with_trait:
     class: Drupal\rector_examples\DrupalSetMessageWithTrait
 
+  rector_examples.entity_manager_static:
+    class: Drupal\rector_examples\EntityManagerStatic
+
   rector_examples.db_query:
     class: Drupal\rector_examples\DbQuery
