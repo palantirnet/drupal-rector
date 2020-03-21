@@ -41,7 +41,7 @@ CODE_AFTER
     public function getNodeTypes(): array
     {
         return [
-            Node\Stmt\Expression::class,
+            Node\Expr\FuncCall::class,
         ];
     }
 
@@ -50,23 +50,22 @@ CODE_AFTER
      */
     public function refactor(Node $node): ?Node
     {
-        /** @var Node\Expr\FuncCall $exp */
-        $exp = $node->expr;
-        if (!empty($exp->name) && $exp->name instanceof Node\Name && 'db_query' === (string) $exp->name) {
+        /** @var Node\Expr\FuncCall $node */
+        if (!empty($node->name) && $node->name instanceof Node\Name && 'db_query' === (string) $node->name) {
             $name = new Node\Name('Database');
             $call = new Node\Name('getConnection');
             $method_arguments = [];
             // DEBUGGING:
-            if (array_key_exists(2, $exp->args)) {
+            if (array_key_exists(2, $node->args)) {
                 // DAN: this returns PhpParser\Node\Expr\Variable, not an
                 //  array class, as I expected.
-                var_dump(get_class($exp->args[2]->value));
+                var_dump(get_class($node->args[2]->value));
             }
             // END DEBUGGING
 
             // Check to see if a target array is passed.
-            if (array_key_exists(2, $exp->args) and !empty($exp->args[2]->items)) {
-                foreach ($exp->args[2]->items as $item) {
+            if (array_key_exists(2, $node->args) and !empty($node->args[2]->items)) {
+                foreach ($node->args[2]->items as $item) {
                   if ((string) $item->key === 'target') {
                     $method_arguments[] = (string) $item->value;
                   }
@@ -74,8 +73,7 @@ CODE_AFTER
             }
             $var = new Node\Expr\StaticCall($name, $call, $method_arguments);
             $name = new Node\Name('query');
-            $method_call = new Node\Expr\MethodCall($var, $name, $exp->args);
-            $node = new Node\Stmt\Expression($method_call);
+            $node = new Node\Expr\MethodCall($var, $name, $node->args);
         }
 
         return $node;
