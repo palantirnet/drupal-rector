@@ -7,11 +7,7 @@
 
 namespace Drupal\rector_examples;
 
-use Drupal\Core\Messenger\MessengerTrait;
-
 class DbQuery {
-
-  use MessengerTrait;
 
   /**
    * Example of static calls from a class with the trait.
@@ -33,6 +29,7 @@ class DbQuery {
 
     db_query('select * from user where name="%test"', $args);
 
+    // Example showing the deprecation of the `target` key in `$options`.
     db_query('select * from user where name="%test"', $args, [
       'target' => 'default',
       'fetch' => \PDO::FETCH_OBJ,
