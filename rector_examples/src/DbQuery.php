@@ -33,6 +33,14 @@ class DbQuery {
 
     db_query('select * from user where name="%test"', $args);
 
+    db_query('select * from user where name="%test"', $args, [
+      'target' => 'default',
+      'fetch' => \PDO::FETCH_OBJ,
+      'return' => Database::RETURN_STATEMENT,
+      'throw_exception' => TRUE,
+      'allow_delimiter_in_query' => FALSE,
+    ]);
+
     db_query('select * from user where name="%test"', $args, $opts);
 
     $query = 'select * from user where name="%test"';

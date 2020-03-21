@@ -55,22 +55,34 @@ CODE_AFTER
             $name = new Node\Name('Database');
             $call = new Node\Name('getConnection');
             $method_arguments = [];
-            // DEBUGGING:
-            if (array_key_exists(2, $node->args)) {
-                // DAN: this returns PhpParser\Node\Expr\Variable, not an
-                //  array class, as I expected.
-                var_dump(get_class($node->args[2]->value));
-            }
-            // END DEBUGGING
 
-            // Check to see if a target array is passed.
-            if (array_key_exists(2, $node->args) and !empty($node->args[2]->items)) {
-                foreach ($node->args[2]->items as $item) {
-                  if ((string) $item->key === 'target') {
-                    $method_arguments[] = (string) $item->value;
-                  }
+            if (array_key_exists(2, $node->args)) {
+                /* @var Node\Arg $options. */
+                $options = $node->args[2];
+
+                $options->getType();
+
+                if ($options->value->getType() === 'Expr_Array') {
+                    foreach ($options->value->items as $item_index => $item) {
+                        if ($item->key->value === 'target') {
+                            $method_arguments[] = new Node\Arg(new Node\Scalar\String_($item->value->value));
+
+                            // Update the options.
+                            $value = $options->value;
+                            $items = $value->items;
+                            unset($items[$item_index]);
+                            $value->items = $items;
+                            $options->value = $value;
+                            $node->args['2'] = $options;
+                        }
+                    }
+                }
+
+                if ($options->value->getType() === 'Expr_Variable') {
+                    // TODO: Handle variable evaluation.
                 }
             }
+
             $var = new Node\Expr\StaticCall($name, $call, $method_arguments);
             $name = new Node\Name('query');
             $node = new Node\Expr\MethodCall($var, $name, $node->args);
