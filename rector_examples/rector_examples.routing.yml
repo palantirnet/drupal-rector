@@ -1,0 +1,7 @@
+rector_examples.entity_manager_controller:
+  path: '/rector-examples/entity-manager-controller'
+  defaults:
+    _title: 'Entity Manager Controller'
+    _controller: '\Drupal\rector_examples\Controller\EntityManagerController::example'
+  requirements:
+    _access: 'TRUE'
