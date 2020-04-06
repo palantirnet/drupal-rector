@@ -1,6 +1,7 @@
 'drupal_set_message()':
   Rector: DrupalSetMessageRector.php
   Examples:
+    - drupal_set_message.php
     - DrupalSetMessageStatic.php
     - DrupalSetMessageStaticUpdated.php
     - DrupalSetMessageWithTrait.php
@@ -8,6 +9,7 @@
 'Drupal::entityManager()':
   Rector: EntityManagerRector.php
   Examples:
+    - entity_manager.php
     - EntityManagerStatic.php
 'ControllerBase::entityManager()':
   Rector: EntityManagerRector.php
