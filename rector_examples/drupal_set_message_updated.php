@@ -1,7 +1,7 @@
 <?php
 
 /**
- * This demonstrates the deprecated static calls that might be called from procedural code like `.module` files.
+ * This demonstrates the updated static calls that might be called from procedural code like `.module` files.
  */
 
 /**
@@ -10,7 +10,7 @@
  * @return null
  */
 function simple_example() {
-  drupal_set_message('example message');
+  \Drupal::messenger()->addStatus('example message');
 
   return NULL;
 }
@@ -21,7 +21,7 @@ function simple_example() {
  * @return null
  */
 function using_all_arguments() {
-  drupal_set_message('example warning', 'status', TRUE);
+  \Drupal::messenger()->addStatus('example warning', TRUE);
 
   return NULL;
 }
@@ -32,11 +32,11 @@ function using_all_arguments() {
  * @return null
  */
 function message_types() {
-  drupal_set_message('example error', 'error');
+  \Drupal::messenger()->addError('example error');
 
-  drupal_set_message('example status', 'status');
+  \Drupal::messenger()->addStatus('example status');
 
-  drupal_set_message('example warning', 'warning');
+  \Drupal::messenger()->addWarning('example warning');
 
   return NULL;
 }
@@ -53,7 +53,16 @@ function message_type_as_variable() {
 
   $type = 'warning';
 
-  drupal_set_message($message, $type);
+  switch($type) {
+    case 'warning':
+      \Drupal::messenger()->addWarning($message);
+      break;
+    case 'error':
+      \Drupal::messenger()->addError($message);
+      break;
+    default:
+      \Drupal::messenger()->addStatus($message);
+  }
 
   return NULL;
 }

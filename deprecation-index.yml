@@ -2,6 +2,7 @@
   Rector: DrupalSetMessageRector.php
   Examples:
     - drupal_set_message.php
+    - drupal_set_message_updated.php
     - DrupalSetMessageStatic.php
     - DrupalSetMessageStaticUpdated.php
     - DrupalSetMessageWithTrait.php
