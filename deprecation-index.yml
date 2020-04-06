@@ -11,8 +11,11 @@
   Rector: EntityManagerRector.php
   Examples:
     - entity_manager.php
+    - entity_manager_updated.php
     - EntityManagerStatic.php
+    - EntityManagerStaticUpdated.php
 'ControllerBase::entityManager()':
   Rector: EntityManagerRector.php
   Examples:
     - EntityManagerController.php
+    - EntityManagerControllerUpdated.php
