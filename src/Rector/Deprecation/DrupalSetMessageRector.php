@@ -13,6 +13,15 @@ use Rector\RectorDefinition\RectorDefinition;
  * Replaces deprecated drupal_set_message() calls.
  *
  * See https://www.drupal.org/node/2774931 for change record.
+ *
+ * What is covered:
+ * - Static replacement
+ *
+ * Improvement opportunities
+ * - Handle variables used to specify the type
+ *   - Example, `drupal_set_message('my message', $type)`
+ * - Add trait for classes
+ *   - `use MessengerTrait;`
  */
 final class DrupalSetMessageRector extends AbstractRector
 {
