@@ -16,6 +16,7 @@ use Rector\RectorDefinition\RectorDefinition;
  *
  * What is covered:
  * - Static replacement
+ * - Trait usage when the `MessengerTrait` is already present on the class
  *
  * Improvement opportunities
  * - Handle variables used to specify the type
