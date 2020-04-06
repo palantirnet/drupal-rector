@@ -1,0 +1,15 @@
+'drupal_set_message()':
+  Rector: DrupalSetMessageRector.php
+  Examples:
+    - DrupalSetMessageStatic.php
+    - DrupalSetMessageStaticUpdated.php
+    - DrupalSetMessageWithTrait.php
+    - DrupalSetMessageWithTraitUpdated.php
+'Drupal::entityManager()':
+  Rector: EntityManagerRector.php
+  Examples:
+    - EntityManagerStatic.php
+'ControllerBase::entityManager()':
+  Rector: EntityManagerRector.php
+  Examples:
+    - EntityManagerController.php
