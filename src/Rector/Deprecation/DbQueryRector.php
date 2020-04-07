@@ -12,6 +12,24 @@ use Rector\RectorDefinition\RectorDefinition;
  * Replaces deprecated db_query() calls.
  *
  * See https://www.drupal.org/node/2993033 for change record.
+ *
+ * What is covered:
+ * - Static replacement using \Drupal::database() which assumes the container is available
+ * - Option 'target' handling when passed in-line, used to access other databases, in which case \Drupal\core\Database\Database::getConnection($database) is used
+ *
+ * Improvement opportunities
+ * - Handle variables used to specify the 'target' option
+ *   - Example
+ *     $opts = ['target' => 'default',
+ *       'fetch' => \PDO::FETCH_OBJ,
+ *       'return' => Database::RETURN_STATEMENT,
+ *       'throw_exception' => TRUE,
+ *       'allow_delimiter_in_query' => FALSE,
+ *     ];
+ *
+ *     db_query($query, $args, $opts);
+ * - Inject the database connection
+ * - Use calls to Database::getConnection() if the container is not yet available
  */
 final class DBQueryRector extends AbstractRector
 {
@@ -29,7 +47,7 @@ db_query($query, $args, $options);
 CODE_BEFORE
                 ,
                 <<<'CODE_AFTER'
-Database::getConnection(_db_get_target($options))->query($query, $args, $options);
+\Drupal::database()->query($query, $args, $options);
 CODE_AFTER
             )
         ]);
@@ -52,20 +70,31 @@ CODE_AFTER
     {
         /** @var Node\Expr\FuncCall $node */
         if (!empty($node->name) && $node->name instanceof Node\Name && 'db_query' === (string) $node->name) {
-            $name = new Node\Name('Database');
-            $call = new Node\Name('getConnection');
+
+            // TODO: Check if we have are in a class and inject \Drupal\Core\Database\Connection
+
+            // TODO: Check if we have are in a class and don't have access to the container, use `\Drupal\core\Database\Database::getConnection()`.
+
+            $name = new Node\Name\FullyQualified('Drupal');
+            $call = new Node\Identifier('database');
+
             $method_arguments = [];
 
+            // The 'target' key in the $options can be used to use a non-default database.
             if (array_key_exists(2, $node->args)) {
                 /* @var Node\Arg $options. */
                 $options = $node->args[2];
 
-                $options->getType();
+//                $options->getType();
 
                 if ($options->value->getType() === 'Expr_Array') {
                     foreach ($options->value->items as $item_index => $item) {
                         if ($item->key->value === 'target') {
-                            $method_arguments[] = new Node\Arg(new Node\Scalar\String_($item->value->value));
+                          // Assume we need to get a different connection than the default.
+                          $name = new Node\Name\FullyQualified('Drupal\core\Database\Database');
+                          $call = new Node\Identifier('getConnection');
+
+                          $method_arguments[] = new Node\Arg(new Node\Scalar\String_($item->value->value));
 
                             // Update the options.
                             $value = $options->value;
@@ -84,8 +113,9 @@ CODE_AFTER
             }
 
             $var = new Node\Expr\StaticCall($name, $call, $method_arguments);
-            $name = new Node\Name('query');
-            $node = new Node\Expr\MethodCall($var, $name, $node->args);
+
+            $method_name = new Node\Identifier('query');
+            $node = new Node\Expr\MethodCall($var, $method_name, $node->args);
         }
 
         return $node;
