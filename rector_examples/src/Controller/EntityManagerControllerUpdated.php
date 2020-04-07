@@ -9,7 +9,7 @@ use Drupal\Core\Controller\ControllerBase;
  *
  * TODO: Add dependency injection.
  */
-class EntityManagerController extends ControllerBase {
+class EntityManagerControllerUpdated extends ControllerBase {
 
   /**
    * Simple example

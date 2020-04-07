@@ -5,7 +5,7 @@ namespace Drupal\rector_examples;
 /**
  * Example of updated static method calls from a class.
  */
-class EntityManagerStatic {
+class EntityManagerStaticUpdated {
 
   /**
    * Simple example

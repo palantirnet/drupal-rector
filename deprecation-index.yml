@@ -19,3 +19,10 @@
   Examples:
     - EntityManagerController.php
     - EntityManagerControllerUpdated.php
+'db_query':
+  Rector: DBQueryRector.php
+  Examples:
+    - db_query.php
+    - db_query_updated.php
+    - DBQuery.php
+    - DBQueryUpdated.php

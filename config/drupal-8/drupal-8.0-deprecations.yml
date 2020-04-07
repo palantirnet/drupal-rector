@@ -1,3 +1,4 @@
 # Contains automatic fixes for some deprecations introduced in Drupal 8.0.
 services:
   DrupalRector\Rector\Deprecation\EntityManagerRector: ~
+  DrupalRector\Rector\Deprecation\DBQueryRector: ~
