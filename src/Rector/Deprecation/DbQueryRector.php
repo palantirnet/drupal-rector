@@ -13,7 +13,7 @@ use Rector\RectorDefinition\RectorDefinition;
  *
  * See https://www.drupal.org/node/2993033 for change record.
  */
-final class DbQueryRector extends AbstractRector
+final class DBQueryRector extends AbstractRector
 {
     use TraitsByClassHelperTrait;
 

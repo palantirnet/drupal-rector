@@ -7,7 +7,7 @@
 
 namespace Drupal\rector_examples;
 
-class DbQuery {
+class DBQuery {
 
   /**
    * Example of static calls from a class with the trait.
