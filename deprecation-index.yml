@@ -19,6 +19,20 @@
   Examples:
     - EntityManagerController.php
     - EntityManagerControllerUpdated.php
+'db_insert':
+  Rector: DBInsertRector.php
+  Examples:
+    - db_insert.php
+    - db_insert_updated.php
+    - DBInsertStatic.php
+    - DBInsertStaticUpdated.php
+'db_select':
+  Rector: DBSelectRector.php
+  Examples:
+    - db_select.php
+    - db_select_updated.php
+    - DBSelectStatic.php
+    - DBSelectStaticUpdated.php
 'db_query':
   Rector: DBQueryRector.php
   Examples:
