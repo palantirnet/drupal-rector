@@ -7,7 +7,7 @@ use Drupal\Core\Database\Database;
 /**
  * Example of updated static method calls from a class.
  */
-class DBQueryUpdated {
+class DBQueryStaticUpdated {
 
   /**
    * A simple example using the minimum number of arguments.

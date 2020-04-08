@@ -8,5 +8,5 @@ services:
   rector_examples.entity_manager_static:
     class: Drupal\rector_examples\EntityManagerStatic
 
-  rector_examples.db_query:
-    class: Drupal\rector_examples\DbQuery
+  rector_examples.db_query_static:
+    class: Drupal\rector_examples\DBQueryStatic
