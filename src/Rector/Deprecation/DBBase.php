@@ -38,6 +38,15 @@ abstract class DBBase extends AbstractRector
     protected $deprecatedMethodName;
 
     /**
+     * The position of the $options argument in the method.
+     *
+     * This varies depending on the method.
+     *
+     * @var int
+     */
+    protected $optionsArgumentPosition;
+
+    /**
      * Return the name of the new method.
      *
      * Example: `db_query` will return `query`.
@@ -74,9 +83,9 @@ abstract class DBBase extends AbstractRector
             $method_arguments = [];
 
             // The 'target' key in the $options can be used to use a non-default database.
-            if (array_key_exists(2, $node->args)) {
+            if (array_key_exists($this->optionsArgumentPosition - 1, $node->args)) {
                 /* @var Node\Arg $options. */
-                $options = $node->args[2];
+                $options = $node->args[$this->optionsArgumentPosition - 1];
 
                 if ($options->value->getType() === 'Expr_Array') {
                     foreach ($options->value->items as $item_index => $item) {
@@ -93,7 +102,7 @@ abstract class DBBase extends AbstractRector
                             unset($items[$item_index]);
                             $value->items = $items;
                             $options->value = $value;
-                            $node->args['2'] = $options;
+                            $node->args[$this->optionsArgumentPosition - 1] = $options;
                         }
                     }
                 }

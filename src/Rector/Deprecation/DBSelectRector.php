@@ -6,7 +6,7 @@ use Rector\RectorDefinition\CodeSample;
 use Rector\RectorDefinition\RectorDefinition;
 
 /**
- * Replaces deprecated db_query() calls.
+ * Replaces deprecated db_select() calls.
  *
  * See https://www.drupal.org/node/2993033 for change record.
  *
@@ -16,9 +16,9 @@ use Rector\RectorDefinition\RectorDefinition;
  * Improvement opportunities
  *  - See `DBBase.php`
  */
-final class DBQueryRector extends DBBase
+final class DBSelectRector extends DBBase
 {
-  protected $deprecatedMethodName = 'db_query';
+  protected $deprecatedMethodName = 'db_select';
 
   protected $optionsArgumentPosition = 3;
 
@@ -27,14 +27,14 @@ final class DBQueryRector extends DBBase
    */
   public function getDefinition(): RectorDefinition
   {
-    return new RectorDefinition('Fixes deprecated db_query() calls',[
+    return new RectorDefinition('Fixes deprecated db_select() calls',[
       new CodeSample(
         <<<'CODE_BEFORE'
-db_query($query, $args, $options);
+db_select($table, $alias, $options);
 CODE_BEFORE
         ,
         <<<'CODE_AFTER'
-\Drupal::database()->query($query, $args, $options);
+\Drupal::database()->select($table, $alias, $options);
 CODE_AFTER
       )
     ]);
