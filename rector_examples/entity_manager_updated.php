@@ -1,21 +1,21 @@
 <?php
 
 /**
- * This demonstrates the deprecated static calls that might be called from procedural code like `.module` files.
+ * This demonstrates updated deprecated static calls that might be called from procedural code like `.module` files.
  */
 
 /**
  * Simple example
  */
 function simple_example() {
-  $entity_manager = \Drupal::entityManager();
+  $entity_manager = \Drupal::service('entity_type.manager');
 }
 
 /**
  * Example of using a method directly on the service.
  */
 function method_on_service() {
-  $definitions = \Drupal::entityManager()->getDefinitions();
+  $definitions = \Drupal::service('entity_type.manager')->getDefinitions();
 }
 
 /**
@@ -26,7 +26,7 @@ function method_on_service() {
 function method_not_in_entityTypeManager() {
   $group = FALSE;
 
-  $entity_manager = \Drupal::entityManager()->getEntityTypeLabels($group);
+  $entity_manager = \Drupal::service('entity_type.repository')->getEntityTypeLabels($group);
 }
 
 /**
@@ -35,7 +35,8 @@ function method_not_in_entityTypeManager() {
  * These should now use the `entity_type.repository` service.
  */
 function stored_service_and_method_not_in_entityTypeManager() {
-  $entity_manager = \Drupal::entityManager();
+  /* @var $entity_manager \Drupal\Core\Entity\EntityTypeRepositoryInterface */
+  $entity_manager = \Drupal::service('entity_type.repository');
 
   $group = FALSE;
   $class_name = 'MyClass';

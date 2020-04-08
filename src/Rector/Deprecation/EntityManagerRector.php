@@ -9,9 +9,19 @@ use Rector\Core\RectorDefinition\CodeSample;
 use Rector\Core\RectorDefinition\RectorDefinition;
 
 /**
- * Replaces deprecated \Drupal::entityManager() calls.
+ * Replaces deprecated `\Drupal::entityManager()` calls.
+ * Replaces deprecated `$this->entityManager()` calls in classes that extend `ControllerBase`.
  *
  * See https://www.drupal.org/node/2549139 for change record.
+ *
+ * What is covered:
+ * - Static replacement
+ * - Dependency injection when class extends `ControllerBase` and uses `entityTypeManager`
+ *
+ * Improvement opportunities
+ * - Dependency injection
+ * - Dependency injection when class extends `ControllerBase` and does not use `entityTypeManager`
+ * - Complex use case handling when a different service is needed and the method does not directly call the service
  */
 final class EntityManagerRector extends AbstractRector {
 
@@ -68,7 +78,7 @@ CODE_AFTER
     if ($node instanceof Node\Expr\MethodCall && $this->getName($node) === "entityManager") {
       $class_name = $node->getAttribute(AttributeKey::CLASS_NAME);
 
-      if ($class_name && in_array('ControllerBase', $node->getAttribute('classNode')->extends->parts)) {
+      if ($class_name && isset($node->getAttribute('classNode')->extends->parts) && in_array('ControllerBase', $node->getAttribute('classNode')->extends->parts)) {
         // If we call a method on `entityManager`, we need to check that method and we can call the correct service that the method uses.
         $next_node = $node->getAttribute('nextNode');
 
