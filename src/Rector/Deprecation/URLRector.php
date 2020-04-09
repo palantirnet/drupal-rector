@@ -26,7 +26,7 @@ final class URLRector extends AbstractRector
      */
     public function getDefinition(): RectorDefinition
     {
-        return new RectorDefinition('Fixes deprecated drupal_set_message() calls',[
+        return new RectorDefinition('Fixes deprecated \Drupal::url() calls',[
             new CodeSample(
                 <<<'CODE_BEFORE'
 \Drupal::url('user.login');
