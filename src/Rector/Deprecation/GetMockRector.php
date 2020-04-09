@@ -12,6 +12,9 @@ use Rector\RectorDefinition\RectorDefinition;
 /**
  * Replaces deprecated getMock() calls.
  *
+ * What is covered:
+ * - All known cases (see BrowserTestBaseGetMock in rector_examples)
+ *
  * See https://www.drupal.org/node/2907725 for change record.
  */
 final class GetMockRector extends AbstractRector
@@ -55,7 +58,6 @@ CODE_AFTER
 
         /* @var Node\Expr\MethodCall $node */
         if ($this->getName($node) === 'getMock' && $this->getName($node->var) === 'this' && $class_name && isset($node->getAttribute('classNode')->extends->parts) && in_array('BrowserTestBase', $node->getAttribute('classNode')->extends->parts)) {
-
 
                 // Build the arguments.
             $method_arguments = $node->args;
