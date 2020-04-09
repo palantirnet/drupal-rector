@@ -4,6 +4,7 @@ namespace DrupalRector\Rector\Deprecation;
 
 use DrupalRector\Utility\TraitsByClassHelperTrait;
 use PhpParser\Node;
+use Rector\NodeTypeResolver\Node\AttributeKey;
 use Rector\Rector\AbstractRector;
 use Rector\RectorDefinition\CodeSample;
 use Rector\RectorDefinition\RectorDefinition;
@@ -41,7 +42,7 @@ CODE_AFTER
     public function getNodeTypes(): array
     {
         return [
-            Node\Stmt\Expression::class,
+            Node\Expr\MethodCall::class,
         ];
     }
 
@@ -50,26 +51,19 @@ CODE_AFTER
      */
     public function refactor(Node $node): ?Node
     {
-        /** @var Node\Stmt\Expression $node */
-        $expr = $node->expr;
-        if ($expr instanceof Node\Expr\MethodCall && 'getMock' === (string) $expr->name) {
+        $class_name = $node->getAttribute(AttributeKey::CLASS_NAME);
 
-            // Get the calling variable.
-            $var = (string) $expr->var->name;
+        /* @var Node\Expr\MethodCall $node */
+        if ($this->getName($node) === 'getMock' && $this->getName($node->var) === 'this' && $class_name && isset($node->getAttribute('classNode')->extends->parts) && in_array('BrowserTestBase', $node->getAttribute('classNode')->extends->parts)) {
 
-            // Build the arguments.
-            $method_arguments = [
-                $node->expr->args[0],
-            ];
+
+                // Build the arguments.
+            $method_arguments = $node->args;
 
             // Get the updated method name.
-            $new_method = 'createMock';
+            $method_name = new Node\Identifier('createMock');
 
-            // Make the new.
-            $method = new Node\Identifier($new_method);
-            $expr = new Node\Expr\MethodCall($expr->var, $method, $method_arguments);
-            $node = new Node\Stmt\Expression($expr);
-
+            $node = new Node\Expr\MethodCall($node->var, $method_name, $method_arguments, $node->getAttributes());
         }
 
         return $node;
