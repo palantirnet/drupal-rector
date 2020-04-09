@@ -40,3 +40,10 @@
     - db_query_updated.php
     - DBQueryStatic.php
     - DBQueryStaticUpdated.php
+'Drupal::url()':
+  Rector: URLRector.php
+    Examples:
+      - url.php
+      - url_updated.php
+      - URLStatic.php
+      - URLStaticUpdated.php
