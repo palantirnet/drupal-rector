@@ -115,7 +115,7 @@ abstract class DBBase extends AbstractRector
             $var = new Node\Expr\StaticCall($name, $call, $method_arguments);
 
             $method_name = new Node\Identifier($this->getMethodName());
-            $node = new Node\Expr\MethodCall($var, $method_name, $node->args);
+            $node = new Node\Expr\MethodCall($var, $method_name, $node->args, $node->getAttributes());
         }
 
         return $node;

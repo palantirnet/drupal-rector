@@ -64,7 +64,7 @@ CODE_AFTER
 
             $method_arguments = $node->args;
 
-            $node = new Node\Expr\MethodCall($service, $method_name, $method_arguments);
+            $node = new Node\Expr\MethodCall($service, $method_name, $method_arguments, $node->getAttributes());
         }
 
         return $node;
