@@ -10,3 +10,12 @@ services:
 
   rector_examples.entity_manager_static:
     class: Drupal\rector_examples\EntityManagerStatic
+
+  rector_examples.db_insert_static:
+    class: Drupal\rector_examples\DBInsertStatic
+
+  rector_examples.db_select_static:
+    class: Drupal\rector_examples\DBSelectStatic
+
+  rector_examples.db_query_static:
+    class: Drupal\rector_examples\DBQueryStatic

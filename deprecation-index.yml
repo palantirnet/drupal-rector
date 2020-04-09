@@ -1,0 +1,42 @@
+'drupal_set_message()':
+  Rector: DrupalSetMessageRector.php
+  Examples:
+    - drupal_set_message.php
+    - drupal_set_message_updated.php
+    - DrupalSetMessageStatic.php
+    - DrupalSetMessageStaticUpdated.php
+    - DrupalSetMessageWithTrait.php
+    - DrupalSetMessageWithTraitUpdated.php
+'Drupal::entityManager()':
+  Rector: EntityManagerRector.php
+  Examples:
+    - entity_manager.php
+    - entity_manager_updated.php
+    - EntityManagerStatic.php
+    - EntityManagerStaticUpdated.php
+'ControllerBase::entityManager()':
+  Rector: EntityManagerRector.php
+  Examples:
+    - EntityManagerController.php
+    - EntityManagerControllerUpdated.php
+'db_insert':
+  Rector: DBInsertRector.php
+  Examples:
+    - db_insert.php
+    - db_insert_updated.php
+    - DBInsertStatic.php
+    - DBInsertStaticUpdated.php
+'db_select':
+  Rector: DBSelectRector.php
+  Examples:
+    - db_select.php
+    - db_select_updated.php
+    - DBSelectStatic.php
+    - DBSelectStaticUpdated.php
+'db_query':
+  Rector: DBQueryRector.php
+  Examples:
+    - db_query.php
+    - db_query_updated.php
+    - DBQueryStatic.php
+    - DBQueryStaticUpdated.php

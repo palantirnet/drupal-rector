@@ -3,14 +3,25 @@
 namespace DrupalRector\Rector\Deprecation;
 
 use PhpParser\Node;
+use Rector\NodeTypeResolver\Node\AttributeKey;
 use Rector\Rector\AbstractRector;
 use Rector\RectorDefinition\CodeSample;
 use Rector\RectorDefinition\RectorDefinition;
 
 /**
- * Replaces deprecated \Drupal::entityManager() calls.
+ * Replaces deprecated `\Drupal::entityManager()` calls.
+ * Replaces deprecated `$this->entityManager()` calls in classes that extend `ControllerBase`.
  *
  * See https://www.drupal.org/node/2549139 for change record.
+ *
+ * What is covered:
+ * - Static replacement
+ * - Dependency injection when class extends `ControllerBase` and uses `entityTypeManager`
+ *
+ * Improvement opportunities
+ * - Dependency injection
+ * - Dependency injection when class extends `ControllerBase` and does not use `entityTypeManager`
+ * - Complex use case handling when a different service is needed and the method does not directly call the service
  */
 final class EntityManagerRector extends AbstractRector {
 
@@ -37,9 +48,7 @@ CODE_AFTER
   public function getNodeTypes(): array {
     return [
       Node\Expr\StaticCall::class,
-// TODO: Can we try to update non-static calls as well such as with controllers that extend ControllerBase?.
-//      Node\Expr\FuncCall::class,
-//      Node\Expr\MethodCall::class,
+      Node\Expr\MethodCall::class,
     ];
   }
 
@@ -54,96 +63,10 @@ CODE_AFTER
         $service = 'entity_type.manager';
 
         // If we call a method on `entityManager`, we need to check that method and we can call the correct service that the method uses.
-        // TODO: Generalize this if we are going to test non-static calls too.
         if ($node->hasAttribute('nextNode')) {
           $next_node = $node->getAttribute('nextNode');
 
-          switch ($this->getName($next_node)) {
-            case 'getEntityTypeLabels':
-            case 'getEntityTypeFromClass':
-              $service = 'entity_type.repository';
-              break;
-
-            case 'getAllBundleInfo':
-            case 'getBundleInfo':
-            case 'clearCachedBundles':
-              $service = 'entity_type.bundle.info';
-              break;
-
-            case 'getAllViewModes':
-            case 'getViewModes':
-            case 'getAllFormModes':
-            case 'getFormModes':
-            case 'getViewModeOptions':
-            case 'getFormModeOptions':
-            case 'getViewModeOptionsByBundle':
-            case 'getFormModeOptionsByBundle':
-            case 'clearDisplayModeInfo':
-              $service = 'entity_display.repository';
-              break;
-
-            case 'getBaseFieldDefinitions':
-            case 'getFieldDefinitions':
-            case 'getFieldStorageDefinitions':
-            case 'getFieldMap':
-            case 'setFieldMap':
-            case 'getFieldMapByFieldType':
-            case 'clearCachedFieldDefinitions':
-            case 'useCaches':
-            case 'getExtraFields':
-              $service = 'entity_field.manager';
-              break;
-
-            case 'onEntityTypeCreate':
-            case 'onEntityTypeUpdate':
-            case 'onEntityTypeDelete':
-              $service = 'entity_type.listener';
-              break;
-
-            case 'getLastInstalledDefinition':
-            case 'getLastInstalledFieldStorageDefinitions':
-              $service = 'entity_definition.repository';
-              break;
-
-            case 'loadEntityByUuid':
-            case 'loadEntityByConfigTarget':
-            case 'getTranslationFromContext':
-              $service = 'entity.repository';
-              break;
-
-            case 'onBundleCreate':
-            case 'onBundleRename':
-            case 'onBundleDelete':
-              $service = 'entity_bundle.listener';
-              break;
-
-            case 'onFieldStorageDefinitionCreate':
-            case 'onFieldStorageDefinitionUpdate':
-            case 'onFieldStorageDefinitionDelete':
-              $service = 'field_storage_definition.listener';
-              break;
-
-            case 'onFieldDefinitionCreate':
-            case 'onFieldDefinitionUpdate':
-            case 'onFieldDefinitionDelete':
-              $service = 'field_definition.listener';
-              break;
-
-            case 'getAccessControlHandler':
-            case 'getStorage':
-            case 'getViewBuilder':
-            case 'getListBuilder':
-            case 'getFormObject':
-            case 'getRouteProviders':
-            case 'hasHandler':
-            case 'getHandler':
-            case 'createHandlerInstance':
-            case 'getDefinition':
-            case 'getDefinitions':
-            default:
-              $service = 'entity_type.manager';
-              break;
-          }
+          $service = $this->getServiceByMethodName($this->getName($next_node));
         }
 
         // This creates a service call like `\Drupal::service('entity_type.manager').
@@ -152,6 +75,118 @@ CODE_AFTER
       }
     }
 
+    if ($node instanceof Node\Expr\MethodCall && $this->getName($node) === "entityManager") {
+      $class_name = $node->getAttribute(AttributeKey::CLASS_NAME);
+
+      if ($class_name && isset($node->getAttribute('classNode')->extends->parts) && in_array('ControllerBase', $node->getAttribute('classNode')->extends->parts)) {
+        // If we call a method on `entityManager`, we need to check that method and we can call the correct service that the method uses.
+        $next_node = $node->getAttribute('nextNode');
+
+        if (!is_null($next_node)) {
+          $service = $this->getServiceByMethodName($this->getName($next_node));
+
+          // This creates a service call like `\Drupal::service('entity_type.manager').
+          // This doesn't use dependency injection, but it should work.
+          $node = new Node\Expr\StaticCall(new Node\Name\FullyQualified('Drupal'), 'service', [new Node\Arg(new Node\Scalar\String_($service))], $node->getAttributes());
+        }
+        else {
+          // If we are making a direct call to ->entityManager(), we can assume the new class will also have entityTypeManager.
+          $node = new Node\Expr\MethodCall(new Node\Expr\Variable('this'), new Node\Identifier('entityTypeManager'));
+        }
+      }
+    }
+
     return $node;
+  }
+
+  private function getServiceByMethodName(string $method_name) {
+      switch ($method_name) {
+          case 'getEntityTypeLabels':
+          case 'getEntityTypeFromClass':
+              $service = 'entity_type.repository';
+              break;
+
+          case 'getAllBundleInfo':
+          case 'getBundleInfo':
+          case 'clearCachedBundles':
+              $service = 'entity_type.bundle.info';
+              break;
+
+          case 'getAllViewModes':
+          case 'getViewModes':
+          case 'getAllFormModes':
+          case 'getFormModes':
+          case 'getViewModeOptions':
+          case 'getFormModeOptions':
+          case 'getViewModeOptionsByBundle':
+          case 'getFormModeOptionsByBundle':
+          case 'clearDisplayModeInfo':
+              $service = 'entity_display.repository';
+              break;
+
+          case 'getBaseFieldDefinitions':
+          case 'getFieldDefinitions':
+          case 'getFieldStorageDefinitions':
+          case 'getFieldMap':
+          case 'setFieldMap':
+          case 'getFieldMapByFieldType':
+          case 'clearCachedFieldDefinitions':
+          case 'useCaches':
+          case 'getExtraFields':
+              $service = 'entity_field.manager';
+              break;
+
+          case 'onEntityTypeCreate':
+          case 'onEntityTypeUpdate':
+          case 'onEntityTypeDelete':
+              $service = 'entity_type.listener';
+              break;
+
+          case 'getLastInstalledDefinition':
+          case 'getLastInstalledFieldStorageDefinitions':
+              $service = 'entity_definition.repository';
+              break;
+
+          case 'loadEntityByUuid':
+          case 'loadEntityByConfigTarget':
+          case 'getTranslationFromContext':
+              $service = 'entity.repository';
+              break;
+
+          case 'onBundleCreate':
+          case 'onBundleRename':
+          case 'onBundleDelete':
+              $service = 'entity_bundle.listener';
+              break;
+
+          case 'onFieldStorageDefinitionCreate':
+          case 'onFieldStorageDefinitionUpdate':
+          case 'onFieldStorageDefinitionDelete':
+              $service = 'field_storage_definition.listener';
+              break;
+
+          case 'onFieldDefinitionCreate':
+          case 'onFieldDefinitionUpdate':
+          case 'onFieldDefinitionDelete':
+              $service = 'field_definition.listener';
+              break;
+
+          case 'getAccessControlHandler':
+          case 'getStorage':
+          case 'getViewBuilder':
+          case 'getListBuilder':
+          case 'getFormObject':
+          case 'getRouteProviders':
+          case 'hasHandler':
+          case 'getHandler':
+          case 'createHandlerInstance':
+          case 'getDefinition':
+          case 'getDefinitions':
+          default:
+              $service = 'entity_type.manager';
+              break;
+      }
+
+      return $service;
   }
 }
