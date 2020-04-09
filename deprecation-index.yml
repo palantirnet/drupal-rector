@@ -40,7 +40,7 @@
     - db_query_updated.php
     - DBQueryStatic.php
     - DBQueryStaticUpdated.php
-'getMock()':
+'BrowserTestBase::getMock()':
   Rector: GetMockRector.php
   Examples:
       - BrowserTestBaseGetMock.php
