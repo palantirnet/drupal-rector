@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\Tests\rector_examples\Functional;
+namespace Drupal\Tests\rector_examples\Unit;
 
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Tests\UnitTestCase;
