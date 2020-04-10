@@ -72,6 +72,8 @@ CODE_AFTER
         // This creates a service call like `\Drupal::service('entity_type.manager').
         // This doesn't use dependency injection, but it should work.
         $node = new Node\Expr\StaticCall(new Node\Name\FullyQualified('Drupal'), 'service', [new Node\Arg(new Node\Scalar\String_($service))], $node->getAttributes());
+
+        return $node;
       }
     }
 
@@ -92,11 +94,13 @@ CODE_AFTER
         else {
           // If we are making a direct call to ->entityManager(), we can assume the new class will also have entityTypeManager.
           $node = new Node\Expr\MethodCall(new Node\Expr\Variable('this'), new Node\Identifier('entityTypeManager'));
+
+          return $node;
         }
       }
     }
 
-    return $node;
+    return null;
   }
 
   private function getServiceByMethodName(string $method_name) {
