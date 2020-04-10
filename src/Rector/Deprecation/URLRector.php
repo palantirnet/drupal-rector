@@ -10,7 +10,7 @@ use Rector\RectorDefinition\RectorDefinition;
 /**
  * Replaces deprecated \Drupal::url() calls.
  *
- * There is no change record for this.
+ * There is no referenced change record for this. This may be related, https://www.drupal.org/node/2046643.
  *
  * What is covered:
  * - Static replacement
