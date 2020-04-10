@@ -70,7 +70,7 @@ CODE_AFTER
             } else {
                 // TODO: Add the messanger trait to a class that doesn't have it.
                 // For now, we are using a static call.
-                $messenger_service = new Node\Expr\StaticCall(new Node\Name\FullyQualified('Drupal'), 'messenger');
+                $messenger_service = new Node\Expr\StaticCall(new Node\Name\FullyQualified('Drupal'), 'file_system');
             }
 
             $method_name = 'addStatus';

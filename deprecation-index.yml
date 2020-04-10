@@ -40,3 +40,10 @@
     - db_query_updated.php
     - DBQueryStatic.php
     - DBQueryStaticUpdated.php
+'file_prepare_directory()':
+  Rector: FilePrepareDirectoryRector.php
+  Examples:
+    - file_prepare_directory.php
+    - file_prepare_directory_updated.php
+    - FilePrepareDirectoryStatic.php
+    - FilePrepareDirectoryStaticUpdated.php
