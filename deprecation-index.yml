@@ -45,6 +45,16 @@
   Examples:
       - BrowserTestBaseGetMock.php
       - BrowserTestBaseGetMockUpdated.php
+'KernelTestBase::getMock()':
+  Rector: KernelTestBaseGetMock.php
+  Examples:
+    - KernelTestBaseGetMock.php
+    - KernelTestBaseGetMockUpdated.php
+'UnitTestCase::getMock()':
+  Rector: UnitTestCaseGetMock.php
+  Examples:
+    - UnitTestCaseGetMock.php
+    - UnitTestCaseGetMockUpdated.php
 'Drupal::url()':
   Rector: URLRector.php
     Examples:
