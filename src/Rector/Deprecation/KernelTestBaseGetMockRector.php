@@ -6,16 +6,16 @@ use Rector\RectorDefinition\CodeSample;
 use Rector\RectorDefinition\RectorDefinition;
 
 /**
- * Replaces deprecated getMock() calls in classes that extend BrowserTestBase.
+ * Replaces deprecated getMock() calls in classes that extend KernelTestBase.
  *
  * See https://www.drupal.org/node/2907725 for change record.
  *
  * What is covered:
- * - Calls from classes that extend BrowserTestBase
+ * - Calls from classes that extend KernelTestBase
  */
-final class BrowserTestBaseGetMockRector extends GetMockBase
+final class KernelTestBaseGetMockRector extends GetMockBase
 {
-    protected $baseClassBeingExtended = 'BrowserTestBase';
+    protected $baseClassBeingExtended = 'KernelTestBase';
 
     /**
      * @inheritdoc
