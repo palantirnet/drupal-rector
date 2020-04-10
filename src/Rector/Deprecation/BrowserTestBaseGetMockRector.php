@@ -2,7 +2,6 @@
 
 namespace DrupalRector\Rector\Deprecation;
 
-use DrupalRector\Utility\TraitsByClassHelperTrait;
 use PhpParser\Node;
 use Rector\NodeTypeResolver\Node\AttributeKey;
 use Rector\Rector\AbstractRector;
@@ -10,16 +9,15 @@ use Rector\RectorDefinition\CodeSample;
 use Rector\RectorDefinition\RectorDefinition;
 
 /**
- * Replaces deprecated getMock() calls.
- *
- * What is covered:
- * - All known cases (see BrowserTestBaseGetMock in rector_examples)
+ * Replaces deprecated getMock() calls in classes that extend BrowserTestBase.
  *
  * See https://www.drupal.org/node/2907725 for change record.
+ *
+ * What is covered:
+ * - Calls from classes that extend BrowserTestBase
  */
-final class GetMockRector extends AbstractRector
+final class BrowserTestBaseGetMockRector extends AbstractRector
 {
-    use TraitsByClassHelperTrait;
 
     /**
      * @inheritdoc
@@ -59,7 +57,7 @@ CODE_AFTER
         /* @var Node\Expr\MethodCall $node */
         if ($this->getName($node) === 'getMock' && $this->getName($node->var) === 'this' && $class_name && isset($node->getAttribute('classNode')->extends->parts) && in_array('BrowserTestBase', $node->getAttribute('classNode')->extends->parts)) {
 
-                // Build the arguments.
+            // Build the arguments.
             $method_arguments = $node->args;
 
             // Get the updated method name.
