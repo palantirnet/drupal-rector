@@ -16,3 +16,6 @@ services:
 
   rector_examples.db_query_static:
     class: Drupal\rector_examples\DBQueryStatic
+
+  rector_examples.url:
+    class: Drupal\rector_examples\URLStatic
