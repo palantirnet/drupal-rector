@@ -71,7 +71,7 @@ abstract class DBBase extends AbstractRector
     public function refactor(Node $node): ?Node
     {
         /** @var Node\Expr\FuncCall $node */
-        if (!empty($node->name) && $node->name instanceof Node\Name && $this->deprecatedMethodName === (string) $node->name) {
+        if ($this->getName($node) === $this->deprecatedMethodName) {
 
             // TODO: Check if we have are in a class and inject \Drupal\Core\Database\Connection
 
@@ -83,7 +83,8 @@ abstract class DBBase extends AbstractRector
             $method_arguments = [];
 
             // The 'target' key in the $options can be used to use a non-default database.
-            if (array_key_exists($this->optionsArgumentPosition - 1, $node->args)) {
+            if (count($node->args) >= $this->optionsArgumentPosition) {
+
                 /* @var Node\Arg $options. */
                 $options = $node->args[$this->optionsArgumentPosition - 1];
 
@@ -115,7 +116,8 @@ abstract class DBBase extends AbstractRector
             $var = new Node\Expr\StaticCall($name, $call, $method_arguments);
 
             $method_name = new Node\Identifier($this->getMethodName());
-            $node = new Node\Expr\MethodCall($var, $method_name, $node->args, $node->getAttributes());
+
+            $node = new Node\Expr\MethodCall($var, $method_name, $node->args);
 
             return $node;
         }
