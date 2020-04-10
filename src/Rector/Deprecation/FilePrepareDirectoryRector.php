@@ -22,14 +22,13 @@ use Rector\RectorDefinition\RectorDefinition;
  */
 final class FilePrepareDirectoryRector extends AbstractRector
 {
-    use TraitsByClassHelperTrait;
 
     /**
      * @inheritdoc
      */
     public function getDefinition(): RectorDefinition
     {
-        return new RectorDefinition('Fixes deprecated drupal_set_message() calls',[
+        return new RectorDefinition('Fixes deprecated file_prepare_directory() calls',[
             new CodeSample(
               <<<'CODE_BEFORE'
 $result = file_prepare_directory($directory, $options);
@@ -58,7 +57,7 @@ CODE_AFTER
     public function refactor(Node $node): ?Node
     {
         /** @var Node\Expr\FuncCall $node */
-        if ($node->name instanceof Node\Name && 'file_prepare_directory' === (string) $node->name) {
+        if ($this->getName($node) === 'file_prepare_directory') {
 
             // This creates a service call like `\Drupal::service('file_system').
             // TODO use dependency injection.
