@@ -47,3 +47,15 @@
     - file_prepare_directory_updated.php
     - FilePrepareDirectoryStatic.php
     - FilePrepareDirectoryStaticUpdated.php
+'BrowserTestBase::getMock()':
+  Rector: BrowserTestBaseGetMock.php
+  Examples:
+      - BrowserTestBaseGetMock.php
+      - BrowserTestBaseGetMockUpdated.php
+'Drupal::url()':
+  Rector: URLRector.php
+    Examples:
+      - url.php
+      - url_updated.php
+      - URLStatic.php
+      - URLStaticUpdated.php
