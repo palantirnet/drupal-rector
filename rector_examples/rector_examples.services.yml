@@ -19,3 +19,6 @@ services:
 
   rector_examples.file_prepare_directory:
     class: Drupal\rector_examples\FilePrepareDirectoryStatic
+
+  rector_examples.url:
+    class: Drupal\rector_examples\URLStatic

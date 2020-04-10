@@ -11,7 +11,7 @@ class DBInsertStatic {
    * A simple example using the minimum number of arguments.
    */
   public function simple_example() {
-    db_insert('user');
+    db_insert('path_alias');
   }
 
   /**
@@ -34,6 +34,15 @@ class DBInsertStatic {
     ];
 
     db_insert($table, $options);
+  }
+
+  /**
+   * An example using chained method calls.
+   */
+  public function chained_method_calls() {
+    db_insert('path_alias')
+      ->fields(['path', 'alias'], [['/my-path', '/my-alias']])
+      ->execute();
   }
 
 }
