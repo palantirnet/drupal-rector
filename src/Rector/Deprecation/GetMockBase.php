@@ -4,7 +4,7 @@ namespace DrupalRector\Rector\Deprecation;
 
 use PhpParser\Node;
 use Rector\NodeTypeResolver\Node\AttributeKey;
-use Rector\Rector\AbstractRector;
+use Rector\Core\Rector\AbstractRector;
 
 /**
  * Replaces deprecated getMock() calls in classes.
