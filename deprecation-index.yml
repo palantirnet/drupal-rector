@@ -48,6 +48,7 @@
     - DBQueryStaticUpdated.php
 'file_prepare_directory()':
   Rector: FilePrepareDirectoryRector.php
+  PHPStan: 'Call to deprecated function file_prepare_directory(). Deprecated in drupal:8.7.0 and is removed from drupal:9.0.0. Use Drupal​\​Core​\​File​\​FileSystemInterface::prepareDirectory().'
   Examples:
     - file_prepare_directory.php
     - file_prepare_directory_updated.php
