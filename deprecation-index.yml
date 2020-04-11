@@ -1,6 +1,6 @@
 'drupal_set_message()':
-  PHPStan: 'Call to deprecated function drupal_set_message(). Deprecated in drupal:8.5.0 and is removed from drupal:9.0.0. Use Drupal​\​Core​\​Messenger​\​MessengerInterface::addMessage() instead.'
   Rector: DrupalSetMessageRector.php
+  PHPStan: 'Call to deprecated function drupal_set_message(). Deprecated in drupal:8.5.0 and is removed from drupal:9.0.0. Use Drupal​\​Core​\​Messenger​\​MessengerInterface::addMessage() instead.'
   Examples:
     - drupal_set_message.php
     - drupal_set_message_updated.php
@@ -73,7 +73,7 @@
     - UnitTestCaseGetMockUpdated.php
 'Drupal::url()':
   Rector: URLRector.php
-  PHPStan: ''Call to deprecated method url() of class Drupal. Deprecated in drupal:8.0.0 and is removed from drupal:9.0.0. Instead create a ​\​Drupal​\​Core​\​Url object directly, for example using Url::fromRoute().''
+  PHPStan: 'Call to deprecated method url() of class Drupal. Deprecated in drupal:8.0.0 and is removed from drupal:9.0.0. Instead create a ​\​Drupal​\​Core​\​Url object directly, for example using Url::fromRoute().'
   Examples:
     - url.php
     - url_updated.php
