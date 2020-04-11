@@ -13,7 +13,7 @@ class DBInsertStaticUpdated {
    * A simple example using the minimum number of arguments.
    */
   public function simple_example() {
-    \Drupal::database()->insert('user');
+    \Drupal::database()->insert('path_alias');
   }
 
   /**
@@ -34,6 +34,15 @@ class DBInsertStaticUpdated {
     ];
 
     Database::getConnection('my_non_default_database')->insert($table, $options);
+  }
+
+  /**
+   * An example using chained method calls.
+   */
+  public function chained_method_calls() {
+    \Drupal::database()->insert('path_alias')
+      ->fields(['path', 'alias'], [['/my-path', '/my-alias']])
+      ->execute();
   }
 
 }

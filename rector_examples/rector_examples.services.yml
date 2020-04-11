@@ -16,3 +16,9 @@ services:
 
   rector_examples.db_query_static:
     class: Drupal\rector_examples\DBQueryStatic
+
+  rector_examples.file_prepare_directory:
+    class: Drupal\rector_examples\FilePrepareDirectoryStatic
+
+  rector_examples.url:
+    class: Drupal\rector_examples\URLStatic

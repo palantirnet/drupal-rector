@@ -1,5 +1,6 @@
 'drupal_set_message()':
   Rector: DrupalSetMessageRector.php
+  PHPStan: 'Call to deprecated function drupal_set_message(). Deprecated in drupal:8.5.0 and is removed from drupal:9.0.0. Use Drupal​\​Core​\​Messenger​\​MessengerInterface::addMessage() instead.'
   Examples:
     - drupal_set_message.php
     - drupal_set_message_updated.php
@@ -9,6 +10,7 @@
     - DrupalSetMessageWithTraitUpdated.php
 'Drupal::entityManager()':
   Rector: EntityManagerRector.php
+  PHPStan: 'Call to deprecated method entityManager() of class Drupal. Deprecated in drupal:8.0.0 and is removed from drupal:9.0.0. Use Drupal::entityTypeManager() instead in most cases. If the needed method is not on ​\​Drupal​\​Core​\​Entity​\​EntityTypeManagerInterface, see the deprecated ​\​Drupal​\​Core​\​Entity​\​EntityManager to find the correct interface or service.'
   Examples:
     - entity_manager.php
     - entity_manager_updated.php
@@ -16,11 +18,13 @@
     - EntityManagerStaticUpdated.php
 'ControllerBase::entityManager()':
   Rector: EntityManagerRector.php
+  PHPStan: 'Call to deprecated method entityManager() of class Drupal​\​Core​\​Controller​\​ControllerBase. Deprecated in drupal:8.0.0 and is removed from drupal:9.0.0. Most of the time static::entityTypeManager() is supposed to be used instead.'
   Examples:
     - EntityManagerController.php
     - EntityManagerControllerUpdated.php
 'db_insert':
   Rector: DBInsertRector.php
+  PHPStan: 'Call to deprecated function db_insert(). Deprecated in drupal:8.0.0 and is removed from drupal:9.0.0. Instead, get a database connection injected into your service from the container and call insert() on it. For example,'
   Examples:
     - db_insert.php
     - db_insert_updated.php
@@ -28,6 +32,7 @@
     - DBInsertStaticUpdated.php
 'db_select':
   Rector: DBSelectRector.php
+  PHPStan: 'Call to deprecated function db_select(). Deprecated in drupal:8.0.0 and is removed from drupal:9.0.0. Instead, get a database connection injected into your service from the container and call select() on it. For example,'
   Examples:
     - db_select.php
     - db_select_updated.php
@@ -35,8 +40,43 @@
     - DBSelectStaticUpdated.php
 'db_query':
   Rector: DBQueryRector.php
+  PHPStan: 'Call to deprecated function db_query(). Deprecated in drupal:8.0.0 and is removed from drupal:9.0.0. Instead, get a database connection injected into your service from the container and call query() on it. For example,'
   Examples:
     - db_query.php
     - db_query_updated.php
     - DBQueryStatic.php
     - DBQueryStaticUpdated.php
+'file_prepare_directory()':
+  Rector: FilePrepareDirectoryRector.php
+  PHPStan: 'Call to deprecated function file_prepare_directory(). Deprecated in drupal:8.7.0 and is removed from drupal:9.0.0. Use Drupal​\​Core​\​File​\​FileSystemInterface::prepareDirectory().'
+  Examples:
+    - file_prepare_directory.php
+    - file_prepare_directory_updated.php
+    - FilePrepareDirectoryStatic.php
+    - FilePrepareDirectoryStaticUpdated.php
+'BrowserTestBase::getMock()':
+  Rector: BrowserTestBaseGetMock.php
+  PHPStan: 'Call to deprecated method getMock() of class Drupal​\​Tests​\​UnitTestCase. Deprecated in drupal:8.5.0 and is removed from drupal:9.0.0. Use Drupal​\​Tests​\​PhpunitCompatibilityTrait::createMock() instead.'
+  Examples:
+      - BrowserTestBaseGetMock.php
+      - BrowserTestBaseGetMockUpdated.php
+'KernelTestBase::getMock()':
+  Rector: KernelTestBaseGetMock.php
+  PHPStan: 'Call to deprecated method getMock() of class Drupal​\​Tests​\​UnitTestCase. Deprecated in drupal:8.5.0 and is removed from drupal:9.0.0. Use Drupal​\​Tests​\​PhpunitCompatibilityTrait::createMock() instead.'
+  Examples:
+    - KernelTestBaseGetMock.php
+    - KernelTestBaseGetMockUpdated.php
+'UnitTestCase::getMock()':
+  Rector: UnitTestCaseGetMock.php
+  PHPStan: 'Call to deprecated method getMock() of class Drupal​\​Tests​\​UnitTestCase. Deprecated in drupal:8.5.0 and is removed from drupal:9.0.0. Use Drupal​\​Tests​\​PhpunitCompatibilityTrait::createMock() instead.'
+  Examples:
+    - UnitTestCaseGetMock.php
+    - UnitTestCaseGetMockUpdated.php
+'Drupal::url()':
+  Rector: URLRector.php
+  PHPStan: 'Call to deprecated method url() of class Drupal. Deprecated in drupal:8.0.0 and is removed from drupal:9.0.0. Instead create a ​\​Drupal​\​Core​\​Url object directly, for example using Url::fromRoute().'
+  Examples:
+    - url.php
+    - url_updated.php
+    - URLStatic.php
+    - URLStaticUpdated.php

@@ -125,8 +125,10 @@ CODE_AFTER
             $method = new Node\Identifier($method_name);
 
             $node = new Node\Expr\MethodCall($messenger_service, $method, $method_arguments);
+
+            return $node;
         }
 
-        return $node;
+        return null;
     }
 }

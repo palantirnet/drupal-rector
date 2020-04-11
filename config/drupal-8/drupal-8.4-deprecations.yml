@@ -1,0 +1,5 @@
+# Contains automatic fixes for some deprecations introduced in Drupal 8.4.
+services:
+    DrupalRector\Rector\Deprecation\BrowserTestBaseGetMockRector: ~
+    DrupalRector\Rector\Deprecation\KernelTestBaseGetMockRector: ~
+    DrupalRector\Rector\Deprecation\UnitTestCaseGetMockRector: ~
