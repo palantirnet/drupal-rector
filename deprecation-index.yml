@@ -80,3 +80,11 @@
     - url_updated.php
     - URLStatic.php
     - URLStaticUpdated.php
+'format_date':
+  Rector: FormatDateRector.php
+  PHPStan: 'Call to deprecated function format_date(). Deprecated in drupal:8.0.0 and is removed from drupal:9.0.0. Use Drupal::service('date.formatter')->format().'
+  Examples:
+    - format_date.php
+    - format_date_updated.php
+    - FormatDateStatic.php
+    - FormatDateStaticUpdated.php
