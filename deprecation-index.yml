@@ -88,3 +88,11 @@
     - format_date_updated.php
     - FormatDateStatic.php
     - FormatDateStaticUpdated.php
+'Unicode::strtolower':
+  Rector: UnicodeStrtolowerRector.php
+  PHPStan: 'Call to deprecated method strtolower() of class Drupal​\​Component​\​Utility​\​Unicode. Deprecated in drupal:8.6.0 and is removed from drupal:9.0.0. Use mb_strtolower() instead.'
+  Example:
+    - unicode_strtolower.php
+    - unicode_strtolower_updated.php
+    - UnicodeStrtolowerStatic.php
+    - UnicodeStrtolowerStaticUpdated.php
