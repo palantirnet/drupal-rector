@@ -16,7 +16,7 @@ use Rector\RectorDefinition\RectorDefinition;
  * Improvement opportunities
  * - Add a use statement
  */
-final class FileCreateDirectoryRector extends ConstantToClassConstant
+final class FileCreateDirectoryRector extends ConstantToClassConstantBase
 {
     protected $deprecatedConstant = 'FILE_CREATE_DIRECTORY';
 

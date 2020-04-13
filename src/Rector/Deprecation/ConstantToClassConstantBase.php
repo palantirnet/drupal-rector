@@ -14,7 +14,7 @@ use Rector\Rector\AbstractRector;
  * Improvement opportunities
  * - Add a use statement
  */
-abstract class ConstantToClassConstant extends AbstractRector
+abstract class ConstantToClassConstantBase extends AbstractRector
 {
     /**
      * The deprecated constant.
