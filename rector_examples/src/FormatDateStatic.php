@@ -11,7 +11,7 @@ class FormatDateStatic {
    * A simple example using the minimum number of arguments.
    */
   public function simple_example() {
-    $formatted_date = format_date('123456');
+    $formatted_date = format_date(123456);
   }
 
   /**

@@ -8,7 +8,7 @@
  * A simple example using the minimum number of arguments.
  */
 function simple_example() {
-  $formatted_date = \Drupal::service('date.formatter')->format('123456');
+  $formatted_date = \Drupal::service('date.formatter')->format(123456);
 }
 
 /**
