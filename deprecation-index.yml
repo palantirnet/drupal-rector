@@ -91,8 +91,16 @@
 'Unicode::strtolower':
   Rector: UnicodeStrtolowerRector.php
   PHPStan: 'Call to deprecated method strtolower() of class Drupal​\​Component​\​Utility​\​Unicode. Deprecated in drupal:8.6.0 and is removed from drupal:9.0.0. Use mb_strtolower() instead.'
-  Example:
+  Examples:
     - unicode_strtolower.php
     - unicode_strtolower_updated.php
     - UnicodeStrtolowerStatic.php
     - UnicodeStrtolowerStaticUpdated.php
+'FILE_CREATE_DIRECTORY':
+  Rector: FileCreateDirectoryRector.php
+  PHPStan: 'Call to deprecated constant FILE_CREATE_DIRECTORY: Deprecated in drupal:8.7.0 and is removed from drupal:9.0.0. Use Drupal​\​Core​\​File​\​FileSystemInterface::CREATE_DIRECTORY.'
+  Examples:
+    - file_create_directory.php
+    - file_create_directory_updated.php
+    - FileCreateDirectoryNoUseStatement.php
+    - FileCreateDirectoryNoUseStatementUpdated.php

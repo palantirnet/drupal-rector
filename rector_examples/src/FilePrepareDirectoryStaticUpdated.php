@@ -22,7 +22,7 @@ class FilePrepareDirectoryStaticUpdated {
   public function using_all_arguments() {
     $directory = '/test/directory';
 
-    \Drupal::service('file_system')->prepareDirectory($directory, 'FILE_CREATE_DIRECTORY');
+    \Drupal::service('file_system')->prepareDirectory($directory, \Drupal\Core\File\FileSystemInterface::CREATE_DIRECTORY);
   }
 
   /**
@@ -31,7 +31,7 @@ class FilePrepareDirectoryStaticUpdated {
   public function options_as_variable() {
     $directory = '/test/directory';
 
-    $options = 'FILE_CREATE_DIRECTORY';
+    $options = \Drupal\Core\File\FileSystemInterface::CREATE_DIRECTORY;
 
     \Drupal::service('file_system')->prepareDirectory($directory, $options);
   }
