@@ -19,7 +19,7 @@ function simple_example() {
 function using_all_arguments() {
   $directory = '/test/directory';
 
-  \Drupal::service('file_system')->prepareDirectory($directory, 'FILE_CREATE_DIRECTORY');
+  \Drupal::service('file_system')->prepareDirectory($directory, FILE_CREATE_DIRECTORY);
 }
 
 /**
@@ -28,7 +28,7 @@ function using_all_arguments() {
 function options_as_variable() {
   $directory = '/test/directory';
 
-  $options = 'FILE_CREATE_DIRECTORY';
+  $options = FILE_CREATE_DIRECTORY;
 
   \Drupal::service('file_system')->prepareDirectory($directory, $options);
 }
