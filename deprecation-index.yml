@@ -104,3 +104,11 @@
     - file_create_directory_updated.php
     - FileCreateDirectoryNoUseStatement.php
     - FileCreateDirectoryNoUseStatementUpdated.php
+'Drupal::l()':
+  Rector: DrupalLRector.php
+  PHPStan: 'Call to deprecated method l() of class Drupal. Deprecated in drupal:8.0.0 and is removed from drupal:9.0.0. Use Drupal​\​Core​\​Link::fromTextAndUrl() instead.'
+  Examples:
+    - drupal_l.php
+    - drupal_l_updated.php
+    - DrupalLStatic.php
+    - DrupalLStaticUpdated.php
