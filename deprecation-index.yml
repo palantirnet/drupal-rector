@@ -112,3 +112,20 @@
     - drupal_l_updated.php
     - DrupalLStatic.php
     - DrupalLStaticUpdated.php
+
+'drupal_render()':
+  Rector: DrupalRenderRector.php
+  PHPStan: 'Call to deprecated function drupal_render(). Deprecated in drupal:8.0.0 and is removed from drupal:9.0.0. Use the'
+  Examples:
+    - DrupalRenderStatic.php
+    - DrupalRenderStaticUpdated.php
+    - drupal_render.php
+    - drupal_render_updated.php
+'drupal_render_root()':
+  Rector: DrupalRenderRootRector.php
+  PHPStan: 'Call to deprecated function drupal_render(). Deprecated in drupal:8.0.0 and is removed from drupal:9.0.0. Use the'
+  Examples:
+    - DrupalRenderRootStatic.php
+    - DrupalRenderRootStaticUpdated.php
+    - drupal_render_root.php
+    - drupal_render_root_updated.php
