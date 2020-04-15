@@ -8,6 +8,9 @@
  * A simple example using the minimum number of arguments.
  */
 function simple_example() {
+  $elements = [
+    '#markup' => '<div>hello world</div>',
+  ];
   \Drupal::service('renderer')->renderRoot($elements);
 }
 
@@ -15,6 +18,9 @@ function simple_example() {
  * An example using all of the arguments.
  */
 function using_all_arguments() {
-  $is_recursive_call = false;
+  $is_recursive_call = FALSE;
+  $elements = [
+    '#markup' => '<div>hello world</div>',
+  ];
   \Drupal::service('renderer')->renderRoot($elements, $is_recursive_call);
 }

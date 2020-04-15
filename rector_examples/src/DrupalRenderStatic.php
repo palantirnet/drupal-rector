@@ -11,14 +11,20 @@ class DrupalRenderStatic {
    * A simple example using the minimum number of arguments.
    */
   public function simple_example() {
-      drupal_render($elements);
+    $elements = [
+      '#markup' => '<div>hello world</div>',
+    ];
+    drupal_render($elements);
   }
 
   /**
    * An example using all parameters.
    */
   public function all_parameters() {
-    $is_recursive_call = false;
+    $is_recursive_call = FALSE;
+    $elements = [
+      '#markup' => '<div>hello world</div>',
+    ];
     drupal_render($elements, $is_recursive_call);
   }
 }

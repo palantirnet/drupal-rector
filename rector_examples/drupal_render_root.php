@@ -11,7 +11,7 @@ function simple_example() {
   $elements = [
     '#markup' => '<div>hello world</div>',
   ];
-  \Drupal::service('renderer')->render($elements);
+  drupal_render_root($elements);
 }
 
 /**
@@ -22,5 +22,5 @@ function using_all_arguments() {
   $elements = [
     '#markup' => '<div>hello world</div>',
   ];
-  \Drupal::service('renderer')->render($elements, $is_recursive_call);
+  drupal_render_root($elements, $is_recursive_call);
 }
