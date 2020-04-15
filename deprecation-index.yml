@@ -1,6 +1,6 @@
 'drupal_set_message()':
   Rector: DrupalSetMessageRector.php
-  PHPStan: 'Call to deprecated function drupal_set_message(). Deprecated in drupal:8.5.0 and is removed from drupal:9.0.0. Use Drupal​\​Core​\​Messenger​\​MessengerInterface::addMessage() instead.'
+  PHPStan: 'Call to deprecated function drupal_set_message(). Deprecated in drupal:8.5.0 and is removed from drupal:9.0.0. Use Drupal\Core\Messenger\MessengerInterface::addMessage() instead.'
   Examples:
     - drupal_set_message.php
     - drupal_set_message_updated.php
@@ -10,7 +10,7 @@
     - DrupalSetMessageWithTraitUpdated.php
 'Drupal::entityManager()':
   Rector: EntityManagerRector.php
-  PHPStan: 'Call to deprecated method entityManager() of class Drupal. Deprecated in drupal:8.0.0 and is removed from drupal:9.0.0. Use Drupal::entityTypeManager() instead in most cases. If the needed method is not on ​\​Drupal​\​Core​\​Entity​\​EntityTypeManagerInterface, see the deprecated ​\​Drupal​\​Core​\​Entity​\​EntityManager to find the correct interface or service.'
+  PHPStan: 'Call to deprecated method entityManager() of class Drupal. Deprecated in drupal:8.0.0 and is removed from drupal:9.0.0. Use Drupal::entityTypeManager() instead in most cases. If the needed method is not on \Drupal\Core\Entity\EntityTypeManagerInterface, see the deprecated \Drupal\Core\Entity\EntityManager to find the correct interface or service.'
   Examples:
     - entity_manager.php
     - entity_manager_updated.php
@@ -18,7 +18,7 @@
     - EntityManagerStaticUpdated.php
 'ControllerBase::entityManager()':
   Rector: EntityManagerRector.php
-  PHPStan: 'Call to deprecated method entityManager() of class Drupal​\​Core​\​Controller​\​ControllerBase. Deprecated in drupal:8.0.0 and is removed from drupal:9.0.0. Most of the time static::entityTypeManager() is supposed to be used instead.'
+  PHPStan: 'Call to deprecated method entityManager() of class Drupal\Core\Controller\ControllerBase. Deprecated in drupal:8.0.0 and is removed from drupal:9.0.0. Most of the time static::entityTypeManager() is supposed to be used instead.'
   Examples:
     - EntityManagerController.php
     - EntityManagerControllerUpdated.php
@@ -48,7 +48,7 @@
     - DBQueryStaticUpdated.php
 'file_prepare_directory()':
   Rector: FilePrepareDirectoryRector.php
-  PHPStan: 'Call to deprecated function file_prepare_directory(). Deprecated in drupal:8.7.0 and is removed from drupal:9.0.0. Use Drupal​\​Core​\​File​\​FileSystemInterface::prepareDirectory().'
+  PHPStan: 'Call to deprecated function file_prepare_directory(). Deprecated in drupal:8.7.0 and is removed from drupal:9.0.0. Use Drupal\Core\File\FileSystemInterface::prepareDirectory().'
   Examples:
     - file_prepare_directory.php
     - file_prepare_directory_updated.php
@@ -56,25 +56,25 @@
     - FilePrepareDirectoryStaticUpdated.php
 'BrowserTestBase::getMock()':
   Rector: BrowserTestBaseGetMock.php
-  PHPStan: 'Call to deprecated method getMock() of class Drupal​\​Tests​\​UnitTestCase. Deprecated in drupal:8.5.0 and is removed from drupal:9.0.0. Use Drupal​\​Tests​\​PhpunitCompatibilityTrait::createMock() instead.'
+  PHPStan: 'Call to deprecated method getMock() of class Drupal\Tests\UnitTestCase. Deprecated in drupal:8.5.0 and is removed from drupal:9.0.0. Use Drupal\Tests\PhpunitCompatibilityTrait::createMock() instead.'
   Examples:
       - BrowserTestBaseGetMock.php
       - BrowserTestBaseGetMockUpdated.php
 'KernelTestBase::getMock()':
   Rector: KernelTestBaseGetMock.php
-  PHPStan: 'Call to deprecated method getMock() of class Drupal​\​Tests​\​UnitTestCase. Deprecated in drupal:8.5.0 and is removed from drupal:9.0.0. Use Drupal​\​Tests​\​PhpunitCompatibilityTrait::createMock() instead.'
+  PHPStan: 'Call to deprecated method getMock() of class Drupal\Tests\UnitTestCase. Deprecated in drupal:8.5.0 and is removed from drupal:9.0.0. Use Drupal\Tests\PhpunitCompatibilityTrait::createMock() instead.'
   Examples:
     - KernelTestBaseGetMock.php
     - KernelTestBaseGetMockUpdated.php
 'UnitTestCase::getMock()':
   Rector: UnitTestCaseGetMock.php
-  PHPStan: 'Call to deprecated method getMock() of class Drupal​\​Tests​\​UnitTestCase. Deprecated in drupal:8.5.0 and is removed from drupal:9.0.0. Use Drupal​\​Tests​\​PhpunitCompatibilityTrait::createMock() instead.'
+  PHPStan: 'Call to deprecated method getMock() of class Drupal\Tests\UnitTestCase. Deprecated in drupal:8.5.0 and is removed from drupal:9.0.0. Use Drupal\Tests\PhpunitCompatibilityTrait::createMock() instead.'
   Examples:
     - UnitTestCaseGetMock.php
     - UnitTestCaseGetMockUpdated.php
 'Drupal::url()':
   Rector: URLRector.php
-  PHPStan: 'Call to deprecated method url() of class Drupal. Deprecated in drupal:8.0.0 and is removed from drupal:9.0.0. Instead create a ​\​Drupal​\​Core​\​Url object directly, for example using Url::fromRoute().'
+  PHPStan: 'Call to deprecated method url() of class Drupal. Deprecated in drupal:8.0.0 and is removed from drupal:9.0.0. Instead create a \Drupal\Core\Url object directly, for example using Url::fromRoute().'
   Examples:
     - url.php
     - url_updated.php
@@ -82,7 +82,7 @@
     - URLStaticUpdated.php
 'format_date':
   Rector: FormatDateRector.php
-  PHPStan: 'Call to deprecated function format_date(). Deprecated in drupal:8.0.0 and is removed from drupal:9.0.0. Use Drupal::service('date.formatter')->format().'
+  PHPStan: 'Call to deprecated function format_date(). Deprecated in drupal:8.0.0 and is removed from drupal:9.0.0. Use Drupal::service(''date.formatter'')->format().'
   Examples:
     - format_date.php
     - format_date_updated.php
@@ -90,7 +90,7 @@
     - FormatDateStaticUpdated.php
 'Unicode::strtolower':
   Rector: UnicodeStrtolowerRector.php
-  PHPStan: 'Call to deprecated method strtolower() of class Drupal​\​Component​\​Utility​\​Unicode. Deprecated in drupal:8.6.0 and is removed from drupal:9.0.0. Use mb_strtolower() instead.'
+  PHPStan: 'Call to deprecated method strtolower() of class Drupal\Component\Utility\Unicode. Deprecated in drupal:8.6.0 and is removed from drupal:9.0.0. Use mb_strtolower() instead.'
   Examples:
     - unicode_strtolower.php
     - unicode_strtolower_updated.php
@@ -98,7 +98,7 @@
     - UnicodeStrtolowerStaticUpdated.php
 'FILE_CREATE_DIRECTORY':
   Rector: FileCreateDirectoryRector.php
-  PHPStan: 'Call to deprecated constant FILE_CREATE_DIRECTORY: Deprecated in drupal:8.7.0 and is removed from drupal:9.0.0. Use Drupal​\​Core​\​File​\​FileSystemInterface::CREATE_DIRECTORY.'
+  PHPStan: 'Call to deprecated constant FILE_CREATE_DIRECTORY: Deprecated in drupal:8.7.0 and is removed from drupal:9.0.0. Use Drupal\Core\File\FileSystemInterface::CREATE_DIRECTORY.'
   Examples:
     - file_create_directory.php
     - file_create_directory_updated.php
@@ -106,7 +106,7 @@
     - FileCreateDirectoryNoUseStatementUpdated.php
 'Drupal::l()':
   Rector: DrupalLRector.php
-  PHPStan: 'Call to deprecated method l() of class Drupal. Deprecated in drupal:8.0.0 and is removed from drupal:9.0.0. Use Drupal​\​Core​\​Link::fromTextAndUrl() instead.'
+  PHPStan: 'Call to deprecated method l() of class Drupal. Deprecated in drupal:8.0.0 and is removed from drupal:9.0.0. Use Drupal\Core\Link::fromTextAndUrl() instead.'
   Examples:
     - drupal_l.php
     - drupal_l_updated.php
