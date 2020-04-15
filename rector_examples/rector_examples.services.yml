@@ -34,3 +34,9 @@ services:
 
   rector_examples.drupal_l_static:
     class: Drupal\rector_examples\DrupalLStatic
+
+  rector_examples.drupal_render:
+    class: Drupal\rector_examples\DrupalRenderStatic
+
+  rector_examples.drupal_render_root:
+    class: Drupal\rector_examples\DrupalRenderRootStatic
