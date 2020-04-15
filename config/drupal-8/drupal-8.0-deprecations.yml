@@ -4,6 +4,8 @@ services:
   DrupalRector\Rector\Deprecation\DBInsertRector: ~
   DrupalRector\Rector\Deprecation\DBSelectRector: ~
   DrupalRector\Rector\Deprecation\DBQueryRector: ~
+  DrupalRector\Rector\Deprecation\DrupalRenderRector: ~
+  DrupalRector\Rector\Deprecation\DrupalRenderRootRector: ~
   DrupalRector\Rector\Deprecation\URLRector: ~
   DrupalRector\Rector\Deprecation\FormatDateRector: ~
   DrupalRector\Rector\Deprecation\DrupalLRector: ~
