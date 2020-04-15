@@ -3,7 +3,7 @@
 namespace DrupalRector\Rector\Deprecation;
 
 use PhpParser\Node;
-use Rector\Rector\AbstractRector;
+use Rector\Core\Rector\AbstractRector;
 
 /**
  * Replaces deprecated static call with service method call.

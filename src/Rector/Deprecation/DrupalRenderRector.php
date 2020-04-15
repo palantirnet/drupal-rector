@@ -3,7 +3,7 @@
 namespace DrupalRector\Rector\Deprecation;
 
 use Rector\RectorDefinition\CodeSample;
-use Rector\RectorDefinition\RectorDefinition;
+use Rector\Core\RectorDefinition\RectorDefinition;
 
 /**
  * Replaces deprecated drupal_render() calls.
