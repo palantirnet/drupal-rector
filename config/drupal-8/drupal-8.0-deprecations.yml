@@ -6,3 +6,4 @@ services:
   DrupalRector\Rector\Deprecation\DBQueryRector: ~
   DrupalRector\Rector\Deprecation\URLRector: ~
   DrupalRector\Rector\Deprecation\FormatDateRector: ~
+  DrupalRector\Rector\Deprecation\DrupalLRector: ~
