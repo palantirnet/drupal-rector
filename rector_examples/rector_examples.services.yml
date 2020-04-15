@@ -17,8 +17,26 @@ services:
   rector_examples.db_query_static:
     class: Drupal\rector_examples\DBQueryStatic
 
-  rector_examples.file_prepare_directory:
+  rector_examples.file_prepare_directory_static:
     class: Drupal\rector_examples\FilePrepareDirectoryStatic
 
-  rector_examples.url:
+  rector_examples.file_create_directory_no_use_statement:
+    class: Drupal\rector_examples\FileCreateDirectoryNoUseStatement
+
+  rector_examples.format_date_static:
+    class: Drupal\rector_examples\FormatDateStatic
+
+  rector_examples.unicode_strtolower_static:
+    class: Drupal\rector_examples\UnicodeStrtolowerStatic
+
+  rector_examples.url_static:
     class: Drupal\rector_examples\URLStatic
+
+  rector_examples.drupal_l_static:
+    class: Drupal\rector_examples\DrupalLStatic
+
+  rector_examples.drupal_render:
+    class: Drupal\rector_examples\DrupalRenderStatic
+
+  rector_examples.drupal_render_root:
+    class: Drupal\rector_examples\DrupalRenderRootStatic

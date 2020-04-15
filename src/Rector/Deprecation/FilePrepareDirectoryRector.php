@@ -2,12 +2,8 @@
 
 namespace DrupalRector\Rector\Deprecation;
 
-use DrupalRector\Utility\TraitsByClassHelperTrait;
-use PhpParser\Node;
-use Rector\NodeTypeResolver\Node\AttributeKey;
-use Rector\Core\Rector\AbstractRector;
-use Rector\Core\RectorDefinition\CodeSample;
-use Rector\Core\RectorDefinition\RectorDefinition;
+use Rector\RectorDefinition\CodeSample;
+use Rector\RectorDefinition\RectorDefinition;
 
 /**
  * Replaces deprecated file_prepare_directory() calls.
@@ -20,8 +16,14 @@ use Rector\Core\RectorDefinition\RectorDefinition;
  * Improvement opportunities
  * - Dependency injection
  */
-final class FilePrepareDirectoryRector extends AbstractRector
+final class FilePrepareDirectoryRector extends FunctionToServiceBase
 {
+    protected $deprecatedFunctionName = 'file_prepare_directory';
+
+    protected $serviceName = 'file_system';
+
+    protected $serviceMethodName = 'prepareDirectory';
+
 
     /**
      * @inheritdoc
@@ -39,37 +41,5 @@ $result = \Drupal::service('file_system')->prepareDirectory($directory, $options
 CODE_AFTER
             )
         ]);
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function getNodeTypes(): array
-    {
-        return [
-            Node\Expr\FuncCall::class,
-        ];
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function refactor(Node $node): ?Node
-    {
-        /** @var Node\Expr\FuncCall $node */
-        if ($this->getName($node) === 'file_prepare_directory') {
-
-            // This creates a service call like `\Drupal::service('file_system').
-            // TODO use dependency injection.
-            $file_system_service = new Node\Expr\StaticCall(new Node\Name\FullyQualified('Drupal'), 'service', [new Node\Arg(new Node\Scalar\String_('file_system'))]);
-
-            $method_name = 'prepareDirectory';
-
-            $method = new Node\Identifier($method_name);
-
-            $node = new Node\Expr\MethodCall($file_system_service, $method, $node->args);
-        }
-
-        return $node;
     }
 }

@@ -2,10 +2,8 @@
 
 namespace DrupalRector\Rector\Deprecation;
 
-use PhpParser\Node;
-use Rector\Core\Rector\AbstractRector;
-use Rector\Core\RectorDefinition\CodeSample;
-use Rector\Core\RectorDefinition\RectorDefinition;
+use Rector\RectorDefinition\CodeSample;
+use Rector\RectorDefinition\RectorDefinition;
 
 /**
  * Replaces deprecated \Drupal::url() calls.
@@ -18,10 +16,17 @@ use Rector\Core\RectorDefinition\RectorDefinition;
  * Improvement opportunities
  * - Dependency injection
  */
-final class URLRector extends AbstractRector
+final class URLRector extends StaticToServiceBase
 {
+    protected $deprecatedFullQualifiedClassName = 'Drupal';
 
-    /**
+    protected $deprecatedMethodName = 'url';
+
+    protected $serviceName = 'url_generator';
+
+    protected $serviceMethodName = 'generateFromRoute';
+
+  /**
      * @inheritdoc
      */
     public function getDefinition(): RectorDefinition
@@ -37,38 +42,5 @@ CODE_BEFORE
 CODE_AFTER
             )
         ]);
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function getNodeTypes(): array
-    {
-        return [
-            Node\Expr\StaticCall::class,
-        ];
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function refactor(Node $node): ?Node
-    {
-        /** @var Node\Expr\StaticCall $node */
-        if ($this->getName($node) === 'url' && $this->getName($node->class) === 'Drupal') {
-            $service_name = new Node\Arg(new Node\Scalar\String_('url_generator'));
-
-            $service = new Node\Expr\StaticCall(new Node\Name\FullyQualified('Drupal'), 'service', [$service_name]);
-
-            $method_name = new Node\Identifier('generateFromRoute');
-
-            $method_arguments = $node->args;
-
-            $node = new Node\Expr\MethodCall($service, $method_name, $method_arguments);
-
-            return $node;
-        }
-
-        return null;
     }
 }

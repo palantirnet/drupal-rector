@@ -19,7 +19,7 @@ function simple_example() {
 function using_all_arguments() {
   $directory = '/test/directory';
 
-  file_prepare_directory($directory, 'FILE_CREATE_DIRECTORY');
+  file_prepare_directory($directory, FILE_CREATE_DIRECTORY);
 }
 
 /**
@@ -28,7 +28,7 @@ function using_all_arguments() {
 function options_as_variable() {
   $directory = '/test/directory';
 
-  $options = 'FILE_CREATE_DIRECTORY';
+  $options = FILE_CREATE_DIRECTORY;
 
   file_prepare_directory($directory, $options);
 }
