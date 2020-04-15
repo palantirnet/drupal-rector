@@ -1,4 +1,4 @@
-name: drupal_rector__test
+name: drupal_rector_07__fail
 
 on:
     pull_request: null
