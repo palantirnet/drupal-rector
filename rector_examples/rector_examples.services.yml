@@ -29,7 +29,8 @@ services:
   rector_examples.unicode_strtolower_static:
     class: Drupal\rector_examples\UnicodeStrtolowerStatic
 
-  rector_examples.url:
+  rector_examples.url_static:
     class: Drupal\rector_examples\URLStatic
 
-
+  rector_examples.drupal_l_static:
+    class: Drupal\rector_examples\DrupalLStatic

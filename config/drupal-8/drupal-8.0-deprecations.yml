@@ -8,3 +8,4 @@ services:
   DrupalRector\Rector\Deprecation\DrupalRenderRootRector: ~
   DrupalRector\Rector\Deprecation\URLRector: ~
   DrupalRector\Rector\Deprecation\FormatDateRector: ~
+  DrupalRector\Rector\Deprecation\DrupalLRector: ~
