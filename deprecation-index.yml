@@ -110,3 +110,5 @@
   Examples:
     - DrupalRenderStatic.php
     - DrupalRenderStaticUpdated.php
+    - drupal_render.php
+    - drupal_render_updated.php
