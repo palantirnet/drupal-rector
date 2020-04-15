@@ -19,10 +19,20 @@ jobs:
 
             # Run standalone install in non-root package, ref https://github.com/rectorphp/rector/issues/732
             -   run: |
-                    # Install Drupal with Rector 0.7.x
+                    # Install latest Drupal
                     mkdir drupal-rector07
                     composer create-project drupal/recommended-project drupal-rector07 --dev --no-progress
+
+                    # Install drupal-rector (based on rector 0.7.x)
                     cd drupal-rector07
                     composer require palantirnet/drupal-rector:dev-rector-0.7 --no-progress
+
+                    # Prepare rector config files with Drupal specific settings
                     cp vendor/palantirnet/drupal-rector/rector.yml .
+
+                    # Prepare rector_examples folder in the drupal modules directory
+                    mkdir -p web/modules/custom
+                    cp -r vendor/palantirnet/drupal-rector/rector_examples web/modules/custom/.
+
+                    # Run Rector
                     vendor/bin/rector process web/modules/custom/rector_examples --dry-run
