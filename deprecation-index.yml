@@ -104,3 +104,9 @@
     - file_create_directory_updated.php
     - FileCreateDirectoryNoUseStatement.php
     - FileCreateDirectoryNoUseStatementUpdated.php
+'drupal_render()':
+  Rector: DrupalRenderRector.php
+  PHPStan: 'Call to deprecated function drupal_render(). Deprecated in drupal:8.0.0 and is removed from drupal:9.0.0. Use the'
+  Examples:
+    - DrupalRenderStatic.php
+    - DrupalRenderStaticUpdated.php
