@@ -9,10 +9,7 @@ use Rector\Rector\AbstractRector;
  * Replaces deprecated constant with class constant.
  *
  * What is covered:
- * - Fully qualified class name replacement
- *
- * Improvement opportunities
- * - Add a use statement
+ * - Replacement with a use statement.
  */
 abstract class ConstantToClassConstantBase extends AbstractRector
 {
@@ -55,7 +52,7 @@ abstract class ConstantToClassConstantBase extends AbstractRector
         /** @var Node\Expr\FuncCall $node */
         if ($this->getName($node->name) === $this->deprecatedConstant) {
 
-            // TODO add use statement.
+            // We add a fully qualified class name and the ImportFullyQualifiedNamesRector rector adds the use statement.
             $fully_qualified_class = new Node\Name\FullyQualified($this->constantFullyQualifiedClassName);
 
             $name = new Node\Identifier($this->constant);
