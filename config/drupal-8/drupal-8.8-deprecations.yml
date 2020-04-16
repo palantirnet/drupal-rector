@@ -8,3 +8,4 @@ services:
   DrupalRector\Rector\Deprecation\FileDefaultSchemeRector: ~
   DrupalRector\Rector\Deprecation\EntityGetDisplayRector: ~
   DrupalRector\Rector\Deprecation\EntityGetFormDisplayRector: ~
+  DrupalRector\Rector\Deprecation\FileScanDirectoryRector: ~
