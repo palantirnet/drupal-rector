@@ -2,6 +2,7 @@
 
 namespace Drupal\rector_examples;
 
+use Drupal;
 use Drupal\Core\Database\Database;
 
 /**
@@ -13,7 +14,7 @@ class DBInsertStaticUpdated {
    * A simple example using the minimum number of arguments.
    */
   public function simple_example() {
-    \Drupal::database()->insert('path_alias');
+    Drupal::database()->insert('path_alias');
   }
 
   /**
@@ -40,7 +41,7 @@ class DBInsertStaticUpdated {
    * An example using chained method calls.
    */
   public function chained_method_calls() {
-    \Drupal::database()->insert('path_alias')
+    Drupal::database()->insert('path_alias')
       ->fields(['path', 'alias'], [['/my-path', '/my-alias']])
       ->execute();
   }

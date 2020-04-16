@@ -2,6 +2,7 @@
 
 namespace Drupal\rector_examples;
 
+use Drupal;
 /**
  * Example of static method calls from a class.
  */
@@ -15,7 +16,7 @@ class DrupalRenderRootStaticUpdated {
     $elements = [
       '#markup' => '<div>hello world</div>',
     ];
-    \Drupal::service('renderer')->renderRoot($elements);
+    Drupal::service('renderer')->renderRoot($elements);
   }
 
   /**
@@ -26,6 +27,6 @@ class DrupalRenderRootStaticUpdated {
     $elements = [
       '#markup' => '<div>hello world</div>',
     ];
-    \Drupal::service('renderer')->renderRoot($elements, $is_recursive_call);
+    Drupal::service('renderer')->renderRoot($elements, $is_recursive_call);
   }
 }

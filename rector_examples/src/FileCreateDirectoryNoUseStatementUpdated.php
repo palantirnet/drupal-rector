@@ -2,6 +2,7 @@
 
 namespace Drupal\rector_examples;
 
+use Drupal;
 use \Drupal\Core\File\FileSystemInterface;
 
 /**
@@ -13,14 +14,14 @@ class FileCreateDirectoryNoUseStatementUpdated {
    * A simple example.
    */
   public function simple_example() {
-    $x = \Drupal\Core\File\FileSystemInterface::CREATE_DIRECTORY;
+    $x = FileSystemInterface::CREATE_DIRECTORY;
   }
 
   /**
    * An example using the constant as an argument.
    */
   public function as_an_argument() {
-    \Drupal::service('file_system')->prepareDirectory('/test/directory', FileSystemInterface::CREATE_DIRECTORY);
+    Drupal::service('file_system')->prepareDirectory('/test/directory', FileSystemInterface::CREATE_DIRECTORY);
   }
 
 }

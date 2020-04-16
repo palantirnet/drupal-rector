@@ -8,25 +8,25 @@
  * A simple example using the minimum number of arguments.
  */
 function simple_example() {
-  \Drupal::messenger()->addStatus('example message');
+  Drupal::messenger()->addStatus('example message');
 }
 
 /**
  * An example using all of the arguments.
  */
 function using_all_arguments() {
-  \Drupal::messenger()->addStatus('example warning', TRUE);
+  Drupal::messenger()->addStatus('example warning', TRUE);
 }
 
 /**
  * Examples that show situations where we define the type of message.
  */
 function message_types() {
-  \Drupal::messenger()->addError('example error');
+  Drupal::messenger()->addError('example error');
 
-  \Drupal::messenger()->addStatus('example status');
+  Drupal::messenger()->addStatus('example status');
 
-  \Drupal::messenger()->addWarning('example warning');
+  Drupal::messenger()->addWarning('example warning');
 }
 
 /**
@@ -41,12 +41,12 @@ function message_type_as_variable() {
 
   switch($type) {
     case 'warning':
-      \Drupal::messenger()->addWarning($message);
+      Drupal::messenger()->addWarning($message);
       break;
     case 'error':
-      \Drupal::messenger()->addError($message);
+      Drupal::messenger()->addError($message);
       break;
     default:
-      \Drupal::messenger()->addStatus($message);
+      Drupal::messenger()->addStatus($message);
   }
 }
