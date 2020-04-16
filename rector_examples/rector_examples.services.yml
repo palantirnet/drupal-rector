@@ -23,6 +23,9 @@ services:
   rector_examples.file_create_directory_no_use_statement:
     class: Drupal\rector_examples\FileCreateDirectoryNoUseStatement
 
+  rector_examples.file_exists_replace_no_use_statement:
+    class: Drupal\rector_examples\FileExistsReplaceNoUseStatement
+
   rector_examples.format_date_static:
     class: Drupal\rector_examples\FormatDateStatic
 
