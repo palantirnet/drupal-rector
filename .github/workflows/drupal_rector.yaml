@@ -1,4 +1,4 @@
-name: drupal_rector
+name: rector_examples
 
 on:
     pull_request: null
@@ -7,7 +7,7 @@ on:
             - master
 
 jobs:
-    test_with_drupal:
+    rector_examples:
         runs-on: ubuntu-latest
         steps:
             -   uses: actions/checkout@v2
@@ -18,21 +18,20 @@ jobs:
                     extensions: "intl"
 
             # Run standalone install in non-root package, ref https://github.com/rectorphp/rector/issues/732
-            -   run: |
-                    # Install latest Drupal
-                    mkdir drupal-rector07
-                    composer create-project drupal/recommended-project drupal-rector07 --dev --no-progress
+            -   run:    # Install latest Drupal
+                        mkdir drupal
+                        composer create-project drupal/recommended-project drupal --dev --no-progress
 
-                    # Install drupal-rector (based on rector 0.7.x)
-                    cd drupal-rector07
-                    composer require palantirnet/drupal-rector:dev-rector-0.7 --no-progress
+            -   run:    # Install drupal-rector (based on rector 0.7.x)
+                        cd drupal
+                        composer require palantirnet/drupal-rector:dev-rector-0.7 --no-progress
 
-                    # Prepare rector config files with Drupal specific settings
-                    cp vendor/palantirnet/drupal-rector/rector.yml .
+            -   run:    # Prepare rector config files with Drupal specific settings
+                        cp vendor/palantirnet/drupal-rector/rector.yml .
 
-                    # Prepare rector_examples folder in the drupal modules directory
-                    mkdir -p web/modules/custom
-                    cp -r vendor/palantirnet/drupal-rector/rector_examples web/modules/custom/.
+            -   run:    # Prepare rector_examples folder in the drupal modules directory
+                        mkdir -p web/modules/custom
+                        cp -r vendor/palantirnet/drupal-rector/rector_examples web/modules/custom/.
 
-                    # Run Rector
-                    vendor/bin/rector process web/modules/custom/rector_examples --dry-run
+            -   run:    # Run Rector
+                        vendor/bin/rector process web/modules/custom/rector_examples --dry-run
