@@ -43,7 +43,7 @@ abstract class FunctionToFunctionBase extends AbstractRector
     public function refactor(Node $node): ?Node
     {
       /** @var Node\Expr\FuncCall $node */
-      if ($this->getName($node) === $this->deprecatedFunctionName) {
+      if ($this->getName($node->name) === $this->deprecatedFunctionName) {
 
           $method_name = new Node\Name($this->functionName);
 

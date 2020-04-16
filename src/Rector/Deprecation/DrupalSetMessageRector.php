@@ -62,7 +62,7 @@ CODE_AFTER
     public function refactor(Node $node): ?Node
     {
         /** @var Node\Expr\FuncCall $node */
-        if ($node->name instanceof Node\Name && 'drupal_set_message' === (string) $node->name) {
+        if ($this->getName($node->name) === 'drupal_set_message') {
             $class_name = $node->getAttribute(AttributeKey::CLASS_NAME);
 
             if ($class_name && in_array('Drupal\Core\Messenger\MessengerTrait', $this->getTraitsByClass($class_name))) {

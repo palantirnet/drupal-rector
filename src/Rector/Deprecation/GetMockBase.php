@@ -42,7 +42,7 @@ abstract class GetMockBase extends AbstractRector
     $class_name = $node->getAttribute(AttributeKey::CLASS_NAME);
 
     /* @var Node\Expr\MethodCall $node */
-    if ($this->getName($node) === 'getMock' && $this->getName($node->var) === 'this' && $class_name && isset($node->getAttribute('classNode')->extends->parts) && in_array($this->baseClassBeingExtended, $node->getAttribute('classNode')->extends->parts)) {
+    if ($this->getName($node->name) === 'getMock' && $this->getName($node->var) === 'this' && $class_name && isset($node->getAttribute('classNode')->extends->parts) && in_array($this->baseClassBeingExtended, $node->getAttribute('classNode')->extends->parts)) {
 
       // Build the arguments.
       $method_arguments = $node->args;

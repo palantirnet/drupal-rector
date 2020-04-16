@@ -53,7 +53,7 @@ abstract class FunctionToServiceBase extends AbstractRector
     public function refactor(Node $node): ?Node
     {
         /** @var Node\Expr\FuncCall $node */
-        if ($this->getName($node) === $this->deprecatedFunctionName) {
+        if ($this->getName($node->name) === $this->deprecatedFunctionName) {
 
             // This creates a service call like `\Drupal::service('file_system').
             // TODO use dependency injection.

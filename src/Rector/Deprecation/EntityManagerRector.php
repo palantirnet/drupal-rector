@@ -77,7 +77,7 @@ CODE_AFTER
       }
     }
 
-    if ($node instanceof Node\Expr\MethodCall && $this->getName($node) === "entityManager") {
+    if ($node instanceof Node\Expr\MethodCall && $this->getName($node->name) === "entityManager") {
       $class_name = $node->getAttribute(AttributeKey::CLASS_NAME);
 
       if ($class_name && isset($node->getAttribute('classNode')->extends->parts) && in_array('ControllerBase', $node->getAttribute('classNode')->extends->parts)) {

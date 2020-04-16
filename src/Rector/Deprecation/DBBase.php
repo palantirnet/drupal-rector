@@ -71,7 +71,7 @@ abstract class DBBase extends AbstractRector
     public function refactor(Node $node): ?Node
     {
         /** @var Node\Expr\FuncCall $node */
-        if ($this->getName($node) === $this->deprecatedMethodName) {
+        if ($this->getName($node->name) === $this->deprecatedMethodName) {
 
             // TODO: Check if we have are in a class and inject \Drupal\Core\Database\Connection
 
