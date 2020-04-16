@@ -53,7 +53,7 @@ abstract class ConstantToClassConstantBase extends AbstractRector
     public function refactor(Node $node): ?Node
     {
         /** @var Node\Expr\FuncCall $node */
-        if ($this->getName($node) === $this->deprecatedConstant) {
+        if ($this->getName($node->name) === $this->deprecatedConstant) {
 
             // TODO add use statement.
             $fully_qualified_class = new Node\Name\FullyQualified($this->constantFullyQualifiedClassName);
