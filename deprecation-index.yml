@@ -104,6 +104,14 @@
     - file_create_directory_updated.php
     - FileCreateDirectoryNoUseStatement.php
     - FileCreateDirectoryNoUseStatementUpdated.php
+'FILE_EXISTS_REPLACE':
+  Rector: FileExistsReplaceRector.php
+  PHPStan: 'Call to deprecated constant FILE_EXISTS_REPLACE: Deprecated in drupal:8.7.0 and is removed from drupal:9.0.0. Use Drupal\Core\File\FileSystemInterface::FILE_EXISTS_REPLACE.'
+  Examples:
+    - file_exists_replace.php
+    - file_exists_replace_updated.php
+    - FileExistsReplaceNoUseStatement.php
+    - FileExistsReplaceNoUseStatementUpdated.php
 'Drupal::l()':
   Rector: DrupalLRector.php
   PHPStan: 'Call to deprecated method l() of class Drupal. Deprecated in drupal:8.0.0 and is removed from drupal:9.0.0. Use Drupal\Core\Link::fromTextAndUrl() instead.'
