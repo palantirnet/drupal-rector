@@ -21,4 +21,9 @@ parameters:
     - inc
     - engine
 
-services: ~
+#  sets:
+#    - 'code-quality'
+#    - 'coding-style'
+services:
+  # This Rector will add 'use' statements.
+  Rector\CodingStyle\Rector\Namespace_\ImportFullyQualifiedNamesRector: ~
