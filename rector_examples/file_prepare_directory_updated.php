@@ -1,6 +1,5 @@
 <?php
 
-use Drupal\Core\File\FileSystemInterface;
 /**
  * This demonstrates the deprecated static calls that might be called from procedural code like `.module` files.
  */
@@ -11,7 +10,7 @@ use Drupal\Core\File\FileSystemInterface;
 function simple_example() {
   $directory = '/test/directory';
 
-  Drupal::service('file_system')->prepareDirectory($directory);
+  \Drupal::service('file_system')->prepareDirectory($directory);
 }
 
 /**
@@ -20,7 +19,7 @@ function simple_example() {
 function using_all_arguments() {
   $directory = '/test/directory';
 
-  Drupal::service('file_system')->prepareDirectory($directory, FileSystemInterface::CREATE_DIRECTORY);
+  \Drupal::service('file_system')->prepareDirectory($directory, \Drupal\Core\File\FileSystemInterface::CREATE_DIRECTORY);
 }
 
 /**
@@ -29,7 +28,7 @@ function using_all_arguments() {
 function options_as_variable() {
   $directory = '/test/directory';
 
-  $options = FileSystemInterface::CREATE_DIRECTORY;
+  $options = \Drupal\Core\File\FileSystemInterface::CREATE_DIRECTORY;
 
-  Drupal::service('file_system')->prepareDirectory($directory, $options);
+  \Drupal::service('file_system')->prepareDirectory($directory, $options);
 }

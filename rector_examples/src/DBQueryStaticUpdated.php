@@ -2,8 +2,6 @@
 
 namespace Drupal\rector_examples;
 
-use Drupal;
-use PDO;
 use Drupal\Core\Database\Database;
 
 /**
@@ -15,21 +13,21 @@ class DBQueryStaticUpdated {
    * A simple example using the minimum number of arguments.
    */
   public function simple_example() {
-    Drupal::database()->query('select * from user');
+    \Drupal::database()->query('select * from user');
   }
 
   /**
    * An example using placeholders as arguments.
    */
   public function placeholder() {
-    Drupal::database()->query('select * from user where name="%test"', ['%test'=>'Adam']);
+    \Drupal::database()->query('select * from user where name="%test"', ['%test'=>'Adam']);
   }
 
   /**
    * An example using arguments and options.
    */
   public function arguments_and_options() {
-    Database::getConnection('my_non_default_database')->query('select * from user where name="%test"', ['%test'=>'Adam'], ['fetch' => PDO::FETCH_OBJ, 'return' => Database::RETURN_STATEMENT, 'throw_exception' => TRUE, 'allow_delimiter_in_query' => FALSE]);
+    Database::getConnection('my_non_default_database')->query('select * from user where name="%test"', ['%test'=>'Adam'], ['fetch' => \PDO::FETCH_OBJ, 'return' => Database::RETURN_STATEMENT, 'throw_exception' => TRUE, 'allow_delimiter_in_query' => FALSE]);
   }
 
   /**
@@ -41,7 +39,7 @@ class DBQueryStaticUpdated {
     $args = ['%test' => 'Adam'];
 
     $opts = ['target' => 'my_non_default_database',
-      'fetch' => PDO::FETCH_OBJ,
+      'fetch' => \PDO::FETCH_OBJ,
       'return' => Database::RETURN_STATEMENT,
       'throw_exception' => TRUE,
       'allow_delimiter_in_query' => FALSE,

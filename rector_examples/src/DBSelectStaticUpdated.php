@@ -2,7 +2,6 @@
 
 namespace Drupal\rector_examples;
 
-use Drupal;
 use Drupal\Core\Database\Database;
 
 /**
@@ -14,14 +13,14 @@ class DBSelectStaticUpdated {
    * A simple example using the minimum number of arguments.
    */
   public function simple_example() {
-    Drupal::database()->select('user');
+    \Drupal::database()->select('user');
   }
 
   /**
    * An example using alias.
    */
   public function alias() {
-    Drupal::database()->select('user', 'u');
+    \Drupal::database()->select('user', 'u');
   }
 
   /**
