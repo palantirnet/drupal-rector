@@ -131,7 +131,7 @@
     - drupal_render_updated.php
 'drupal_render_root()':
   Rector: DrupalRenderRootRector.php
-  PHPStan: 'Call to deprecated function drupal_render(). Deprecated in drupal:8.0.0 and is removed from drupal:9.0.0. Use the'
+  PHPStan: 'Call to deprecated function drupal_render_root(). Deprecated in drupal:8.0.0 and is removed from drupal:9.0.0. Use Drupal​\​Core​\​Render​\​RendererInterface::renderRoot() instead.'
   Examples:
     - DrupalRenderRootStatic.php
     - DrupalRenderRootStaticUpdated.php
