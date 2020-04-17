@@ -1,10 +1,10 @@
 imports:
   - { resource: "vendor/palantirnet/drupal-rector/config/drupal-8/drupal-8-all-deprecations.yml" }
-  # includes:
-  # - { resource: "vendor/palantirnet/drupal-rector/config/drupal-8/drupal-8.0-deprecations.yml" }
-  # - { resource: "vendor/palantirnet/drupal-rector/config/drupal-8/drupal-8.5-deprecations.yml" }
-  # - { resource: "vendor/palantirnet/drupal-rector/config/drupal-8/drupal-8.6-deprecations.yml" }
-  # - { resource: "vendor/palantirnet/drupal-rector/config/drupal-8/drupal-8.7-deprecations.yml" }
+# includes:
+# - { resource: "vendor/palantirnet/drupal-rector/config/drupal-8/drupal-8.0-deprecations.yml" }
+# - { resource: "vendor/palantirnet/drupal-rector/config/drupal-8/drupal-8.5-deprecations.yml" }
+# - { resource: "vendor/palantirnet/drupal-rector/config/drupal-8/drupal-8.6-deprecations.yml" }
+# - { resource: "vendor/palantirnet/drupal-rector/config/drupal-8/drupal-8.7-deprecations.yml" }
 
 parameters:
   autoload_paths:
@@ -21,9 +21,11 @@ parameters:
     - inc
     - engine
 
-#  sets:
-#    - 'code-quality'
-#    - 'coding-style'
-services:
-  # This Rector will add 'use' statements.
-  Rector\CodingStyle\Rector\Namespace_\ImportFullyQualifiedNamesRector: ~
+  # Create `use` statements.
+  auto_import_names: true
+  # Do not convert `\Drupal` to `Drupal`, etc.
+  import_short_classes: false
+  # This will not import classes used in PHP DocBlocks, like in /** @var \Some\Class */
+  import_doc_blocks: false
+
+services: ~
