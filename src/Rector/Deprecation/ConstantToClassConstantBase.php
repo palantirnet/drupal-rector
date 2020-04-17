@@ -52,7 +52,7 @@ abstract class ConstantToClassConstantBase extends AbstractRector
         /** @var Node\Expr\FuncCall $node */
         if ($this->getName($node->name) === $this->deprecatedConstant) {
 
-            // We add a fully qualified class name and the ImportFullyQualifiedNamesRector rector adds the use statement.
+            // We add a fully qualified class name and the parameters in `rector.yml` adds the use statement.
             $fully_qualified_class = new Node\Name\FullyQualified($this->constantFullyQualifiedClassName);
 
             $name = new Node\Identifier($this->constant);
