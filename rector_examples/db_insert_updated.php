@@ -1,5 +1,6 @@
 <?php
 
+use Drupal\core\Database\Database;
 /**
  * This demonstrates the deprecated static calls that might be called from procedural code like `.module` files.
  */
@@ -15,7 +16,7 @@ function simple_example() {
  * An example using options.
  */
 function options() {
-  \Drupal\core\Database\Database::getConnection('my_non_default_database')->insert('user', []);
+  Database::getConnection('my_non_default_database')->insert('user', []);
 }
 
 /**
@@ -28,5 +29,5 @@ function table_and_options_as_variables() {
     'target' => 'my_non_default_database',
   ];
 
-  \Drupal\core\Database\Database::getConnection('my_non_default_database')->insert($table, $options);
+  Database::getConnection('my_non_default_database')->insert($table, $options);
 }
