@@ -25,7 +25,7 @@ jobs:
             -   run: |
                     # Install drupal-rector
                     cd drupal
-                    composer require palantirnet/drupal-rector --no-progress
+                    composer require palantirnet/drupal-rector:dev-master --no-progress
 
             -   run: |
                     # Prepare rector config files with Drupal specific settings
