@@ -20,6 +20,9 @@ services:
   rector_examples.file_prepare_directory_static:
     class: Drupal\rector_examples\FilePrepareDirectoryStatic
 
+  rector_examples.file_unmanaged_save_data_static:
+    class: Drupal\rector_examples\FilePrepareDirectoryStatic
+
   rector_examples.file_create_directory_no_use_statement:
     class: Drupal\rector_examples\FileCreateDirectoryNoUseStatement
 
