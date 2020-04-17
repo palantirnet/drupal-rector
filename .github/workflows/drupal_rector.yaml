@@ -19,7 +19,7 @@ jobs:
 
             # Run standalone install in non-root package, ref https://github.com/rectorphp/rector/issues/732
             -   run: |
-                    # Install latest Drupal
+                    # Download the latest Drupal core project and all its dependencies
                     composer create-project drupal/recommended-project drupal --dev --no-progress
 
             -   run: |
