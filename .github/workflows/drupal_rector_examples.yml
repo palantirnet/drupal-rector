@@ -23,9 +23,9 @@ jobs:
                     composer create-project drupal/recommended-project drupal --dev --no-progress
 
             -   run: |
-                    # Install drupal-rector (based on rector 0.7.x)
+                    # Install drupal-rector
                     cd drupal
-                    composer require palantirnet/drupal-rector:dev-rector-0.7 --no-progress
+                    composer require palantirnet/drupal-rector:dev-master --no-progress
 
             -   run: |
                     # Prepare rector config files with Drupal specific settings
