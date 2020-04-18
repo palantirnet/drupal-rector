@@ -31,12 +31,12 @@ jobs:
                     composer remove mglaman/drupal-check --dev
 
             -   run: |
-                    # Install the latest drupal-check (supports phpstan 0.12)
+                    # Install the latest drupal-check (requires phpstan 0.12)
                     cd drupal
                     composer require mglaman/drupal-check --dev
 
             -   run: |
-                    # Attempt installing drupal-rector (should fail because it requires phpstan 0.12)
+                    # Attempt installing drupal-rector
                     cd drupal
                     composer require palantirnet/drupal-rector --dev
 
