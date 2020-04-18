@@ -21,9 +21,9 @@ jobs:
                     composer create-project drupal/recommended-project drupal --dev --no-progress
 
             -   run: |
-                    # Install legacy-drupal-check (before phpstan 0.12 was supported)
+                    # Install legacy-drupal-check version 1.0.14 (when it required phpstan 0.11)
                     cd drupal
-                    composer require mglaman/drupal-check:1.1 --dev
+                    composer require mglaman/drupal-check:1.0.14 --dev
 
             -   run: |
                     # Attempt installing drupal-rector (should fail because it requires phpstan 0.12)
