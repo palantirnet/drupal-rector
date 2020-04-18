@@ -41,6 +41,11 @@ jobs:
                     composer require mglaman/drupal-check --dev
 
             -   run: |
+                    # Install drupal-rector
+                    cd drupal
+                    composer require palantirnet/drupal-rector --dev
+
+            -   run: |
                     # Prepare rector config files with Drupal specific settings
                     cd drupal
                     cp vendor/palantirnet/drupal-rector/rector.yml .
@@ -55,3 +60,8 @@ jobs:
                     # Run Rector
                     cd drupal
                     vendor/bin/rector process web/modules/custom/rector_examples
+
+           -   run: |
+                    # Run Drupal-Check
+                    cd drupal
+                    vendor/bin/drupal-check web/modules/custom/rector_examples
