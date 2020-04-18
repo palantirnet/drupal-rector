@@ -55,8 +55,3 @@ jobs:
                     # Run Rector
                     cd drupal
                     vendor/bin/rector process web/modules/custom/rector_examples
-
-            -   run: |
-                    # Run Drupal-Check
-                    cd drupal
-                    vendor/bin/drupal-check web/modules/custom/rector_examples
