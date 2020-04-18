@@ -1,0 +1,57 @@
+name: legacy_drupal_check_conflict
+
+on:
+    pull_request: null
+    push: null
+
+jobs:
+    legacy_drupal_check_conflict:
+        runs-on: ubuntu-latest
+        steps:
+            -   uses: actions/checkout@v2
+            -   uses: shivammathur/setup-php@v2
+                with:
+                    php-version: 7.3
+                    coverage: none # disable xdebug, pcov
+                    extensions: "intl"
+
+            # Run standalone install in non-root package, ref https://github.com/rectorphp/rector/issues/732
+            -   run: |
+                    # Download the latest Drupal core project and all its dependencies
+                    composer create-project drupal/recommended-project drupal --dev --no-progress
+
+            -   run: |
+                    # Install legacy-drupal-check (before phpstan 0.12 was supported)
+                    cd drupal
+                    require mglaman/drupal-check:1.1 --dev
+
+            -   run: |
+                    # Attempt installing drupal-rector (should fail because it requires phpstan 0.12)
+                    cd drupal
+                    composer require palantirnet/drupal-rector --dev
+
+            -   run: |
+                    # Remove legacy-drupal-check
+                    cd drupal
+                    composer remove mglaman/drupal-check --dev
+
+            -   run: |
+                    # Install the latest drupal-check (supports phpstan 0.12)
+                    cd drupal
+                    composer require mglaman/drupal-check --dev
+
+            -   run: |
+                    # Prepare rector config files with Drupal specific settings
+                    cd drupal
+                    cp vendor/palantirnet/drupal-rector/rector.yml .
+
+            -   run: |
+                    # Prepare rector_examples folder in the drupal modules directory
+                    cd drupal
+                    mkdir -p web/modules/custom
+                    cp -r vendor/palantirnet/drupal-rector/rector_examples web/modules/custom/.
+
+            -   run: |
+                    # Run Rector
+                    cd drupal
+                    vendor/bin/rector process web/modules/custom/rector_examples
