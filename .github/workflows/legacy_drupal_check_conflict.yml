@@ -23,7 +23,7 @@ jobs:
             -   run: |
                     # Install legacy-drupal-check (before phpstan 0.12 was supported)
                     cd drupal
-                    require mglaman/drupal-check:1.1 --dev
+                    composer require mglaman/drupal-check:1.1 --dev
 
             -   run: |
                     # Attempt installing drupal-rector (should fail because it requires phpstan 0.12)
