@@ -1,0 +1,6 @@
+# Contains automatic fixes for some deprecations introduced in Drupal 8.8.
+services:
+  DrupalRector\Rector\Deprecation\PathAliasManagerServiceNameRector: ~
+  DrupalRector\Rector\Deprecation\PathAliasWhitelistServiceNameRector: ~
+  DrupalRector\Rector\Deprecation\PathSubscriberServiceNameRector: ~
+  DrupalRector\Rector\Deprecation\PathProcessorAliasServiceNameRector: ~
