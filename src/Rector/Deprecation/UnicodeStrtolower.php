@@ -15,7 +15,7 @@ use Rector\Core\RectorDefinition\RectorDefinition;
  */
 final class UnicodeStrtolower extends StaticToFunctionBase
 {
-    protected $deprecatedFullQualifiedClassName = 'Drupal\Component\Utility\Unicode';
+    protected $deprecatedFullyQualifiedClassName = 'Drupal\Component\Utility\Unicode';
 
     protected $deprecatedMethodName = 'strtolower';
 

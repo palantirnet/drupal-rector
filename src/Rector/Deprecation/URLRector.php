@@ -18,7 +18,7 @@ use Rector\Core\RectorDefinition\RectorDefinition;
  */
 final class URLRector extends StaticToServiceBase
 {
-    protected $deprecatedFullQualifiedClassName = 'Drupal';
+    protected $deprecatedFullyQualifiedClassName = 'Drupal';
 
     protected $deprecatedMethodName = 'url';
 

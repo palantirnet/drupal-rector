@@ -18,7 +18,7 @@ use Rector\Core\RectorDefinition\RectorDefinition;
  */
 final class DrupalLRector extends StaticToServiceBase
 {
-    protected $deprecatedFullQualifiedClassName = 'Drupal';
+    protected $deprecatedFullyQualifiedClassName = 'Drupal';
 
     protected $deprecatedMethodName = 'l';
 
