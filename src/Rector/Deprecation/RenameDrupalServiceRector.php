@@ -3,7 +3,6 @@
 namespace DrupalRector\Rector\Deprecation;
 
 use PhpParser\Node;
-use Rector\NodeTypeResolver\Node\AttributeKey;
 use Rector\Core\Rector\AbstractRector;
 use Rector\Core\RectorDefinition\CodeSample;
 use Rector\Core\RectorDefinition\RectorDefinition;
@@ -60,9 +59,10 @@ CODE_AFTER
 
     if ($node instanceof Node\Expr\StaticCall) {
       /** @var Node\Expr\StaticCall $node */
-      if ($node->name instanceof Node\Identifier && (string) $node->class === 'Drupal' && (string) $node->name === 'service') {
+      if ($this->getName($node->name) === 'service' && (string) $node->class === 'Drupal') {
         if ($node->args[0]->value instanceof Node\Scalar\String_) {
           $service = $node->args[0]->value->value;
+
           if ($new = $this->map[$service]) {
             return new Node\Expr\StaticCall(new Node\Name\FullyQualified('Drupal'), 'service', [new Node\Arg(new Node\Scalar\String_($new))]);
           }
