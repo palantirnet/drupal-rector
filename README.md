@@ -6,43 +6,37 @@ Automate fixing deprecated Drupal code.
 
 https://www.palantir.net/blog/jumpstart-your-drupal-9-upgrade-drupal-rector
 
-## Issues are managed on d.o
+## Issues are managed on drupal.org
 
 https://www.drupal.org/project/rector
 
 ## Installation
 
-Install the library inside a drupal project.
+### Install Drupal Rector inside a Drupal project.
 
 ```bash
 $ composer require --dev palantirnet/drupal-rector
 ```
 
-Create / copy / symlink a `rector.yml` file in the Drupal root.
+_If you have installation issues, you may need to upgrade `phpstan/phpstan` with Composer first._
+
+### Create a configuration file in your project
+
+You will need to have a `rector.yml` configuration in the root of your repository. This should sit beside your document root such as `web` or `docroot`.
+
+You can copy the file example `rector.yml` file from this repository.
+
+#### Edit the configuration file if needed
+
+If you are using `docroot` as your document root instead of `web`, you will need to edit the `rector.yml` file from this repository to point to `docroot` instead of `web` under `parameters.autoload_paths`.
 
 ```yml
-imports:
-  - { resource: "vendor/palantirnet/drupal-rector/config/drupal-8/drupal-8-all-deprecations.yml" }
-  # includes:
-  # - { resource: "vendor/palantirnet/drupal-rector/config/drupal-8/drupal-8.5-deprecations.yml" }
-  # - { resource: "vendor/palantirnet/drupal-rector/config/drupal-8/drupal-8.6-deprecations.yml" }
-  # - { resource: "vendor/palantirnet/drupal-rector/config/drupal-8/drupal-8.7-deprecations.yml" }
-
 parameters:
   autoload_paths:
     - 'web/core'
     - 'web/core/modules'
     - 'web/modules'
     - 'web/profiles'
-  file_extensions:
-    - module
-    - theme
-    - install
-    - profile
-    - inc
-    - engine
-
-services: ~
 ```
 
 # Suggested workflow
