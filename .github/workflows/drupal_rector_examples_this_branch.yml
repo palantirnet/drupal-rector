@@ -1,0 +1,54 @@
+name: drupal_rector_examples
+
+on:
+    pull_request: null
+    push: null
+#    push:
+#        branches:
+#            - master
+
+jobs:
+    drupal_rector_examples:
+        runs-on: ubuntu-latest
+        steps:
+
+            -
+                uses: actions/checkout@v2
+                with:
+                        ref: ${{ github.event.pull_request.head.ref }} # Solves the not "You are not currently on a branch" problem, see https://github.com/actions/checkout/issues/124#issuecomment-586664611
+                        token: ${{ secrets.ACCESS_TOKEN }} # Must be used to trigger workflow after push
+
+            -   name: Debugging with tmate
+                uses: mxschmitt/action-tmate@v2
+
+            -   uses: shivammathur/setup-php@v2
+                with:
+                    php-version: 7.3
+                    coverage: none # disable xdebug, pcov
+                    extensions: "intl"
+
+            # Run standalone install in non-root package, ref https://github.com/rectorphp/rector/issues/732
+            -   run: |
+                    # Download the latest Drupal core project and all its dependencies
+                    composer create-project drupal/recommended-project . --dev --no-progress
+
+            #-   run: |
+                    # Install drupal-rector
+            #        cd drupal
+            #        composer require palantirnet/drupal-rector:dev-master --no-progress
+
+            #-   run: |
+                    # Prepare rector config files with Drupal specific settings
+            #        cd drupal
+            #        cp vendor/palantirnet/drupal-rector/rector.yml .
+
+            -   run: |
+                    # Prepare rector_examples folder in the drupal modules directory
+            #        cd drupal
+                    mkdir -p web/modules/custom
+                    cp -r vendor/palantirnet/drupal-rector/rector_examples web/modules/custom/.
+
+            #-   run: |
+                    # Run Rector
+            #        cd drupal
+                    vendor/bin/rector process web/modules/custom/rector_examples
