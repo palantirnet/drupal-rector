@@ -5,7 +5,7 @@ namespace Drupal\rector_examples;
 /**
  * Example of static method calls from a class.
  */
-class URLStatic {
+class DrupalURLStatic {
 
   /**
    * A simple example using the minimum number of arguments.

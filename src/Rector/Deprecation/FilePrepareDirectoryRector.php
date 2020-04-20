@@ -2,7 +2,8 @@
 
 namespace DrupalRector\Rector\Deprecation;
 
-use Rector\RectorDefinition\CodeSample;
+use DrupalRector\Rector\Deprecation\Base\FunctionToServiceBase;
+use Rector\Core\RectorDefinition\CodeSample;
 use Rector\Core\RectorDefinition\RectorDefinition;
 
 /**

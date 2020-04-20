@@ -7,9 +7,9 @@ use Rector\Core\RectorDefinition\CodeSample;
 use Rector\Core\RectorDefinition\RectorDefinition;
 
 /**
- * Replaces deprecated drupal_render_root() calls.
+ * Replaces deprecated file_unmanaged_save_data() calls.
  *
- * See https://www.drupal.org/node/2912696 for change record.
+ * See https://www.drupal.org/node/3006851 for change record.
  *
  * What is covered:
  * - Static replacement
@@ -17,13 +17,13 @@ use Rector\Core\RectorDefinition\RectorDefinition;
  * Improvement opportunities
  * - Dependency injection
  */
-final class DrupalRenderRootRector extends FunctionToServiceBase
+final class FileUnmanagedSaveDataRector extends FunctionToServiceBase
 {
-    protected $deprecatedFunctionName = 'drupal_render_root';
+    protected $deprecatedFunctionName = 'file_unmanaged_save_data';
 
-    protected $serviceName = 'renderer';
+    protected $serviceName = 'file_system';
 
-    protected $serviceMethodName = 'renderRoot';
+    protected $serviceMethodName = 'saveData';
 
 
     /**
@@ -31,14 +31,14 @@ final class DrupalRenderRootRector extends FunctionToServiceBase
      */
     public function getDefinition(): RectorDefinition
     {
-        return new RectorDefinition('Fixes deprecated drupal_render_root() calls',[
+        return new RectorDefinition('Fixes deprecated file_unmanaged_save_data() calls',[
             new CodeSample(
               <<<'CODE_BEFORE'
-$result = drupal_render_root($elements);
+$result = file_unmanaged_save_data($data, $destination, $replace);
 CODE_BEFORE
               ,
               <<<'CODE_AFTER'
-$result = \Drupal::service('renderer')->renderRoot($elements);
+$result = \Drupal::service('file_system')->saveData($data, $destination, $replace);
 CODE_AFTER
             )
         ]);

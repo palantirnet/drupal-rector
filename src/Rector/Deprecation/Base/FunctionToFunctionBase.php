@@ -1,31 +1,24 @@
 <?php
 
-namespace DrupalRector\Rector\Deprecation;
+namespace DrupalRector\Rector\Deprecation\Base;
 
 use PhpParser\Node;
 use Rector\Core\Rector\AbstractRector;
 
 /**
- * Replaces deprecated static call with a function call.
+ * Replaces deprecated function call with a function call.
  *
  * What is covered:
  * - Static replacement
  */
-abstract class StaticToFunctionBase extends AbstractRector
+abstract class FunctionToFunctionBase extends AbstractRector
 {
     /**
-     * Deprecated fully qualified class name.
+     * Deprecated function name.
      *
      * @var string
      */
-    protected $deprecatedFullQualifiedClassName;
-
-    /**
-     * The deprecated function name.
-     *
-     * @var string
-     */
-    protected $deprecatedMethodName;
+    protected $deprecatedFunctionName;
 
     /**
      * The replacement function name.
@@ -40,7 +33,7 @@ abstract class StaticToFunctionBase extends AbstractRector
     public function getNodeTypes(): array
     {
         return [
-            Node\Expr\StaticCall::class,
+            Node\Expr\FuncCall::class,
         ];
     }
 
@@ -49,8 +42,8 @@ abstract class StaticToFunctionBase extends AbstractRector
      */
     public function refactor(Node $node): ?Node
     {
-        /** @var Node\Expr\StaticCall $node */
-        if ($this->getName($node->name) === $this->deprecatedMethodName && $this->getName($node->class) === $this->deprecatedFullQualifiedClassName) {
+      /** @var Node\Expr\FuncCall $node */
+      if ($this->getName($node->name) === $this->deprecatedFunctionName) {
 
           $method_name = new Node\Name($this->functionName);
 

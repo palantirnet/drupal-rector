@@ -73,7 +73,7 @@
     - UnitTestCaseGetMock.php
     - UnitTestCaseGetMockUpdated.php
 'Drupal::url()':
-  Rector: URLRector.php
+  Rector: DrupalURLRector.php
   PHPStan: 'Call to deprecated method url() of class Drupal. Deprecated in drupal:8.0.0 and is removed from drupal:9.0.0. Instead create a \Drupal\Core\Url object directly, for example using Url::fromRoute().'
   Examples:
     - url.php
@@ -137,3 +137,11 @@
     - DrupalRenderRootStaticUpdated.php
     - drupal_render_root.php
     - drupal_render_root_updated.php
+'file_unmanaged_save_data()':
+  Rector: FileUnmanagedSaveDataRector.php
+  PHPStan: 'Call to deprecated function file_unmanaged_save_data(). Deprecated in drupal:8.7.0 and is removed from drupal:9.0.0. Use Drupal\Core\File\FileSystemInterface::saveData().'
+  Examples:
+    - file_unmanaged_save_data.php
+    - file_unmanaged_save_data_updated.php
+    - FileUnmanagedSaveDataStatic.php
+    - FileUnmanagedSaveDataStaticUpdated.php
