@@ -2,13 +2,10 @@
 
 namespace DrupalRector\Rector\Deprecation;
 
-use PhpParser\Node;
-use Rector\Core\Rector\AbstractRector;
-use Rector\Core\RectorDefinition\CodeSample;
-use Rector\Core\RectorDefinition\RectorDefinition;
+use DrupalRector\Rector\Deprecation\Base\DrupalServiceRenameBase;
 
 /**
- * Renames deprecated Drupal::services('path.alias_manager') argument.
+ * Renames deprecated Drupal::services('path.alias_repository') argument.
  *
  * See https://www.drupal.org/node/3092086 for change record.
  *
