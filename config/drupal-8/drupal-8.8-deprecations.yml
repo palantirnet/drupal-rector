@@ -4,3 +4,4 @@ services:
   DrupalRector\Rector\Deprecation\PathAliasWhitelistServiceNameRector: ~
   DrupalRector\Rector\Deprecation\PathSubscriberServiceNameRector: ~
   DrupalRector\Rector\Deprecation\PathProcessorAliasServiceNameRector: ~
+  DrupalRector\Rector\Deprecation\PathAliasRepositoryRector: ~
