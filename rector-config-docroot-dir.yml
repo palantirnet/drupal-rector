@@ -9,10 +9,10 @@ imports:
 
 parameters:
   autoload_paths:
-    - 'web/core'
-    - 'web/core/modules'
-    - 'web/modules'
-    - 'web/profiles'
+    - 'docroot/core'
+    - 'docroot/core/modules'
+    - 'docroot/modules'
+    - 'docroot/profiles'
 
   file_extensions:
     - module

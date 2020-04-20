@@ -6,7 +6,7 @@ Automate fixing deprecated Drupal code.
 
 https://www.palantir.net/blog/jumpstart-your-drupal-9-upgrade-drupal-rector
 
-## Issues are managed on drupal.org
+## Issues are managed on [drupal.org](https://www.drupal.org/project/rector)
 
 https://www.drupal.org/project/rector
 
@@ -20,19 +20,29 @@ For contribution suggestions, please see the later section of this document.
 $ composer require --dev palantirnet/drupal-rector
 ```
 
-_If you have installation issues, you may need to upgrade `phpstan/phpstan` with Composer first._
-
 ### Create a configuration file in your project
 
 You will need to have a `rector.yml` configuration in the root of your repository. This should sit beside your document root such as `web` or `docroot`.
 
-You can copy the file example `rector.yml` file from this repository.
+This project provides starting files that should handle most use cases.
 
-#### Edit the configuration file if needed
+If your document root directory is `web`, you can copy the `rector-config-web-dir.yml`
 
-If you are using `docroot` as your document root instead of `web`, you will need to edit the `rector.yml` file from this repository to point to `docroot` instead of `web` under `parameters.autoload_paths`.
+```bash
+cp vendor/palantirnet/drupal-rector/rector-config-web-dir.yml rector.yml
+```
 
-```yml
+If your document root directory is `docroot`, you can copy the `rector-config-docroot-dir.yml`
+
+```bash
+cp vendor/palantirnet/drupal-rector/rector-config-docroot-dir.yml rector.yml
+```
+
+If your document root directory is something else you will need to manually copy and edit `rector.yml`.
+
+Replace the `web` in these paths with your document root.
+
+```
 parameters:
   autoload_paths:
     - 'web/core'
@@ -62,6 +72,24 @@ You can find more information about Rector [here](https://github.com/rectorphp/r
 We recommend using our `drupal-rector-sandbox` development environment [https://github.com/palantirnet/drupal-rector-sandbox](https://github.com/palantirnet/drupal-rector-sandbox)
 
 Alternatively, you can use your existing Drupal project and follow the instructions in [README](https://github.com/palantirnet/drupal-rector-sandbox/blob/master/README.md#developing-with-drupal-rector)
+
+## Troubleshooting
+
+### PhpStan composer issues
+
+You may need to upgrade `phpstan/phpstan` with Composer before installing this package.
+
+Rector itself has conflicts with older versions of PhpStan.
+
+### Unable to find Rector rule classes
+
+If you are getting errors like
+
+`[ERROR] Class "DrupalRector\Rector\Deprecation\EntityManagerRector" was not found while loading`
+
+You may need to rebuild your autoload file.
+
+`composer dump-autoload`
 
 ## Contribution Suggestions
 
