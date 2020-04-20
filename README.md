@@ -10,6 +10,8 @@ https://www.palantir.net/blog/jumpstart-your-drupal-9-upgrade-drupal-rector
 
 https://www.drupal.org/project/rector
 
+For contribution suggestions, please see the later section of this document.
+
 ## Installation
 
 ### Install Drupal Rector inside a Drupal project.
@@ -60,6 +62,31 @@ You can find more information about Rector [here](https://github.com/rectorphp/r
 We recommend using our `drupal-rector-sandbox` development environment [https://github.com/palantirnet/drupal-rector-sandbox](https://github.com/palantirnet/drupal-rector-sandbox)
 
 Alternatively, you can use your existing Drupal project and follow the instructions in [README](https://github.com/palantirnet/drupal-rector-sandbox/blob/master/README.md#developing-with-drupal-rector)
+
+## Contribution Suggestions
+
+Thanks for your interest in contributing!
+
+Our goal is to make contributing to this project easy for people. While we've made certain architectural decisions here to hopefully achieve that goal, it's a work in progress and feedback is appreciated.
+
+### Adding a Rector rule
+
+If you would like to submit a Rector rule, we are looking for the following:
+
+- A Rector rule class, see `/src/Rector/Deprecation` for existing rules
+- An example file or files that show(s) the before and after, see `/rector_examples`
+- An updated configuration file that registers the Rector rule, see `/config/drupal-8`
+- A listing in the index file, see `/deprecation-index.yml`
+
+The index file is used in part to provide automated updates to https://dev.acquia.com/drupal9/deprecation_status/errors which is a helpful way to track coverage. The `PHPStan` messages are listed there as well as in the change record comments throughout the Drupal codebase.
+
+### A few tips
+
+We would like one Rector rule per deprecation. Some deprecations include updating multiple things and those would be separate rules.
+
+To avoid duplication, we have created base classes for simple repeated patterns where possible. These end in `Base.php`. In many of these rules, you will extend the base class, define class properties, add a class comment, and define the definition.
+
+Rector supports passing parameters to rules and you can also define your rules in a variety of ways. To avoid confusion for new developers, we're trying to avoid these advanced features so that someone with limited familiarity with the tool can easily determine where things are located and what they are doing. If the copy & paste challenge isn't worth this trade-off, we can re-evaluate it as we go. Suggestions appreciated.
 
 ## Credits
 
