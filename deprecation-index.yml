@@ -137,3 +137,8 @@
     - DrupalRenderRootStaticUpdated.php
     - drupal_render_root.php
     - drupal_render_root_updated.php
+'file_unmanaged_copy()':
+  Rector: FileUnmanagedCopyRector.php
+  PHPStan: 'Call to deprecated function file_unmanaged_copy(). Deprecated in Drupal 8.7.0, will be removed before Drupal 9.0.0. Use \Drupal\Core\File\FileSystemInterface::copy().'
+  Examples:
+    - file_unmanaged_copy.php

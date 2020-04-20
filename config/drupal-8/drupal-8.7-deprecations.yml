@@ -2,4 +2,5 @@
 services:
   DrupalRector\Rector\Deprecation\FilePrepareDirectoryRector: ~
   DrupalRector\Rector\Deprecation\FileCreateDirectoryRector: ~
+  DrupalRector\Rector\Deprecation\FileUnmanagedCopyRector: ~
   DrupalRector\Rector\Deprecation\FileExistsReplaceRector: ~
