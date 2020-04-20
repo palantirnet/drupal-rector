@@ -1,9 +1,9 @@
 <?php
 
-namespace DrupalRector\Rector\Deprecation;
+namespace DrupalRector\Rector\Deprecation\Base;
 
 use PhpParser\Node;
-use Rector\Rector\AbstractRector;
+use Rector\Core\Rector\AbstractRector;
 
 /**
  * Base class for replacing deprecated db_*() calls.

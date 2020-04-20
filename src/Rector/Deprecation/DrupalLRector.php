@@ -2,8 +2,9 @@
 
 namespace DrupalRector\Rector\Deprecation;
 
-use Rector\RectorDefinition\CodeSample;
-use Rector\RectorDefinition\RectorDefinition;
+use DrupalRector\Rector\Deprecation\Base\StaticToServiceBase;
+use Rector\Core\RectorDefinition\CodeSample;
+use Rector\Core\RectorDefinition\RectorDefinition;
 
 /**
  * Replaces deprecated \Drupal::l() calls.
@@ -18,7 +19,7 @@ use Rector\RectorDefinition\RectorDefinition;
  */
 final class DrupalLRector extends StaticToServiceBase
 {
-    protected $deprecatedFullQualifiedClassName = 'Drupal';
+    protected $deprecatedFullyQualifiedClassName = 'Drupal';
 
     protected $deprecatedMethodName = 'l';
 

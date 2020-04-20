@@ -2,8 +2,9 @@
 
 namespace DrupalRector\Rector\Deprecation;
 
-use Rector\RectorDefinition\CodeSample;
-use Rector\RectorDefinition\RectorDefinition;
+use DrupalRector\Rector\Deprecation\Base\StaticToFunctionBase;
+use Rector\Core\RectorDefinition\CodeSample;
+use Rector\Core\RectorDefinition\RectorDefinition;
 
 /**
  * Replaces deprecated Unicode::strtolower() calls.
@@ -15,7 +16,7 @@ use Rector\RectorDefinition\RectorDefinition;
  */
 final class UnicodeStrtolower extends StaticToFunctionBase
 {
-    protected $deprecatedFullQualifiedClassName = 'Drupal\Component\Utility\Unicode';
+    protected $deprecatedFullyQualifiedClassName = 'Drupal\Component\Utility\Unicode';
 
     protected $deprecatedMethodName = 'strtolower';
 

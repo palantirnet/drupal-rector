@@ -2,8 +2,9 @@
 
 namespace DrupalRector\Rector\Deprecation;
 
-use Rector\RectorDefinition\CodeSample;
-use Rector\RectorDefinition\RectorDefinition;
+use DrupalRector\Rector\Deprecation\Base\ConstantToClassConstantBase;
+use Rector\Core\RectorDefinition\CodeSample;
+use Rector\Core\RectorDefinition\RectorDefinition;
 
 /**
  * Replaces deprecated FILE_CREATE_DIRECTORY constant use.

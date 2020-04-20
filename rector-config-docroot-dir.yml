@@ -9,10 +9,10 @@ imports:
 
 parameters:
   autoload_paths:
-    - 'web/core'
-    - 'web/core/modules'
-    - 'web/modules'
-    - 'web/profiles'
+    - 'docroot/core'
+    - 'docroot/core/modules'
+    - 'docroot/modules'
+    - 'docroot/profiles'
 
   file_extensions:
     - module
@@ -21,12 +21,5 @@ parameters:
     - profile
     - inc
     - engine
-
-  # Create `use` statements.
-  auto_import_names: true
-  # Do not convert `\Drupal` to `Drupal`, etc.
-  import_short_classes: false
-  # This will not import classes used in PHP DocBlocks, like in /** @var \Some\Class */
-  import_doc_blocks: false
 
 services: ~

@@ -22,11 +22,4 @@ parameters:
     - inc
     - engine
 
-  # Create `use` statements.
-  auto_import_names: true
-  # Do not convert `\Drupal` to `Drupal`, etc.
-  import_short_classes: false
-  # This will not import classes used in PHP DocBlocks, like in /** @var \Some\Class */
-  import_doc_blocks: false
-
 services: ~

@@ -1,9 +1,9 @@
 <?php
 
-namespace DrupalRector\Rector\Deprecation;
+namespace DrupalRector\Rector\Deprecation\Base;
 
 use PhpParser\Node;
-use Rector\Rector\AbstractRector;
+use Rector\Core\Rector\AbstractRector;
 
 /**
  * Replaces deprecated static call with service method call.
@@ -21,7 +21,7 @@ abstract class StaticToServiceBase extends AbstractRector
      *
      * @var string
      */
-    protected $deprecatedFullQualifiedClassName;
+    protected $deprecatedFullyQualifiedClassName;
 
     /**
      * The deprecated function name.
@@ -60,7 +60,7 @@ abstract class StaticToServiceBase extends AbstractRector
     public function refactor(Node $node): ?Node
     {
         /** @var Node\Expr\StaticCall $node */
-        if ($this->getName($node->name) === $this->deprecatedMethodName && $this->getName($node->class) === $this->deprecatedFullQualifiedClassName) {
+        if ($this->getName($node->name) === $this->deprecatedMethodName && $this->getName($node->class) === $this->deprecatedFullyQualifiedClassName) {
 
           // This creates a service call like `\Drupal::service('file_system').
           // TODO use dependency injection.
