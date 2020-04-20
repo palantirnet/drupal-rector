@@ -1,5 +1,6 @@
 <?php
 
+use Drupal\Core\File\FileSystemInterface;
 /**
  * This demonstrates the deprecated static calls that might be called from procedural code like `.module` files.
  */
@@ -18,7 +19,7 @@ function using_all_arguments() {
   $snippet = 'example';
   $destination = "public://test/test.txt";
 
-  \Drupal::service('file_system')->saveData($snippet, $destination, \Drupal\Core\File\FileSystemInterface::EXISTS_REPLACE);
+  \Drupal::service('file_system')->saveData($snippet, $destination, FileSystemInterface::EXISTS_REPLACE);
 }
 
 /**
@@ -27,7 +28,7 @@ function using_all_arguments() {
 function options_as_variable() {
   $snippet = 'example';
   $destination = "public://test/test.txt";
-  $options = \Drupal\Core\File\FileSystemInterface::EXISTS_REPLACE;
+  $options = FileSystemInterface::EXISTS_REPLACE;
 
   \Drupal::service('file_system')->saveData($snippet, $destination, $options);
 }

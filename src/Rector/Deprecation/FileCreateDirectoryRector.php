@@ -12,10 +12,10 @@ use Rector\Core\RectorDefinition\RectorDefinition;
  * No change record found.
  *
  * What is covered:
- * - Fully qualified class name replacement
+ * - See `ConstantToClassConstantBase.php`
  *
  * Improvement opportunities
- * - Add a use statement
+ *  - See `ConstantToClassConstantBase.php`
  */
 final class FileCreateDirectoryRector extends ConstantToClassConstantBase
 {

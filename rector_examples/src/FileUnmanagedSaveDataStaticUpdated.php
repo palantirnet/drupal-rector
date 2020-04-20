@@ -2,6 +2,7 @@
 
 namespace Drupal\rector_examples;
 
+use Drupal\Core\File\FileSystemInterface;
 /**
  * Example of static method calls from a class.
  */
@@ -21,7 +22,7 @@ class FileUnmanagedSaveDataStaticUpdated {
     $snippet = 'example';
     $destination = "public://test/test.txt";
 
-    \Drupal::service('file_system')->saveData($snippet, $destination, \Drupal\Core\File\FileSystemInterface::EXISTS_REPLACE);
+    \Drupal::service('file_system')->saveData($snippet, $destination, FileSystemInterface::EXISTS_REPLACE);
   }
 
   /**
@@ -30,7 +31,7 @@ class FileUnmanagedSaveDataStaticUpdated {
   public function options_as_variable() {
     $snippet = 'example';
     $destination = "public://test/test.txt";
-    $options = \Drupal\Core\File\FileSystemInterface::EXISTS_REPLACE;
+    $options = FileSystemInterface::EXISTS_REPLACE;
 
     \Drupal::service('file_system')->saveData($snippet, $destination, $options);
   }
