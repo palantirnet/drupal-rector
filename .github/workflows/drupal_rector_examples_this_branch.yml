@@ -42,7 +42,7 @@ jobs:
             #        cd drupal
             #        cp vendor/palantirnet/drupal-rector/rector.yml .
 
-            -   run: |
+            #-   run: |
                     # Prepare rector_examples folder in the drupal modules directory
             #        cd drupal
                     mkdir -p web/modules/custom
