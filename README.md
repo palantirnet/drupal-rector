@@ -22,19 +22,34 @@ $ composer require --dev palantirnet/drupal-rector
 
 ### Create a configuration file in your project
 
-A `rector.yml` file with drupal-specific configuration is needed.
+You will need to have a `rector.yml` configuration in the root of your repository. This should sit beside your document root such as `web` or `docroot`.
 
-If your document root directory is `web`, run this:
+This project provides starting files that should handle most use cases.
+
+If your document root directory is `web`, you can copy the `rector-config-web-dir.yml`
+
 ```bash
 cp vendor/palantirnet/drupal-rector/rector-config-web-dir.yml rector.yml
 ```
 
-If your document root directory is `docroot`, run this:
+If your document root directory is `docroot`, you can copy the `rector-config-docroot-dir.yml`
+
 ```bash
 cp vendor/palantirnet/drupal-rector/rector-config-docroot-dir.yml rector.yml
 ```
 
-(If your document root directory is something else you will need to manually edit `rector.yml`)
+If your document root directory is something else you will need to manually copy and edit `rector.yml`.
+
+Replace the `web` in these paths with your document root.
+
+```
+parameters:
+  autoload_paths:
+    - 'web/core'
+    - 'web/core/modules'
+    - 'web/modules'
+    - 'web/profiles'
+```
 
 # Suggested workflow
 
