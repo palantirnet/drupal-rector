@@ -106,15 +106,48 @@ If you would like to submit a Rector rule, we are looking for the following:
 - An updated configuration file that registers the Rector rule, see `/config/drupal-8`
 - A listing in the index file, see `/deprecation-index.yml`
 
-The index file is used in part to provide automated updates to https://dev.acquia.com/drupal9/deprecation_status/errors which is a helpful way to track coverage. The `PHPStan` messages are listed there as well as in the change record comments throughout the Drupal codebase.
+#### Create a Rector rule class
 
-### A few tips
+Rector rules should be named after the deprecation, including the class name.
+
+`Drupal::url()` -> `DrupalUrlRector.php`
+`drupal_set_message()` -> `DrupalSetMessageRector.php`
 
 We would like one Rector rule per deprecation. Some deprecations include updating multiple things and those would be separate rules.
 
-To avoid duplication, we have created base classes for simple repeated patterns where possible. These end in `Base.php`. In many of these rules, you will extend the base class, define class properties, add a class comment, and define the definition.
+To avoid duplication, we have created base classes for simple repeated patterns where possible. These end in `Base.php` and are located in `/src/Rector/Deprecation/Base`. In many of these rules, you will extend the base class, define class properties, add a class comment, and define the definition.
 
 Rector supports passing parameters to rules and you can also define your rules in a variety of ways. To avoid confusion for new developers, we're trying to avoid these advanced features so that someone with limited familiarity with the tool can easily determine where things are located and what they are doing. If the copy & paste challenge isn't worth this trade-off, we can re-evaluate it as we go. Suggestions appreciated.
+
+#### Create examples
+
+We are creating pairs of example files.
+
+These should be named the same thing as the deprecation. So, `DrupalUrlRector` has a `drupal_url.php` example. An example `drupal_url_updated.php` should also be created to show the updated code. You can run Drupal Rector on this file to show the update.
+
+Example
+
+`DrupalUrlRector` -> `drupal_url.php` and `drupal_url_updated`
+
+If you would like to show how the code is used in a class, you can add the class to the appropriate place in the `/rector_examples/src` or `/rector_examples/test` directories. Most of the examples in the example module are `services` in that they are stand alone classes.
+
+Since these classes can use static calls, dependency injection, or traits to get access to services, constants, etc, we have added more details to some class names. For example, `*Static` to indicate that the class is not using dependency injection.
+
+Example
+
+`DrupalUrlRector` -> `DrupalUrlStatic.php` and `DrupalUrlStaticUpdated.php`
+
+#### Create / Update a configuration file
+
+The configuration files in `/config/drupal-8` are broken down by Drupal minor versions.
+
+Add your Rector rule to the relevant file.
+
+The key is the fully qualified class name of the Rector rule. The key is the yaml null value `~`.
+
+#### Update the index file
+
+The index file is used in part to provide automated updates to https://dev.acquia.com/drupal9/deprecation_status/errors which is a helpful way to track coverage. The `PHPStan` messages are listed there as well as in the change record comments throughout the Drupal codebase.
 
 ## Credits
 

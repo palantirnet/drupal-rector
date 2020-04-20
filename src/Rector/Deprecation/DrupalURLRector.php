@@ -2,7 +2,8 @@
 
 namespace DrupalRector\Rector\Deprecation;
 
-use Rector\RectorDefinition\CodeSample;
+use DrupalRector\Rector\Deprecation\Base\StaticToServiceBase;
+use Rector\Core\RectorDefinition\CodeSample;
 use Rector\Core\RectorDefinition\RectorDefinition;
 
 /**
@@ -16,7 +17,7 @@ use Rector\Core\RectorDefinition\RectorDefinition;
  * Improvement opportunities
  * - Dependency injection
  */
-final class URLRector extends StaticToServiceBase
+final class DrupalURLRector extends StaticToServiceBase
 {
     protected $deprecatedFullyQualifiedClassName = 'Drupal';
 

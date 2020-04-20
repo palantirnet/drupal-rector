@@ -73,7 +73,7 @@
     - UnitTestCaseGetMock.php
     - UnitTestCaseGetMockUpdated.php
 'Drupal::url()':
-  Rector: URLRector.php
+  Rector: DrupalURLRector.php
   PHPStan: 'Call to deprecated method url() of class Drupal. Deprecated in drupal:8.0.0 and is removed from drupal:9.0.0. Instead create a \Drupal\Core\Url object directly, for example using Url::fromRoute().'
   Examples:
     - url.php

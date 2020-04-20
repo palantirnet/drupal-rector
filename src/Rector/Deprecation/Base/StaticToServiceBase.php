@@ -1,17 +1,20 @@
 <?php
 
-namespace DrupalRector\Rector\Deprecation;
+namespace DrupalRector\Rector\Deprecation\Base;
 
 use PhpParser\Node;
 use Rector\Core\Rector\AbstractRector;
 
 /**
- * Replaces deprecated static call with a function call.
+ * Replaces deprecated static call with service method call.
  *
  * What is covered:
  * - Static replacement
+ *
+ * Improvement opportunities
+ * - Dependency injection
  */
-abstract class StaticToFunctionBase extends AbstractRector
+abstract class StaticToServiceBase extends AbstractRector
 {
     /**
      * Deprecated fully qualified class name.
@@ -28,11 +31,18 @@ abstract class StaticToFunctionBase extends AbstractRector
     protected $deprecatedMethodName;
 
     /**
-     * The replacement function name.
+     * The replacement service name.
      *
      * @var string
      */
-    protected $functionName;
+    protected $serviceName;
+
+    /**
+     * The replacement service method.
+     *
+     * @var string
+     */
+    protected $serviceMethodName;
 
     /**
      * @inheritdoc
@@ -52,9 +62,13 @@ abstract class StaticToFunctionBase extends AbstractRector
         /** @var Node\Expr\StaticCall $node */
         if ($this->getName($node->name) === $this->deprecatedMethodName && $this->getName($node->class) === $this->deprecatedFullyQualifiedClassName) {
 
-          $method_name = new Node\Name($this->functionName);
+          // This creates a service call like `\Drupal::service('file_system').
+          // TODO use dependency injection.
+          $service = new Node\Expr\StaticCall(new Node\Name\FullyQualified('Drupal'), 'service', [new Node\Arg(new Node\Scalar\String_($this->serviceName))]);
 
-          $node = new Node\Expr\FuncCall($method_name, $node->args);
+          $method_name = new Node\Identifier($this->serviceMethodName);
+
+          $node = new Node\Expr\MethodCall($service, $method_name, $node->args);
 
           return $node;
         }
