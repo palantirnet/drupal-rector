@@ -18,7 +18,7 @@ abstract class StaticToFunctionBase extends AbstractRector
      *
      * @var string
      */
-    protected $deprecatedFullQualifiedClassName;
+    protected $deprecatedFullyQualifiedClassName;
 
     /**
      * The deprecated function name.
@@ -50,7 +50,7 @@ abstract class StaticToFunctionBase extends AbstractRector
     public function refactor(Node $node): ?Node
     {
         /** @var Node\Expr\StaticCall $node */
-        if ($this->getName($node->name) === $this->deprecatedMethodName && $this->getName($node->class) === $this->deprecatedFullQualifiedClassName) {
+        if ($this->getName($node->name) === $this->deprecatedMethodName && $this->getName($node->class) === $this->deprecatedFullyQualifiedClassName) {
 
           $method_name = new Node\Name($this->functionName);
 
