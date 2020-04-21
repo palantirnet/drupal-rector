@@ -24,6 +24,18 @@ jobs:
                     coverage: none # disable xdebug, pcov
                     extensions: "intl"
 
+            - name: Extract branch name
+              shell: bash
+              run: |
+                  if [[ -z "$GITHUB_HEAD_REF" ]]; then
+                    echo echo "::set-env name=BRANCH_NAME::$(echo ${GITHUB_REF}
+                  else
+                    echo echo "::set-env name=BRANCH_NAME::$(echo ${GITHUB_HEAD_REF}
+                  fi
+
+            - name: Test
+              run: echo "This branch name = ${BRANCH_NAME}"
+
             -   run: |
                     # Download the latest Drupal core project and all its dependencies
                     composer create-project drupal/recommended-project drupal --no-progress
