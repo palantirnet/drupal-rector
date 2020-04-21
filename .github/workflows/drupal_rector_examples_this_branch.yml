@@ -31,7 +31,8 @@ jobs:
             -   run: |
                     # Install drupal-rector from current repository & branch
                     cd drupal
-                    composer require ${GITHUB_REPOSITORY}:dev-${GITHUB_REF##*/} --no-progress
+                    composer config repositories.drupal-rector vcs https://github.com/${GITHUB_REPOSITORY}
+                    composer require palantirnet/drupal-rector:dev-${GITHUB_REF##*/} --no-progress
 
             -   run: |
                     # Prepare rector config files with Drupal specific settings
