@@ -4,7 +4,7 @@ namespace DrupalRector\Rector\Deprecation;
 
 use DrupalRector\Rector\Deprecation\Base\FunctionToServiceBase;
 use Rector\Core\RectorDefinition\CodeSample;
-use Rector\ThisShouldBreakTheTest\RectorDefinition\RectorDefinition;
+use Rector\Core\RectorDefinition\RectorDefinition;
 
 /**
  * Replaces deprecated file_unmanaged_save_data() calls.
