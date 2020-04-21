@@ -26,7 +26,9 @@ jobs:
 
             - name: Extract branch name
               shell: bash
+              # https://help.github.com/en/actions/configuring-and-managing-workflows/using-environment-variables
               run: |
+                  # set BRANCH_NAME variable
                   if [[ -z "$GITHUB_HEAD_REF" ]]; then
                     echo echo "::set-env name=BRANCH_NAME::$(echo ${GITHUB_REF}
                   else
@@ -44,7 +46,7 @@ jobs:
                     # Install drupal-rector from current repository & branch
                     cd drupal
                     composer config repositories.drupal-rector vcs https://github.com/${GITHUB_REPOSITORY}
-                    composer require palantirnet/drupal-rector:dev-${GITHUB_REF##*/} --no-progress
+                    composer require palantirnet/drupal-rector:dev-${BRANCH_NAME} --no-progress
 
             -   run: |
                     # Prepare rector config files with Drupal specific settings
