@@ -1,4 +1,4 @@
-name: drupal_rector_examples
+name: drupal_rector_examples_this_branch
 
 on:
     pull_request: null
@@ -8,7 +8,7 @@ on:
 #            - master
 
 jobs:
-    drupal_rector_examples:
+    drupal_rector_examples_this_branch:
         runs-on: ubuntu-latest
         steps:
 
