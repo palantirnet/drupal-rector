@@ -1,19 +1,13 @@
-name: drupal_rector_examples_this_branch
+name: drupal_rector_examples_as_local_package
 
 on:
-    pull_request: null
-    push:
-        branches:
-            - master
+    [push, pull_request]
 
 jobs:
-    drupal_rector_examples_this_branch:
+    drupal_rector_examples_as_local_package:
         runs-on: ubuntu-latest
         steps:
-
-            -
-                uses: actions/checkout@v2
-
+            -   uses: actions/checkout@v2
             -   uses: shivammathur/setup-php@v2
                 with:
                     php-version: 7.3
