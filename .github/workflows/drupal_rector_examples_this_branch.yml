@@ -20,20 +20,6 @@ jobs:
                     coverage: none # disable xdebug, pcov
                     extensions: "intl"
 
-            - name: Extract branch name
-              shell: bash
-              # https://help.github.com/en/actions/configuring-and-managing-workflows/using-environment-variables
-              run: |
-                  # set BRANCH_NAME variable
-                  if [[ -z "$GITHUB_HEAD_REF" ]]; then
-                    echo "::set-env name=BRANCH_NAME::$(echo ${GITHUB_REF})"
-                  else
-                    echo "::set-env name=BRANCH_NAME::$(echo ${GITHUB_HEAD_REF})"
-                  fi
-
-            - name: Test
-              run: echo "This branch name = ${BRANCH_NAME}"
-
 #           Uncomment to enable SSH access to Github Actions - https://github.com/marketplace/actions/debugging-with-tmate#getting-started
 #            - name: Debugging with tmate
 #              uses: mxschmitt/action-tmate@v2
