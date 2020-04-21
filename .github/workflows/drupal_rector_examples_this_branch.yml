@@ -30,9 +30,9 @@ jobs:
               run: |
                   # set BRANCH_NAME variable
                   if [[ -z "$GITHUB_HEAD_REF" ]]; then
-                    echo echo "::set-env name=BRANCH_NAME::$(echo ${GITHUB_REF}
+                    echo "::set-env name=BRANCH_NAME::$(echo ${GITHUB_REF}
                   else
-                    echo echo "::set-env name=BRANCH_NAME::$(echo ${GITHUB_HEAD_REF}
+                    echo "::set-env name=BRANCH_NAME::$(echo ${GITHUB_HEAD_REF}
                   fi
 
             - name: Test
