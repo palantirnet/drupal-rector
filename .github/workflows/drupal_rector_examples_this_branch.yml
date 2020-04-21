@@ -43,10 +43,10 @@ jobs:
                     composer create-project drupal/recommended-project drupal --no-progress
 
             -   run: |
-                    # Install drupal-rector from current repository & branch
+                    # Install drupal-rector using current github-actions directory (allow testing for both forks and main repo)
                     cd drupal
-                    composer config repositories.drupal-rector vcs https://github.com/${GITHUB_REPOSITORY}
-                    composer require palantirnet/drupal-rector:dev-${BRANCH_NAME} --no-progress
+                    composer config repositories.drupal-rector '{"type": "path", "url": "../.", "options": {"symlink": true}}'
+                    composer require palantirnet/drupal-rector:@dev --prefer-source --no-progress
 
             -   run: |
                     # Prepare rector config files with Drupal specific settings
