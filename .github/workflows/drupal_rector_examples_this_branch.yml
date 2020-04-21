@@ -11,10 +11,6 @@ jobs:
         runs-on: ubuntu-latest
         steps:
 
-#           Uncomment to enable SSH access to Github Actions - https://github.com/marketplace/actions/debugging-with-tmate#getting-started
-            -   name: Debugging with tmate
-                uses: mxschmitt/action-tmate@v2
-
             -
                 uses: actions/checkout@v2
 
@@ -37,6 +33,10 @@ jobs:
 
             - name: Test
               run: echo "This branch name = ${BRANCH_NAME}"
+
+#           Uncomment to enable SSH access to Github Actions - https://github.com/marketplace/actions/debugging-with-tmate#getting-started
+            -   name: Debugging with tmate
+            uses: mxschmitt/action-tmate@v2
 
             -   run: |
                     # Download the latest Drupal core project and all its dependencies
