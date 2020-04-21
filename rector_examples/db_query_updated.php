@@ -1,5 +1,6 @@
 <?php
 
+use Drupal\core\Database\Database;
 /**
  * This demonstrates the updated deprecated static calls that might be called from procedural code like `.module` files.
  */
@@ -22,7 +23,7 @@ function placeholder() {
  * An example using arguments and options.
  */
 function arguments_and_options() {
-  \Drupal\core\Database\Database::getConnection('my_non_default_database')->query('select * from user where name="%test"', ['%test'=>'Adam'], ['fetch' => \PDO::FETCH_OBJ, 'return' => Database::RETURN_STATEMENT, 'throw_exception' => TRUE, 'allow_delimiter_in_query' => FALSE]);
+  Database::getConnection('my_non_default_database')->query('select * from user where name="%test"', ['%test'=>'Adam'], ['fetch' => \PDO::FETCH_OBJ, 'return' => Database::RETURN_STATEMENT, 'throw_exception' => TRUE, 'allow_delimiter_in_query' => FALSE]);
 }
 
 /**

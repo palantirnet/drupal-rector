@@ -12,10 +12,10 @@ use Rector\Core\RectorDefinition\RectorDefinition;
  * See https://www.drupal.org/node/3006851 for change record.
  *
  * What is covered:
- * - Fully qualified class name replacement
+ * - See `ConstantToClassConstantBase.php`
  *
  * Improvement opportunities
- * - Add a use statement
+ *  - See `ConstantToClassConstantBase.php`
  */
 final class FileExistsReplaceRector extends ConstantToClassConstantBase
 {

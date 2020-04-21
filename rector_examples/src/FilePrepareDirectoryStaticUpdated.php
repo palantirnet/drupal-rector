@@ -2,6 +2,7 @@
 
 namespace Drupal\rector_examples;
 
+use Drupal\Core\File\FileSystemInterface;
 /**
  * Example of static method calls from a class.
  */
@@ -22,7 +23,7 @@ class FilePrepareDirectoryStaticUpdated {
   public function using_all_arguments() {
     $directory = '/test/directory';
 
-    \Drupal::service('file_system')->prepareDirectory($directory, \Drupal\Core\File\FileSystemInterface::CREATE_DIRECTORY);
+    \Drupal::service('file_system')->prepareDirectory($directory, FileSystemInterface::CREATE_DIRECTORY);
   }
 
   /**
@@ -31,7 +32,7 @@ class FilePrepareDirectoryStaticUpdated {
   public function options_as_variable() {
     $directory = '/test/directory';
 
-    $options = \Drupal\Core\File\FileSystemInterface::CREATE_DIRECTORY;
+    $options = FileSystemInterface::CREATE_DIRECTORY;
 
     \Drupal::service('file_system')->prepareDirectory($directory, $options);
   }

@@ -10,7 +10,7 @@ use \Drupal\Core\File\FileSystemInterface;
  * A simple example.
  */
 function simple_example() {
-  $x = \Drupal\Core\File\FileSystemInterface::CREATE_DIRECTORY;
+  $x = FileSystemInterface::CREATE_DIRECTORY;
 }
 
 /**

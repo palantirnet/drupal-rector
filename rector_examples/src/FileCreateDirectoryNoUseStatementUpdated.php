@@ -13,7 +13,7 @@ class FileCreateDirectoryNoUseStatementUpdated {
    * A simple example.
    */
   public function simple_example() {
-    $x = \Drupal\Core\File\FileSystemInterface::CREATE_DIRECTORY;
+    $x = FileSystemInterface::CREATE_DIRECTORY;
   }
 
   /**
