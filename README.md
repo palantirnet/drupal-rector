@@ -102,7 +102,7 @@ Our goal is to make contributing to this project easy for people. While we've ma
 If you would like to submit a Rector rule, we are looking for the following:
 
 - A Rector rule class, see `/src/Rector/Deprecation` for existing rules
-- An example file or files that show(s) the before and after, see `/rector_examples`
+- An example file or files that show(s) the before and after, see `/rector_examples` and `/rector_examples_updated`
 - An updated configuration file that registers the Rector rule, see `/config/drupal-8`
 - A listing in the index file, see `/deprecation-index.yml`
 
@@ -123,11 +123,11 @@ Rector supports passing parameters to rules and you can also define your rules i
 
 We are creating pairs of example files.
 
-These should be named the same thing as the deprecation. So, `DrupalUrlRector` has a `drupal_url.php` example. An example `drupal_url_updated.php` should also be created to show the updated code. You can run Drupal Rector on this file to show the update.
+These should be named the same thing as the deprecation. So, `DrupalUrlRector` has a `rector_examples/drupal_url.php` example. An example `rector_examples_updated/drupal_url.php` should also be created to show the updated code. You can run Drupal Rector on this file to show the update.
 
 Example
 
-`DrupalUrlRector` -> `drupal_url.php` and `drupal_url_updated`
+`DrupalUrlRector` -> `rector_examples/drupal_url.php` and `rector_examples_updated/drupal_url`
 
 If you would like to show how the code is used in a class, you can add the class to the appropriate place in the `/rector_examples/src` or `/rector_examples/test` directories. Most of the examples in the example module are `services` in that they are stand alone classes.
 
@@ -135,7 +135,7 @@ Since these classes can use static calls, dependency injection, or traits to get
 
 Example
 
-`DrupalUrlRector` -> `DrupalUrlStatic.php` and `DrupalUrlStaticUpdated.php`
+`DrupalUrlRector` -> `rector_examples/src/DrupalUrlStatic.php` and `rector_examples_updated/src/DrupalUrlStatic.php`
 
 #### Create / Update a configuration file
 
