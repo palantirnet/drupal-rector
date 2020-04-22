@@ -9,3 +9,6 @@
 # Other ignored paths and files.
 /vendor
 /composer.lock
+
+/features/tmp/*
+!/features/tmp/.placeholder
