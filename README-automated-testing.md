@@ -26,7 +26,7 @@ The tests are located in `features` with a simple `/features/bootstrap/FeatureCo
 
 ### Setup
 
-To run the Behat tests, you will need the setup mentioned above. See `.github/workflows/drupal_rector_examples_as_local_package.yml` for an example of how this is done.
+To run the Behat tests, you will need the setup mentioned above. See `.github/workflows/local_package.yml` for an example of how this is done.
 
 Then run `composer install` to install Behat in this repository's `vendor` directory.
 
@@ -34,6 +34,6 @@ To run tests, run `vendor/bin/behat`.
 
 ### Adding tests
 
-Tests should be pretty simple. Copy `features/drupal_url.feature` as a starting point and reference two files in the `rector_examples` module.
+Tests should be pretty simple. Copy `features/drupal_url.feature` as a starting point and reference a pair of files in the `rector_examples` and `rector_examples_updated` directories.
 
-The Behat tests make a copy of the file we are going to test, so you don't have to worry about overwriting files in the `rector_examples` directory.
+The Behat tests make a copy of the file we are going to test, so you don't have to worry about overwriting files in those directories.
