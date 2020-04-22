@@ -23,27 +23,28 @@ jobs:
             -   run: |
                     # Download the latest Drupal core project and all its dependencies
                     composer create-project drupal/recommended-project ../drupal --no-progress
+                    mv ../drupal/* ..
 
             -   run: |
                     # Install drupal-rector using current github-actions directory (allow testing for both forks and main repo)
-                    cd ../drupal
-                    composer config repositories.drupal-rector '{"type": "path", "url": "../drupal-rector", "options": {"symlink": true}}'
+                    cd ..
+                    composer config repositories.drupal-rector '{"type": "path", "url": "drupal-rector", "options": {"symlink": true}}'
                     composer require palantirnet/drupal-rector:@dev --prefer-source --no-progress
 
             -   run: |
                     # Prepare rector config files with Drupal specific settings
-                    cd ../drupal
+                    cd ..
                     cp vendor/palantirnet/drupal-rector/rector.yml .
 
             -   run: |
                     # Prepare rector_examples folder in the drupal modules directory
-                    cd ../drupal
+                    cd ..
                     mkdir -p web/modules/custom
                     cp -r vendor/palantirnet/drupal-rector/rector_examples web/modules/custom/.
 
             -   run: |
                     # Run Rector
-                    cd ../drupal
+                    cd ..
                     vendor/bin/rector process web/modules/custom/rector_examples
 
     functional_tests:
@@ -61,25 +62,26 @@ jobs:
             -   run: |
                     # Download the latest Drupal core project and all its dependencies
                     composer create-project drupal/recommended-project ../drupal --no-progress
+                    mv ../drupal/* ..
 
             # This is copied from above, because Github artifacts are REALLY slow.
             -   run: |
                     # Install drupal-rector using current github-actions directory (allow testing for both forks and main repo)
-                    cd ../drupal
-                    composer config repositories.drupal-rector '{"type": "path", "url": "../drupal-rector", "options": {"symlink": true}}'
+                    cd ..
+                    composer config repositories.drupal-rector '{"type": "path", "url": "drupal-rector", "options": {"symlink": true}}'
                     composer require palantirnet/drupal-rector:@dev --prefer-source --no-progress
 
             # This is copied from above, because Github artifacts are REALLY slow.
             -   run: |
                     # Prepare rector config files with Drupal specific settings
-                    cd ../drupal
+                    cd ..
                     cp vendor/palantirnet/drupal-rector/rector.yml .
 
             -   run: |
                     # Install local packages, including Behat
                     composer install
 
-            -  uses: mxschmitt/action-tmate@v2
+#            -  uses: mxschmitt/action-tmate@v2
             
             -   run: |
                     # Run Behat
