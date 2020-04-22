@@ -1,5 +1,6 @@
 name: drupal_rector_examples_as_local_package
 
+# This test will run on every pull request, and on every commit on any branch
 on:
     [push, pull_request]
 
