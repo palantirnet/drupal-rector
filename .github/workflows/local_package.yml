@@ -1,8 +1,8 @@
 name: local_package
 
-# This test will run on every pull request, and on every commit on any branch
+# This test will run on every commit on any branch
 on:
-    [push, pull_request]
+    push: null
 
 jobs:
     run_rector_on_rector_examples_module:
@@ -77,11 +77,19 @@ jobs:
                     cd ..
                     cp vendor/palantirnet/drupal-rector/rector.yml .
 
+            # This is copied from above, because Github artifacts are REALLY slow.
+            # This seems needed for the autoloading to work.
+            - run: |
+                    # Prepare rector_examples folder in the drupal modules directory
+                    cd ..
+                    mkdir -p web/modules/custom
+                    cp -r vendor/palantirnet/drupal-rector/rector_examples web/modules/custom/.
+
             -   run: |
                     # Install local packages, including Behat
                     composer install
 
-            -  uses: mxschmitt/action-tmate@v2
+#            -  uses: mxschmitt/action-tmate@v2
             
             -   run: |
                     # Run Behat
