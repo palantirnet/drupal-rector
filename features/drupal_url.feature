@@ -7,10 +7,10 @@ Feature: Drupal::url()
     Given I create a test file from "rector_examples/drupal_url.php"
     When I run Drupal Rector on the test file
     And I examine the test file
-    Then the test file matches "rector_examples/drupal_url_updated.php"
+    Then the test file matches "rector_examples_updated/drupal_url.php"
 
   Scenario: Verify class file is updated as expected.
     Given I create a test file from "rector_examples/src/DrupalURLStatic.php"
     When I run Drupal Rector on the test file
     And I examine the test file
-    Then the test file matches "rector_examples/src/DrupalURLStaticUpdated.php"
+    Then the test file matches "rector_examples_updated/src/DrupalURLStatic.php"
