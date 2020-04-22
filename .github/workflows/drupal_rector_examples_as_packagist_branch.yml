@@ -1,5 +1,6 @@
-name: drupal_rector_examples
+name: drupal_rector_examples_as_packagist_branch
 
+# This test will run on every pull request, and on every commit that is pushed to master
 on:
     pull_request: null
     push:
@@ -7,7 +8,7 @@ on:
             - master
 
 jobs:
-    drupal_rector_examples:
+    drupal_rector_examples_as_packagist_branch:
         runs-on: ubuntu-latest
         steps:
             -   uses: actions/checkout@v2
@@ -17,10 +18,13 @@ jobs:
                     coverage: none # disable xdebug, pcov
                     extensions: "intl"
 
-            # Run standalone install in non-root package, ref https://github.com/rectorphp/rector/issues/732
+#           Uncomment to enable SSH access to Github Actions - https://github.com/marketplace/actions/debugging-with-tmate#getting-started
+#            - name: Debugging with tmate
+#              uses: mxschmitt/action-tmate@v2
+
             -   run: |
                     # Download the latest Drupal core project and all its dependencies
-                    composer create-project drupal/recommended-project drupal --dev --no-progress
+                    composer create-project drupal/recommended-project drupal --no-progress
 
             -   run: |
                     # Install drupal-rector
