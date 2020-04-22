@@ -5,8 +5,8 @@ on:
     [push, pull_request]
 
 jobs:
-    create_drupal_artifact:
-        name: Create a Drupal artifact
+    run_rector_on_rector_examples_module:
+        name: Run Drupal Rector
         runs-on: ubuntu-latest
         steps:
             -   uses: actions/checkout@v2
@@ -41,15 +41,13 @@ jobs:
                     mkdir -p web/modules/custom
                     cp -r vendor/palantirnet/drupal-rector/rector_examples web/modules/custom/.
 
-            -   name: Upload Drupal code
-                uses: actions/upload-artifact@v1
-                with:
-                    name: drupal-artifact
-                    path: ../drupal
+            -   run: |
+                    # Run Rector
+                    cd ../drupal
+                    vendor/bin/rector process web/modules/custom/rector_examples
 
-    run_rector_on_rector_examples_module:
-        name: Run Drupal Rector on rector_examples module
-        needs: create_drupal_artifact
+    functional_tests:
+        name: Run functional tests using Behat
         runs-on: ubuntu-latest
         steps:
             - uses: actions/checkout@v2
@@ -59,37 +57,28 @@ jobs:
                   coverage: none # disable xdebug, pcov
                   extensions: "intl"
 
-            - name: Download Drupal artifact
-              uses: actions/download-artifact@v1
-              with:
-                  name: drupal-artifact
+            # This is copied from above, because Github artifacts are REALLY slow.
+            -   run: |
+                    # Download the latest Drupal core project and all its dependencies
+                    composer create-project drupal/recommended-project ../drupal --no-progress
 
-            - run: |
-                # Run Rector
-                cd ../drupal
-                vendor/bin/rector process web/modules/custom/rector_examples
+            # This is copied from above, because Github artifacts are REALLY slow.
+            -   run: |
+                    # Install drupal-rector using current github-actions directory (allow testing for both forks and main repo)
+                    cd ../drupal
+                    composer config repositories.drupal-rector '{"type": "path", "url": "../drupal-rector", "options": {"symlink": true}}'
+                    composer require palantirnet/drupal-rector:@dev --prefer-source --no-progress
 
-    functional_tests:
-        name: Run functional tests using Behat
-        needs: create_drupal_artifact
-        runs-on: ubuntu-latest
-        steps:
-            - uses: actions/checkout@v2
-            - uses: shivammathur/setup-php@v2
-              with:
-                php-version: 7.3
-                coverage: none # disable xdebug, pcov
-                extensions: "intl"
+            # This is copied from above, because Github artifacts are REALLY slow.
+            -   run: |
+                    # Prepare rector config files with Drupal specific settings
+                    cd ../drupal
+                    cp vendor/palantirnet/drupal-rector/rector.yml .
 
-            - name: Download Drupal artifact
-              uses: actions/download-artifact@v1
-              with:
-                  name: drupal-artifact
+            -   run: |
+                    # Install local packages, including Behat
+                    composer install
 
-            - run: |
-                # Install local packages, including Behat
-                composer install
-
-            - run: |
-                # Run Behat
-                vendor/bin/behat
+            -   run: |
+                    # Run Behat
+                    vendor/bin/behat
