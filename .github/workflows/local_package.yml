@@ -1,11 +1,12 @@
-name: drupal_rector_examples_as_local_package
+name: local_package
 
 # This test will run on every pull request, and on every commit on any branch
 on:
     [push, pull_request]
 
 jobs:
-    install_and_run_drupal_rector:
+    create_drupal_artifact:
+        name: Create a Drupal artifact
         runs-on: ubuntu-latest
         steps:
             -   uses: actions/checkout@v2
@@ -40,12 +41,15 @@ jobs:
                     mkdir -p web/modules/custom
                     cp -r vendor/palantirnet/drupal-rector/rector_examples web/modules/custom/.
 
-            -   run: |
-                    # Run Rector
-                    cd ../drupal
-                    vendor/bin/rector process web/modules/custom/rector_examples
+            -   name: Upload Drupal code
+                uses: actions/upload-artifact@v1
+                with:
+                    name: drupal-artifact
+                    path: ../drupal
 
-    functional_tests:
+    run_rector_on_rector_examples_module:
+        name: Run Drupal Rector on rector_examples module
+        needs: create_drupal_artifact
         runs-on: ubuntu-latest
         steps:
             - uses: actions/checkout@v2
@@ -55,23 +59,32 @@ jobs:
                   coverage: none # disable xdebug, pcov
                   extensions: "intl"
 
-            # Copied from above.
-            - run: |
-                # Download the latest Drupal core project and all its dependencies
-                composer create-project drupal/recommended-project ../drupal --no-progress
+            - name: Download Drupal artifact
+              uses: actions/download-artifact@v1
+              with:
+                  name: drupal-artifact
 
-            # Copied from above.
             - run: |
-                # Install drupal-rector using current github-actions directory (allow testing for both forks and main repo)
+                # Run Rector
                 cd ../drupal
-                composer config repositories.drupal-rector '{"type": "path", "url": "../drupal-rector", "options": {"symlink": true}}'
-                composer require palantirnet/drupal-rector:@dev --prefer-source --no-progress
+                vendor/bin/rector process web/modules/custom/rector_examples
 
-            # Copied from above.
-            - run: |
-                # Prepare rector config files with Drupal specific settings
-                cd ../drupal
-                cp vendor/palantirnet/drupal-rector/rector.yml .
+    functional_tests:
+        name: Run functional tests using Behat
+        needs: create_drupal_artifact
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v2
+            - uses: shivammathur/setup-php@v2
+              with:
+                php-version: 7.3
+                coverage: none # disable xdebug, pcov
+                extensions: "intl"
+
+            - name: Download Drupal artifact
+              uses: actions/download-artifact@v1
+              with:
+                  name: drupal-artifact
 
             - run: |
                 # Install local packages, including Behat
