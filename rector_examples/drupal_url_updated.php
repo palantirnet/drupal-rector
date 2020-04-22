@@ -1,7 +1,7 @@
 <?php
 
 /**
- * This demonstrates the updated deprecated static calls that might be called from procedural code like `.module` files.
+ * This demonstrates the deprecated static calls that might be called from procedural code like `.module` files.
  */
 
 /**

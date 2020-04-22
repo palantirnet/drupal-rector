@@ -1,0 +1,39 @@
+# Automated testing
+
+## Installation test
+
+Github Workflow is used to test that this package can be installed. See `.github`.
+
+## Rector automated functional tests using Behat
+
+Behat (the Php version of Cucumber) is used to run automated tests.
+
+These tests assume that this repository is installed as a local composer package. This is necessary, because we need a full Drupal site to run the Rector tests.
+
+Example setup:
+```
+# This repository
+/drupal-rector
+# Drupal
+/web/core
+/web/index.php
+# A Composer vendor directory
+/vendor/bin/rector
+...
+```
+
+The tests are located in `features` with a simple `/features/bootstrap/FeatureContext.php` context file which handles running Rector and comparing files.
+
+### Setup
+
+To run the Behat tests, you will need the setup mentioned above. See `.github/workflows/drupal_rector_examples_as_local_package.yml` for an example of how this is done.
+
+Then run `composer install` to install Behat in this repository's `vendor` directory.
+
+To run tests, run `vendor/bin/behat`.
+
+### Adding tests
+
+Tests should be pretty simple. Copy `features/drupal_url.feature` as a starting point and reference two files in the `rector_examples` module.
+
+The Behat tests make a copy of the file we are going to test, so you don't have to worry about overwriting files in the `rector_examples` directory.
