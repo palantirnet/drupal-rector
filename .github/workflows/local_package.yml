@@ -80,8 +80,6 @@ jobs:
             -   run: |
                     # Install local packages, including Behat
                     composer install
-
-            -  uses: mxschmitt/action-tmate@v2
             
             -   run: |
                     # Run Behat
