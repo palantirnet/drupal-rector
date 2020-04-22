@@ -96,9 +96,9 @@ class FeatureContext implements Context {
     if ($this->testFile !== $expected_updated_file) {
       throw new Exception('The test file did not match the expected updated file.' . PHP_EOL
         . 'Expected:' . PHP_EOL
-        . $this->testFile . PHP_EOL
-        . 'Actual:' . PHP_EOL
         . $expected_updated_file . PHP_EOL
+        . 'Actual:' . PHP_EOL
+        . $this->testFile . PHP_EOL
       );
     }
   }
