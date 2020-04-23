@@ -105,7 +105,13 @@ class FeatureContext implements Context {
     // Using Linux / MacOS commands, because they are simple and work well.
     $output = NULL;
     $return_value = NULL;
-    exec("diff -ru $path $this->temporaryFolderPath/$this->testPath", $output, $return_value);
+    /*
+     * -r: recursive
+     * -u: show the joined context, like git diff
+     * -b: ignore whitespace
+     * -B: ignore lines that are only whitespace
+     */
+    exec("diff -rubB $path $this->temporaryFolderPath/$this->testPath", $output, $return_value);
 
     if ($return_value !== 0) {
       throw new Exception('The test does not match.' . PHP_EOL . PHP_EOL
