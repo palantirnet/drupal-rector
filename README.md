@@ -105,7 +105,6 @@ If you would like to submit a Rector rule, we are looking for the following:
 - An example file or files that show(s) the before and after, see `/rector_examples` and `/rector_examples_updated`
 - An updated configuration file that registers the Rector rule, see `/config/drupal-8`
 - A listing in the index file, see `/deprecation-index.yml`
-- An automated Behat functional test
 
 #### Create a Rector rule class
 
@@ -149,12 +148,6 @@ The key is the fully qualified class name of the Rector rule. The key is the yam
 #### Update the index file
 
 The index file is used in part to provide automated updates to https://dev.acquia.com/drupal9/deprecation_status/errors which is a helpful way to track coverage. The `PHPStan` messages are listed there as well as in the change record comments throughout the Drupal codebase.
-
-#### Create an automated Behat functional test
-
-For more information on testing, see [README-automated-testing.md](README-automated-testing.md).
-
-You can copy the example feature, `features/drupal_url.feature` and provide the example files you created above.
 
 ## Credits
 
