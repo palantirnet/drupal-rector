@@ -1,4 +1,4 @@
-# Rector for Drupal
+# Drupal Rector
 
 Automate fixing deprecated Drupal code.
 
