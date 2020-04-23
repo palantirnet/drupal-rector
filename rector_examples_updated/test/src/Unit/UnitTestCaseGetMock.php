@@ -11,13 +11,13 @@ class UnitTestCaseGetMock extends UnitTestCase {
    * A simple example using the class property.
    */
   public function simple_example() {
-    $this->entityTypeManager = $this->getMock(EntityTypeManagerInterface::class);
+    $this->entityTypeManager = $this->createMock(EntityTypeManagerInterface::class);
   }
 
   /**
    * A simple example using a string directly.
    */
   public function class_name_as_string() {
-    $this->entityTypeManager = $this->getMock('Drupal\Core\Entity\EntityTypeManagerInterface');
+    $this->entityTypeManager = $this->createMock('Drupal\Core\Entity\EntityTypeManagerInterface');
   }
 }

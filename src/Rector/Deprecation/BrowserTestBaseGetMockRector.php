@@ -16,7 +16,7 @@ use Rector\Core\RectorDefinition\RectorDefinition;
  */
 final class BrowserTestBaseGetMockRector extends GetMockBase
 {
-    protected $baseClassBeingExtended = 'BrowserTestBase';
+    protected $baseClassBeingExtended = 'Drupal\Tests\BrowserTestBase';
 
     /**
      * @inheritdoc

@@ -15,7 +15,7 @@ class EntityManagerController extends ControllerBase {
    * @return null
    */
   public function simple_example() {
-    $entity_manager = $this->entityManager();
+    $entity_manager = $this->entityTypeManager();
 
     return NULL;
   }
@@ -26,7 +26,7 @@ class EntityManagerController extends ControllerBase {
    * @return null
    */
   public function method_on_service() {
-    $definitions = $this->entityManager()->getDefinitions();
+    $definitions = \Drupal::service('entity_type.manager')->getDefinitions();
 
     return NULL;
   }
@@ -41,7 +41,7 @@ class EntityManagerController extends ControllerBase {
   public function method_not_in_entityTypeManager() {
     $group = FALSE;
 
-    $entity_manager = $this->entityManager()->getEntityTypeLabels($group);
+    $entity_manager = \Drupal::service('entity_type.repository')->getEntityTypeLabels($group);
 
     return NULL;
   }
@@ -54,7 +54,7 @@ class EntityManagerController extends ControllerBase {
    * @return null
    */
   public function stored_service_and_method_not_in_entityTypeManager() {
-    $entity_manager = $this->entityManager();
+    $entity_manager = $this->entityTypeManager();
 
     $group = FALSE;
     $class_name = 'MyClass';
