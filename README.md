@@ -2,6 +2,12 @@
 
 Automate fixing deprecated Drupal code.
 
+## Status
+
+![local_package_functional_tests](https://github.com/palantirnet/drupal-rector/workflows/local_package_functional_tests/badge.svg)
+![local_package_run_rector](https://github.com/palantirnet/drupal-rector/workflows/local_package_run_rector/badge.svg)
+![packagist_package_run_rector](https://github.com/palantirnet/drupal-rector/workflows/packagist_package_run_rector/badge.svg)
+
 ## Introduction
 
 https://www.palantir.net/blog/jumpstart-your-drupal-9-upgrade-drupal-rector
