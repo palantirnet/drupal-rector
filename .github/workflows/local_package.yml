@@ -86,6 +86,11 @@ jobs:
                     cp -r vendor/palantirnet/drupal-rector/rector_examples web/modules/custom/.
 
             -   run: |
+                    # Install phpunit/phpunit on the Drupal site since it's needed for some of our examples.
+                    cd ..
+                    composer require phpunit/phpunit:~7.5
+
+            -   run: |
                     # Install local packages, including Behat
                     composer install
 
