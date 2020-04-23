@@ -80,7 +80,9 @@ CODE_AFTER
     if ($node instanceof Node\Expr\MethodCall && $this->getName($node->name) === "entityManager") {
       $class_name = $node->getAttribute(AttributeKey::CLASS_NAME);
 
-      if ($class_name && isset($node->getAttribute('classNode')->extends->parts) && in_array('ControllerBase', $node->getAttribute('classNode')->extends->parts)) {
+      $parent_class = $node->getAttribute(AttributeKey::PARENT_CLASS_NAME);
+
+      if (!is_null($class_name) && !is_null($parent_class) && $parent_class === 'Drupal\Core\Controller\ControllerBase') {
         // If we call a method on `entityManager`, we need to check that method and we can call the correct service that the method uses.
         $next_node = $node->getAttribute('nextNode');
 

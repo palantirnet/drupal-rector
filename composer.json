@@ -44,5 +44,8 @@
         "drupal8-rector/drupal8-rector": "*"
     },
     "minimum-stability": "dev",
-    "prefer-stable": true
+    "prefer-stable": true,
+    "require-dev": {
+        "behat/behat": "^3.6"
+    }
 }
