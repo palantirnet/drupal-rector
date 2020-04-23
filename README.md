@@ -133,7 +133,7 @@ These should be named the same thing as the deprecation. So, `DrupalUrlRector` h
 
 Example
 
-`DrupalUrlRector` -> `rector_examples/drupal_url.php` and `rector_examples_updated/drupal_url`
+`DrupalUrlRector` -> `rector_examples/drupal_url.php` and `rector_examples_updated/drupal_url.php`
 
 If you would like to show how the code is used in a class, you can add the class to the appropriate place in the `/rector_examples/src` or `/rector_examples/test` directories. Most of the examples in the example module are `services` in that they are stand alone classes.
 
