@@ -8,16 +8,14 @@
  * A simple example using the minimum number of arguments.
  */
 function simple_example() {
-  db_delete('user');
+  \Drupal::database()->delete('user');
 }
 
 /**
  * An example using options.
  */
 function options() {
-  db_delete('user', [
-    'target' => 'my_non_default_database',
-  ]);
+  \Drupal\core\Database\Database::getConnection('my_non_default_database')->delete('user', []);
 }
 
 /**
@@ -30,5 +28,5 @@ function table_and_options_as_variables() {
     'target' => 'my_non_default_database',
   ];
 
-  db_delete($table, $options);
+  \Drupal::database()->delete($table, $options);
 }
