@@ -1,8 +1,8 @@
 name: local_package_run_rector
 
-# This test will run on every commit on any branch
+# This test will run on every pull request, and on every commit on any branch
 on:
-    push: null
+        [push, pull_request]
 
 jobs:
     run_rector_on_rector_examples_module:
