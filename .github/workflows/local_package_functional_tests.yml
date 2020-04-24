@@ -1,8 +1,8 @@
 name: local_package_functional_tests
 
-# This test will run on every commit on any branch
+# This test will run on every pull request, and on every commit on any branch
 on:
-    push: null
+        [push, pull_request]
 
 jobs:
     functional_tests:
