@@ -1,8 +1,10 @@
 name: drupal_rector_examples
 
-# This test will run on every pull request, and on every commit on any branch
 on:
-    [push, pull_request]
+    pull_request: null
+    push:
+        branches:
+            - master
 
 jobs:
     drupal_rector_examples:
