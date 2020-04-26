@@ -28,8 +28,10 @@ jobs:
                     composer create-project drupal/recommended-project drupal --no-progress
 
             -   run: |
-                    # Install drupal-rector
+                    # Install drupal-rector:dev-master from Github
                     cd drupal
+                    # Set composer to get code from Github repo instead of Packagist (master does not exist on Packagist)
+                    composer config repositories.drupal-rector '{"type": "vcs", "url": "https://github.com/palantirnet/drupal-rector.git"}'
                     composer require palantirnet/drupal-rector:dev-master --no-progress
 
             -   run: |
