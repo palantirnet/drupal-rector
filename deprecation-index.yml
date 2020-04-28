@@ -85,6 +85,12 @@
   Examples:
     - file_exists_replace.php
     - FileExistsReplaceNoUseStatement.php
+'FILE_MODIFY_PERMISSIONS':
+  Rector: FileModifyPermissionsRector.php
+  PHPStan: 'Call to deprecated constant FILE_MODIFY_PERMISSIONS: Deprecated in drupal:8.7.0 and is removed from drupal:9.0.0. Use Drupal\Core\File\FileSystemInterface::FILE_MODIFY_PERMISSIONS.'
+  Examples:
+    - file_modify_permissions.php
+    - FileModifyPermissionsNoUseStatement.php
 'Drupal::l()':
   Rector: DrupalLRector.php
   PHPStan: 'Call to deprecated method l() of class Drupal. Deprecated in drupal:8.0.0 and is removed from drupal:9.0.0. Use Drupal\Core\Link::fromTextAndUrl() instead.'
