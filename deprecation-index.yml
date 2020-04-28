@@ -34,6 +34,12 @@
   Examples:
     - db_query.php
     - DBQueryStatic.php
+'db_delete':
+  Rector: DBDeleteRector.php
+  PHPStan: 'Call to deprecated function db_delete(). Deprecated in drupal:8.0.0 and is removed from drupal:9.0.0. Instead, get a database connection injected into your service from the container and call delete() on it. For example,'
+  Examples:
+    - db_delete.php
+    - DBDeleteStatic.php
 'file_prepare_directory()':
   Rector: FilePrepareDirectoryRector.php
   PHPStan: 'Call to deprecated function file_prepare_directory(). Deprecated in drupal:8.7.0 and is removed from drupal:9.0.0. Use Drupal\Core\File\FileSystemInterface::prepareDirectory().'
