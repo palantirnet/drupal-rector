@@ -11,7 +11,7 @@ class EntityGetDisplayStatic {
    * A simple example using the minimum number of arguments.
    */
   public function simple_example() {
-    $form_display = entity_get_display('node', 'page', 'default');
+    $view_display = entity_get_display('node', 'page', 'default');
   }
 
   /**
@@ -20,9 +20,9 @@ class EntityGetDisplayStatic {
   public function arguments_as_variables() {
     $entity_type = 'node';
     $bundle = 'page';
-    $form_mode = 'default';
+    $view_mode = 'default';
 
-    $form_display = $form_display = entity_get_display($entity_type, $bundle, $form_mode);
+    $view_display = entity_get_display($entity_type, $bundle, $view_mode);
   }
 
 }

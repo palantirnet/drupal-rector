@@ -8,7 +8,7 @@
  * A simple example using the minimum number of arguments.
  */
 function simple_example() {
-  $form_display = \Drupal::service('entity_display.repository')->getViewDisplay('node', 'page', 'default');
+  $view_display = \Drupal::service('entity_display.repository')->getViewDisplay('node', 'page', 'default');
 }
 
 /**
@@ -17,7 +17,7 @@ function simple_example() {
 function arguments_as_variables() {
   $entity_type = 'node';
   $bundle = 'page';
-  $form_mode = 'default';
+  $view_mode = 'default';
 
-  $form_display = $form_display = \Drupal::service('entity_display.repository')->getViewDisplay($entity_type, $bundle, $form_mode);
+  $view_display = \Drupal::service('entity_display.repository')->getViewDisplay($entity_type, $bundle, $view_mode);
 }

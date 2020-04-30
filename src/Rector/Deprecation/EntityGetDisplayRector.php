@@ -34,12 +34,12 @@ final class EntityGetDisplayRector extends FunctionToServiceBase
         return new RectorDefinition('Fixes deprecated entity_get_display() calls',[
             new CodeSample(
               <<<'CODE_BEFORE'
-$display = entity_get_display($entity_type, $bundle, $form_mode)
+$display = entity_get_display($entity_type, $bundle, $view_mode)
 CODE_BEFORE
               ,
               <<<'CODE_AFTER'
 $display = \Drupal::service('entity_display.repository')
-    ->getViewDisplay($entity_type, $bundle, $form_mode);
+    ->getViewDisplay($entity_type, $bundle, $view_mode);
 CODE_AFTER
             )
         ]);
