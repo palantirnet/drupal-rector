@@ -121,3 +121,9 @@
   Examples:
     - file_unmanaged_save_data.php
     - FileUnmanagedSaveDataStatic.php
+'entity_get_display':
+  Rector: EntityGetDisplayRector.php
+  PHPStan: 'Call to deprecated function entity_get_display(). Deprecated in drupal:8.8.0 and is removed from drupal:9.0.0. Use Drupal::service(''entity_display.repository'')->getViewDisplay().'
+  Examples:
+    - entity_get_display.php
+    - EntityGetDisplayStatic.php
