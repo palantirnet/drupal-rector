@@ -19,5 +19,5 @@ function arguments_as_variables() {
   $bundle = 'page';
   $form_mode = 'default';
 
-  $form_display = $form_display = entity_get_form_display($entity_type, $bundle, $form_mode);
+  $form_display = entity_get_form_display($entity_type, $bundle, $form_mode);
 }

@@ -22,7 +22,7 @@ class EntityGetFormDisplayStatic {
     $bundle = 'page';
     $form_mode = 'default';
 
-    $form_display = $form_display = \Drupal::service('entity_display.repository')->getFormDisplay($entity_type, $bundle, $form_mode);
+    $form_display = \Drupal::service('entity_display.repository')->getFormDisplay($entity_type, $bundle, $form_mode);
   }
 
 }
