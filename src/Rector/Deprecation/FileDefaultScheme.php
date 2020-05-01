@@ -22,7 +22,7 @@ final class FileDefaultScheme extends FunctionToImmutableConfigBase
      */
     public function getDefinition(): RectorDefinition
     {
-        return new RectorDefinition('Fixes deprecated \Drupal::l() calls',[
+        return new RectorDefinition('Fixes deprecated file_default_scheme calls',[
             new CodeSample(
                 <<<'CODE_BEFORE'
 $file_default_scheme = file_default_scheme();
