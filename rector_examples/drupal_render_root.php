@@ -13,14 +13,3 @@ function simple_example() {
   ];
   drupal_render_root($elements);
 }
-
-/**
- * An example using all of the arguments.
- */
-function using_all_arguments() {
-  $is_recursive_call = FALSE;
-  $elements = [
-    '#markup' => '<div>hello world</div>',
-  ];
-  drupal_render_root($elements, $is_recursive_call);
-}
