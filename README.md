@@ -10,7 +10,29 @@ Automate fixing deprecated Drupal code.
 
 ## Introduction
 
+You can read more details in the following blog post:
+
 https://www.palantir.net/blog/jumpstart-your-drupal-9-upgrade-drupal-rector
+
+## Scope and limitations
+
+The development of this tool is prioritized by the percieved impact of the deprecations and updates. There are many deprecations that often involve several components and for each of these there are several ways to address the deprecation.
+
+We've tried to determine impact based on:
+- The use of the deprecated functionality in the contributed modules on Drupal.org
+- If there are simple to develop ways to fix the deprecation
+
+So, high impact (the code works in newer versions of Drupal for a large number of people), low effort (we can develop the rule based on our knowledge of Rector).
+
+### Common limitations
+
+Known limitations are listed in the comment documentation for each rule.
+
+Common limitations include:
+- Using static calls like `Drupal->service('my_service')->myMethod();` rather than injecting the service into the class
+- Skipping complex use cases, such as when optional arguments are passed as variables
+
+Our hope is that as we learn more about Rector, we may be able to update these rules to add these features.
 
 ## Issues are managed on [drupal.org](https://www.drupal.org/project/rector)
 
