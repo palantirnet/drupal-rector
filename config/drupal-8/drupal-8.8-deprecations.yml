@@ -6,3 +6,5 @@ services:
   DrupalRector\Rector\Deprecation\PathProcessorAliasServiceNameRector: ~
   DrupalRector\Rector\Deprecation\PathAliasRepositoryRector: ~
   DrupalRector\Rector\Deprecation\FileDefaultScheme: ~
+  DrupalRector\Rector\Deprecation\EntityGetDisplayRector: ~
+  DrupalRector\Rector\Deprecation\EntityGetFormDisplayRector: ~
