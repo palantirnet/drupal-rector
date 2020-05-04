@@ -121,6 +121,11 @@
   Examples:
     - file_unmanaged_save_data.php
     - FileUnmanagedSaveDataStatic.php
+'REQUEST_TIME':
+    Rector: RequestTimeConst.php
+    PHPStan: 'Call to deprecated const REQUEST_TIME. Deprecated in drupal:8.3.0 and is removed from drupal:10.0.0. Use \Drupal::time()->getRequestTime().'
+    Examples:
+        - request_time_const.php
 'entity_get_display':
   Rector: EntityGetDisplayRector.php
   PHPStan: 'Call to deprecated function entity_get_display(). Deprecated in drupal:8.8.0 and is removed from drupal:9.0.0. Use Drupal::service(''entity_display.repository'')->getViewDisplay().'
