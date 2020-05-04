@@ -87,13 +87,13 @@
     - FileCreateDirectoryNoUseStatement.php
 'FILE_EXISTS_REPLACE':
   Rector: FileExistsReplaceRector.php
-  PHPStan: 'Call to deprecated constant FILE_EXISTS_REPLACE: Deprecated in drupal:8.7.0 and is removed from drupal:9.0.0. Use Drupal\Core\File\FileSystemInterface::FILE_EXISTS_REPLACE.'
+  PHPStan: 'Call to deprecated constant FILE_EXISTS_REPLACE: Deprecated in drupal:8.7.0 and is removed from drupal:9.0.0. Use Drupal\Core\File\FileSystemInterface::EXISTS_REPLACE.'
   Examples:
     - file_exists_replace.php
     - FileExistsReplaceNoUseStatement.php
 'FILE_MODIFY_PERMISSIONS':
   Rector: FileModifyPermissionsRector.php
-  PHPStan: 'Call to deprecated constant FILE_MODIFY_PERMISSIONS: Deprecated in drupal:8.7.0 and is removed from drupal:9.0.0. Use Drupal\Core\File\FileSystemInterface::FILE_MODIFY_PERMISSIONS.'
+  PHPStan: 'Call to deprecated constant FILE_MODIFY_PERMISSIONS: Deprecated in drupal:8.7.0 and is removed from drupal:9.0.0. Use Drupal\Core\File\FileSystemInterface::MODIFY_PERMISSIONS.'
   Examples:
     - file_modify_permissions.php
     - FileModifyPermissionsNoUseStatement.php
@@ -111,7 +111,7 @@
     - drupal_render.php
 'drupal_render_root()':
   Rector: DrupalRenderRootRector.php
-  PHPStan: 'Call to deprecated function drupal_render_root(). Deprecated in drupal:8.0.0 and is removed from drupal:9.0.0. Use Drupal​\​Core​\​Render​\​RendererInterface::renderRoot() instead.'
+  PHPStan: 'Call to deprecated function drupal_render_root(). Deprecated in drupal:8.0.0 and is removed from drupal:9.0.0. Use Drupal\Core\Render\RendererInterface::renderRoot() instead.'
   Examples:
     - DrupalRenderRootStatic.php
     - drupal_render_root.php
