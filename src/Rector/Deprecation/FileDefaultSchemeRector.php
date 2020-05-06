@@ -11,7 +11,7 @@ use Rector\Core\RectorDefinition\RectorDefinition;
  *
  * @see https://www.drupal.org/node/3049030 for change record.
  */
-final class FileDefaultScheme extends FunctionToImmutableConfigBase
+final class FileDefaultSchemeRector extends FunctionToImmutableConfigBase
 {
     protected $deprecatedFunctionName = 'file_default_scheme';
 

@@ -14,7 +14,7 @@ use Rector\Core\RectorDefinition\RectorDefinition;
  * What is covered:
  * - Static replacement
  */
-final class UnicodeStrtolower extends StaticToFunctionBase
+final class UnicodeStrtolowerRector extends StaticToFunctionBase
 {
     protected $deprecatedFullyQualifiedClassName = 'Drupal\Component\Utility\Unicode';
 

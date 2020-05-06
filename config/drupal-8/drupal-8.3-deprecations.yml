@@ -1,4 +1,4 @@
 # Contains automatic fixes for some deprecations introduced in Drupal 8.3.
 services:
-  DrupalRector\Rector\Deprecation\RequestTimeConst: ~
+  DrupalRector\Rector\Deprecation\RequestTimeConstRector: ~
 

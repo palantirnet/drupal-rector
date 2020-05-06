@@ -9,7 +9,7 @@ use Rector\Core\Rector\AbstractRector;
 use Rector\Core\RectorDefinition\CodeSample;
 use Rector\Core\RectorDefinition\RectorDefinition;
 
-class RequestTimeConst extends AbstractRector
+class RequestTimeConstRector extends AbstractRector
 {
     protected $deprecatedConstant = 'REQUEST_TIME';
 
