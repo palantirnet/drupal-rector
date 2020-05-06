@@ -40,6 +40,12 @@
   Examples:
     - db_delete.php
     - DBDeleteStatic.php
+'db_update':
+  Rector: DBUpdateRector.php
+  PHPStan: 'Call to deprecated function db_update(). Deprecated in drupal:8.0.0 and is removed from drupal:9.0.0. Instead, get a database connection injected into your service from the container and call update() on it. For example,'
+  Examples:
+    - db_update.php
+    - DBUpdateStatic.php
 'file_prepare_directory()':
   Rector: FilePrepareDirectoryRector.php
   PHPStan: 'Call to deprecated function file_prepare_directory(). Deprecated in drupal:8.7.0 and is removed from drupal:9.0.0. Use Drupal\Core\File\FileSystemInterface::prepareDirectory().'
