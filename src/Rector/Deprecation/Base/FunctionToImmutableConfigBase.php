@@ -9,7 +9,7 @@ use Rector\Core\Rector\AbstractRector;
 /**
  * Replace deprecated function calls with a static config.factory service call to get an immutable configuration.
  *
- * @see \DrupalRector\Rector\Deprecation\FileDefaultScheme for an example.
+ * @see \DrupalRector\Rector\Deprecation\FileDefaultSchemeRector for an example.
  *
  * What is covered:
  *  - Static replacement
