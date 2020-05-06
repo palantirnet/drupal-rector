@@ -7,12 +7,42 @@ use Rector\Core\Rector\AbstractRector;
 
 
 /**
- * Replace deprecated function calls with a wrapped config.factory service call to get an immutable configuration.
+ * Replace deprecated function calls with a static config.factory service call to get an immutable configuration.
  *
  * @see \DrupalRector\Rector\Deprecation\FileDefaultScheme for an example.
+ *
+ * What is covered:
+ *  - Static replacement
  */
 abstract class FunctionToImmutableConfigBase extends AbstractRector
 {
+    /**
+     * Deprecated function name.
+     *
+     * Example: file_default_scheme
+     *
+     * @var string
+     */
+    protected $deprecatedFunctionName = '';
+
+    /**
+     * The name of the configuration object. The name corresponds to a configuration file.
+     *
+     * Example: system.file.
+     *
+     * @var string
+     */
+    protected $configObject = '';
+
+    /**
+     * A string that maps to a key within the configuration data.
+     *
+     * Example: default_scheme
+     *
+     * @var string
+     */
+    protected $configName = '';
+
     /**
      * @inheritDoc
      */

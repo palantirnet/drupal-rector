@@ -14,7 +14,9 @@ use Rector\Core\RectorDefinition\RectorDefinition;
 final class FileDefaultScheme extends FunctionToImmutableConfigBase
 {
     protected $deprecatedFunctionName = 'file_default_scheme';
+
     protected $configObject = 'system.file';
+
     protected $configName = 'default_scheme';
 
     /**
