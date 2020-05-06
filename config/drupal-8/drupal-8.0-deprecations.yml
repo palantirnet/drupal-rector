@@ -11,4 +11,4 @@ services:
   DrupalRector\Rector\Deprecation\DrupalURLRector: ~
   DrupalRector\Rector\Deprecation\FormatDateRector: ~
   DrupalRector\Rector\Deprecation\DrupalLRector: ~
-
+  DrupalRector\Rector\Deprecation\EntityInterfaceUrlInfoRector: ~

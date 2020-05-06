@@ -150,3 +150,9 @@
   Examples:
     - file_default_scheme.php
     - FileDefaultSchemeStatic.php
+'EntityInterface:urlInfo()':
+  Rector: EntityInterfaceUrlInfoRector.php
+  PHPStan: 'Call to deprecated method urlInfo() of class Drupal​\​Core​\​Entity​\​EntityInterface. Deprecated in drupal:8.0.0 and is removed from drupal:9.0.0. Use Drupal​\​Core​\​Entity​\​EntityInterface::toUrl() instead.'
+  Examples:
+    - entity_interface_url_info.php
+    - EntityInterfaceUrlInfoStatic.php
