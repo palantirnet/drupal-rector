@@ -5,11 +5,8 @@
  */
 
 /**
- * A simple example using the minimum number of arguments.
+ * A simple example.
  */
 function simple_example() {
-  $elements = [
-    '#markup' => '<div>hello world</div>',
-  ];
-  drupal_render_root($elements);
+  $request_time = \Drupal::time()->getRequestTime();
 }

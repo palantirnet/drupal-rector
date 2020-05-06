@@ -1,6 +1,7 @@
 # General ruleset for Drupal 8.
 imports:
     - { resource: "./drupal-8.0-deprecations.yml" }
+    - { resource: "./drupal-8.3-deprecations.yml" }
     - { resource: "./drupal-8.4-deprecations.yml" }
     - { resource: "./drupal-8.5-deprecations.yml" }
     - { resource: "./drupal-8.6-deprecations.yml" }
