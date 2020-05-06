@@ -2,8 +2,7 @@
 
 namespace DrupalRector\Rector\Deprecation;
 
-use PhpParser\Node;
-use Rector\Core\Rector\AbstractRector;
+use DrupalRector\Rector\Deprecation\Base\MethodToMethodBase;
 use Rector\Core\RectorDefinition\RectorDefinition;
 
 /**
@@ -12,13 +11,18 @@ use Rector\Core\RectorDefinition\RectorDefinition;
  * See https://www.drupal.org/node/2614344 for change record.
  *
  * What is covered:
- * - Checks the class being extended.
+ * - See MethodToMethodBase.php
  *
  * Improvement opportunities:
- * - Check that the class is an entity.
+ * - See MethodToMethodBase.php
  */
-final class EntityInterfaceUrlInfoRector extends AbstractRector
+final class EntityInterfaceUrlInfoRector extends MethodToMethodBase
 {
+    protected $deprecatedMethodName = 'urlInfo';
+
+    protected $methodName = 'toUrl';
+
+    protected $className = 'Drupal\Core\Entity\EntityInterface';
 
     /**
      * @inheritdoc
@@ -36,32 +40,5 @@ $url = $entity->toUrl();
 CODE_AFTER
         )
       ]);
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function getNodeTypes(): array
-    {
-        return [
-            Node\Expr\MethodCall::class,
-        ];
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function refactor(Node $node): ?Node
-    {
-        /** @var Node\Expr\MethodCall $node */
-        // TODO: Check the class to see if it implements EntityInterface.
-        // I could not find any other methods called urlInfo in core and I'm not sure if there is a simple way to evaluate the class of the calling variable.
-        if ($this->getName($node->name) === 'urlInfo') {
-            $node->name = new Node\Name('toUrl');
-
-            return $node;
-        }
-
-        return null;
     }
 }
