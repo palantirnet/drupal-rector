@@ -119,6 +119,22 @@ You may need to rebuild your autoload file.
 
 `composer dump-autoload`
 
+### Iconv error when running Rector in Alpine Docker
+
+If you are getting errors like 
+
+`iconv(): Wrong charset, conversion from UTF-8 to ASCII//TRANSLIT//IGNORE is not allowed`
+
+You can fix it in Dockerfile with
+
+```
+# fix work iconv library with alphine
+RUN apk add --no-cache --repository http://dl-cdn.alpinelinux.org/alpine/edge/community/ --allow-untrusted gnu-libiconv
+ENV LD_PRELOAD /usr/lib/preloadable_libiconv.so php
+```
+
+Credits to @zolotov88 in https://github.com/nunomaduro/phpinsights/issues/43#issuecomment-498108857
+
 ## Contribution Suggestions
 
 Thanks for your interest in contributing!
