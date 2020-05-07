@@ -2,11 +2,12 @@
 
 namespace DrupalRector\Rector\Deprecation;
 
-use Rector\RectorDefinition\CodeSample;
-use Rector\RectorDefinition\RectorDefinition;
+use DrupalRector\Rector\Deprecation\Base\FunctionToServiceBase;
+use Rector\Core\RectorDefinition\CodeSample;
+use Rector\Core\RectorDefinition\RectorDefinition;
 
 /**
-     * Replaces deprecated file_scan_directory() calls.
+ * Replaces deprecated file_scan_directory() calls.
  *
  * See https://www.drupal.org/node/3038437 for change record.
  *
@@ -14,7 +15,8 @@ use Rector\RectorDefinition\RectorDefinition;
  * - Static replacement
  *
  * Improvement opportunities
- * - Dependency injection
+ * - Dependency injection\
+ * - Include if statement wrapper to check if our parameter is a directory.
  */
 final class FileScanDirectoryRector extends FunctionToServiceBase
 {
@@ -32,14 +34,12 @@ final class FileScanDirectoryRector extends FunctionToServiceBase
     {
         return new RectorDefinition('Fixes deprecated file_scan_directory() calls',[
             new CodeSample(
-                <<<'CODE_BEFORE'
+              <<<'CODE_BEFORE'
 $files = file_scan_directory($directory);
 CODE_BEFORE
-                ,
-                <<<'CODE_AFTER'
-if (is_dir($directory)) {
-  $files = \Drupal::service('file_system')->scanDirectory($directory);
-}
+              ,
+              <<<'CODE_AFTER'
+$files = \Drupal::service('file_system')->scanDirectory($directory);
 CODE_AFTER
             )
         ]);

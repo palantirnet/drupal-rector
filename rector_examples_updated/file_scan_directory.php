@@ -10,7 +10,7 @@
 function simple_example() {
   $directory = '/test/directory';
 
-  file_scan_directory($directory);
+  \Drupal::service('file_system')->scanDirectory($directory);
 }
 
 /**
@@ -25,5 +25,5 @@ function using_all_arguments() {
     'key' => 'uri',
     'min_depth' => 0,
   ];
-  file_scan_directory($directory, $mask, $options);
+  \Drupal::service('file_system')->scanDirectory($directory, $mask, $options);
 }

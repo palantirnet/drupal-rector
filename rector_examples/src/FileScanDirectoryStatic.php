@@ -13,7 +13,7 @@ class FileScanDirectoryStatic {
   public function simple_example() {
     $directory = '/test/directory';
 
-    \Drupal::service('file_system')->scanDirectory($directory);
+    file_scan_directory($directory);
   }
 
   /**
@@ -28,7 +28,7 @@ class FileScanDirectoryStatic {
       'key' => 'uri',
       'min_depth' => 0,
     ];
-    \Drupal::service('file_system')->scanDirectory($directory, $mask, $options);
+    file_scan_directory($directory, $mask, $options);
   }
 
 }
