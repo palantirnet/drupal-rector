@@ -65,7 +65,7 @@
       - BrowserTestBaseGetMock.php
 'KernelTestBase::getMock()':
   Rector: KernelTestBaseGetMock.php
-  PHPStan: 'Call to deprecated method getMock() of class Drupal\Tests\UnitTestCase. Deprecated in drupal:8.5.0 and is removed from drupal:9.0.0. Use Drupal\Tests\PhpunitCompatibilityTrait::createMock() instead.'
+  PHPStan: 'Call to deprecated method getMock() of class Drupal\KernelTests\KernelTestBase. Deprecated in drupal:8.5.0 and is removed from drupal:9.0.0. Use Drupal\Tests\PhpunitCompatibilityTrait::createMock() instead.'
   Examples:
     - KernelTestBaseGetMock.php
 'UnitTestCase::getMock()':
