@@ -65,7 +65,7 @@
       - BrowserTestBaseGetMock.php
 'KernelTestBase::getMock()':
   Rector: KernelTestBaseGetMock.php
-  PHPStan: 'Call to deprecated method getMock() of class Drupal\Tests\UnitTestCase. Deprecated in drupal:8.5.0 and is removed from drupal:9.0.0. Use Drupal\Tests\PhpunitCompatibilityTrait::createMock() instead.'
+  PHPStan: 'Call to deprecated method getMock() of class Drupal\KernelTests\KernelTestBase. Deprecated in drupal:8.5.0 and is removed from drupal:9.0.0. Use Drupal\Tests\PhpunitCompatibilityTrait::createMock() instead.'
   Examples:
     - KernelTestBaseGetMock.php
 'UnitTestCase::getMock()':
@@ -140,13 +140,13 @@
         - request_time_const.php
 'entity_get_display':
   Rector: EntityGetDisplayRector.php
-  PHPStan: 'Call to deprecated function entity_get_display(). Deprecated in drupal:8.8.0 and is removed from drupal:9.0.0. Use Drupal::service(''entity_display.repository'')->getViewDisplay().'
+  PHPStan: 'Call to deprecated function entity_get_display(). Deprecated in drupal:8.8.0 and is removed from drupal:9.0.0. Use EntityDisplayRepositoryInterface::getViewDisplay() instead.'
   Examples:
     - entity_get_display.php
     - EntityGetDisplayStatic.php
 'entity_get_form_display':
   Rector: EntityGetFormDisplayRector.php
-  PHPStan: 'Call to deprecated function entity_get_form_display(). Deprecated in drupal:8.8.0 and is removed from drupal:9.0.0. Use Drupal::service(''entity_display.repository'')->getFormDisplay().'
+  PHPStan: 'Call to deprecated function entity_get_form_display(). Deprecated in drupal:8.8.0 and is removed from drupal:9.0.0. Use EntityDisplayRepositoryInterface::getFormDisplay() instead.'
   Examples:
     - entity_get_form_display.php
     - EntityGetFormDisplayStatic.php
