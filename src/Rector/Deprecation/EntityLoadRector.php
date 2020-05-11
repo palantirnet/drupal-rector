@@ -76,12 +76,12 @@ CODE_AFTER
             $getStorage_method_name = new Node\Identifier('getStorage');
 
             // Start to build the new node.
-            $get_storage_node = new Node\Expr\MethodCall($var, $getStorage_method_name, [$entity_type]);
+            $getStorage_node = new Node\Expr\MethodCall($var, $getStorage_method_name, [$entity_type]);
 
             // Create the simple version of the entity load.
             $load_method_name = new Node\Identifier('load');
 
-            $new_node = new Node\Expr\MethodCall($get_storage_node, $load_method_name, [$entity_id]);
+            $new_node = new Node\Expr\MethodCall($getStorage_node, $load_method_name, [$entity_id]);
 
             // We need to account for the `reset` option which adds a method to the chain.
             // We will replace the original method with a ternary to evaluate and provide both options.
@@ -97,7 +97,7 @@ CODE_AFTER
                 ];
 
                 // TODO: Create ternary.
-                $entity_load_reset_node = new Node\Expr\MethodCall($get_storage_node, $resetCache_method_name, $reset_args);
+                $entity_load_reset_node = new Node\Expr\MethodCall($getStorage_node, $resetCache_method_name, $reset_args);
 
                 $entity_load_reset_node = new Node\Expr\MethodCall($entity_load_reset_node, $load_method_name, [$entity_id]);
 
