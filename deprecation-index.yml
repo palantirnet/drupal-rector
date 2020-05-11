@@ -161,7 +161,11 @@
   PHPStan: 'Call to deprecated method urlInfo() of class Drupal​\​Core​\​Entity​\​EntityInterface. Deprecated in drupal:8.0.0 and is removed from drupal:9.0.0. Use Drupal​\​Core​\​Entity​\​EntityInterface::toUrl() instead.'
   Examples:
     - entity_interface_url_info.php
-    - EntityInterfaceUrlInfoStatic.php
+'EntityInterface:link()':
+  Rector: EntityInterfaceLinkRector.php
+  PHPStan: 'Call to deprecated method link() of class Drupal​\​Core​\​Entity​\​EntityInterface. Deprecated in drupal:8.0.0 and is removed from drupal:9.0.0. Use Drupal​\​Core​\​EntityInterface::toLink()->toString() instead.'
+  Examples:
+    - entity_interface_link.php
 'entity_load()':
   Rector: EntityLoadRector.php
   PHPStan: 'Call to deprecated function entity_load(). Deprecated in drupal:8.0.0 and is removed from drupal:9.0.0. Use the entity type storage''s load() method.'
