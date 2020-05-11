@@ -162,3 +162,9 @@
   Examples:
     - entity_interface_url_info.php
     - EntityInterfaceUrlInfoStatic.php
+'drupal_realpath()':
+  Rector: DrupalRealpathRector.php
+  PHPStan: 'Call to deprecated function drupal_realpath(). Deprecated in drupal:8.0.0 and is removed from drupal:9.0.0. Use Drupal\Core\File\FileSystem::realpath().'
+  Examples:
+    - drupal_realpath.php
+    - DrupalRealpathStatic.php
