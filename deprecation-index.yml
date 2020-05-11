@@ -162,3 +162,8 @@
   Examples:
     - entity_interface_url_info.php
     - EntityInterfaceUrlInfoStatic.php
+'entity_load()':
+  Rector: EntityLoadRector.php
+  PHPStan: 'Call to deprecated function entity_load(). Deprecated in drupal:8.0.0 and is removed from drupal:9.0.0. Use the entity type storage''s load() method.'
+  Examples:
+    - entity_load.php
