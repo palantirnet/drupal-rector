@@ -7,7 +7,7 @@ use Rector\Core\RectorDefinition\CodeSample;
 use Rector\Core\RectorDefinition\RectorDefinition;
 
 /**
- * Replaced deprecated entity_load() calls.
+ * Replaced deprecated node_load() calls.
  *
  * See https://www.drupal.org/node/2266845 for change record.
  *
@@ -17,18 +17,19 @@ use Rector\Core\RectorDefinition\RectorDefinition;
  * Improvement opportunities
  * - See EntityLoadBase.php
  */
-final class EntityLoadRector extends EntityLoadBase
+final class NodeLoadRector extends EntityLoadBase
 {
+    protected $entityType = 'node';
 
     /**
      * @inheritdoc
      */
     public function getDefinition(): RectorDefinition
     {
-        return new RectorDefinition('Fixes deprecated entity_load() use',[
+        return new RectorDefinition('Fixes deprecated node_load() use',[
             new CodeSample(
                 <<<'CODE_BEFORE'
-$node = entity_load('node', 123);
+$node = node_load(123);
 CODE_BEFORE
                 ,
                 <<<'CODE_AFTER'

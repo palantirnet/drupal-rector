@@ -9,7 +9,7 @@
  */
 function simple_example() {
   /* @var \Drupal\node\Entity\Node $node */
-  $node = \Drupal::service('entity_type.manager')->getStorage('node')->load(123);
+  $node = node_load(123);
 }
 
 /**
@@ -17,17 +17,16 @@ function simple_example() {
  */
 function all_arguments() {
   /* @var \Drupal\node\Entity\Node $node */
-  $node = TRUE ? \Drupal::service('entity_type.manager')->getStorage('node')->resetCache([123])->load(123) : \Drupal::service('entity_type.manager')->getStorage('node')->load(123);
+  $node = node_load(123, TRUE);
 }
 
 /**
  * An example using all of the arguments as variables.
  */
 function all_arguments_as_variables() {
-  $entity_type = 'node';
   $entity_id = 123;
   $reset = TRUE;
 
   /* @var \Drupal\node\Entity\Node $node */
-  $node = $reset ? \Drupal::service('entity_type.manager')->getStorage($entity_type)->resetCache([$entity_id])->load($entity_id) : \Drupal::service('entity_type.manager')->getStorage($entity_type)->load($entity_id);
+  $node = node_load($entity_id, $reset);
 }

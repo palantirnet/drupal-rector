@@ -13,3 +13,5 @@ services:
   DrupalRector\Rector\Deprecation\DrupalLRector: ~
   DrupalRector\Rector\Deprecation\EntityInterfaceUrlInfoRector: ~
   DrupalRector\Rector\Deprecation\EntityLoadRector: ~
+  DrupalRector\Rector\Deprecation\FileLoadRector: ~
+  DrupalRector\Rector\Deprecation\NodeLoadRector: ~

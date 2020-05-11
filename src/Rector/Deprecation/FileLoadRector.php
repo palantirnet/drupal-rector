@@ -7,7 +7,7 @@ use Rector\Core\RectorDefinition\CodeSample;
 use Rector\Core\RectorDefinition\RectorDefinition;
 
 /**
- * Replaced deprecated entity_load() calls.
+ * Replaced deprecated file_load() calls.
  *
  * See https://www.drupal.org/node/2266845 for change record.
  *
@@ -17,22 +17,23 @@ use Rector\Core\RectorDefinition\RectorDefinition;
  * Improvement opportunities
  * - See EntityLoadBase.php
  */
-final class EntityLoadRector extends EntityLoadBase
+final class FileLoadRector extends EntityLoadBase
 {
+    protected $entityType = 'file';
 
     /**
      * @inheritdoc
      */
     public function getDefinition(): RectorDefinition
     {
-        return new RectorDefinition('Fixes deprecated entity_load() use',[
+        return new RectorDefinition('Fixes deprecated file_load() use',[
             new CodeSample(
                 <<<'CODE_BEFORE'
-$node = entity_load('node', 123);
+$file = file_load(123);
 CODE_BEFORE
                 ,
                 <<<'CODE_AFTER'
-$node = \Drupal::entityManager()->getStorage('node')->load(123);
+$file = \Drupal::entityManager()->getStorage('file')->load(123);
 CODE_AFTER
             )
         ]);
