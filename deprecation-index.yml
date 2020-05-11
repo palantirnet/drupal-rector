@@ -162,3 +162,23 @@
   Examples:
     - entity_interface_url_info.php
     - EntityInterfaceUrlInfoStatic.php
+'entity_load()':
+  Rector: EntityLoadRector.php
+  PHPStan: 'Call to deprecated function entity_load(). Deprecated in drupal:8.0.0 and is removed from drupal:9.0.0. Use the entity type storage''s load() method.'
+  Examples:
+    - entity_load.php
+'node_load()':
+  Rector: NodeLoadRector.php
+  PHPStan: 'Call to deprecated function node_load(). Deprecated in drupal:8.0.0 and is removed from drupal:9.0.0. Use Drupal​\​node​\​Entity​\​Node::load().'
+  Examples:
+    - node_load.php
+'file_load()':
+  Rector: FileLoadRector.php
+  PHPStan: 'Call to deprecated function file_load(). Deprecated in drupal:8.0.0 and is removed from drupal:9.0.0. Use Drupal​\​file​\​Entity​\​File::load().'
+  Examples:
+    - file_load.php
+'user_load()':
+  Rector: UserLoadRector.php
+  PHPStan: 'Call to deprecated function user_load(). Deprecated in drupal:8.0.0 and is removed from drupal:9.0.0. Use Drupal​\​user​\​Entity​\​User::load().'
+  Examples:
+    - user_load.php
