@@ -168,12 +168,12 @@
   Examples:
     - entity_load.php
 'node_load()':
-  Rector: EntityLoadRector.php
+  Rector: NodeLoadRector.php
   PHPStan: 'Call to deprecated function node_load(). Deprecated in drupal:8.0.0 and is removed from drupal:9.0.0. Use Drupal​\​node​\​Entity​\​Node::load().'
   Examples:
     - node_load.php
 'file_load()':
-  Rector: EntityLoadRector.php
+  Rector: FileLoadRector.php
   PHPStan: 'Call to deprecated function file_load(). Deprecated in drupal:8.0.0 and is removed from drupal:9.0.0. Use Drupal​\​file​\​Entity​\​File::load().'
   Examples:
     - file_load.php
