@@ -79,7 +79,7 @@ parameters:
     - 'web/profiles'
 ```
 
-# Suggested workflow
+## Suggested workflow
 
 1. Analyze your code with Rector and review suggested changes:
 
@@ -94,12 +94,6 @@ $ vendor/bin/rector process web/modules/contrib/[YOUR_MODULE]
 ```
 
 You can find more information about Rector [here](https://github.com/rectorphp/rector).
-
-## Development
-
-We recommend using our `drupal-rector-sandbox` development environment [https://github.com/palantirnet/drupal-rector-sandbox](https://github.com/palantirnet/drupal-rector-sandbox)
-
-Alternatively, you can use your existing Drupal project and follow the instructions in [README](https://github.com/palantirnet/drupal-rector-sandbox/blob/master/README.md#developing-with-drupal-rector)
 
 ## Troubleshooting
 
@@ -135,11 +129,17 @@ ENV LD_PRELOAD /usr/lib/preloadable_libiconv.so php
 
 Credits to @zolotov88 in https://github.com/nunomaduro/phpinsights/issues/43#issuecomment-498108857
 
-## Contribution Suggestions
+## Development and contribution suggestions
 
 Thanks for your interest in contributing!
 
 Our goal is to make contributing to this project easy for people. While we've made certain architectural decisions here to hopefully achieve that goal, it's a work in progress and feedback is appreciated.
+
+### Development environment
+
+We recommend using our `drupal-rector-sandbox` development environment [https://github.com/palantirnet/drupal-rector-sandbox](https://github.com/palantirnet/drupal-rector-sandbox)
+
+Alternatively, you can use your existing Drupal project and follow the instructions in [README](https://github.com/palantirnet/drupal-rector-sandbox/blob/master/README.md#developing-with-drupal-rector)
 
 ### Adding a Rector rule
 
@@ -150,7 +150,19 @@ If you would like to submit a Rector rule, we are looking for the following:
 - An updated configuration file that registers the Rector rule, see `/config/drupal-8`
 - A listing in the index file, see `/deprecation-index.yml`
 
-#### Create a Rector rule class
+#### Guides
+
+A few guides are currently available and we encourage people to create additional guides to provide their perspective and help us better understand this tool together.
+
+##### Video guide on creating a rector rule
+[https://www.palantir.net/rector/creating-drupal-rector-rule](https://www.palantir.net/rector/creating-drupal-rector-rule)
+
+##### Additional documentation and links
+[https://www.palantir.net/rector](https://www.palantir.net/rector)
+
+#### Quick(?) overview
+
+##### Create a Rector rule class
 
 Rector rules should be named after the deprecation, including the class name.
 
@@ -163,7 +175,7 @@ To avoid duplication, we have created base classes for simple repeated patterns 
 
 Rector supports passing parameters to rules and you can also define your rules in a variety of ways. To avoid confusion for new developers, we're trying to avoid these advanced features so that someone with limited familiarity with the tool can easily determine where things are located and what they are doing. If the copy & paste challenge isn't worth this trade-off, we can re-evaluate it as we go. Suggestions appreciated.
 
-#### Create examples
+##### Create examples
 
 We are creating pairs of example files.
 
@@ -181,7 +193,7 @@ Example
 
 `DrupalUrlRector` -> `rector_examples/src/DrupalUrlStatic.php` and `rector_examples_updated/src/DrupalUrlStatic.php`
 
-#### Create / Update a configuration file
+##### Create / Update a configuration file
 
 The configuration files in `/config/drupal-8` are broken down by Drupal minor versions.
 
@@ -189,7 +201,7 @@ Add your Rector rule to the relevant file.
 
 The key is the fully qualified class name of the Rector rule. The key is the yaml null value `~`.
 
-#### Update the index file
+##### Update the index file
 
 The index file is used in part to provide automated updates to https://dev.acquia.com/drupal9/deprecation_status/errors which is a helpful way to track coverage. The `PHPStan` messages are listed there as well as in the change record comments throughout the Drupal codebase.
 
