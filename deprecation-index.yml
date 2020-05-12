@@ -202,3 +202,8 @@
   Examples:
     - drupal_realpath.php
     - DrupalRealpathStatic.php
+'file_uri_target()':
+  Rector: FileUriTargetRector.php
+  PHPStan: 'Call to deprecated function file_uri_target(). Deprecated in drupal:8.8.0 and is removed from drupal:9.0.0. Use \Drupal\Core\StreamWrapper\StreamWrapperManagerInterface::getTarget() instead.'
+  Examples:
+    - file_uri_target.php
