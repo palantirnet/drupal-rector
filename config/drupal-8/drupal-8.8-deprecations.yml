@@ -10,3 +10,4 @@ services:
   DrupalRector\Rector\Deprecation\EntityGetFormDisplayRector: ~
   DrupalRector\Rector\Deprecation\FileScanDirectoryRector: ~
   DrupalRector\Rector\Deprecation\FileDirectoryTempRector: ~
+  DrupalRector\Rector\Deprecation\FileUriTargetRector: ~
