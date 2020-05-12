@@ -203,7 +203,7 @@
     - file_directory_temp.php
 'file_directory_os_temp':
   Rector: FileDirectoryOsTempRector.php
-  PHPStan: ~
+  PHPStan: 'Call to deprecated function file_directory_temp(). Deprecated in drupal:8.8.0 and is removed from drupal:9.0.0. Use \Drupal\Core\File\FileSystemInterface::getTempDirectory() instead.'
   Examples:
     - file_directory_os_temp.php
 'file_uri_target()':
