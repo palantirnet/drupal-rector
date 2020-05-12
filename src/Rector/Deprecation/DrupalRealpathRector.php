@@ -31,7 +31,7 @@ final class DrupalRealpathRector extends FunctionToServiceBase
      */
     public function getDefinition(): RectorDefinition
     {
-        return new RectorDefinition('Fixes deprecated entity_get_display() calls',[
+        return new RectorDefinition('Fixes deprecated drupal_realpath() calls',[
             new CodeSample(
               <<<'CODE_BEFORE'
 $path = drupal_realpath($path);
