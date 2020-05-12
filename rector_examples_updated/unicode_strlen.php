@@ -10,12 +10,5 @@ use Drupal\Component\Utility\Unicode;
  * A simple example using the minimum number of arguments.
  */
 function simple_example() {
-  $string = \Drupal\Component\Utility\Unicode::strtolower('example');
-}
-
-/**
- * Example of using all arguments.
- */
-function example_with_all_arguments() {
-  $string = Unicode::strtolower('example');
+  $length = mb_strlen('example');
 }
