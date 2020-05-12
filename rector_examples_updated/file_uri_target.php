@@ -8,5 +8,5 @@
  * A simple example using the minimum number of arguments.
  */
 function simple_example() {
-    $x = file_uri_target($uri);
+    \Drupal::service('stream_wrapper_manager')->getTarget($uri);
 }
