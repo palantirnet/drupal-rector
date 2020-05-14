@@ -62,7 +62,7 @@
   Rector: BrowserTestBaseGetMock.php
   PHPStan: 'Call to deprecated method getMock() of class Drupal\Tests\BrowserTestBase. Deprecated in drupal:8.5.0 and is removed from drupal:9.0.0. Use Drupal\Tests\PhpunitCompatibilityTrait::createMock() instead.'
   Examples:
-      - BrowserTestBaseGetMock.php
+    - BrowserTestBaseGetMock.php
 'KernelTestBase::getMock()':
   Rector: KernelTestBaseGetMock.php
   PHPStan: 'Call to deprecated method getMock() of class Drupal\KernelTests\KernelTestBase. Deprecated in drupal:8.5.0 and is removed from drupal:9.0.0. Use Drupal\Tests\PhpunitCompatibilityTrait::createMock() instead.'
@@ -162,7 +162,7 @@
     - EntityGetFormDisplayStatic.php
 'file_default_scheme()':
   Rector: FileDefaultSchemeRector.php
-  PHPStan: "Call to deprecated function file_default_scheme(). Deprecated in drupal:8.8.0 and is removed from drupal:9.0.0. Use Drupal::config('system.file')->get('default_scheme') instead."
+  PHPStan: 'Call to deprecated function file_default_scheme(). Deprecated in drupal:8.8.0 and is removed from drupal:9.0.0. Use Drupal::config(''system.file'')->get(''default_scheme'') instead.'
   Examples:
     - file_default_scheme.php
     - FileDefaultSchemeStatic.php
