@@ -54,7 +54,7 @@
     - FilePrepareDirectoryStatic.php
 'file_scan_directory()':
   Rector: FileScanDirectoryRector.php
-  PHPStan: 'Call to deprecated function file_scan_directory(). Deprecated in drupal:8.8.0 and is removed from drupal:9.0.0. Use Drupal​\​Core​\​File​\​FileSystemInterface::scanDirectory() instead.'
+  PHPStan: 'Call to deprecated function file_scan_directory(). Deprecated in drupal:8.8.0 and is removed from drupal:9.0.0. Use Drupal\Core\File\FileSystemInterface::scanDirectory() instead.'
   Examples:
     - file_scan_directory.php
     - FileScanDirectoryStatic.php
@@ -62,7 +62,7 @@
   Rector: BrowserTestBaseGetMock.php
   PHPStan: 'Call to deprecated method getMock() of class Drupal\Tests\BrowserTestBase. Deprecated in drupal:8.5.0 and is removed from drupal:9.0.0. Use Drupal\Tests\PhpunitCompatibilityTrait::createMock() instead.'
   Examples:
-      - BrowserTestBaseGetMock.php
+    - BrowserTestBaseGetMock.php
 'KernelTestBase::getMock()':
   Rector: KernelTestBaseGetMock.php
   PHPStan: 'Call to deprecated method getMock() of class Drupal\KernelTests\KernelTestBase. Deprecated in drupal:8.5.0 and is removed from drupal:9.0.0. Use Drupal\Tests\PhpunitCompatibilityTrait::createMock() instead.'
@@ -87,7 +87,7 @@
     - FormatDateStatic.php
 'Unicode::strlen':
   Rector: UnicodeStrtolowerRector.php
-  PHPStan: 'Call to deprecated method strlen() of class Drupal​\​Component​\​Utility​\​Unicode. Deprecated in drupal:8.6.0 and is removed from drupal:9.0.0. Use mb_strlen() instead.'
+  PHPStan: 'Call to deprecated method strlen() of class Drupal\Component\Utility\Unicode. Deprecated in drupal:8.6.0 and is removed from drupal:9.0.0. Use mb_strlen() instead.'
   Examples:
     - unicode_strlen.php
 'Unicode::strtolower':
@@ -98,7 +98,7 @@
     - UnicodeStrtolowerStatic.php
 'Unicode::substr':
   Rector: UnicodeStrtolowerRector.php
-  PHPStan: 'Call to deprecated method substr() of class Drupal​\​Component​\​Utility​\​Unicode. Deprecated in drupal:8.6.0 and is removed from drupal:9.0.0. Use mb_substr() instead.'
+  PHPStan: 'Call to deprecated method substr() of class Drupal\Component\Utility\Unicode. Deprecated in drupal:8.6.0 and is removed from drupal:9.0.0. Use mb_substr() instead.'
   Examples:
     - unicode_substr.php
 'FILE_CREATE_DIRECTORY':
@@ -162,18 +162,18 @@
     - EntityGetFormDisplayStatic.php
 'file_default_scheme()':
   Rector: FileDefaultSchemeRector.php
-  PHPStan: 'Call to deprecated function file_default_scheme(). Deprecated in drupal:8.8.0 and is removed from drupal:9.0.0. Use Drupal::config('system.file')->get('default_scheme') instead.'
+  PHPStan: 'Call to deprecated function file_default_scheme(). Deprecated in drupal:8.8.0 and is removed from drupal:9.0.0. Use Drupal::config(''system.file'')->get(''default_scheme'') instead.'
   Examples:
     - file_default_scheme.php
     - FileDefaultSchemeStatic.php
 'EntityInterface:urlInfo()':
   Rector: EntityInterfaceUrlInfoRector.php
-  PHPStan: 'Call to deprecated method urlInfo() of class Drupal​\​Core​\​Entity​\​EntityInterface. Deprecated in drupal:8.0.0 and is removed from drupal:9.0.0. Use Drupal​\​Core​\​Entity​\​EntityInterface::toUrl() instead.'
+  PHPStan: 'Call to deprecated method urlInfo() of class Drupal\Core\Entity\EntityInterface. Deprecated in drupal:8.0.0 and is removed from drupal:9.0.0. Use Drupal\Core\Entity\EntityInterface::toUrl() instead.'
   Examples:
     - entity_interface_url_info.php
 'EntityInterface:link()':
   Rector: EntityInterfaceLinkRector.php
-  PHPStan: 'Call to deprecated method link() of class Drupal​\​Core​\​Entity​\​EntityInterface. Deprecated in drupal:8.0.0 and is removed from drupal:9.0.0. Use Drupal​\​Core​\​EntityInterface::toLink()->toString() instead.'
+  PHPStan: 'Call to deprecated method link() of class Drupal\Core\Entity\EntityInterface. Deprecated in drupal:8.0.0 and is removed from drupal:9.0.0. Use Drupal\Core\EntityInterface::toLink()->toString() instead.'
   Examples:
     - entity_interface_link.php
 'entity_load()':
@@ -183,17 +183,17 @@
     - entity_load.php
 'node_load()':
   Rector: NodeLoadRector.php
-  PHPStan: 'Call to deprecated function node_load(). Deprecated in drupal:8.0.0 and is removed from drupal:9.0.0. Use Drupal​\​node​\​Entity​\​Node::load().'
+  PHPStan: 'Call to deprecated function node_load(). Deprecated in drupal:8.0.0 and is removed from drupal:9.0.0. Use Drupal\node\Entity\Node::load().'
   Examples:
     - node_load.php
 'file_load()':
   Rector: FileLoadRector.php
-  PHPStan: 'Call to deprecated function file_load(). Deprecated in drupal:8.0.0 and is removed from drupal:9.0.0. Use Drupal​\​file​\​Entity​\​File::load().'
+  PHPStan: 'Call to deprecated function file_load(). Deprecated in drupal:8.0.0 and is removed from drupal:9.0.0. Use Drupal\file\Entity\File::load().'
   Examples:
     - file_load.php
 'user_load()':
   Rector: UserLoadRector.php
-  PHPStan: 'Call to deprecated function user_load(). Deprecated in drupal:8.0.0 and is removed from drupal:9.0.0. Use Drupal​\​user​\​Entity​\​User::load().'
+  PHPStan: 'Call to deprecated function user_load(). Deprecated in drupal:8.0.0 and is removed from drupal:9.0.0. Use Drupal\user\Entity\User::load().'
   Examples:
     - user_load.php
 'file_directory_temp':
