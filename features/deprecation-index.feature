@@ -10,6 +10,6 @@ Feature: deprecation-index.yml
 
   # Unicode characters sometimes get added when copy & pasting.
   # They are not intended and don't match as easily.
-  Scenario: deprecation-index.yml does not have unicode characters
+  Scenario: deprecation-index.yml only uses ASCII characters
     When I examine the "deprecation-index.yml" file
     Then The file only uses ASCII characters.
