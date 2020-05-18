@@ -145,7 +145,7 @@
     - FileUnmanagedSaveDataStatic.php
 'REQUEST_TIME':
     Rector: RequestTimeConstRector.php
-    PHPStan: 'Call to deprecated const REQUEST_TIME. Deprecated in drupal:8.3.0 and is removed from drupal:10.0.0. Use \Drupal::time()->getRequestTime().'
+    PHPStan: 'Call to deprecated const REQUEST_TIME. Deprecated in drupal:8.3.0 and is removed from drupal:10.0.0. Use Drupal::time()->getRequestTime().'
     Examples:
         - request_time_const.php
 'entity_get_display':
@@ -198,12 +198,12 @@
     - user_load.php
 'file_directory_temp':
   Rector: FileDirectoryTempRector.php
-  PHPStan: 'Call to deprecated function file_directory_temp(). Deprecated in drupal:8.8.0 and is removed from drupal:9.0.0. Use \Drupal\Core\File\FileSystemInterface::getTempDirectory() instead.'
+  PHPStan: 'Call to deprecated function file_directory_temp(). Deprecated in drupal:8.8.0 and is removed from drupal:9.0.0. Use Drupal\Core\File\FileSystemInterface::getTempDirectory() instead.'
   Examples:
     - file_directory_temp.php
 'file_directory_os_temp':
   Rector: FileDirectoryOsTempRector.php
-  PHPStan: ~
+  PHPStan: 'Call to deprecated function file_directory_os_temp(). Deprecated in drupal:8.3.0 and is removed from drupal:9.0.0. Use Drupal\Component\FileSystem\FileSystem::getOsTemporaryDirectory().'
   Examples:
     - file_directory_os_temp.php
 'drupal_realpath()':
@@ -214,6 +214,6 @@
     - DrupalRealpathStatic.php
 'file_uri_target()':
   Rector: FileUriTargetRector.php
-  PHPStan: 'Call to deprecated function file_uri_target(). Deprecated in drupal:8.8.0 and is removed from drupal:9.0.0. Use \Drupal\Core\StreamWrapper\StreamWrapperManagerInterface::getTarget() instead.'
+  PHPStan: 'Call to deprecated function file_uri_target(). Deprecated in drupal:8.8.0 and is removed from drupal:9.0.0. Use Drupal\Core\StreamWrapper\StreamWrapperManagerInterface::getTarget() instead.'
   Examples:
     - file_uri_target.php
