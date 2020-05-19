@@ -8,7 +8,7 @@
  * A simple example.
  */
 function simple_example() {
-  $entity = \Drupal::service('entity_type.manager')->getStorage('node')->create();
+  $entity = \Drupal::service('entity_type.manager')->getStorage('node')->create([]);
 }
 
 /**

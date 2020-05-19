@@ -219,6 +219,6 @@
     - file_uri_target.php
 'entity_create()':
   Rector: EntityCreateRector.php
-  PHPStan: 'Call to deprecated function entity_create(). Deprecated in drupal:8.0.0 and is removed from drupal:9.0.0. Use The method overriding Entity::create() for the entity type, e.g. ​\​Drupal​\​node​\​Entity​\​Node::create() if the entity type is known. If the entity type is variable, use the entity storage''s create() method to construct a new entity:'
+  PHPStan: 'Call to deprecated function entity_create(). Deprecated in drupal:8.0.0 and is removed from drupal:9.0.0. Use The method overriding Entity::create() for the entity type, e.g. \Drupal\node\Entity\Node::create() if the entity type is known. If the entity type is variable, use the entity storage''s create() method to construct a new entity:'
   Examples:
     - entity_create.php
