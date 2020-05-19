@@ -57,8 +57,6 @@ CODE_AFTER
     {
         /** @var Node\Expr\FuncCall $node */
         if ($this->getName($node->name) === 'entity_create') {
-            // This creates a service call like `\Drupal::service('file_system').
-            // TODO use dependency injection.
             $service = new Node\Expr\StaticCall(new Node\Name\FullyQualified('Drupal'), 'service', [new Node\Arg(new Node\Scalar\String_('entity_type.manager'))]);
 
             $getStorage_method_name = new Node\Identifier('getStorage');
