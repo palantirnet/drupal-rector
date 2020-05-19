@@ -73,7 +73,7 @@ CODE_AFTER
             $entity_values = new Node\Arg(new Node\Expr\Array_());
 
             // If we have values for the new entity, pass them to the create method.
-            if (count($node->args === 2)) {
+            if (count($node->args) === 2) {
                 $entity_values = $node->args[1];
             }
 
