@@ -7,7 +7,7 @@ use Rector\Core\RectorDefinition\CodeSample;
 use Rector\Core\RectorDefinition\RectorDefinition;
 
 /**
- * Replaces deprecated FILE_EXISTS_REPLACE constant use.
+ * Replaces deprecated FILE_EXISTS_RENAME constant use.
  *
  * See https://www.drupal.org/node/3006851 for change record.
  *
