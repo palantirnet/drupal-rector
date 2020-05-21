@@ -18,5 +18,6 @@ services:
   DrupalRector\Rector\Deprecation\EntityManagerRector: ~
   DrupalRector\Rector\Deprecation\FormatDateRector: ~
   DrupalRector\Rector\Deprecation\FileLoadRector: ~
+  DrupalRector\Rector\Deprecation\LinkGeneratorTraitLRector: ~
   DrupalRector\Rector\Deprecation\NodeLoadRector: ~
   DrupalRector\Rector\Deprecation\UserLoadRector: ~
