@@ -17,6 +17,7 @@ function simple_example() {
  */
 function all_arguments() {
   /* @var \Drupal\file\Entity\File $file */
+  // Rector notice: A ternary operator is used here to keep the conditional contained within this part of the expression. Consider wrapping this statement in an `if / else` statement.
   $file = TRUE ? \Drupal::service('entity_type.manager')->getStorage('file')->resetCache([123])->load(123) : \Drupal::service('entity_type.manager')->getStorage('file')->load(123);
 }
 
@@ -28,5 +29,6 @@ function all_arguments_as_variables() {
   $reset = TRUE;
 
   /* @var \Drupal\file\Entity\File $file */
+  // Rector notice: A ternary operator is used here to keep the conditional contained within this part of the expression. Consider wrapping this statement in an `if / else` statement.
   $file = $reset ? \Drupal::service('entity_type.manager')->getStorage('file')->resetCache([$entity_id])->load($entity_id) : \Drupal::service('entity_type.manager')->getStorage('file')->load($entity_id);
 }
