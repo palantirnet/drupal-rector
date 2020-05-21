@@ -113,6 +113,12 @@
   Examples:
     - file_exists_replace.php
     - FileExistsReplaceNoUseStatement.php
+'FILE_EXISTS_RENAME':
+  Rector: FileExistsRenameRector.php
+  PHPStan: 'Call to deprecated constant FILE_EXISTS_RENAME: Deprecated in drupal:8.7.0 and is removed from drupal:9.0.0. Use Drupal\Core\File\FileSystemInterface::EXISTS_RENAME.'
+  Examples:
+    - file_exists_rename.php
+    - FileExistsRenameNoUseStatement.php
 'FILE_MODIFY_PERMISSIONS':
   Rector: FileModifyPermissionsRector.php
   PHPStan: 'Call to deprecated constant FILE_MODIFY_PERMISSIONS: Deprecated in drupal:8.7.0 and is removed from drupal:9.0.0. Use Drupal\Core\File\FileSystemInterface::MODIFY_PERMISSIONS.'

@@ -5,3 +5,4 @@ services:
   DrupalRector\Rector\Deprecation\FileExistsReplaceRector: ~
   DrupalRector\Rector\Deprecation\FileUnmanagedSaveDataRector: ~
   DrupalRector\Rector\Deprecation\FileModifyPermissionsRector: ~
+  DrupalRector\Rector\Deprecation\FileExistsRenameRector: ~
