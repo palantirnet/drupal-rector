@@ -11,6 +11,7 @@ class DBInsertStatic {
    * A simple example using the minimum number of arguments.
    */
   public function simple_example() {
+    // Rector notice: You will need to use `\Drupal\core\Database\Database::getConnection()` if you do not yet have access to the container here.
     \Drupal::database()->insert('path_alias');
   }
 
@@ -31,6 +32,7 @@ class DBInsertStatic {
       'target' => 'my_non_default_database',
     ];
 
+    // Rector notice: If your `options` argument contains a `target` key, you will need to use `\Drupal\core\Database\Database::getConnection('my_database'). Drupal Rector could not yet evaluate the `options` argument since it was a variable.
     \Drupal::database()->insert($table, $options);
   }
 
@@ -38,6 +40,7 @@ class DBInsertStatic {
    * An example using chained method calls.
    */
   public function chained_method_calls() {
+    // Rector notice: You will need to use `\Drupal\core\Database\Database::getConnection()` if you do not yet have access to the container here.
     \Drupal::database()->insert('path_alias')
       ->fields(['path', 'alias'], [['/my-path', '/my-alias']])
       ->execute();

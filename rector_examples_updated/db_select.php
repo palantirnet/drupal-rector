@@ -8,6 +8,7 @@
  * A simple example using the minimum number of arguments.
  */
 function simple_example() {
+  // Rector notice: You will need to use `\Drupal\core\Database\Database::getConnection()` if you do not yet have access to the container here.
   \Drupal::database()->select('user');
 }
 
@@ -15,6 +16,7 @@ function simple_example() {
  * An example using alias.
  */
 function alias() {
+  // Rector notice: You will need to use `\Drupal\core\Database\Database::getConnection()` if you do not yet have access to the container here.
   \Drupal::database()->select('user', 'u');
 }
 
@@ -37,5 +39,6 @@ function table_and_alias_and_options_as_variables() {
     'target' => 'my_non_default_database',
   ];
 
+  // Rector notice: If your `options` argument contains a `target` key, you will need to use `\Drupal\core\Database\Database::getConnection('my_database'). Drupal Rector could not yet evaluate the `options` argument since it was a variable.
   \Drupal::database()->select($table, $alias, $options);
 }
