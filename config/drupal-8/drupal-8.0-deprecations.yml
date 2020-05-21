@@ -20,4 +20,5 @@ services:
   DrupalRector\Rector\Deprecation\FileLoadRector: ~
   DrupalRector\Rector\Deprecation\LinkGeneratorTraitLRector: ~
   DrupalRector\Rector\Deprecation\NodeLoadRector: ~
+  DrupalRector\Rector\Deprecation\SafeMarkupFormatRector: ~
   DrupalRector\Rector\Deprecation\UserLoadRector: ~
