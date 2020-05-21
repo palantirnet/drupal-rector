@@ -19,4 +19,5 @@ services:
   DrupalRector\Rector\Deprecation\FormatDateRector: ~
   DrupalRector\Rector\Deprecation\FileLoadRector: ~
   DrupalRector\Rector\Deprecation\NodeLoadRector: ~
+  DrupalRector\Rector\Deprecation\SafeMarkupFormatRector: ~
   DrupalRector\Rector\Deprecation\UserLoadRector: ~
