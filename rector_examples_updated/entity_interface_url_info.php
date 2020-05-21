@@ -11,6 +11,7 @@ function simple_example() {
   /* @var \Drupal\node\Entity\Node $node */
   $node = \Drupal::entityTypeManager()->getStorage('node')->load(123);
 
+  // Rector notice: Please confirm that `$node` is an instance of `Drupal\Core\Entity\EntityInterface`. Only the method name and not the class name was checked for this replacement, so this may be a false positive.
   $url = $node->toUrl();
 }
 
@@ -21,5 +22,6 @@ function example_using_arguments() {
   /* @var \Drupal\node\Entity\Node $node */
   $node = \Drupal::entityTypeManager()->getStorage('node')->load(123);
 
+  // Rector notice: Please confirm that `$node` is an instance of `Drupal\Core\Entity\EntityInterface`. Only the method name and not the class name was checked for this replacement, so this may be a false positive.
   $url = $node->toUrl('edit-form', ['absolute' => TRUE]);
 }
