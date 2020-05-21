@@ -2,6 +2,7 @@
 
 namespace DrupalRector\Rector\Deprecation;
 
+use DrupalRector\Utility\AddCommentTrait;
 use DrupalRector\Utility\TraitsByClassHelperTrait;
 use PhpParser\Node;
 use Rector\NodeTypeResolver\Node\AttributeKey;
@@ -27,6 +28,7 @@ use Rector\Core\RectorDefinition\RectorDefinition;
 final class DrupalSetMessageRector extends AbstractRector
 {
     use TraitsByClassHelperTrait;
+    use AddCommentTrait;
 
     /**
      * @inheritdoc
@@ -113,6 +115,8 @@ CODE_AFTER
                      * https://git.drupalcode.org/project/devel/blob/8.x-2.0/devel.module#L151
                      * https://git.drupalcode.org/project/devel/blob/8.x-2.0/devel.module#L265
                      */
+                    $this->AddComment($node, '// Rector notice: This needs to be replaced, but Rector was not yet able to replace this because the type of message was set with a variable. If you need to continue to use a variable, you might consider using a switch statement.');
+
                     return $node;
                 }
             }
