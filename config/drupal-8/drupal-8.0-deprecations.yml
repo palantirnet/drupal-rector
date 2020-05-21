@@ -19,4 +19,4 @@ services:
   DrupalRector\Rector\Deprecation\FileLoadRector: ~
   DrupalRector\Rector\Deprecation\NodeLoadRector: ~
   DrupalRector\Rector\Deprecation\UserLoadRector: ~
-  DrupalRector\Rector\Deprecation\ControllerBaseLRector: ~
+  DrupalRector\Rector\Deprecation\LinkGeneratorTraitL: ~

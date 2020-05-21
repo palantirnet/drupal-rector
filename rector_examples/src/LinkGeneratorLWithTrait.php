@@ -2,14 +2,13 @@
 
 namespace Drupal\rector_examples;
 
-use Drupal\Core\Link;
-use Drupal\Core\Url;
 use Drupal\Core\Routing\LinkGeneratorTrait;
+use Drupal\Core\Url;
 
 /**
  * Example of static calls from a class with the trait.
  */
-class ControllerBaseLWithTrait {
+class LinkGeneratorLWithTrait {
 
   use LinkGeneratorTrait;
 
@@ -19,7 +18,7 @@ class ControllerBaseLWithTrait {
   public function simple_example() {
     $url = Url::fromUri('public://');
 
-    Link::fromTextAndUrl('text', $url);
+    $this->l('text', $url);
   }
 
   /**
@@ -29,7 +28,7 @@ class ControllerBaseLWithTrait {
     $text = 'text';
     $url = Url::fromUri('public://');
 
-    Link::fromTextAndUrl($text, $url);
+    $this->l($text, $url);
   }
 
 }

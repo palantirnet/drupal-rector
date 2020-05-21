@@ -21,7 +21,7 @@ use Rector\Core\RectorDefinition\RectorDefinition;
  * - Add trait for classes
  *   - `use LinkGeneratorTrait;`
  */
-final class ControllerBaseLRector extends AbstractRector
+final class LinkGeneratorTraitL extends AbstractRector
 {
     use TraitsByClassHelperTrait;
 
