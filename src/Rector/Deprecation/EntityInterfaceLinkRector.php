@@ -2,6 +2,7 @@
 
 namespace DrupalRector\Rector\Deprecation;
 
+use DrupalRector\Utility\AddCommentTrait;
 use Rector\Core\RectorDefinition\RectorDefinition;
 use PhpParser\Node;
 use Rector\Core\Rector\AbstractRector;
@@ -19,6 +20,8 @@ use Rector\Core\Rector\AbstractRector;
  */
 final class EntityInterfaceLinkRector extends AbstractRector
 {
+    use AddCommentTrait;
+    
     /**
      * @inheritdoc
      */
@@ -55,6 +58,10 @@ CODE_AFTER
       /** @var Node\Expr\MethodCall $node */
       // TODO: Check the class to see if it implements Drupal\Core\Entity\EntityInterface.
       if ($this->getName($node->name) === 'link') {
+          $node_class_name = $this->getName($node->var);
+
+          $this->addComment($node, "// Rector notice: Please confirm that `$$node_class_name` is an instance of `\Drupal\Core\Entity\EntityInterface`. Only the method name and not the class name was checked for this replacement, so this may be a false positive.");
+
           $toLink_node = $node;
 
           $toLink_node->name = new Node\Name('toLink');
