@@ -15,6 +15,7 @@ class EntityManagerController extends ControllerBase {
    * @return null
    */
   public function simple_example() {
+    // Rector notice: We are assuming that we want to use the `$this->entityTypeManager` injected service since no method was called here directly. Please confirm this is the case. If another service is needed, you may need to inject that yourself. See https://www.drupal.org/node/2549139 for more information.
     $entity_manager = $this->entityTypeManager();
 
     return NULL;
@@ -54,6 +55,7 @@ class EntityManagerController extends ControllerBase {
    * @return null
    */
   public function stored_service_and_method_not_in_entityTypeManager() {
+    // Rector notice: We are assuming that we want to use the `$this->entityTypeManager` injected service since no method was called here directly. Please confirm this is the case. If another service is needed, you may need to inject that yourself. See https://www.drupal.org/node/2549139 for more information.
     $entity_manager = $this->entityTypeManager();
 
     $group = FALSE;
