@@ -11,7 +11,7 @@
     ],
     "require": {
         "jawira/case-converter": "^1.1",
-        "rector/rector-prefixed": "<0.7.19"
+        "rector/rector-prefixed": "dev-master#cd10d7f"
     },
     "license": "MIT",
     "authors": [
@@ -47,5 +47,11 @@
     "prefer-stable": true,
     "require-dev": {
         "behat/behat": "^3.6"
+    },
+    "repositories": {
+        "rector-prefixed": {
+            "type": "vcs",
+            "url": "https://github.com/rectorphp/rector-prefixed.git"
+        }
     }
 }
