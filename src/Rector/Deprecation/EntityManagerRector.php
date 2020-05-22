@@ -57,9 +57,8 @@ CODE_AFTER
    */
   public function refactor(Node $node): ?Node {
 
-    if ($node instanceof Node\Expr\StaticCall) {
-      /** @var Node\Expr\StaticCall $node */
-      if ($node->name instanceof Node\Identifier && (string) $node->class === 'Drupal' && (string) $node->name === 'entityManager') {
+    if ($this->getName($node->name) === 'entityManager') {
+      if ($node instanceof Node\Expr\StaticCall && $this->getName($node->class) === 'Drupal') {
         $service = 'entity_type.manager';
 
         // If we call a method on `entityManager`, we need to check that method and we can call the correct service that the method uses.
@@ -75,30 +74,26 @@ CODE_AFTER
 
         return $node;
       }
-    }
 
-    if ($node instanceof Node\Expr\MethodCall && $this->getName($node->name) === "entityManager") {
-      $class_name = $node->getAttribute(AttributeKey::CLASS_NAME);
+      if ($node instanceof Node\Expr\MethodCall) {
+        if ($node->hasAttribute(AttributeKey::PARENT_CLASS_NAME) && $node->getAttribute(AttributeKey::PARENT_CLASS_NAME) === 'Drupal\Core\Controller\ControllerBase') {
+          // If we call a method on `entityManager`, we need to check that method and we can call the correct service that the method uses.
+          $next_node = $node->getAttribute('nextNode');
 
-      $parent_class = $node->getAttribute(AttributeKey::PARENT_CLASS_NAME);
+          if (!is_null($next_node)) {
+            $service = $this->getServiceByMethodName($this->getName($next_node));
 
-      if (!is_null($class_name) && !is_null($parent_class) && $parent_class === 'Drupal\Core\Controller\ControllerBase') {
-        // If we call a method on `entityManager`, we need to check that method and we can call the correct service that the method uses.
-        $next_node = $node->getAttribute('nextNode');
+            // This creates a service call like `\Drupal::service('entity_type.manager').
+            // This doesn't use dependency injection, but it should work.
+            $node = new Node\Expr\StaticCall(new Node\Name\FullyQualified('Drupal'), 'service', [new Node\Arg(new Node\Scalar\String_($service))]);
+          }
+          else {
+            // If we are making a direct call to ->entityManager(), we can assume the new class will also have entityTypeManager.
+            $node = new Node\Expr\MethodCall(new Node\Expr\Variable('this'), new Node\Identifier('entityTypeManager'));
+          }
 
-        if (!is_null($next_node)) {
-          $service = $this->getServiceByMethodName($this->getName($next_node));
-
-          // This creates a service call like `\Drupal::service('entity_type.manager').
-          // This doesn't use dependency injection, but it should work.
-          $node = new Node\Expr\StaticCall(new Node\Name\FullyQualified('Drupal'), 'service', [new Node\Arg(new Node\Scalar\String_($service))]);
+          return $node;
         }
-        else {
-          // If we are making a direct call to ->entityManager(), we can assume the new class will also have entityTypeManager.
-          $node = new Node\Expr\MethodCall(new Node\Expr\Variable('this'), new Node\Identifier('entityTypeManager'));
-        }
-
-        return $node;
       }
     }
 
