@@ -16,38 +16,56 @@
   PHPStan: 'Call to deprecated method entityManager() of class Drupal\Core\Controller\ControllerBase. Deprecated in drupal:8.0.0 and is removed from drupal:9.0.0. Most of the time static::entityTypeManager() is supposed to be used instead.'
   Examples:
     - EntityManagerController.php
-'db_insert':
+'db_insert()':
   Rector: DBInsertRector.php
   PHPStan: 'Call to deprecated function db_insert(). Deprecated in drupal:8.0.0 and is removed from drupal:9.0.0. Instead, get a database connection injected into your service from the container and call insert() on it. For example,'
   Examples:
     - db_insert.php
     - DBInsertStatic.php
-'db_select':
+'db_select()':
   Rector: DBSelectRector.php
   PHPStan: 'Call to deprecated function db_select(). Deprecated in drupal:8.0.0 and is removed from drupal:9.0.0. Instead, get a database connection injected into your service from the container and call select() on it. For example,'
   Examples:
     - db_select.php
     - DBSelectStatic.php
-'db_query':
+'db_query()':
   Rector: DBQueryRector.php
   PHPStan: 'Call to deprecated function db_query(). Deprecated in drupal:8.0.0 and is removed from drupal:9.0.0. Instead, get a database connection injected into your service from the container and call query() on it. For example,'
   Examples:
     - db_query.php
     - DBQueryStatic.php
+'db_delete()':
+  Rector: DBDeleteRector.php
+  PHPStan: 'Call to deprecated function db_delete(). Deprecated in drupal:8.0.0 and is removed from drupal:9.0.0. Instead, get a database connection injected into your service from the container and call delete() on it. For example,'
+  Examples:
+    - db_delete.php
+    - DBDeleteStatic.php
+'db_update()':
+  Rector: DBUpdateRector.php
+  PHPStan: 'Call to deprecated function db_update(). Deprecated in drupal:8.0.0 and is removed from drupal:9.0.0. Instead, get a database connection injected into your service from the container and call update() on it. For example,'
+  Examples:
+    - db_update.php
+    - DBUpdateStatic.php
 'file_prepare_directory()':
   Rector: FilePrepareDirectoryRector.php
   PHPStan: 'Call to deprecated function file_prepare_directory(). Deprecated in drupal:8.7.0 and is removed from drupal:9.0.0. Use Drupal\Core\File\FileSystemInterface::prepareDirectory().'
   Examples:
     - file_prepare_directory.php
     - FilePrepareDirectoryStatic.php
+'file_scan_directory()':
+  Rector: FileScanDirectoryRector.php
+  PHPStan: 'Call to deprecated function file_scan_directory(). Deprecated in drupal:8.8.0 and is removed from drupal:9.0.0. Use Drupal\Core\File\FileSystemInterface::scanDirectory() instead.'
+  Examples:
+    - file_scan_directory.php
+    - FileScanDirectoryStatic.php
 'BrowserTestBase::getMock()':
   Rector: BrowserTestBaseGetMock.php
-  PHPStan: 'Call to deprecated method getMock() of class Drupal\Tests\UnitTestCase. Deprecated in drupal:8.5.0 and is removed from drupal:9.0.0. Use Drupal\Tests\PhpunitCompatibilityTrait::createMock() instead.'
+  PHPStan: 'Call to deprecated method getMock() of class Drupal\Tests\BrowserTestBase. Deprecated in drupal:8.5.0 and is removed from drupal:9.0.0. Use Drupal\Tests\PhpunitCompatibilityTrait::createMock() instead.'
   Examples:
-      - BrowserTestBaseGetMock.php
+    - BrowserTestBaseGetMock.php
 'KernelTestBase::getMock()':
   Rector: KernelTestBaseGetMock.php
-  PHPStan: 'Call to deprecated method getMock() of class Drupal\Tests\UnitTestCase. Deprecated in drupal:8.5.0 and is removed from drupal:9.0.0. Use Drupal\Tests\PhpunitCompatibilityTrait::createMock() instead.'
+  PHPStan: 'Call to deprecated method getMock() of class Drupal\KernelTests\KernelTestBase. Deprecated in drupal:8.5.0 and is removed from drupal:9.0.0. Use Drupal\Tests\PhpunitCompatibilityTrait::createMock() instead.'
   Examples:
     - KernelTestBaseGetMock.php
 'UnitTestCase::getMock()':
@@ -61,18 +79,28 @@
   Examples:
     - url.php
     - DrupalURLStatic.php
-'format_date':
+'format_date()':
   Rector: FormatDateRector.php
   PHPStan: 'Call to deprecated function format_date(). Deprecated in drupal:8.0.0 and is removed from drupal:9.0.0. Use Drupal::service(''date.formatter'')->format().'
   Examples:
     - format_date.php
     - FormatDateStatic.php
-'Unicode::strtolower':
+'Unicode::strlen()':
+  Rector: UnicodeStrtolowerRector.php
+  PHPStan: 'Call to deprecated method strlen() of class Drupal\Component\Utility\Unicode. Deprecated in drupal:8.6.0 and is removed from drupal:9.0.0. Use mb_strlen() instead.'
+  Examples:
+    - unicode_strlen.php
+'Unicode::strtolower()':
   Rector: UnicodeStrtolowerRector.php
   PHPStan: 'Call to deprecated method strtolower() of class Drupal\Component\Utility\Unicode. Deprecated in drupal:8.6.0 and is removed from drupal:9.0.0. Use mb_strtolower() instead.'
   Examples:
     - unicode_strtolower.php
     - UnicodeStrtolowerStatic.php
+'Unicode::substr()':
+  Rector: UnicodeStrtolowerRector.php
+  PHPStan: 'Call to deprecated method substr() of class Drupal\Component\Utility\Unicode. Deprecated in drupal:8.6.0 and is removed from drupal:9.0.0. Use mb_substr() instead.'
+  Examples:
+    - unicode_substr.php
 'FILE_CREATE_DIRECTORY':
   Rector: FileCreateDirectoryRector.php
   PHPStan: 'Call to deprecated constant FILE_CREATE_DIRECTORY: Deprecated in drupal:8.7.0 and is removed from drupal:9.0.0. Use Drupal\Core\File\FileSystemInterface::CREATE_DIRECTORY.'
@@ -81,16 +109,33 @@
     - FileCreateDirectoryNoUseStatement.php
 'FILE_EXISTS_REPLACE':
   Rector: FileExistsReplaceRector.php
-  PHPStan: 'Call to deprecated constant FILE_EXISTS_REPLACE: Deprecated in drupal:8.7.0 and is removed from drupal:9.0.0. Use Drupal\Core\File\FileSystemInterface::FILE_EXISTS_REPLACE.'
+  PHPStan: 'Call to deprecated constant FILE_EXISTS_REPLACE: Deprecated in drupal:8.7.0 and is removed from drupal:9.0.0. Use Drupal\Core\File\FileSystemInterface::EXISTS_REPLACE.'
   Examples:
     - file_exists_replace.php
     - FileExistsReplaceNoUseStatement.php
+'FILE_EXISTS_RENAME':
+  Rector: FileExistsRenameRector.php
+  PHPStan: 'Call to deprecated constant FILE_EXISTS_RENAME: Deprecated in drupal:8.7.0 and is removed from drupal:9.0.0. Use Drupal\Core\File\FileSystemInterface::EXISTS_RENAME.'
+  Examples:
+    - file_exists_rename.php
+    - FileExistsRenameNoUseStatement.php
+'FILE_MODIFY_PERMISSIONS':
+  Rector: FileModifyPermissionsRector.php
+  PHPStan: 'Call to deprecated constant FILE_MODIFY_PERMISSIONS: Deprecated in drupal:8.7.0 and is removed from drupal:9.0.0. Use Drupal\Core\File\FileSystemInterface::MODIFY_PERMISSIONS.'
+  Examples:
+    - file_modify_permissions.php
+    - FileModifyPermissionsNoUseStatement.php
 'Drupal::l()':
   Rector: DrupalLRector.php
   PHPStan: 'Call to deprecated method l() of class Drupal. Deprecated in drupal:8.0.0 and is removed from drupal:9.0.0. Use Drupal\Core\Link::fromTextAndUrl() instead.'
   Examples:
     - drupal_l.php
     - DrupalLStatic.php
+'LinkGeneratorTrait::l()':
+  Rector: LinkGeneratorTraitLRector.php
+  PHPStan: '\LinkGeneratorTrait::l() is deprecated in drupal:8.0.0 and is removed from drupal:9.0.0. Use \Drupal\Core\Link::fromTextAndUrl() instead. See https://www.drupal.org/node/2614344.'
+  Examples:
+    - LinkGeneratorLWithTrait.php
 'drupal_render()':
   Rector: DrupalRenderRector.php
   PHPStan: 'Call to deprecated function drupal_render(). Deprecated in drupal:8.0.0 and is removed from drupal:9.0.0. Use the'
@@ -99,7 +144,7 @@
     - drupal_render.php
 'drupal_render_root()':
   Rector: DrupalRenderRootRector.php
-  PHPStan: 'Call to deprecated function drupal_render_root(). Deprecated in drupal:8.0.0 and is removed from drupal:9.0.0. Use Drupal​\​Core​\​Render​\​RendererInterface::renderRoot() instead.'
+  PHPStan: 'Call to deprecated function drupal_render_root(). Deprecated in drupal:8.0.0 and is removed from drupal:9.0.0. Use Drupal\Core\Render\RendererInterface::renderRoot() instead.'
   Examples:
     - DrupalRenderRootStatic.php
     - drupal_render_root.php
@@ -109,3 +154,87 @@
   Examples:
     - file_unmanaged_save_data.php
     - FileUnmanagedSaveDataStatic.php
+'REQUEST_TIME':
+    Rector: RequestTimeConstRector.php
+    PHPStan: 'Call to deprecated const REQUEST_TIME. Deprecated in drupal:8.3.0 and is removed from drupal:10.0.0. Use Drupal::time()->getRequestTime().'
+    Examples:
+        - request_time_const.php
+'entity_get_display()':
+  Rector: EntityGetDisplayRector.php
+  PHPStan: 'Call to deprecated function entity_get_display(). Deprecated in drupal:8.8.0 and is removed from drupal:9.0.0. Use EntityDisplayRepositoryInterface::getViewDisplay() instead.'
+  Examples:
+    - entity_get_display.php
+    - EntityGetDisplayStatic.php
+'entity_get_form_display()':
+  Rector: EntityGetFormDisplayRector.php
+  PHPStan: 'Call to deprecated function entity_get_form_display(). Deprecated in drupal:8.8.0 and is removed from drupal:9.0.0. Use EntityDisplayRepositoryInterface::getFormDisplay() instead.'
+  Examples:
+    - entity_get_form_display.php
+    - EntityGetFormDisplayStatic.php
+'file_default_scheme()':
+  Rector: FileDefaultSchemeRector.php
+  PHPStan: 'Call to deprecated function file_default_scheme(). Deprecated in drupal:8.8.0 and is removed from drupal:9.0.0. Use Drupal::config(''system.file'')->get(''default_scheme'') instead.'
+  Examples:
+    - file_default_scheme.php
+    - FileDefaultSchemeStatic.php
+'EntityInterface:urlInfo()':
+  Rector: EntityInterfaceUrlInfoRector.php
+  PHPStan: 'Call to deprecated method urlInfo() of class Drupal\Core\Entity\EntityInterface. Deprecated in drupal:8.0.0 and is removed from drupal:9.0.0. Use Drupal\Core\Entity\EntityInterface::toUrl() instead.'
+  Examples:
+    - entity_interface_url_info.php
+'EntityInterface:link()':
+  Rector: EntityInterfaceLinkRector.php
+  PHPStan: 'Call to deprecated method link() of class Drupal\Core\Entity\EntityInterface. Deprecated in drupal:8.0.0 and is removed from drupal:9.0.0. Use Drupal\Core\EntityInterface::toLink()->toString() instead.'
+  Examples:
+    - entity_interface_link.php
+'entity_load()':
+  Rector: EntityLoadRector.php
+  PHPStan: 'Call to deprecated function entity_load(). Deprecated in drupal:8.0.0 and is removed from drupal:9.0.0. Use the entity type storage''s load() method.'
+  Examples:
+    - entity_load.php
+'node_load()':
+  Rector: NodeLoadRector.php
+  PHPStan: 'Call to deprecated function node_load(). Deprecated in drupal:8.0.0 and is removed from drupal:9.0.0. Use Drupal\node\Entity\Node::load().'
+  Examples:
+    - node_load.php
+'file_load()':
+  Rector: FileLoadRector.php
+  PHPStan: 'Call to deprecated function file_load(). Deprecated in drupal:8.0.0 and is removed from drupal:9.0.0. Use Drupal\file\Entity\File::load().'
+  Examples:
+    - file_load.php
+'user_load()':
+  Rector: UserLoadRector.php
+  PHPStan: 'Call to deprecated function user_load(). Deprecated in drupal:8.0.0 and is removed from drupal:9.0.0. Use Drupal\user\Entity\User::load().'
+  Examples:
+    - user_load.php
+'file_directory_temp()':
+  Rector: FileDirectoryTempRector.php
+  PHPStan: 'Call to deprecated function file_directory_temp(). Deprecated in drupal:8.8.0 and is removed from drupal:9.0.0. Use Drupal\Core\File\FileSystemInterface::getTempDirectory() instead.'
+  Examples:
+    - file_directory_temp.php
+'file_directory_os_temp()':
+  Rector: FileDirectoryOsTempRector.php
+  PHPStan: 'Call to deprecated function file_directory_os_temp(). Deprecated in drupal:8.3.0 and is removed from drupal:9.0.0. Use Drupal\Component\FileSystem\FileSystem::getOsTemporaryDirectory().'
+  Examples:
+    - file_directory_os_temp.php
+'drupal_realpath()':
+  Rector: DrupalRealpathRector.php
+  PHPStan: 'Call to deprecated function drupal_realpath(). Deprecated in drupal:8.0.0 and is removed from drupal:9.0.0. Use Drupal\Core\File\FileSystem::realpath().'
+  Examples:
+    - drupal_realpath.php
+    - DrupalRealpathStatic.php
+'file_uri_target()':
+  Rector: FileUriTargetRector.php
+  PHPStan: 'Call to deprecated function file_uri_target(). Deprecated in drupal:8.8.0 and is removed from drupal:9.0.0. Use Drupal\Core\StreamWrapper\StreamWrapperManagerInterface::getTarget() instead.'
+  Examples:
+    - file_uri_target.php
+'entity_create()':
+  Rector: EntityCreateRector.php
+  PHPStan: 'Call to deprecated function entity_create(). Deprecated in drupal:8.0.0 and is removed from drupal:9.0.0. Use The method overriding Entity::create() for the entity type, e.g. \Drupal\node\Entity\Node::create() if the entity type is known. If the entity type is variable, use the entity storage''s create() method to construct a new entity:'
+  Examples:
+    - entity_create.php
+'SafeMarkup::format()':
+  Rector: SafeMarkupFormatRector.php
+  PHPStan: 'Call to deprecated method format() of class Drupal\Component\Utility\SafeMarkup. Deprecated in drupal:8.0.0 and is removed from drupal:9.0.0. Use Drupal\Component\Render\FormattableMarkup.'
+  Examples:
+    - safe_markup_format.php

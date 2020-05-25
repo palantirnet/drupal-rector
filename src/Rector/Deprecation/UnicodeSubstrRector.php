@@ -7,20 +7,20 @@ use Rector\Core\RectorDefinition\CodeSample;
 use Rector\Core\RectorDefinition\RectorDefinition;
 
 /**
- * Replaces deprecated Unicode::strtolower() calls.
+ * Replaces deprecated Unicode::substr() calls.
  *
  * See https://www.drupal.org/node/2850048 for change record.
  *
  * What is covered:
  * - Static replacement
  */
-final class UnicodeStrtolower extends StaticToFunctionBase
+final class UnicodeSubstrRector extends StaticToFunctionBase
 {
     protected $deprecatedFullyQualifiedClassName = 'Drupal\Component\Utility\Unicode';
 
-    protected $deprecatedMethodName = 'strtolower';
+    protected $deprecatedMethodName = 'substr';
 
-    protected $functionName = 'mb_strtolower';
+    protected $functionName = 'mb_substr';
 
 
     /**
@@ -28,14 +28,14 @@ final class UnicodeStrtolower extends StaticToFunctionBase
      */
     public function getDefinition(): RectorDefinition
     {
-        return new RectorDefinition('Fixes deprecated \Drupal\Component\Utility\Unicode::strtolower() calls',[
+        return new RectorDefinition('Fixes deprecated \Drupal\Component\Utility\Unicode::substr() calls',[
             new CodeSample(
               <<<'CODE_BEFORE'
-$string = \Drupal\Component\Utility\Unicode::strtolower('example');
+$string = \Drupal\Component\Utility\Unicode::substr('example', 0, 2);
 CODE_BEFORE
               ,
               <<<'CODE_AFTER'
-$string = mb_strtolower('example');
+$string = mb_substr('example', 0, 2);
 CODE_AFTER
             )
         ]);

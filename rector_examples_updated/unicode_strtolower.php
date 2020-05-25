@@ -14,8 +14,8 @@ function simple_example() {
 }
 
 /**
- * Example of using a use statment instead of a fully qualified class name.
+ * Example of using all arguments.
  */
-function example_with_use_statement() {
+function example_with_all_arguments() {
   $string = mb_strtolower('example');
 }
