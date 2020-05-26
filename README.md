@@ -14,6 +14,12 @@ You can read more details in the following blog post:
 
 https://www.palantir.net/blog/jumpstart-your-drupal-9-upgrade-drupal-rector
 
+## Documentation
+
+Development guides, individual deprecation overviews, and other resources can be found here:
+
+https://www.palantir.net/rector
+
 ## Scope and limitations
 
 The development of this tool is prioritized by the percieved impact of the deprecations and updates. There are many deprecations that often involve several components and for each of these there are several ways to address the deprecation.

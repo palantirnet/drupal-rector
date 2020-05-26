@@ -39,12 +39,8 @@ abstract class GetMockBase extends AbstractRector
    */
   public function refactor(Node $node): ?Node
   {
-    $class_name = $node->getAttribute(AttributeKey::CLASS_NAME);
-
-    $parent_class = $node->getAttribute(AttributeKey::PARENT_CLASS_NAME);
-
     /* @var Node\Expr\MethodCall $node */
-    if ($this->getName($node->name) === 'getMock' && $this->getName($node->var) === 'this' && !is_null($class_name) && !is_null($parent_class) && $parent_class === $this->baseClassBeingExtended) {
+    if ($this->getName($node->name) === 'getMock' && ($node->var instanceof Node\Expr\Variable) && $this->getName($node->var) === 'this' && $node->hasAttribute(AttributeKey::PARENT_CLASS_NAME) && $node->getAttribute(AttributeKey::PARENT_CLASS_NAME) === $this->baseClassBeingExtended) {
 
       // Build the arguments.
       $method_arguments = $node->args;
