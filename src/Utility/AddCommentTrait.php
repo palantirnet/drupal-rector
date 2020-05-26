@@ -38,7 +38,7 @@ trait AddCommentTrait
      * @param Node $node
      * @param string $comment
      */
-    protected function addComment(Node $node, $comment) {
+    protected function addDrupalRectorComment(Node $node, $comment) {
         $comment_with_wrapper = "//// Drupal Rector Notice: Please delete the following comment after you've made any necessary changes." . PHP_EOL
           . "//// $comment";
 

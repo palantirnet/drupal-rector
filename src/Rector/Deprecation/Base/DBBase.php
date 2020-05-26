@@ -113,11 +113,11 @@ abstract class DBBase extends AbstractRector
 
                 if ($options->value->getType() === 'Expr_Variable') {
                     // TODO: Handle variable evaluation.
-                    $this->addComment($node, 'If your `options` argument contains a `target` key, you will need to use `\Drupal\core\Database\Database::getConnection(\'my_database\'). Drupal Rector could not yet evaluate the `options` argument since it was a variable.');
+                    $this->addDrupalRectorComment($node, 'If your `options` argument contains a `target` key, you will need to use `\Drupal\core\Database\Database::getConnection(\'my_database\'). Drupal Rector could not yet evaluate the `options` argument since it was a variable.');
                 }
             }
             else {
-                $this->addComment($node, 'You will need to use `\Drupal\core\Database\Database::getConnection()` if you do not yet have access to the container here.');
+                $this->addDrupalRectorComment($node, 'You will need to use `\Drupal\core\Database\Database::getConnection()` if you do not yet have access to the container here.');
             }
 
             $var = new Node\Expr\StaticCall($name, $call, $method_arguments);

@@ -115,7 +115,7 @@ CODE_AFTER
                      * https://git.drupalcode.org/project/devel/blob/8.x-2.0/devel.module#L151
                      * https://git.drupalcode.org/project/devel/blob/8.x-2.0/devel.module#L265
                      */
-                    $this->AddComment($node, 'This needs to be replaced, but Rector was not yet able to replace this because the type of message was set with a variable. If you need to continue to use a variable, you might consider using a switch statement.');
+                    $this->addDrupalRectorComment($node, 'This needs to be replaced, but Rector was not yet able to replace this because the type of message was set with a variable. If you need to continue to use a variable, you might consider using a switch statement.');
 
                     return $node;
                 }
