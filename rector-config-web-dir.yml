@@ -27,6 +27,10 @@ parameters:
     - inc
     - engine
 
+  # If you would like Rector to include PHPUnit 8 upgrades, uncomment the following lines:
+  # sets:
+  #   - phpunit80
+
   # Create `use` statements.
   auto_import_names: true
   # Do not convert `\Drupal` to `Drupal`, etc.
