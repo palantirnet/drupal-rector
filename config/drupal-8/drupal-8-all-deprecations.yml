@@ -1,6 +1,7 @@
 # General ruleset for Drupal 8.
 imports:
     - { resource: "./drupal-8.0-deprecations.yml" }
+    - { resource: "./drupal-8.1-deprecations.yml" }
     - { resource: "./drupal-8.2-deprecations.yml" }
     - { resource: "./drupal-8.3-deprecations.yml" }
     - { resource: "./drupal-8.4-deprecations.yml" }
@@ -10,6 +11,6 @@ imports:
     - { resource: "./drupal-8.8-deprecations.yml" }
 
 parameters:
-    exclude_rectors:
+    exclude_rectors: ~
 
-services:
+services: ~

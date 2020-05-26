@@ -2,10 +2,14 @@ imports:
   - { resource: "vendor/palantirnet/drupal-rector/config/drupal-8/drupal-8-all-deprecations.yml" }
   # includes:
   # - { resource: "vendor/palantirnet/drupal-rector/config/drupal-8/drupal-8.0-deprecations.yml" }
+  # - { resource: "vendor/palantirnet/drupal-rector/config/drupal-8/drupal-8.1-deprecations.yml" }
+  # - { resource: "vendor/palantirnet/drupal-rector/config/drupal-8/drupal-8.2-deprecations.yml" }
+  # - { resource: "vendor/palantirnet/drupal-rector/config/drupal-8/drupal-8.3-deprecations.yml" }
   # - { resource: "vendor/palantirnet/drupal-rector/config/drupal-8/drupal-8.4-deprecations.yml" }
   # - { resource: "vendor/palantirnet/drupal-rector/config/drupal-8/drupal-8.5-deprecations.yml" }
   # - { resource: "vendor/palantirnet/drupal-rector/config/drupal-8/drupal-8.6-deprecations.yml" }
   # - { resource: "vendor/palantirnet/drupal-rector/config/drupal-8/drupal-8.7-deprecations.yml" }
+  # - { resource: "vendor/palantirnet/drupal-rector/config/drupal-8/drupal-8.8-deprecations.yml" }
 
 parameters:
   autoload_paths:
@@ -15,9 +19,11 @@ parameters:
     - 'docroot/profiles'
 
   exclude_paths:
-  # If you would like to skip test directories, uncomment the following lines:
-  #   - '*/tests/*'
-  #   - '*/Tests/*'
+    # This path is used by the upgrade_status module.
+    - '*/upgrade_status/tests/modules/*'
+    # If you would like to skip test directories, uncomment the following lines:
+    # - '*/tests/*'
+    # - '*/Tests/*'
 
   file_extensions:
     - module
