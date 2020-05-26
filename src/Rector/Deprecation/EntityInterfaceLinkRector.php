@@ -60,7 +60,7 @@ CODE_AFTER
       if ($this->getName($node->name) === 'link') {
           $node_class_name = $this->getName($node->var);
 
-          $this->addComment($node, "// Rector notice: Please confirm that `$$node_class_name` is an instance of `\Drupal\Core\Entity\EntityInterface`. Only the method name and not the class name was checked for this replacement, so this may be a false positive.");
+          $this->addComment($node, "Please confirm that `$$node_class_name` is an instance of `\Drupal\Core\Entity\EntityInterface`. Only the method name and not the class name was checked for this replacement, so this may be a false positive.");
 
           $toLink_node = $node;
 

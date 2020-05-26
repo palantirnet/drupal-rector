@@ -39,11 +39,14 @@ trait AddCommentTrait
      * @param string $comment
      */
     protected function addComment(Node $node, $comment) {
+        $comment_with_wrapper = "//// Drupal Rector Notice: Please delete the following comment after you've made any necessary changes." . PHP_EOL
+          . "//// $comment";
+
         $statement_node = $this->getClosestStatementNode($node);
 
         if (!is_null($statement_node)) {
             $comments = $statement_node->getComments();
-            $comments[] = new Comment($comment);
+            $comments[] = new Comment($comment_with_wrapper);
 
             $statement_node->setAttribute('comments', $comments);
         }

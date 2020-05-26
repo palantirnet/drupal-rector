@@ -65,7 +65,7 @@ CODE_AFTER
 
             // Check if class has LinkGeneratorTrait.
             if ($class_name && in_array('Drupal\Core\Routing\LinkGeneratorTrait', $this->getTraitsByClass($class_name))) {
-              $this->addComment($node, '// Rector notice: Please manually remove the `use LinkGeneratorTrait;` statement from this class.');
+              $this->addComment($node, 'Please manually remove the `use LinkGeneratorTrait;` statement from this class.');
 
               // Replace with a static call to Link::fromTextAndUrl().
               $name = new Node\Name\FullyQualified('Drupal\Core\Link');

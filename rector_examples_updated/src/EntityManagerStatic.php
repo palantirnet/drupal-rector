@@ -11,7 +11,8 @@ class EntityManagerStatic {
    * Simple example
    */
   public function simple_example() {
-    // Rector notice: We are assuming that we want to use the `entity_type.manager` service since no method was called here directly. Please confirm this is the case. See https://www.drupal.org/node/2549139 for more information.
+    //// Drupal Rector Notice: Please delete the following comment after you've made any necessary changes.
+    //// We are assuming that we want to use the `entity_type.manager` service since no method was called here directly. Please confirm this is the case. See https://www.drupal.org/node/2549139 for more information.
     $entity_manager = \Drupal::service('entity_type.manager');
   }
 
@@ -39,7 +40,8 @@ class EntityManagerStatic {
    * These should now use the `entity_type.repository` service.
    */
   public function stored_service_and_method_not_in_entityTypeManager() {
-    // Rector notice: We are assuming that we want to use the `entity_type.manager` service since no method was called here directly. Please confirm this is the case. See https://www.drupal.org/node/2549139 for more information.
+    //// Drupal Rector Notice: Please delete the following comment after you've made any necessary changes.
+    //// We are assuming that we want to use the `entity_type.manager` service since no method was called here directly. Please confirm this is the case. See https://www.drupal.org/node/2549139 for more information.
     $entity_manager = \Drupal::service('entity_type.manager');
 
     $group = FALSE;

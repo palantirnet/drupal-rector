@@ -102,7 +102,7 @@ abstract class EntityLoadBase extends AbstractRector
         // We need to account for the `reset` option which adds a method to the chain.
         // We will replace the original method with a ternary to evaluate and provide both options.
         if (count($node->args) == (2 + $argument_offset)) {
-            $this->addComment($node, '// Rector notice: A ternary operator is used here to keep the conditional contained within this part of the expression. Consider wrapping this statement in an `if / else` statement.');
+            $this->addComment($node, 'A ternary operator is used here to keep the conditional contained within this part of the expression. Consider wrapping this statement in an `if / else` statement.');
 
             /* @var Node\Arg $reset_flag. */
             $reset_flag = $node->args[1 + $argument_offset];

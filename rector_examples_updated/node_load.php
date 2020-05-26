@@ -17,7 +17,8 @@ function simple_example() {
  */
 function all_arguments() {
   /* @var \Drupal\node\Entity\Node $node */
-  // Rector notice: A ternary operator is used here to keep the conditional contained within this part of the expression. Consider wrapping this statement in an `if / else` statement.
+  //// Drupal Rector Notice: Please delete the following comment after you've made any necessary changes.
+  //// A ternary operator is used here to keep the conditional contained within this part of the expression. Consider wrapping this statement in an `if / else` statement.
   $node = TRUE ? \Drupal::service('entity_type.manager')->getStorage('node')->resetCache([123])->load(123) : \Drupal::service('entity_type.manager')->getStorage('node')->load(123);
 }
 
@@ -29,6 +30,7 @@ function all_arguments_as_variables() {
   $reset = TRUE;
 
   /* @var \Drupal\node\Entity\Node $node */
-  // Rector notice: A ternary operator is used here to keep the conditional contained within this part of the expression. Consider wrapping this statement in an `if / else` statement.
+  //// Drupal Rector Notice: Please delete the following comment after you've made any necessary changes.
+  //// A ternary operator is used here to keep the conditional contained within this part of the expression. Consider wrapping this statement in an `if / else` statement.
   $node = $reset ? \Drupal::service('entity_type.manager')->getStorage('node')->resetCache([$entity_id])->load($entity_id) : \Drupal::service('entity_type.manager')->getStorage('node')->load($entity_id);
 }

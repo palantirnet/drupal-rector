@@ -62,7 +62,7 @@ abstract class MethodToMethodBase extends AbstractRector
 
             $node_class_name = $this->getName($node->var);
 
-            $this->addComment($node, "// Rector notice: Please confirm that `$$node_class_name` is an instance of `$this->className`. Only the method name and not the class name was checked for this replacement, so this may be a false positive.");
+            $this->addComment($node, "Please confirm that `$$node_class_name` is an instance of `$this->className`. Only the method name and not the class name was checked for this replacement, so this may be a false positive.");
             
             $node->name = new Node\Name($this->methodName);
 
