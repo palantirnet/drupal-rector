@@ -97,19 +97,15 @@ CODE_AFTER
             // If we are making a direct call to ->entityManager(), we can assume the new class will also have entityTypeManager.
             $node = new Node\Expr\MethodCall(new Node\Expr\Variable('this'), new Node\Identifier('entityTypeManager'));
           }
-
-          // This creates a service call like `\Drupal::service('entity_type.manager').
-          // This doesn't use dependency injection, but it should work.
-          $node = new Node\Expr\StaticCall(new Node\Name\FullyQualified('Drupal'), 'service', [new Node\Arg(new Node\Scalar\String_($service))]);
         }
         else {
           // If we are making a direct call to ->entityManager(), we can assume the new class will also have entityTypeManager.
           $this->addComment($node, '// Rector notice: We are assuming that we want to use the `$this->entityTypeManager` injected service since no method was called here directly. Please confirm this is the case. If another service is needed, you may need to inject that yourself. See https://www.drupal.org/node/2549139 for more information.');
 
           $node = new Node\Expr\MethodCall(new Node\Expr\Variable('this'), new Node\Identifier('entityTypeManager'));
-
-          return $node;
         }
+
+        return $node;
       }
     }
 
