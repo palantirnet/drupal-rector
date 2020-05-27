@@ -12,14 +12,16 @@ class DrupalURLStatic {
    * A simple example using the minimum number of arguments.
    */
   public function simple_example() {
-    Url::fromRoute('user.login')->toString();
+    $url_as_string = Url::fromRoute('user.login')->toString();
   }
 
   /**
    * An example using all parameters.
    */
   public function all_parameters() {
-    Url::fromRoute('entity.node.canonical', ['node' => 1], ['query' => ['test_key' => 'test_value']])->toString(FALSE);
+    $url_as_string = Url::fromRoute('entity.node.canonical', ['node' => 1], ['query' => ['test_key' => 'test_value']])->toString(FALSE);
+
+    $url_as_object = Url::fromRoute('entity.node.canonical', ['node' => 1], ['query' => ['test_key' => 'test_value']])->toString(TRUE);
   }
 
 }
