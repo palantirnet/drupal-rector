@@ -19,6 +19,8 @@ class LinkGeneratorLWithTrait {
   public function simple_example() {
     $url = Url::fromUri('public://');
 
+    //// Drupal Rector Notice: Please delete the following comment after you've made any necessary changes.
+    //// Please manually remove the `use LinkGeneratorTrait;` statement from this class.
     Link::fromTextAndUrl('text', $url);
   }
 
@@ -29,6 +31,8 @@ class LinkGeneratorLWithTrait {
     $text = 'text';
     $url = Url::fromUri('public://');
 
+    //// Drupal Rector Notice: Please delete the following comment after you've made any necessary changes.
+    //// Please manually remove the `use LinkGeneratorTrait;` statement from this class.
     Link::fromTextAndUrl($text, $url);
   }
 

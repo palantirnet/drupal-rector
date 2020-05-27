@@ -44,4 +44,7 @@ parameters:
   # This will not import classes used in PHP DocBlocks, like in /** @var \Some\Class */
   import_doc_blocks: false
 
+  # This will add comments to call out edge cases in replacements.
+  drupal_rector_notices_as_comments: true
+
 services: ~

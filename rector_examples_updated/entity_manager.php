@@ -8,6 +8,8 @@
  * Simple example
  */
 function simple_example() {
+  //// Drupal Rector Notice: Please delete the following comment after you've made any necessary changes.
+  //// We are assuming that we want to use the `entity_type.manager` service since no method was called here directly. Please confirm this is the case. See https://www.drupal.org/node/2549139 for more information.
   $entity_manager = \Drupal::service('entity_type.manager');
 }
 
@@ -35,6 +37,8 @@ function method_not_in_entityTypeManager() {
  * These should now use the `entity_type.repository` service.
  */
 function stored_service_and_method_not_in_entityTypeManager() {
+  //// Drupal Rector Notice: Please delete the following comment after you've made any necessary changes.
+  //// We are assuming that we want to use the `entity_type.manager` service since no method was called here directly. Please confirm this is the case. See https://www.drupal.org/node/2549139 for more information.
   $entity_manager = \Drupal::service('entity_type.manager');
 
   $group = FALSE;

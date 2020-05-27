@@ -2,6 +2,7 @@
 
 namespace DrupalRector\Rector\Deprecation\Base;
 
+use DrupalRector\Utility\AddCommentTrait;
 use PhpParser\Node;
 use Rector\Core\Rector\AbstractRector;
 
@@ -17,6 +18,8 @@ use Rector\Core\Rector\AbstractRector;
  */
 abstract class MethodToMethodBase extends AbstractRector
 {
+    use AddCommentTrait;
+
     /**
      * Deprecated method name.
      *
@@ -56,6 +59,11 @@ abstract class MethodToMethodBase extends AbstractRector
         /** @var Node\Expr\MethodCall $node */
         // TODO: Check the class to see if it implements $this->className.
         if ($this->getName($node->name) === $this->deprecatedMethodName) {
+
+            $node_class_name = $this->getName($node->var);
+
+            $this->addDrupalRectorComment($node, "Please confirm that `$$node_class_name` is an instance of `$this->className`. Only the method name and not the class name was checked for this replacement, so this may be a false positive.");
+            
             $node->name = new Node\Name($this->methodName);
 
             return $node;
