@@ -2,7 +2,8 @@
 
 namespace DrupalRector\Rector\Deprecation;
 
-use DrupalRector\Rector\Deprecation\Base\StaticToServiceBase;
+use PhpParser\Node;
+use Rector\Core\Rector\AbstractRector;
 use Rector\Core\RectorDefinition\CodeSample;
 use Rector\Core\RectorDefinition\RectorDefinition;
 
@@ -17,15 +18,18 @@ use Rector\Core\RectorDefinition\RectorDefinition;
  * Improvement opportunities
  * - Dependency injection
  */
-final class DrupalURLRector extends StaticToServiceBase
+final class DrupalURLRector extends AbstractRector
 {
-    protected $deprecatedFullyQualifiedClassName = 'Drupal';
 
-    protected $deprecatedMethodName = 'url';
-
-    protected $serviceName = 'url_generator';
-
-    protected $serviceMethodName = 'generateFromRoute';
+    /**
+     * @inheritdoc
+     */
+    public function getNodeTypes(): array
+    {
+        return [
+            Node\Expr\StaticCall::class,
+        ];
+    }
 
   /**
      * @inheritdoc
@@ -39,9 +43,42 @@ final class DrupalURLRector extends StaticToServiceBase
 CODE_BEFORE
                 ,
                 <<<'CODE_AFTER'
-\Drupal::service('url_generator')->generateFromRoute('user.login');
+\Drupal\Core\Url::fromRoute('user.login')->toString();
 CODE_AFTER
             )
         ]);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function refactor(Node $node): ?Node
+    {
+        /** @var Node\Expr\StaticCall $node */
+        if ($this->getName($node->name) === 'url' && $this->getName($node->class) === 'Drupal') {
+
+            $toString_argument = NULL;
+            $fromRoute_arguments = $node->args;
+
+            // If we are the optional fourth argument, we need to chain a `toString($collect_bubbleable_metadata)`.
+            if (count($fromRoute_arguments) === 4) {
+               $toString_argument = $fromRoute_arguments[3];
+
+               unset($fromRoute_arguments[3]);
+            }
+
+            $new_node = new Node\Expr\StaticCall(new Node\Name\FullyQualified('Drupal\Core\Url'), 'fromRoute', $fromRoute_arguments);
+
+            if (is_null($toString_argument)) {
+                $new_node = new Node\Expr\MethodCall($new_node, 'toString');
+            }
+            else {
+                $new_node = new Node\Expr\MethodCall($new_node, 'toString', [$toString_argument]);
+            }
+
+            return $new_node;
+        }
+
+        return null;
     }
 }
