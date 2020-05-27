@@ -8,5 +8,5 @@
  * A simple example using the minimum number of arguments.
  */
 function simple_example() {
-    \Drupal::l('User Login', \Drupal::service('url_generator')->generateFromRoute('user.login'));
+    \Drupal::l('User Login', \Drupal\Core\Url::fromRoute('user.login'));
 }
