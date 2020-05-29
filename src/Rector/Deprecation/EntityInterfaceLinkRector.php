@@ -3,6 +3,7 @@
 namespace DrupalRector\Rector\Deprecation;
 
 use DrupalRector\Utility\AddCommentTrait;
+use Rector\Core\RectorDefinition\CodeSample;
 use Rector\Core\RectorDefinition\RectorDefinition;
 use PhpParser\Node;
 use Rector\Core\Rector\AbstractRector;
@@ -21,7 +22,7 @@ use Rector\Core\Rector\AbstractRector;
 final class EntityInterfaceLinkRector extends AbstractRector
 {
     use AddCommentTrait;
-    
+
     /**
      * @inheritdoc
      */
