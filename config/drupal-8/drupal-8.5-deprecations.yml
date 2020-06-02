@@ -2,3 +2,4 @@
 services:
     DrupalRector\Rector\Deprecation\DrupalSetMessageRector: ~
     DrupalRector\Rector\Deprecation\DatetimeDatetimeStorageFormatRector: ~
+    DrupalRector\Rector\Deprecation\DatetimeStorageTimezoneRector: ~
