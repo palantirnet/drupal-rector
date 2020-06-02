@@ -238,3 +238,8 @@
   PHPStan: 'Call to deprecated method format() of class Drupal\Component\Utility\SafeMarkup. Deprecated in drupal:8.0.0 and is removed from drupal:9.0.0. Use Drupal\Component\Render\FormattableMarkup.'
   Examples:
     - safe_markup_format.php
+'DATETIME_DATETIME_STORAGE_FORMAT':
+  Rector: DatetimeDatetimeStorageFormatRector.php
+  PHPStan: 'Call to deprecated constant DATETIME_DATETIME_STORAGE_FORMAT: Deprecated in drupal:8.5.0 and is removed from drupal:9.0.0. Use Drupal\datetime\Plugin\Field\FieldType\DateTimeItemInterface::DATETIME_STORAGE_FORMAT instead.'
+  Examples:
+    - datetime_datetime_storage_format.php
