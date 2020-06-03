@@ -1,16 +1,18 @@
 <?php
 
-use Drupal\datetime\Plugin\Field\FieldType\DateTimeItemInterface;
 /**
- * This demonstrates the deprecated static calls that might be called from procedural code like `.module` files.
+ * @file
+ * Demonstrates updated code using the new constants.
  */
+
+use Drupal\Core\Datetime\DrupalDateTime;
+use Drupal\datetime\Plugin\Field\FieldType\DateTimeItemInterface;
 
 /**
  * A simple example.
  */
 function simple_example() {
   $format = DateTimeItemInterface::DATETIME_STORAGE_FORMAT;
-
 }
 
 /**

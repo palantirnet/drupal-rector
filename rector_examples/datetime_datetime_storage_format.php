@@ -1,15 +1,17 @@
 <?php
 
 /**
- * This demonstrates the deprecated static calls that might be called from procedural code like `.module` files.
+ * @file
+ * Demonstrates deprecated constants that might be used in procedural code.
  */
+
+use Drupal\Core\Datetime\DrupalDateTime;
 
 /**
  * A simple example.
  */
 function simple_example() {
   $format = DATETIME_DATETIME_STORAGE_FORMAT;
-
 }
 
 /**

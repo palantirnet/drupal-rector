@@ -34,11 +34,13 @@ final class DatetimeDatetimeStorageFormatRector extends ConstantToClassConstantB
     return new RectorDefinition('Fixes deprecated DATETIME_DATETIME_STORAGE_FORMAT use',[
       new CodeSample(
         <<<'CODE_BEFORE'
+use Drupal\Core\Datetime\DrupalDateTime;
 $date = new DrupalDateTime('now', new \DateTimezone('America/Los_Angeles'));
 $now = $date->format(DATETIME_DATETIME_STORAGE_FORMAT);
 CODE_BEFORE
         ,
         <<<'CODE_AFTER'
+use Drupal\Core\Datetime\DrupalDateTime;
 use Drupal\datetime\Plugin\Field\FieldType\DateTimeItemInterface;
 $date = new DrupalDateTime('now', new \DateTimezone('America/Los_Angeles'));
 $now = $date->format(DateTimeItemInterface::DATETIME_STORAGE_FORMAT);
