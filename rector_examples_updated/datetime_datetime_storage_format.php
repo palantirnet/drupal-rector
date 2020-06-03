@@ -1,12 +1,12 @@
 <?php
 
+use Drupal\datetime\Plugin\Field\FieldType\DateTimeItemInterface;
 /**
  * @file
- * Demonstrates updated code using the new constants.
+ * Demonstrates deprecated constants that might be used in procedural code.
  */
 
 use Drupal\Core\Datetime\DrupalDateTime;
-use Drupal\datetime\Plugin\Field\FieldType\DateTimeItemInterface;
 
 /**
  * A simple example.
