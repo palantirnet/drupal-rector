@@ -39,8 +39,9 @@ $now = $date->format(DATETIME_DATETIME_STORAGE_FORMAT);
 CODE_BEFORE
         ,
         <<<'CODE_AFTER'
+use Drupal\datetime\Plugin\Field\FieldType\DateTimeItemInterface;
 $date = new DrupalDateTime('now', new \DateTimezone('America/Los_Angeles'));
-$now = $date->format(\Drupal\datetime\Plugin\Field\FieldType\DateTimeItemInterface::DATETIME_STORAGE_FORMAT);
+$now = $date->format(DateTimeItemInterface::DATETIME_STORAGE_FORMAT);
 CODE_AFTER
       )
     ]);
