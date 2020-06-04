@@ -15,5 +15,5 @@ function simple_example() {
  * An example using the constant as an argument.
  */
 function as_an_argument() {
-  $now->setTimezone(new \DateTimeZone(DATETIME_STORAGE_TIMEZONE));
+  $timezone = new \DateTimeZone(DATETIME_STORAGE_TIMEZONE);
 }

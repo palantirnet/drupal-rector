@@ -34,12 +34,12 @@ final class DatetimeStorageTimezoneRector extends ConstantToClassConstantBase
     return new RectorDefinition('Fixes deprecated DATETIME_STORAGE_TIMEZONE use',[
       new CodeSample(
         <<<'CODE_BEFORE'
-$now->setTimezone(new \DateTimeZone(DATETIME_STORAGE_TIMEZONE));
+$timezone = new \DateTimeZone(DATETIME_STORAGE_TIMEZONE);
 CODE_BEFORE
         ,
         <<<'CODE_AFTER'
 use Drupal\datetime\Plugin\Field\FieldType\DateTimeItemInterface;
-$now->setTimezone(new \DateTimeZone(DateTimeItemInterface::STORAGE_TIMEZONE));
+$timezone = new \DateTimeZone(DateTimeItemInterface::STORAGE_TIMEZONE);
 CODE_AFTER
       )
     ]);
