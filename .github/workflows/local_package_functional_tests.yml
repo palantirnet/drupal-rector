@@ -19,7 +19,7 @@ jobs:
             # This is copied from `local_package_run_rector`.
             -    run: |
                     # Download the latest Drupal core project and all its dependencies
-                    composer create-project drupal/recommended-project ../drupal --no-progress
+                    composer create-project drupal/recommended-project:~8.8.0 ../drupal --no-progress
                     mv ../drupal/* ..
 
             # This is copied from `local_package_run_rector`.
