@@ -25,7 +25,7 @@ jobs:
 
             -   run: |
                     # Download the latest Drupal core project and all its dependencies
-                    composer create-project drupal/recommended-project:~8.8.0 drupal --no-progress
+                    composer create-project drupal/recommended-project:~8 drupal --no-progress
 
             -   run: |
                     # Install drupal-rector:dev-master from Github
