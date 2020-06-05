@@ -1,4 +1,4 @@
-# All 47 Rectors Overview
+# All 50 Rectors Overview
 
 ## `BrowserTestBaseGetMockRector`
 
@@ -74,6 +74,52 @@ Fixes deprecated db_update() calls
 ```diff
 -db_update($table, $options);
 +\Drupal::database()->update($table, $options);
+```
+
+<br>
+
+## `DatetimeDateStorageFormatRector`
+
+- class: [`DrupalRector\Rector\Deprecation\DatetimeDateStorageFormatRector`](/../master/drupal-rector/src/Rector/Deprecation/DatetimeDateStorageFormatRector.php)
+
+Fixes deprecated DATETIME_DATE_STORAGE_FORMAT use
+
+```diff
+ use Drupal\Core\Datetime\DrupalDateTime;
++use Drupal\datetime\Plugin\Field\FieldType\DateTimeItemInterface;
+ $date = new DrupalDateTime('now', new \DateTimezone('America/Los_Angeles'));
+-$now = $date->format(DATETIME_DATE_STORAGE_FORMAT);
++$now = $date->format(DateTimeItemInterface::DATE_STORAGE_FORMAT);
+```
+
+<br>
+
+## `DatetimeDatetimeStorageFormatRector`
+
+- class: [`DrupalRector\Rector\Deprecation\DatetimeDatetimeStorageFormatRector`](/../master/drupal-rector/src/Rector/Deprecation/DatetimeDatetimeStorageFormatRector.php)
+
+Fixes deprecated DATETIME_DATETIME_STORAGE_FORMAT use
+
+```diff
+ use Drupal\Core\Datetime\DrupalDateTime;
++use Drupal\datetime\Plugin\Field\FieldType\DateTimeItemInterface;
+ $date = new DrupalDateTime('now', new \DateTimezone('America/Los_Angeles'));
+-$now = $date->format(DATETIME_DATETIME_STORAGE_FORMAT);
++$now = $date->format(DateTimeItemInterface::DATETIME_STORAGE_FORMAT);
+```
+
+<br>
+
+## `DatetimeStorageTimezoneRector`
+
+- class: [`DrupalRector\Rector\Deprecation\DatetimeStorageTimezoneRector`](/../master/drupal-rector/src/Rector/Deprecation/DatetimeStorageTimezoneRector.php)
+
+Fixes deprecated DATETIME_STORAGE_TIMEZONE use
+
+```diff
+-$timezone = new \DateTimeZone(DATETIME_STORAGE_TIMEZONE);
++use Drupal\datetime\Plugin\Field\FieldType\DateTimeItemInterface;
++$timezone = new \DateTimeZone(DateTimeItemInterface::STORAGE_TIMEZONE);
 ```
 
 <br>
