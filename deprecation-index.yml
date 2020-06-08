@@ -250,6 +250,6 @@
     - datetime_datetime_storage_format.php
 'DATETIME_STORAGE_TIMEZONE':
   Rector: DatetimeStorageTimezoneRector.php
-  PHPStan: 'Call to deprecated constant DATETIME_STORAGE_TIMEZONE: Deprecated in drupal:8.5.0 and is removed from drupal:9.0.0. Use Drupal\datetime\Plugin\Field\FieldType\DateTimeItemInterface::STORAGE_FORMAT instead.'
+  PHPStan: 'Call to deprecated constant DATETIME_STORAGE_TIMEZONE: Deprecated in drupal:8.5.0 and is removed from drupal:9.0.0. Use Drupal\datetime\Plugin\Field\FieldType\DateTimeItemInterface::STORAGE_TIMEZONE instead.'
   Examples:
     - datetime_storage_timezone.php
