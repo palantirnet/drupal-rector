@@ -119,6 +119,23 @@ You may need to rebuild your autoload file.
 
 `composer dump-autoload`
 
+### FileLocator::locate() must be compatible with FileLocatorInterface::locate()
+
+If you are getting errors like
+
+```
+PHP Fatal error:  Declaration of _HumbugBox3630ef99eac4\Symfony\Component\HttpKernel\Config\FileLocator::locate($file, $currentPath = NULL, $first = true) must be compatible with _HumbugBox3630ef99eac4\Symfony\Component\Config\FileLocatorInterface::locate(string $name, ?string $currentPath = NULL, bool $first = true) in phar:///var/www/html/vendor/rector/rector-prefixed/rector/vendor/symfony/http-kernel/Config/FileLocator.php on line 20
+Fatal error: Declaration of _HumbugBox3630ef99eac4\Symfony\Component\HttpKernel\Config\FileLocator::locate($file, $currentPath = NULL, $first = true) must be compatible with _HumbugBox3630ef99eac4\Symfony\Component\Config\FileLocatorInterface::locate(string $name, ?string $currentPath = NULL, bool $first = true) in phar:///var/www/html/vendor/rector/rector-prefixed/rector/vendor/symfony/http-kernel/Config/FileLocator.php on line 20
+```
+
+You may need to check that you are
+- Running `composer install` from an environment that support Php 7.2 or greater
+- Running Drupal Rector from an environment that supports Php 7.2 or greater
+
+Sometimes people install composer dependencies from one machine (host machine) and run Drupal Rector from another (such as a Lando VM).
+
+If you are having these issues try running Rector from the environment that has Php 7.2 or greater. Drupal Rector does not need a fully functional web server, it only (more or less) needs Php and access to a standard Drupal set of files.
+
 ### Iconv error when running Rector in Alpine Docker
 
 If you are getting errors like 
