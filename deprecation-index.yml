@@ -253,3 +253,8 @@
   PHPStan: 'Call to deprecated constant DATETIME_STORAGE_TIMEZONE: Deprecated in drupal:8.5.0 and is removed from drupal:9.0.0. Use Drupal\datetime\Plugin\Field\FieldType\DateTimeItemInterface::STORAGE_TIMEZONE instead.'
   Examples:
     - datetime_storage_timezone.php
+'EntityType::getLowercaseLabel()':
+  Rector: EntityTypeGetSingularLabelRector.php
+  PHPStan: 'Call to deprecated method EntityType::getLowercaseLabel(). Deprecated in drupal:8.8.0 and is removed from drupal:9.0.0. Use EntityType::getSingularLabel().'
+  Examples:
+    - entity_type_getsingularlabel.php
