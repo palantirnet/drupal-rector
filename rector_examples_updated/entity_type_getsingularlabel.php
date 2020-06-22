@@ -11,6 +11,8 @@ function simple_example() {
   /* @var \Drupal\node\Entity\Node $node */
   $node = \Drupal::entityTypeManager()->getStorage('node')->load(123);
   $entity_type = $node->getEntityType();
+  // TODO: Drupal Rector Notice: Please delete the following comment after you've made any necessary changes.
+  // Please confirm that `$entity_type` is an instance of `\Drupal\Core\Entity\EntityType`. Only the method name and not the class name was checked for this
   $entity_type->getSingularLabel();
 }
 
