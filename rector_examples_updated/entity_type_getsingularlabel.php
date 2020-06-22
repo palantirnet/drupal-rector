@@ -22,5 +22,5 @@ function simple_example() {
 //function chained_example() {
 //  /* @var \Drupal\node\Entity\Node $node */
 //  $node = \Drupal::entityTypeManager()->getStorage('node')->load(123);
-//  $label = $node->getEntityType()->getSingularLabel();
+//  $label = $node->getEntityType()->getLowercaseLabel();
 //}
