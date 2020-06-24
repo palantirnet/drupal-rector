@@ -21,3 +21,4 @@ services:
   DrupalRector\Rector\Deprecation\NodeLoadRector: ~
   DrupalRector\Rector\Deprecation\SafeMarkupFormatRector: ~
   DrupalRector\Rector\Deprecation\UserLoadRector: ~
+  DrupalRector\Rector\Deprecation\EntityManagerGetStorageRector: ~
