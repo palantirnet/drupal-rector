@@ -19,8 +19,8 @@ function simple_example() {
  *
  * Seems like we should support this, but the method chaining errors out.
  */
-//function chained_example() {
-//  /* @var \Drupal\node\Entity\Node $node */
-//  $node = \Drupal::entityTypeManager()->getStorage('node')->load(123);
-//  $label = $node->getEntityType()->getLowercaseLabel();
-//}
+function chained_example() {
+  /* @var \Drupal\node\Entity\Node $node */
+  $node = \Drupal::entityTypeManager()->getStorage('node')->load(123);
+  $label = $node->getEntityType()->getLowercaseLabel();
+}
