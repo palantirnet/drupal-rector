@@ -8,7 +8,7 @@ services:
   DrupalRector\Rector\Deprecation\FileDefaultSchemeRector: ~
   DrupalRector\Rector\Deprecation\EntityGetDisplayRector: ~
   DrupalRector\Rector\Deprecation\EntityGetFormDisplayRector: ~
-  DrupalRector\Rector\Deprecation\EntityTypeGetSingularLabelRector: ~
+  DrupalRector\Rector\Deprecation\EntityTypeGetLowercaseLabelRector: ~
   DrupalRector\Rector\Deprecation\FileScanDirectoryRector: ~
   DrupalRector\Rector\Deprecation\FileDirectoryTempRector: ~
   DrupalRector\Rector\Deprecation\FileUriTargetRector: ~

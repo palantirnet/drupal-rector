@@ -15,7 +15,7 @@ use Rector\Core\RectorDefinition\RectorDefinition;
  * - Changes the name of the method.
  *
  */
-final class EntityTypeGetSingularLabelRector extends MethodToMethodBase
+final class EntityTypeGetLowercaseLabelRector extends MethodToMethodBase
 {
 
   /**

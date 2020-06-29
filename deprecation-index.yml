@@ -254,7 +254,7 @@
   Examples:
     - datetime_storage_timezone.php
 'EntityType::getLowercaseLabel()':
-  Rector: EntityTypeGetSingularLabelRector.php
+  Rector: EntityTypeGetLowercaseLabelRector.php
   PHPStan: 'Call to deprecated method EntityType::getLowercaseLabel(). Deprecated in drupal:8.8.0 and is removed from drupal:9.0.0. Use EntityType::getSingularLabel().'
   Examples:
-    - entity_type_getsingularlabel.php
+    - entity_type_get_lowercase_label.php
