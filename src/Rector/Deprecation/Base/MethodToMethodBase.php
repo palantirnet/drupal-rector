@@ -59,10 +59,17 @@ abstract class MethodToMethodBase extends AbstractRector
         /** @var Node\Expr\MethodCall $node */
         // TODO: Check the class to see if it implements $this->className.
         if ($this->getName($node->name) === $this->deprecatedMethodName) {
+            $node_var = $node->var->name;
 
-            $node_class_name = $this->getName($node->var);
+            if ($node->var instanceof Node\Expr\Variable) {
+              $node_var = "$$node_var";
+            }
 
-            $this->addDrupalRectorComment($node, "Please confirm that `$$node_class_name` is an instance of `$this->className`. Only the method name and not the class name was checked for this replacement, so this may be a false positive.");
+            if ($node->var instanceof Node\Expr\MethodCall) {
+              $node_var = "$node_var()";
+            }
+
+            $this->addDrupalRectorComment($node, "Please confirm that `$node_var` is an instance of `$this->className`. Only the method name and not the class name was checked for this replacement, so this may be a false positive.");
             
             $node->name = new Node\Name($this->methodName);
 
