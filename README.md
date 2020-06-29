@@ -37,6 +37,8 @@ Known limitations are listed in the comment documentation for each rule.
 Common limitations include:
 - Using static calls like `Drupal->service('my_service')->myMethod();` rather than injecting the service into the class
 - Skipping complex use cases, such as when optional arguments are passed as variables
+- Handling `use` statements in weird ways. Rector has a global option to handle `use` statements and we think the benefits outweigh the drawbacks such as weird placement or lack of handling of less common patterns.
+- Handling doc comments in weird ways, particularly around spacing. Rector uses dependencies that sometimes delete empty comments or remove white space. At this point, Drupal Rector does not intend to modify any doc comments, but Rector ends up doing this.
 
 Our hope is that as we learn more about Rector, we may be able to update these rules to add these features.
 
