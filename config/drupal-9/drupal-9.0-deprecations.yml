@@ -1,2 +1,3 @@
 # Contains automatic fixes for some deprecations introduced in Drupal 9.0.
-services: ~
+services:
+  DrupalRector\Rector\Deprecation\Drupal9\ConnectionEscapedNamesRector: ~
