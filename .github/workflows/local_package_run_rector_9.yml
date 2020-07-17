@@ -1,4 +1,4 @@
-name: local_package_run_rector
+name: local_package_run_rector_9
 
 # This test will run on every pull request, and on every commit on any branch
 on:
@@ -22,7 +22,7 @@ jobs:
 
             -   run: |
                     # Download the latest Drupal core project and all its dependencies
-                    composer create-project drupal/recommended-project:~8 ../drupal --no-progress
+                    composer create-project drupal/recommended-project:~9 ../drupal --no-progress
                     mv ../drupal/* ..
 
             -   run: |
@@ -34,13 +34,13 @@ jobs:
             -   run: |
                     # Prepare rector config files with Drupal specific settings
                     cd ..
-                    cp vendor/palantirnet/drupal-rector/rector.yml .
+                    cp vendor/palantirnet/drupal-rector/default-config-templates/drupal-9/rector-9-web.yml rector.yml
 
             -   run: |
                     # Prepare rector_examples folder in the drupal modules directory
                     cd ..
                     mkdir -p web/modules/custom
-                    cp -r vendor/palantirnet/drupal-rector/rector_examples web/modules/custom/.
+                    cp -r vendor/palantirnet/drupal-rector/example-modules/drupal-9/rector_examples web/modules/custom/.
 
             -   run: |
                     # Run Rector

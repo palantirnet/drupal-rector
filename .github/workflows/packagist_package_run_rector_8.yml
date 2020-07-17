@@ -1,4 +1,4 @@
-name: packagist_package_run_rector
+name: packagist_package_run_rector_8
 
 # This test will run on every pull request, and on every commit that is pushed to master
 on:
@@ -37,13 +37,13 @@ jobs:
             -   run: |
                     # Prepare rector config files with Drupal specific settings
                     cd drupal
-                    cp vendor/palantirnet/drupal-rector/rector.yml .
+                    cp vendor/palantirnet/drupal-rector/default-config-templates/drupal-8/rector-8-web.yml rector.yml
 
             -   run: |
                     # Prepare rector_examples folder in the drupal modules directory
                     cd drupal
                     mkdir -p web/modules/custom
-                    cp -r vendor/palantirnet/drupal-rector/rector_examples web/modules/custom/.
+                    cp -r vendor/palantirnet/drupal-rector/example-modules/drupal-8/rector_examples web/modules/custom/.
 
             -   run: |
                     # Run Rector

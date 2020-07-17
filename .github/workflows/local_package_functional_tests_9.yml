@@ -1,4 +1,4 @@
-name: local_package_functional_tests
+name: local_package_functional_tests_9
 
 # This test will run on every pull request, and on every commit on any branch
 on:
@@ -19,7 +19,7 @@ jobs:
             # This is copied from `local_package_run_rector`.
             -    run: |
                     # Download the latest Drupal core project and all its dependencies
-                    composer create-project drupal/recommended-project:~8 ../drupal --no-progress
+                    composer create-project drupal/recommended-project:~9 ../drupal --no-progress
                     mv ../drupal/* ..
 
             # This is copied from `local_package_run_rector`.
@@ -30,23 +30,12 @@ jobs:
                     composer require palantirnet/drupal-rector:@dev --prefer-source --no-progress
 
             # This is copied from `local_package_run_rector`.
-            -    run: |
-                    # Prepare rector config files with Drupal specific settings
-                    cd ..
-                    cp vendor/palantirnet/drupal-rector/rector.yml .
-
-            # This is copied from `local_package_run_rector`.
             # This seems needed for the autoloading to work.
             -    run: |
                   # Prepare rector_examples folder in the drupal modules directory
                   cd ..
                   mkdir -p web/modules/custom
-                  cp -r vendor/palantirnet/drupal-rector/rector_examples web/modules/custom/.
-
-            -    run: |
-                    # Install phpunit/phpunit on the Drupal site since it's needed for some of our examples.
-                    cd ..
-                    composer require phpunit/phpunit:~7.5
+                  cp -r vendor/palantirnet/drupal-rector/example-modules/drupal-9/rector_examples web/modules/custom/.
 
             -    run: |
                     # Install local packages, including Behat
