@@ -62,19 +62,9 @@ You will need to have a `rector.yml` configuration in the root of your repositor
 
 This project provides starting files that should handle most use cases.
 
-If your document root directory is `web`, you can copy the `rector-config-web-dir.yml`
+These starting files are located in `default-config-templates`.
 
-```bash
-cp vendor/palantirnet/drupal-rector/rector-config-web-dir.yml rector.yml
-```
-
-If your document root directory is `docroot`, you can copy the `rector-config-docroot-dir.yml`
-
-```bash
-cp vendor/palantirnet/drupal-rector/rector-config-docroot-dir.yml rector.yml
-```
-
-If your document root directory is something else you will need to manually copy and edit `rector.yml`.
+If your document root directory is something other than `web` or `docroot`, you will need to manually copy and edit one of these files.
 
 Replace the `web` in these paths with your document root.
 
@@ -168,10 +158,12 @@ Alternatively, you can use your existing Drupal project and follow the instructi
 
 ### Adding a Rector rule
 
+_If you are working on Drupal 9, just replace `8` with `9` in the following directions.
+
 If you would like to submit a Rector rule, we are looking for the following:
 
-- A Rector rule class, see `/src/Rector/Deprecation` for existing rules
-- An example file or files that show(s) the before and after, see `/rector_examples` and `/rector_examples_updated`
+- A Rector rule class, see `/src/Rector/Deprecation/Drupal8` for existing rules
+- An example file or files that show(s) the before and after, see `/example-modules/drupal-8/rector_examples` and `/example-modules/drupal-8/rector_examples_updated`
 - An updated configuration file that registers the Rector rule, see `/config/drupal-8`
 - A listing in the index file, see `/deprecation-index.yml`
 
@@ -204,23 +196,23 @@ Rector supports passing parameters to rules and you can also define your rules i
 
 We are creating pairs of example files.
 
-These should be named the same thing as the deprecation. So, `DrupalUrlRector` has a `rector_examples/drupal_url.php` example. An example `rector_examples_updated/drupal_url.php` should also be created to show the updated code. You can run Drupal Rector on this file to show the update.
+These should be named the same thing as the deprecation. So, `Drupal8\DrupalUrlRector` has a `/example-modules/drupal-8/rector_examples/drupal_url.php` example. An example `/example-modules/drupal-8/rector_examples_updated/drupal_url.php` should also be created to show the updated code. You can run Drupal Rector on this file to show the update.
 
 Example
 
-`DrupalUrlRector` -> `rector_examples/drupal_url.php` and `rector_examples_updated/drupal_url.php`
+`Drupal8\DrupalUrlRector` -> `/example-modules/drupal-8/rector_examples/drupal_url.php` and `/example-modules/drupal-8/rector_examples_updated/drupal_url.php`
 
-If you would like to show how the code is used in a class, you can add the class to the appropriate place in the `/rector_examples/src` or `/rector_examples/test` directories. Most of the examples in the example module are `services` in that they are stand alone classes.
+If you would like to show how the code is used in a class, you can add the class to the appropriate place in the `/example-modules/drupal-8/rector_examples/src` or `/example-modules/drupal-8/rector_examples/test` directories. Most of the examples in the example module are `services` in that they are stand alone classes.
 
 Since these classes can use static calls, dependency injection, or traits to get access to services, constants, etc, we have added more details to some class names. For example, `*Static` to indicate that the class is not using dependency injection.
 
 Example
 
-`DrupalUrlRector` -> `rector_examples/src/DrupalUrlStatic.php` and `rector_examples_updated/src/DrupalUrlStatic.php`
+`DrupalUrlRector` -> `/example-modules/drupal-8/rector_examples/src/DrupalUrlStatic.php` and `/example-modules/drupal-8/rector_examples_updated/src/DrupalUrlStatic.php`
 
 ##### Create / Update a configuration file
 
-The configuration files in `/config/drupal-8` are broken down by Drupal minor versions.
+The configuration files `/config` are broken down by major version (`/config/drupal-8`) and then minor versions (`/config/drupal-8/drupal-8.0-deprecations.yml`).
 
 Add your Rector rule to the relevant file.
 
