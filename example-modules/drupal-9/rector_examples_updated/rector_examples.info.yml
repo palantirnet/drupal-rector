@@ -1,0 +1,5 @@
+name: Rector examples
+type: module
+description: Examples of deprecated code to test with Rector
+core: 9.x
+core_version_requirement: ^9
