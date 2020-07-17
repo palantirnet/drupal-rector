@@ -1,3 +1,4 @@
+@8 @9
 Feature: deprecation-index.yml
   As a Drupal developer
   I want the deprecation-index.yml file to parse cleanly

@@ -1,3 +1,4 @@
+@9
 Feature: Drupal 9 rector_examples module
   As a Drupal developer
   I want rector_example deprecations to be updated by Drupal Rector

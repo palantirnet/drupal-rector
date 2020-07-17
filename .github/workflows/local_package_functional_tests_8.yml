@@ -50,4 +50,4 @@ jobs:
 
             -    run: |
                     # Run Behat
-                    vendor/bin/behat
+                    vendor/bin/behat --tags=@8
