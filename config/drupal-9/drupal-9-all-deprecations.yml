@@ -1,0 +1,8 @@
+# General ruleset for Drupal 9.
+imports:
+    - { resource: "./drupal-9.0-deprecations.yml" }
+
+parameters:
+    exclude_rectors: ~
+
+services: ~

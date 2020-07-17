@@ -1,14 +1,14 @@
 # Contains automatic fixes for some deprecations introduced in Drupal 8.8.
 services:
-  DrupalRector\Rector\Deprecation\PathAliasManagerServiceNameRector: ~
-  DrupalRector\Rector\Deprecation\PathAliasWhitelistServiceNameRector: ~
-  DrupalRector\Rector\Deprecation\PathSubscriberServiceNameRector: ~
-  DrupalRector\Rector\Deprecation\PathProcessorAliasServiceNameRector: ~
-  DrupalRector\Rector\Deprecation\PathAliasRepositoryRector: ~
-  DrupalRector\Rector\Deprecation\FileDefaultSchemeRector: ~
-  DrupalRector\Rector\Deprecation\EntityGetDisplayRector: ~
-  DrupalRector\Rector\Deprecation\EntityGetFormDisplayRector: ~
-  DrupalRector\Rector\Deprecation\EntityTypeGetLowercaseLabelRector: ~
-  DrupalRector\Rector\Deprecation\FileScanDirectoryRector: ~
-  DrupalRector\Rector\Deprecation\FileDirectoryTempRector: ~
-  DrupalRector\Rector\Deprecation\FileUriTargetRector: ~
+  DrupalRector\Rector\Deprecation\Drupal8\PathAliasManagerServiceNameRector: ~
+  DrupalRector\Rector\Deprecation\Drupal8\PathAliasWhitelistServiceNameRector: ~
+  DrupalRector\Rector\Deprecation\Drupal8\PathSubscriberServiceNameRector: ~
+  DrupalRector\Rector\Deprecation\Drupal8\PathProcessorAliasServiceNameRector: ~
+  DrupalRector\Rector\Deprecation\Drupal8\PathAliasRepositoryRector: ~
+  DrupalRector\Rector\Deprecation\Drupal8\FileDefaultSchemeRector: ~
+  DrupalRector\Rector\Deprecation\Drupal8\EntityGetDisplayRector: ~
+  DrupalRector\Rector\Deprecation\Drupal8\EntityGetFormDisplayRector: ~
+  DrupalRector\Rector\Deprecation\Drupal8\EntityTypeGetLowercaseLabelRector: ~
+  DrupalRector\Rector\Deprecation\Drupal8\FileScanDirectoryRector: ~
+  DrupalRector\Rector\Deprecation\Drupal8\FileDirectoryTempRector: ~
+  DrupalRector\Rector\Deprecation\Drupal8\FileUriTargetRector: ~

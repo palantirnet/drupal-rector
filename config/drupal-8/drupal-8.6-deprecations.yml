@@ -1,5 +1,5 @@
 # Contains automatic fixes for some deprecations introduced in Drupal 8.6.
 services:
-  DrupalRector\Rector\Deprecation\UnicodeStrlenRector: ~
-  DrupalRector\Rector\Deprecation\UnicodeStrtolowerRector: ~
-  DrupalRector\Rector\Deprecation\UnicodeSubstrRector: ~
+  DrupalRector\Rector\Deprecation\Drupal8\UnicodeStrlenRector: ~
+  DrupalRector\Rector\Deprecation\Drupal8\UnicodeStrtolowerRector: ~
+  DrupalRector\Rector\Deprecation\Drupal8\UnicodeSubstrRector: ~

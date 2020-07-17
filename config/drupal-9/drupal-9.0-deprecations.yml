@@ -1,0 +1,2 @@
+# Contains automatic fixes for some deprecations introduced in Drupal 9.0.
+services: ~
