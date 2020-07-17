@@ -59,6 +59,18 @@ class FeatureContext implements Context {
   }
 
   /**
+   * @Given I install the Drupal Rector configuration file :file
+   */
+  public function iInstallTheDrupalRectorConfigurationFile($file) {
+    // Using Linux / MacOS commands, because they are simple and work well.
+    chdir('..');
+
+    exec("cp drupal-rector/$file rector.yml");
+
+    chdir($this->drupalRectorPath);
+  }
+
+  /**
    * @When I run Drupal Rector on the test file/folder
    */
   public function iRunDrupalRectorOnTheTest() {
