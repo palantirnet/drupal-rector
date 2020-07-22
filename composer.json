@@ -10,7 +10,7 @@
         "ast"
     ],
     "require": {
-        "jawira/case-converter": "^1.1",
+        "jawira/case-converter": "^3.4", 
         "rector/rector-prefixed": "0.7.29"
     },
     "license": "MIT",
