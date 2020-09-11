@@ -34,7 +34,7 @@ entity_delete_multiple('node', [1, 2, 42]);
 CODE_BEFORE
                 ,
                 <<<'CODE_AFTER'
-\Drupal::service('entity_type.manager)->getStorage('node')->delete(\Drupal::service('entity_type.manager)->getStorage('node')->loadMultiple(1, 2, 42));
+\Drupal::service('entity_type.manager')->getStorage('node')->delete(\Drupal::service('entity_type.manager')->getStorage('node')->loadMultiple(1, 2, 42));
 CODE_AFTER
             )
         ]);
