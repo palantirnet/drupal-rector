@@ -10,6 +10,7 @@
         "ast"
     ],
     "require": {
+        "php": "^7.2",
         "jawira/case-converter": "^1.1",
         "rector/rector-prefixed": "^0.8.6"
     },

@@ -1,6 +1,0 @@
-# Contains automatic fixes for some deprecations introduced in Drupal 8.5.
-services:
-    DrupalRector\Rector\Deprecation\DrupalSetMessageRector: ~
-    DrupalRector\Rector\Deprecation\DatetimeDateStorageFormatRector: ~
-    DrupalRector\Rector\Deprecation\DatetimeDatetimeStorageFormatRector: ~
-    DrupalRector\Rector\Deprecation\DatetimeStorageTimezoneRector: ~
