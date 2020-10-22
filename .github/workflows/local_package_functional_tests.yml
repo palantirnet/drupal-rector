@@ -14,7 +14,7 @@ jobs:
                 with:
                     php-version: 7.3
                     coverage: none # disable xdebug, pcov
-                    extensions: "intl"
+                    extensions: "intl, php-gd"
 
             # This is copied from `local_package_run_rector`.
             -    run: |

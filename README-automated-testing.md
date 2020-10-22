@@ -2,7 +2,7 @@
 
 ## Installation test
 
-Github Workflow is used to test that this package can be installed. See `.github`.
+Github Actions is used to test that this package can be installed. See `.github`.
 
 ## Rector automated functional tests using Behat
 
@@ -39,3 +39,25 @@ To run tests, run `vendor/bin/behat`.
 Tests should be pretty simple. By default, the main test feature `rector_examples.feature` will test the entire `rector_examples` folder and report any differences. Tests can also be made for individual files.
 
 The Behat tests make a copy of the file or folder we are going to test, so you don't have to worry about overwriting files in those directories.
+
+## Run Github Actions locally
+
+Using [Act](https://github.com/nektos/act) you can run Github Actions locally on your machine.
+
+Install Act:
+
+```bash
+brew install act
+```
+
+Get list of all Github Actions available:
+
+```bash
+act -l
+```
+
+Run all Github Actions locally:
+
+```bash
+act -P ubuntu-latest=shivammathur/node:latest
+```

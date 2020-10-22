@@ -14,7 +14,7 @@ jobs:
                 with:
                     php-version: 7.3
                     coverage: none # disable xdebug, pcov
-                    extensions: "intl"
+                    extensions: "intl, php-gd"
 
 #           Uncomment to enable SSH access to Github Actions - https://github.com/marketplace/actions/debugging-with-tmate#getting-started
 #            - name: Debugging with tmate
