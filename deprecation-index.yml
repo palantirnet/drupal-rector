@@ -34,6 +34,12 @@
   Examples:
     - db_query.php
     - DBQueryStatic.php
+'db_drop_table()':
+  Rector: DBDropTableRector.php
+  PHPStan: 'Call to deprecated function db_drop_table(). Deprecated in drupal:8.0.0 and is removed from drupal:9.0.0. Instead, get a database connection injected into your service from the container, get its schema driver, and call dropTable() on it.'
+  Examples:
+    - db_drop_table.php
+    - DBDropTableStatic.php
 'db_delete()':
   Rector: DBDeleteRector.php
   PHPStan: 'Call to deprecated function db_delete(). Deprecated in drupal:8.0.0 and is removed from drupal:9.0.0. Instead, get a database connection injected into your service from the container and call delete() on it. For example,'
