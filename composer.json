@@ -46,11 +46,5 @@
     "prefer-stable": true,
     "require-dev": {
         "behat/behat": "^3.6"
-    },
-    "repositories": {
-        "rector-prefixed": {
-            "type": "vcs",
-            "url": "https://github.com/rectorphp/rector-prefixed.git"
-        }
     }
 }
