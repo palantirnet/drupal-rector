@@ -50,9 +50,7 @@ jobs:
 
             -    run: |
                     # Install local packages, including Behat
-                    composer install
-
-            #            -  uses: mxschmitt/action-tmate@v2
+                    composer install -vvv
 
             -    run: |
                     # Run Behat
