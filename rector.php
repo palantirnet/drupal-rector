@@ -11,7 +11,7 @@ return static function (ContainerConfigurator $containerConfigurator): void {
     $parameters = $containerConfigurator->parameters();
     $parameters->set(Option::AUTOLOAD_PATHS, ['web/core', 'web/core/modules', 'web/modules', 'web/profiles']);
 
-    $parameters->set(Option::EXCLUDE_PATHS, ['*/upgrade_status/tests/modules/*']);
+    $parameters->set(Option::SKIP, ['*/upgrade_status/tests/modules/*']);
     $parameters->set(Option::FILE_EXTENSIONS, ['module', 'theme', 'install', 'profile', 'inc', 'engine']);
     $parameters->set(Option::AUTO_IMPORT_NAMES, true);
     $parameters->set(Option::IMPORT_SHORT_CLASSES, false);

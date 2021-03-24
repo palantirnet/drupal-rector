@@ -1,8 +1,7 @@
 name: packagist_package_run_rector
 
-# This test will run on every pull request, and on every commit that is pushed to master
+# This test will run on every commit that is pushed to master
 on:
-    pull_request: null
     push:
         branches:
             - master
