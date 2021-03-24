@@ -13,6 +13,7 @@ use DrupalRector\Rector\Deprecation\DrupalRenderRector;
 use DrupalRector\Rector\Deprecation\DrupalRenderRootRector;
 use DrupalRector\Rector\Deprecation\DrupalURLRector;
 use DrupalRector\Rector\Deprecation\EntityCreateRector;
+use DrupalRector\Rector\Deprecation\EntityDeleteMultipleRector;
 use DrupalRector\Rector\Deprecation\EntityInterfaceLinkRector;
 use DrupalRector\Rector\Deprecation\EntityInterfaceUrlInfoRector;
 use DrupalRector\Rector\Deprecation\EntityLoadRector;
@@ -49,6 +50,8 @@ return static function (ContainerConfigurator $containerConfigurator): void {
     $services->set(DrupalRealpathRector::class);
 
     $services->set(EntityCreateRector::class);
+
+    $services->set(EntityDeleteMultipleRector::class);
 
     $services->set(EntityInterfaceLinkRector::class);
 
