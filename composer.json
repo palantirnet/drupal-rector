@@ -10,7 +10,7 @@
         "ast"
     ],
     "require": {
-        "rector/rector-prefixed": "0.7.29"
+        "rector/rector-prefixed": "~0.10.0"
     },
     "license": "MIT",
     "authors": [
@@ -45,6 +45,10 @@
     "minimum-stability": "dev",
     "prefer-stable": true,
     "require-dev": {
-        "behat/behat": "^3.6"
+        "behat/behat": "^3.6",
+        "phpstan/extension-installer": "^1.1",
+        "phpstan/phpstan": "^0.12.82",
+        "phpstan/phpstan-deprecation-rules": "^0.12.6",
+        "rector/rector": "~0.10.0"
     }
 }
