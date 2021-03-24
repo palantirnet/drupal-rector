@@ -3,8 +3,8 @@
 namespace DrupalRector\Rector\Deprecation;
 
 use DrupalRector\Rector\Deprecation\Base\ConstantToClassConstantBase;
-use Rector\Core\RectorDefinition\CodeSample;
-use Rector\Core\RectorDefinition\RectorDefinition;
+use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
+use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 /**
  * Replaces deprecated DATETIME_STORAGE_TIMEZONE constant use.
@@ -29,9 +29,9 @@ final class DatetimeStorageTimezoneRector extends ConstantToClassConstantBase
   /**
    * @inheritdoc
    */
-  public function getDefinition(): RectorDefinition
+  public function getRuleDefinition(): RuleDefinition
   {
-    return new RectorDefinition('Fixes deprecated DATETIME_STORAGE_TIMEZONE use',[
+    return new RuleDefinition('Fixes deprecated DATETIME_STORAGE_TIMEZONE use',[
       new CodeSample(
         <<<'CODE_BEFORE'
 $timezone = new \DateTimeZone(DATETIME_STORAGE_TIMEZONE);

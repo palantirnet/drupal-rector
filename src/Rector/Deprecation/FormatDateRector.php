@@ -3,8 +3,8 @@
 namespace DrupalRector\Rector\Deprecation;
 
 use DrupalRector\Rector\Deprecation\Base\FunctionToServiceBase;
-use Rector\Core\RectorDefinition\CodeSample;
-use Rector\Core\RectorDefinition\RectorDefinition;
+use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
+use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 /**
  * Replaces deprecated format_date() calls.
@@ -29,9 +29,9 @@ final class FormatDateRector extends FunctionToServiceBase
     /**
      * @inheritdoc
      */
-    public function getDefinition(): RectorDefinition
+    public function getRuleDefinition(): RuleDefinition
     {
-        return new RectorDefinition('Fixes deprecated format_date() calls',[
+        return new RuleDefinition('Fixes deprecated format_date() calls', [
             new CodeSample(
               <<<'CODE_BEFORE'
 $date = format_date($timestamp, $type, $format, $timezone, $langcode);

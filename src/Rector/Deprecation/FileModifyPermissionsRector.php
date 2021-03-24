@@ -3,8 +3,8 @@
 namespace DrupalRector\Rector\Deprecation;
 
 use DrupalRector\Rector\Deprecation\Base\ConstantToClassConstantBase;
-use Rector\Core\RectorDefinition\CodeSample;
-use Rector\Core\RectorDefinition\RectorDefinition;
+use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
+use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 /**
  * Replaces deprecated FILE_MODIFY_PERMISSIONS constant use.
@@ -29,9 +29,9 @@ final class FileModifyPermissionsRector extends ConstantToClassConstantBase
   /**
    * @inheritdoc
    */
-  public function getDefinition(): RectorDefinition
+  public function getRuleDefinition(): RuleDefinition
   {
-    return new RectorDefinition('Fixes deprecated FILE_MODIFY_PERMISSIONS use',[
+    return new RuleDefinition('Fixes deprecated FILE_MODIFY_PERMISSIONS use',[
       new CodeSample(
         <<<'CODE_BEFORE'
 $result = file_prepare_directory($destination, FILE_MODIFY_PERMISSIONS);

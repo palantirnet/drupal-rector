@@ -4,10 +4,10 @@ namespace DrupalRector\Rector\Deprecation;
 
 use DrupalRector\Utility\AddCommentTrait;
 use PhpParser\Node;
-use Rector\NodeTypeResolver\Node\AttributeKey;
+use Rector\NodeCollector\ScopeResolver\ParentClassScopeResolver;
 use Rector\Core\Rector\AbstractRector;
-use Rector\Core\RectorDefinition\CodeSample;
-use Rector\Core\RectorDefinition\RectorDefinition;
+use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
+use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 /**
  * Replaces deprecated `\Drupal::entityManager()` calls.
@@ -29,10 +29,19 @@ final class EntityManagerRector extends AbstractRector {
   use AddCommentTrait;
 
   /**
+   * @var ParentClassScopeResolver
+   */
+  protected $parentClassScopeResolver;
+
+  public function __construct(ParentClassScopeResolver $parentClassScopeResolver) {
+    $this->parentClassScopeResolver = $parentClassScopeResolver;
+  }
+
+  /**
    * @inheritdoc
    */
-  public function getDefinition(): RectorDefinition {
-    return new RectorDefinition('Fixes deprecated \Drupal::entityManager() calls',[
+  public function getRuleDefinition(): RuleDefinition {
+    return new RuleDefinition('Fixes deprecated \Drupal::entityManager() calls',[
       new CodeSample(
         <<<'CODE_BEFORE'
 $entity_manager = \Drupal::entityManager();
@@ -81,7 +90,8 @@ CODE_AFTER
         return $node;
       }
 
-      if ($node instanceof Node\Expr\MethodCall && $node->hasAttribute(AttributeKey::PARENT_CLASS_NAME) && $node->getAttribute(AttributeKey::PARENT_CLASS_NAME) === 'Drupal\Core\Controller\ControllerBase') {
+        $parentClassName = $this->parentClassScopeResolver->resolveParentClassName($node);
+      if ($node instanceof Node\Expr\MethodCall && $parentClassName === 'Drupal\Core\Controller\ControllerBase') {
         // If we call a method on `entityManager`, we need to check that method and we can call the correct service that the method uses.
         $next_node = $node->getAttribute('nextNode');
 

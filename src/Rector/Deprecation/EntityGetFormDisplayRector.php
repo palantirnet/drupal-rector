@@ -3,8 +3,8 @@
 namespace DrupalRector\Rector\Deprecation;
 
 use DrupalRector\Rector\Deprecation\Base\FunctionToServiceBase;
-use Rector\Core\RectorDefinition\CodeSample;
-use Rector\Core\RectorDefinition\RectorDefinition;
+use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
+use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 /**
  * Replaces deprecated entity_get_form_display() calls.
@@ -29,9 +29,9 @@ final class EntityGetFormDisplayRector extends FunctionToServiceBase
     /**
      * @inheritdoc
      */
-    public function getDefinition(): RectorDefinition
+    public function getRuleDefinition(): RuleDefinition
     {
-        return new RectorDefinition('Fixes deprecated entity_get_form_display() calls',[
+        return new RuleDefinition('Fixes deprecated entity_get_form_display() calls',[
             new CodeSample(
               <<<'CODE_BEFORE'
 $display = entity_get_form_display($entity_type, $bundle, $form_mode)

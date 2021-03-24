@@ -3,8 +3,8 @@
 namespace DrupalRector\Rector\Deprecation;
 
 use DrupalRector\Rector\Deprecation\Base\ConstantToClassConstantBase;
-use Rector\Core\RectorDefinition\CodeSample;
-use Rector\Core\RectorDefinition\RectorDefinition;
+use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
+use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 /**
  * Replaces deprecated FILE_EXISTS_RENAME constant use.
@@ -29,9 +29,9 @@ final class FileExistsRenameRector extends ConstantToClassConstantBase
   /**
    * @inheritdoc
    */
-  public function getDefinition(): RectorDefinition
+  public function getRuleDefinition(): RuleDefinition
   {
-    return new RectorDefinition('Fixes deprecated FILE_EXISTS_RENAME use',[
+    return new RuleDefinition('Fixes deprecated FILE_EXISTS_RENAME use',[
       new CodeSample(
         <<<'CODE_BEFORE'
 $result = file_unmanaged_copy($source, $destination, FILE_EXISTS_RENAME);

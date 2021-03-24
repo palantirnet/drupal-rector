@@ -4,8 +4,8 @@ namespace DrupalRector\Rector\Deprecation;
 
 use PhpParser\Node;
 use Rector\Core\Rector\AbstractRector;
-use Rector\Core\RectorDefinition\CodeSample;
-use Rector\Core\RectorDefinition\RectorDefinition;
+use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
+use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 /**
  * Replaces deprecated SafeMarkup::format() calls.
@@ -23,9 +23,9 @@ final class SafeMarkupFormatRector extends AbstractRector
   /**
    * @inheritdoc
    */
-  public function getDefinition(): RectorDefinition
+  public function getRuleDefinition(): RuleDefinition
   {
-    return new RectorDefinition('Fixes deprecated SafeMarkup::format() calls',[
+    return new RuleDefinition('Fixes deprecated SafeMarkup::format() calls',[
       new CodeSample(
         <<<'CODE_BEFORE'
 $safe_string_markup_object = \Drupal\Component\Utility\SafeMarkup::format('hello world');
@@ -58,9 +58,7 @@ CODE_AFTER
 
       $class = new Node\Name\FullyQualified('Drupal\Component\Render\FormattableMarkup');
 
-      $new_node = new Node\Expr\New_($class, $node->args);
-
-      return $new_node;
+      return new Node\Expr\New_($class, $node->args);
     }
 
     return null;

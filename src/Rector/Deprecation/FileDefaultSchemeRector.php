@@ -3,8 +3,8 @@
 namespace DrupalRector\Rector\Deprecation;
 
 use DrupalRector\Rector\Deprecation\Base\FunctionToImmutableConfigBase;
-use Rector\Core\RectorDefinition\CodeSample;
-use Rector\Core\RectorDefinition\RectorDefinition;
+use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
+use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 /**
  * Replaces the deprecated file_default_scheme function calls.
@@ -22,9 +22,9 @@ final class FileDefaultSchemeRector extends FunctionToImmutableConfigBase
     /**
      * @inheritDoc
      */
-    public function getDefinition(): RectorDefinition
+    public function getRuleDefinition(): RuleDefinition
     {
-        return new RectorDefinition('Fixes deprecated file_default_scheme calls',[
+        return new RuleDefinition('Fixes deprecated file_default_scheme calls',[
             new CodeSample(
                 <<<'CODE_BEFORE'
 $file_default_scheme = file_default_scheme();

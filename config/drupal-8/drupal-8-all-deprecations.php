@@ -9,5 +9,5 @@ return static function (ContainerConfigurator $containerConfigurator): void {
     $containerConfigurator->import(__DIR__ . '/drupal-8.*');
 
     $parameters = $containerConfigurator->parameters();
-    $parameters->set(Option::EXCLUDE_RECTORS, []);
+    $parameters->set(Option::SKIP, []);
 };

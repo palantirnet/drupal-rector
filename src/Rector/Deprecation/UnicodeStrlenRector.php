@@ -3,8 +3,8 @@
 namespace DrupalRector\Rector\Deprecation;
 
 use DrupalRector\Rector\Deprecation\Base\StaticToFunctionBase;
-use Rector\Core\RectorDefinition\CodeSample;
-use Rector\Core\RectorDefinition\RectorDefinition;
+use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
+use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 /**
  * Replaces deprecated Unicode::strlen() calls.
@@ -26,9 +26,9 @@ final class UnicodeStrlenRector extends StaticToFunctionBase
     /**
      * @inheritdoc
      */
-    public function getDefinition(): RectorDefinition
+    public function getRuleDefinition(): RuleDefinition
     {
-        return new RectorDefinition('Fixes deprecated \Drupal\Component\Utility\Unicode::strlen() calls',[
+        return new RuleDefinition('Fixes deprecated \Drupal\Component\Utility\Unicode::strlen() calls',[
             new CodeSample(
               <<<'CODE_BEFORE'
 $length = \Drupal\Component\Utility\Unicode::strlen('example');

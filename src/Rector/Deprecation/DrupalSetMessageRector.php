@@ -7,8 +7,8 @@ use DrupalRector\Utility\TraitsByClassHelperTrait;
 use PhpParser\Node;
 use Rector\NodeTypeResolver\Node\AttributeKey;
 use Rector\Core\Rector\AbstractRector;
-use Rector\Core\RectorDefinition\CodeSample;
-use Rector\Core\RectorDefinition\RectorDefinition;
+use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
+use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 /**
  * Replaces deprecated drupal_set_message() calls.
@@ -33,9 +33,9 @@ final class DrupalSetMessageRector extends AbstractRector
     /**
      * @inheritdoc
      */
-    public function getDefinition(): RectorDefinition
+    public function getRuleDefinition(): RuleDefinition
     {
-        return new RectorDefinition('Fixes deprecated drupal_set_message() calls',[
+        return new RuleDefinition('Fixes deprecated drupal_set_message() calls',[
             new CodeSample(
                 <<<'CODE_BEFORE'
 drupal_set_message('example status', 'status');
