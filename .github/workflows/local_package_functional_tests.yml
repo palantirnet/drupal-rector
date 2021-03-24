@@ -33,7 +33,7 @@ jobs:
             -    run: |
                     # Prepare rector config files with Drupal specific settings
                     cd ..
-                    cp vendor/palantirnet/drupal-rector/rector.yml .
+                    cp vendor/palantirnet/drupal-rector/rector.php .
 
             # This is copied from `local_package_run_rector`.
             # This seems needed for the autoloading to work.

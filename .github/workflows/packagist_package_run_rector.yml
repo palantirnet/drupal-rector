@@ -37,7 +37,7 @@ jobs:
             -   run: |
                     # Prepare rector config files with Drupal specific settings
                     cd drupal
-                    cp vendor/palantirnet/drupal-rector/rector.yml .
+                    cp vendor/palantirnet/drupal-rector/rector.php .
 
             -   run: |
                     # Prepare rector_examples folder in the drupal modules directory

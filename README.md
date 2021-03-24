@@ -58,23 +58,23 @@ $ composer require --dev palantirnet/drupal-rector
 
 ### Create a configuration file in your project
 
-You will need to have a `rector.yml` configuration in the root of your repository. This should sit beside your document root such as `web` or `docroot`.
+You will need to have a `rector.php` configuration in the root of your repository. This should sit beside your document root such as `web` or `docroot`.
 
 This project provides starting files that should handle most use cases.
 
 If your document root directory is `web`, you can copy the `rector-config-web-dir.yml`
 
 ```bash
-cp vendor/palantirnet/drupal-rector/rector-config-web-dir.yml rector.yml
+cp vendor/palantirnet/drupal-rector/rector-config-web-dir.yml rector.php
 ```
 
 If your document root directory is `docroot`, you can copy the `rector-config-docroot-dir.yml`
 
 ```bash
-cp vendor/palantirnet/drupal-rector/rector-config-docroot-dir.yml rector.yml
+cp vendor/palantirnet/drupal-rector/rector-config-docroot-dir.yml rector.php
 ```
 
-If your document root directory is something else you will need to manually copy and edit `rector.yml`.
+If your document root directory is something else you will need to manually copy and edit `rector.php`.
 
 Replace the `web` in these paths with your document root.
 
@@ -140,7 +140,7 @@ If you are having these issues try running Rector from the environment that has 
 
 ### Iconv error when running Rector in Alpine Docker
 
-If you are getting errors like 
+If you are getting errors like
 
 `iconv(): Wrong charset, conversion from UTF-8 to ASCII//TRANSLIT//IGNORE is not allowed`
 
