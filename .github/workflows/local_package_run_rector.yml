@@ -29,7 +29,7 @@ jobs:
                     # Install drupal-rector using current github-actions directory (allow testing for both forks and main repo)
                     cd ..
                     composer config repositories.drupal-rector '{"type": "path", "url": "drupal-rector", "options": {"symlink": true}}'
-                    composer require palantirnet/drupal-rector:@dev --prefer-source --no-progress
+                    composer require palantirnet/drupal-rector:@dev --no-progress
 
             -   run: |
                     # Prepare rector config files with Drupal specific settings

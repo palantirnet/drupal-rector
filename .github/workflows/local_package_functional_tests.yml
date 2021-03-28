@@ -30,7 +30,7 @@ jobs:
                     COMPOSER_MEMORY_LIMIT=-1 composer require drupal/core-dev:~8 --with-all-dependencies
             -   run: |
                     cd ~/drupal
-                    composer require palantirnet/drupal-rector:@dev --prefer-source --no-progress
+                    composer require palantirnet/drupal-rector:@dev --no-progress
 
             # This is copied from `local_package_run_rector`.
             -    run: |
