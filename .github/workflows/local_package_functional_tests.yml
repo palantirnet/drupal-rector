@@ -14,45 +14,39 @@ jobs:
                 with:
                     php-version: 7.3
                     coverage: none # disable xdebug, pcov
-                    extensions: "intl"
+                    tools: composer:v2
+                    extensions: dom, curl, libxml, mbstring, zip, pdo, mysql, pdo_mysql, bcmath, gd, exif, iconv
 
             # This is copied from `local_package_run_rector`.
-            -    run: |
-                    # Download the latest Drupal core project and all its dependencies
-                    composer create-project drupal/recommended-project:~8 ../drupal --no-progress
-                    mv ../drupal/* ..
-
-            # This is copied from `local_package_run_rector`.
-            -    run: |
-                    # Install drupal-rector using current github-actions directory (allow testing for both forks and main repo)
-                    cd ..
-                    composer config repositories.drupal-rector '{"type": "path", "url": "drupal-rector", "options": {"symlink": true}}'
+            -   name: Setup Drupal
+                run: |
+                    COMPOSER_MEMORY_LIMIT=-1 composer create-project drupal/recommended-project:~8 ~/drupal --no-interaction
+                    cd ~/drupal
+                    composer config minimum-stability dev
+                    composer config prefer-stable true
+                    composer config preferred-install dist
+                    composer config repositories.0 "{\"type\": \"path\", \"url\": \"$GITHUB_WORKSPACE\", \"options\": {\"symlink\": false}}"
+                    composer config repositories.1 composer https://packages.drupal.org/8
+                    COMPOSER_MEMORY_LIMIT=-1 composer require drupal/core-dev:~8 --with-all-dependencies
+            -   run: |
+                    cd ~/drupal
                     composer require palantirnet/drupal-rector:@dev --prefer-source --no-progress
 
             # This is copied from `local_package_run_rector`.
             -    run: |
                     # Prepare rector config files with Drupal specific settings
-                    cd ..
+                    cd ~/drupal
                     cp vendor/palantirnet/drupal-rector/rector.php .
 
-            # This is copied from `local_package_run_rector`.
-            # This seems needed for the autoloading to work.
             -    run: |
                   # Prepare rector_examples folder in the drupal modules directory
-                  cd ..
+                  cd ~/drupal
                   mkdir -p web/modules/custom
                   cp -r vendor/palantirnet/drupal-rector/rector_examples web/modules/custom/.
 
             -    run: |
-                    # Install phpunit/phpunit on the Drupal site since it's needed for some of our examples.
-                    cd ..
-                    composer require phpunit/phpunit:~7.5
-
-            -    run: |
                     # Install local packages, including Behat
                     composer install
-
-            #            -  uses: mxschmitt/action-tmate@v2
 
             -    run: |
                     # Run Behat
