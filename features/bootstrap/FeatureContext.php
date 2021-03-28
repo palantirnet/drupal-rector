@@ -69,12 +69,7 @@ class FeatureContext implements Context {
    * @When I run Drupal Rector on the file/folder :path
    */
   public function iRunDrupalRectorOnThe($path) {
-      $githubWorkflow = $_ENV['GITHUB_WORKFLOW'] ?? '';
-      if ($githubWorkflow === 'local_package_functional_tests') {
-          chdir('~/drupal');
-      } else {
-          chdir('..');
-      }
+      chdir('~/drupal');
 
     $output = NULL;
     $return_value = NULL;
