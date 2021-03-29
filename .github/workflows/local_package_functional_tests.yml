@@ -17,7 +17,6 @@ jobs:
                     tools: composer:v2
                     extensions: dom, curl, libxml, mbstring, zip, pdo, mysql, pdo_mysql, bcmath, gd, exif, iconv
 
-            # This is copied from `local_package_run_rector`.
             -   name: Setup Drupal
                 run: |
                     COMPOSER_MEMORY_LIMIT=-1 composer create-project drupal/recommended-project:~8 ~/drupal --no-interaction
@@ -28,26 +27,30 @@ jobs:
                     composer config repositories.0 "{\"type\": \"path\", \"url\": \"$GITHUB_WORKSPACE\", \"options\": {\"symlink\": false}}"
                     composer config repositories.1 composer https://packages.drupal.org/8
                     COMPOSER_MEMORY_LIMIT=-1 composer require drupal/core-dev:~8 --with-all-dependencies
-            -   run: |
+            -   name: Install drupal-rector
+                run: |
                     cd ~/drupal
                     composer require palantirnet/drupal-rector:@dev --no-progress
 
-            # This is copied from `local_package_run_rector`.
-            -    run: |
-                    # Prepare rector config files with Drupal specific settings
+            -   name: Copy rector config
+                run: |
                     cd ~/drupal
                     cp vendor/palantirnet/drupal-rector/rector.php .
+                    cat rector.php
 
-            -    run: |
-                  # Prepare rector_examples folder in the drupal modules directory
+            -   name: Prepare rector_examples folder in the drupal modules directory
+                run: |
                   cd ~/drupal
                   mkdir -p web/modules/custom
-                  cp -r vendor/palantirnet/drupal-rector/rector_examples web/modules/custom/.
+                  mv vendor/palantirnet/drupal-rector/rector_examples web/modules/custom
+                  ls -la web/modules/custom/rector_examples
 
-            -    run: |
-                    # Install local packages, including Behat
-                    composer install
-
-            -    run: |
-                    # Run Behat
-                    vendor/bin/behat
+            -   name: Run rector against Drupal (dry-run)
+                run: |
+                    cd ~/drupal
+                    vendor/bin/rector process web/modules/custom/rector_examples --dry-run --debug
+            -   name: Run rector against Drupal
+                run: |
+                    cd ~/drupal
+                    vendor/bin/rector process web/modules/custom/rector_examples --debug
+            -    run: diff -rubB rector_examples_updated ~/drupal/web/modules/custom/rector_examples
