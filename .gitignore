@@ -14,3 +14,4 @@
 !/features/tmp/.placeholder
 
 /.phpunit.cache
+/tests/fixtures/drupal

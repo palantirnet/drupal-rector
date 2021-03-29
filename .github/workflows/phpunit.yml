@@ -1,8 +1,8 @@
-name: phpstan
+name: phpunit
 on: [push, pull_request]
 jobs:
-    phpstan_analyze:
-        name: PHPStan Analyze
+    phpunit:
+        name: PHPUnit
         runs-on: ubuntu-latest
         steps:
             -   uses: actions/checkout@v2
@@ -13,4 +13,5 @@ jobs:
                     tools: composer:v2
                     extensions: dom, curl, libxml, mbstring, zip, pdo, mysql, pdo_mysql, bcmath, gd, exif, iconv
             -    run: composer install
-            -    run: vendor/bin/phpstan
+            -    run: composer create-project drupal/recommended-project:^8.9 tests/fixtures/drupal
+            -    run: vendor/bin/phpunit

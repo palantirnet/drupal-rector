@@ -69,7 +69,7 @@ class FeatureContext implements Context {
    * @When I run Drupal Rector on the file/folder :path
    */
   public function iRunDrupalRectorOnThe($path) {
-      chdir('~/drupal');
+      chdir('../drupal');
 
     $output = NULL;
     $return_value = NULL;
@@ -129,35 +129,4 @@ class FeatureContext implements Context {
     }
   }
 
-  /**
-   * @When I examine the :file file
-   */
-  public function iExamineTheFile($file) {
-    $this->examinedFileContents = file_get_contents($file);
-
-    if ($this->examinedFileContents === FALSE) {
-      throw new Exception("The file $file could not be read.");
-    }
-  }
-
-  /**
-   * @Then The file is valid YAML
-   */
-  public function theFileIsValidYaml() {
-    try {
-      $parsed_data = Yaml::parse($this->examinedFileContents);
-    }
-    catch (ParseException $exception) {
-      throw new Exception("The YAML was not valid. This is often caused by unescaped quotes. Please use `'` to escape a single quote.\n\n{$exception->getMessage()}");
-    }
-  }
-
-  /**
-   * @Then The file only uses ASCII characters.
-   */
-  public function theFileOnlyHasASCIICharacters() {
-    if (mb_detect_encoding($this->examinedFileContents, 'ASCII', TRUE) === FALSE) {
-      throw new Exception('The file contains non ASCII characters. Please make sure `\` and spaces are only using ASCII characters.');
-    }
-  }
 }
