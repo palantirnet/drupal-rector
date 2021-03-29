@@ -45,4 +45,4 @@ jobs:
             -   run: |
                     # Run Rector
                     cd ~/drupal
-                    vendor/bin/rector process web/modules/custom/rector_examples
+                    vendor/bin/rector process web/modules/custom/rector_examples --debug

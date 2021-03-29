@@ -9,7 +9,7 @@ return static function (ContainerConfigurator $containerConfigurator): void {
     $containerConfigurator->import(__DIR__ .  '/vendor/palantirnet/drupal-rector/config/drupal-8/drupal-8-all-deprecations.php');
 
     $parameters = $containerConfigurator->parameters();
-    $parameters->set(Option::AUTOLOAD_PATHS, ['web/core', 'web/core/modules', 'web/modules', 'web/profiles']);
+    $parameters->set(Option::AUTOLOAD_PATHS, ['web/core', 'web/modules', 'web/profiles', 'web/themes']);
 
     $parameters->set(Option::SKIP, ['*/upgrade_status/tests/modules/*']);
     $parameters->set(Option::FILE_EXTENSIONS, ['php', 'module', 'theme', 'install', 'profile', 'inc', 'engine']);

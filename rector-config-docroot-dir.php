@@ -10,7 +10,7 @@ return static function (ContainerConfigurator $containerConfigurator): void {
 
     $parameters = $containerConfigurator->parameters();
 
-    $parameters->set(Option::AUTOLOAD_PATHS, ['docroot/core', 'docroot/core/modules', 'docroot/modules', 'docroot/profiles']);
+    $parameters->set(Option::AUTOLOAD_PATHS, ['docroot/core', 'docroot/modules', 'docroot/profiles', 'docroot/themes']);
     $parameters->set(Option::SKIP, ['*/upgrade_status/tests/modules/*']);
     $parameters->set(Option::FILE_EXTENSIONS, ['php', 'module', 'theme', 'install', 'profile', 'inc', 'engine']);
     $parameters->set(Option::AUTO_IMPORT_NAMES, true);
