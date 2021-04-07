@@ -21,7 +21,8 @@ return static function (ContainerConfigurator $containerConfigurator): void {
         __DIR__ . '/../fixtures/drupal/web/modules',
         __DIR__ . '/../fixtures/drupal/web/profiles'
     ]);
-    require_once __DIR__ . '/../fixtures/drupal/web/core/tests/bootstrap.php';
+    // @todo this crashes PHPUnit but fixes Drupal's test namespace autoloading.
+    // require_once __DIR__ . '/../fixtures/drupal/web/core/tests/bootstrap.php';
     $parameters->set(Option::SKIP, ['*/upgrade_status/tests/modules/*']);
     $parameters->set(Option::FILE_EXTENSIONS, ['php', 'module', 'theme', 'install', 'profile', 'inc', 'engine']);
     $parameters->set(Option::AUTO_IMPORT_NAMES, true);
