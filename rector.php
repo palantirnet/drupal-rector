@@ -10,6 +10,7 @@ return static function (ContainerConfigurator $containerConfigurator): void {
 
     $parameters = $containerConfigurator->parameters();
     $parameters->set(Option::AUTOLOAD_PATHS, ['web/core', 'web/modules', 'web/profiles', 'web/themes']);
+    require_once __DIR__ . '/web/core/tests/bootstrap.php';
 
     $parameters->set(Option::SKIP, ['*/upgrade_status/tests/modules/*']);
     $parameters->set(Option::FILE_EXTENSIONS, ['php', 'module', 'theme', 'install', 'profile', 'inc', 'engine']);
