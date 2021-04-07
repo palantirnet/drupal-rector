@@ -21,9 +21,9 @@ return static function (ContainerConfigurator $containerConfigurator): void {
         __DIR__ . '/../fixtures/drupal/web/modules',
         __DIR__ . '/../fixtures/drupal/web/profiles'
     ]);
-
+    require_once __DIR__ . '/../fixtures/drupal/web/core/tests/bootstrap.php';
     $parameters->set(Option::SKIP, ['*/upgrade_status/tests/modules/*']);
-    $parameters->set(Option::FILE_EXTENSIONS, ['module', 'theme', 'install', 'profile', 'inc', 'engine']);
+    $parameters->set(Option::FILE_EXTENSIONS, ['php', 'module', 'theme', 'install', 'profile', 'inc', 'engine']);
     $parameters->set(Option::AUTO_IMPORT_NAMES, true);
     $parameters->set(Option::IMPORT_SHORT_CLASSES, false);
     $parameters->set(Option::IMPORT_DOC_BLOCKS, false);
