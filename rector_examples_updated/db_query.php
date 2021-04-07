@@ -26,7 +26,12 @@ function placeholder() {
  * An example using arguments and options.
  */
 function arguments_and_options() {
-  \Drupal\core\Database\Database::getConnection('my_non_default_database')->query('select * from user where name="%test"', ['%test'=>'Adam'], ['fetch' => \PDO::FETCH_OBJ, 'return' => Database::RETURN_STATEMENT, 'throw_exception' => TRUE, 'allow_delimiter_in_query' => FALSE]);
+  \Drupal\core\Database\Database::getConnection('my_non_default_database')->query('select * from user where name="%test"', ['%test'=>'Adam'], [
+    'fetch' => \PDO::FETCH_OBJ,
+    'return' => \Drupal\core\Database\Database::RETURN_STATEMENT,
+    'throw_exception' => TRUE,
+    'allow_delimiter_in_query' => FALSE
+  ]);
 }
 
 /**
@@ -39,7 +44,7 @@ function query_and_arguments_and_options_as_variables() {
 
   $opts = ['target' => 'my_non_default_database',
     'fetch' => \PDO::FETCH_OBJ,
-    'return' => Database::RETURN_STATEMENT,
+    'return' => \Drupal\core\Database\Database::RETURN_STATEMENT,
     'throw_exception' => TRUE,
     'allow_delimiter_in_query' => FALSE,
   ];
