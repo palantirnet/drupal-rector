@@ -45,10 +45,11 @@ jobs:
                   mv vendor/palantirnet/drupal-rector/rector_examples web/modules/custom
                   ls -la web/modules/custom/rector_examples
 
+            # dry-run is expected to return exit code 1 if there are changes, which we are expecting to happen, here.
             -   name: Run rector against Drupal (dry-run)
                 run: |
                     cd ~/drupal
-                    vendor/bin/rector process web/modules/custom/rector_examples --dry-run --debug
+                    vendor/bin/rector process web/modules/custom/rector_examples --dry-run --debug || if (($? == 1)); then true; else false; fi
             -   name: Run rector against Drupal
                 run: |
                     cd ~/drupal
