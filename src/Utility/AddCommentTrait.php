@@ -23,8 +23,8 @@ trait AddCommentTrait
         if ($node instanceof Node\Stmt) {
             $statement_node = $node;
         }
-        elseif ($node->hasAttribute('parentNode')) {
-            $parent_node = $node->getAttribute('parentNode');
+        elseif ($node->hasAttribute('parent')) {
+            $parent_node = $node->getAttribute('parent');
 
             $statement_node = $this->getClosestStatementNode($parent_node);
         }
@@ -39,7 +39,10 @@ trait AddCommentTrait
      * @param string $comment
      */
     protected function addDrupalRectorComment(Node $node, $comment) {
-        // Referencing the `parameterProvider` property in this way isn't a great idea since we are assuming the property exists, but it does in `AbstractRector` which all of our rules extend in some form or another.
+        // Referencing the `parameterProvider` property in this way isn't a
+        // great idea since we are assuming the property exists, but it does in
+        // `AbstractRector` which all of our rules extend in some form or
+        // another.
         if ($this->parameterProvider->provideParameter('drupal_rector_notices_as_comments')) {
             $comment_with_wrapper = "// TODO: Drupal Rector Notice: Please delete the following comment after you've made any necessary changes." . PHP_EOL
                 . "// $comment";

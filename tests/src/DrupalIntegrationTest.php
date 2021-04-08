@@ -3,6 +3,7 @@
 namespace DrupalRector\Tests;
 
 use DrupalRector\Rector\Deprecation\DatetimeDateStorageFormatRector;
+use DrupalRector\Rector\Deprecation\DrupalSetMessageRector;
 use DrupalRector\Rector\Deprecation\FileCreateDirectoryRector;
 use PHPUnit\Framework\TestCase;
 use Rector\Core\Bootstrap\RectorConfigsResolver;
@@ -76,6 +77,10 @@ HEREDOC
         yield [
             __DIR__ . '/../../rector_examples/src/FileCreateDirectoryNoUseStatement.php',
             [FileCreateDirectoryRector::class]
+        ];
+        yield [
+            __DIR__ . '/../../rector_examples/drupal_set_message.php',
+            [DrupalSetMessageRector::class]
         ];
     }
 
