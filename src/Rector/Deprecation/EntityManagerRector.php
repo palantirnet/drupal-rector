@@ -74,8 +74,8 @@ CODE_AFTER
         $service = 'entity_type.manager';
 
         // If we call a method on `entityManager`, we need to check that method and we can call the correct service that the method uses.
-        if ($node->hasAttribute('nextNode')) {
-          $next_node = $node->getAttribute('nextNode');
+        if ($node->hasAttribute('next')) {
+          $next_node = $node->getAttribute('next');
 
           $service = $this->getServiceByMethodName($this->getName($next_node));
         }
@@ -93,7 +93,7 @@ CODE_AFTER
         $parentClassName = $this->parentClassScopeResolver->resolveParentClassName($node);
       if ($node instanceof Node\Expr\MethodCall && $parentClassName === 'Drupal\Core\Controller\ControllerBase') {
         // If we call a method on `entityManager`, we need to check that method and we can call the correct service that the method uses.
-        $next_node = $node->getAttribute('nextNode');
+        $next_node = $node->getAttribute('next');
 
         if (!is_null($next_node)) {
           $service = $this->getServiceByMethodName($this->getName($next_node));

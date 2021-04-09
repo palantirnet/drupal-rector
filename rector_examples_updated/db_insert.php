@@ -1,6 +1,6 @@
 <?php
 
-use Drupal\core\Database\Database;
+use Drupal\Core\Database\Database;
 /**
  * This demonstrates the deprecated static calls that might be called from procedural code like `.module` files.
  */
