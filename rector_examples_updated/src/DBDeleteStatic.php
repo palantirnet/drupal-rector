@@ -2,6 +2,7 @@
 
 namespace Drupal\rector_examples;
 
+use Drupal\core\Database\Database;
 /**
  * Example of static method calls from a class.
  */
@@ -20,7 +21,7 @@ class DBDeleteStatic {
    * An example using options.
    */
   public function options() {
-    \Drupal\core\Database\Database::getConnection('my_non_default_database')->delete('user', []);
+    Database::getConnection('my_non_default_database')->delete('user', []);
   }
 
   /**

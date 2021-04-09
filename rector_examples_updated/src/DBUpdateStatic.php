@@ -2,6 +2,7 @@
 
 namespace Drupal\rector_examples;
 
+use Drupal\core\Database\Database;
 /**
  * Example of static method calls from a class.
  */
@@ -20,7 +21,7 @@ class DBUpdateStatic {
    * An example using options.
    */
   public function options() {
-    $database = \Drupal\core\Database\Database::getConnection('my_non_default_database')->update('user', []);
+    $database = Database::getConnection('my_non_default_database')->update('user', []);
   }
 
   /**
