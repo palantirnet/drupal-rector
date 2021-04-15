@@ -2,6 +2,7 @@
 
 namespace DrupalRector\Tests;
 
+use DrupalRector\Rector\Deprecation\BrowserTestBaseGetMockRector;
 use DrupalRector\Rector\Deprecation\DatetimeDateStorageFormatRector;
 use DrupalRector\Rector\Deprecation\DrupalSetMessageRector;
 use DrupalRector\Rector\Deprecation\FileCreateDirectoryRector;
@@ -84,7 +85,7 @@ HEREDOC
         ];
         yield [
             __DIR__ . '/../../rector_examples/test/src/Functional/BrowserTestBaseGetMock.php',
-            [DrupalSetMessageRector::class]
+            [BrowserTestBaseGetMockRector::class]
         ];
     }
 

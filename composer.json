@@ -28,6 +28,9 @@
         }
     ],
     "autoload": {
+        "files": [
+            "drupal-phpunit-hack.php"
+        ],
         "psr-4": {
             "DrupalRector\\": "src"
         }

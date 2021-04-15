@@ -21,6 +21,9 @@ return static function (ContainerConfigurator $containerConfigurator): void {
         $drupalRoot . '/modules',
         $drupalRoot . '/profiles',
     ]);
+    $parameters->set(Option::BOOTSTRAP_FILES, [
+        __DIR__ . '/drupal-phpunit-fixes.php'
+    ]);
 
     $parameters->set(Option::SKIP, ['*/upgrade_status/tests/modules/*']);
     $parameters->set(Option::FILE_EXTENSIONS, ['php', 'module', 'theme', 'install', 'profile', 'inc', 'engine']);
