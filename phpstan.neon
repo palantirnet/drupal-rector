@@ -4,5 +4,3 @@ parameters:
 		- config
 		- src
 		- rector.php
-		- rector-config-docroot-dir.php
-		- rector-config-web-dir.php
