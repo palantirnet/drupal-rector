@@ -1,8 +1,24 @@
 <?php
 
 /**
- * @TODO FIND A WAY TO MAKE THIS GENERIC
+ * @file
+ *
+ * This fixes Drupal testing namespace autoloading and PHPUnit compatibility.
  */
+
+use Rector\Core\Autoloading\BootstrapFilesIncluder;
+use Symplify\PackageBuilder\Parameter\ParameterProvider;
+
+assert($this instanceof BootstrapFilesIncluder);
+/** @phpstan-ignore-next-line */
+$parameterProvider = $this->parameterProvider;
+assert($parameterProvider instanceof ParameterProvider);
+
+// @todo replace with webflo/drupal-finder to find core from first path.
+$autoloadPaths = $parameterProvider->provideArrayParameter(\Rector\Core\Configuration\Option::AUTOLOAD_PATHS);
+$corePath = $autoloadPaths[0];
+$drupalRoot = dirname($corePath);
+$vendorRoot = dirname($drupalRoot) . '/vendor';
 
 /**
  * Finds all valid extension directories recursively within a given directory.
@@ -106,11 +122,10 @@ function drupal_phpunit_get_extension_namespaces($dirs) {
  * phpunit's global state change watcher. The class loader can be retrieved from
  * composer at any time by requiring autoload.php.
  */
-function drupal_phpunit_populate_class_loader() {
-    $drupalRoot = __DIR__ . '/../fixtures/drupal/web';
+function drupal_phpunit_populate_class_loader($drupalRoot, $vendorRoot) {
 
   /** @var \Composer\Autoload\ClassLoader $loader */
-  $loader = require __DIR__ . '/../fixtures/drupal/vendor/autoload.php';
+  $loader = require $vendorRoot . '/autoload.php';
 
   // Start with classes in known locations.
   $loader->add('Drupal\\BuildTests', $drupalRoot . '/core/tests');
@@ -137,8 +152,8 @@ function drupal_phpunit_populate_class_loader() {
 }
 
 // Do class loader population.
-drupal_phpunit_populate_class_loader();
+drupal_phpunit_populate_class_loader($drupalRoot, $vendorRoot);
 
 // Force the alias to PHPUnit 7. This prevents possibly aliasing to PhpUnit9.
-require_once __DIR__ . '/../fixtures/drupal/web/core/tests/Drupal/TestTools/PhpUnitCompatibility/PhpUnit7/TestCompatibilityTrait.php';
+require_once $drupalRoot . '/core/tests/Drupal/TestTools/PhpUnitCompatibility/PhpUnit7/TestCompatibilityTrait.php';
 class_alias("Drupal\TestTools\PhpUnitCompatibility\PhpUnit7\TestCompatibilityTrait", '\Drupal\Tests\PhpunitVersionDependentTestCompatibilityTrait');

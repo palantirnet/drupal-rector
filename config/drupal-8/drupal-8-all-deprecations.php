@@ -10,4 +10,7 @@ return static function (ContainerConfigurator $containerConfigurator): void {
 
     $parameters = $containerConfigurator->parameters();
     $parameters->set(Option::SKIP, []);
+    $parameters->set(Option::BOOTSTRAP_FILES, [
+        __DIR__ . '/../drupal-phpunit-bootstrap-file.php'
+    ]);
 };
