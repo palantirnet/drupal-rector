@@ -66,8 +66,7 @@ HEREDOC
         $output = json_decode(ob_get_clean());
         self::assertObjectNotHasAttribute('errors', $output, var_export($output, true));
         self::assertObjectHasAttribute('file_diffs', $output);
-        // @todo rector/rector 0.10.4 stopped having applied_rectors with data.
-        // self::assertEquals($applied_rules, $output->file_diffs[0]->applied_rectors);
+        self::assertEquals($applied_rules, $output->file_diffs[0]->applied_rectors);
     }
 
     public function integrationData(): \Generator {
