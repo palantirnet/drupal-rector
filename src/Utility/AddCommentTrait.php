@@ -4,6 +4,7 @@ namespace DrupalRector\Utility;
 
 use PhpParser\Comment;
 use PhpParser\Node;
+use Rector\NodeTypeResolver\Node\AttributeKey;
 
 /**
  * Provides an easy way to add a comment to a statement.
@@ -23,8 +24,8 @@ trait AddCommentTrait
         if ($node instanceof Node\Stmt) {
             $statement_node = $node;
         }
-        elseif ($node->hasAttribute('parent')) {
-            $parent_node = $node->getAttribute('parent');
+        elseif ($node->hasAttribute(AttributeKey::PARENT_NODE)) {
+            $parent_node = $node->getAttribute(AttributeKey::PARENT_NODE);
 
             $statement_node = $this->getClosestStatementNode($parent_node);
         }
