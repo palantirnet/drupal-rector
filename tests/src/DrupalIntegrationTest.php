@@ -83,6 +83,10 @@ HEREDOC
             __DIR__ . '/../../rector_examples/drupal_set_message.php',
             [DrupalSetMessageRector::class]
         ];
+        yield [
+            __DIR__ . '/../../rector_examples/test/src/Functional/BrowserTestBaseGetMock.php',
+            [DrupalSetMessageRector::class]
+        ];
     }
 
 }
