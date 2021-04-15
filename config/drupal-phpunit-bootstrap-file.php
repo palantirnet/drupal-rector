@@ -6,6 +6,7 @@
  * This fixes Drupal testing namespace autoloading and PHPUnit compatibility.
  */
 
+use DrupalFinder\DrupalFinder;
 use Rector\Core\Autoloading\BootstrapFilesIncluder;
 use Symplify\PackageBuilder\Parameter\ParameterProvider;
 
@@ -14,11 +15,19 @@ assert($this instanceof BootstrapFilesIncluder);
 $parameterProvider = $this->parameterProvider;
 assert($parameterProvider instanceof ParameterProvider);
 
-// @todo replace with webflo/drupal-finder to find core from first path.
 $autoloadPaths = $parameterProvider->provideArrayParameter(\Rector\Core\Configuration\Option::AUTOLOAD_PATHS);
-$corePath = $autoloadPaths[0];
-$drupalRoot = dirname($corePath);
-$vendorRoot = dirname($drupalRoot) . '/vendor';
+if (count($autoloadPaths) === 0) {
+    throw new \RuntimeException('No autoload paths were specified.');
+}
+
+$drupalFinder = new DrupalFinder();
+$drupalFinder->locateRoot($autoloadPaths[0]);
+$drupalRoot = $drupalFinder->getDrupalRoot();
+$drupalVendorRoot = $drupalFinder->getVendorDir();
+
+if (! (bool) $drupalRoot || ! (bool) $drupalVendorRoot) {
+    throw new \RuntimeException("Unable to detect Drupal at $drupalRoot");
+}
 
 /**
  * Finds all valid extension directories recursively within a given directory.
@@ -152,7 +161,7 @@ function drupal_phpunit_populate_class_loader($drupalRoot, $vendorRoot) {
 }
 
 // Do class loader population.
-drupal_phpunit_populate_class_loader($drupalRoot, $vendorRoot);
+drupal_phpunit_populate_class_loader($drupalRoot, $drupalVendorRoot);
 
 // Force the alias to PHPUnit 7. This prevents possibly aliasing to PhpUnit9.
 require_once $drupalRoot . '/core/tests/Drupal/TestTools/PhpUnitCompatibility/PhpUnit7/TestCompatibilityTrait.php';

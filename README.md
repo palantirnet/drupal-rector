@@ -60,32 +60,14 @@ $ composer require --dev palantirnet/drupal-rector
 
 You will need to have a `rector.php` configuration in the root of your repository. This should sit beside your document root such as `web` or `docroot`.
 
-This project provides starting files that should handle most use cases.
+This project uses [`webflo/drupal-finder`](https://packagist.org/packages/webflo/drupal-finder) to find your document root that contains Drupal.
 
-If your document root directory is `web`, you can copy the `rector-config-web-dir.php`
-
-```bash
-cp vendor/palantirnet/drupal-rector/rector-config-web-dir.php rector.php
-```
-
-If your document root directory is `docroot`, you can copy the `rector-config-docroot-dir.php`
+To get started, copy the `rector.php` configuration file provided by this package:
 
 ```bash
-cp vendor/palantirnet/drupal-rector/rector-config-docroot-dir.php rector.php
+cp vendor/palantirnet/drupal-rector/rector.php .
 ```
 
-If your document root directory is something else you will need to manually copy and edit `rector.php`.
-
-Replace the `web` in these paths with your document root.
-
-```
-$parameters->set(Option::AUTOLOAD_PATHS, [
-    'web/core',
-    'web/modules',
-    'web/profiles',
-    'web/themes'
-]);
-```
 
 ## Suggested workflow
 
