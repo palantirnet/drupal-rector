@@ -62,16 +62,16 @@ You will need to have a `rector.php` configuration in the root of your repositor
 
 This project provides starting files that should handle most use cases.
 
-If your document root directory is `web`, you can copy the `rector-config-web-dir.yml`
+If your document root directory is `web`, you can copy the `rector-config-web-dir.php`
 
 ```bash
-cp vendor/palantirnet/drupal-rector/rector-config-web-dir.yml rector.php
+cp vendor/palantirnet/drupal-rector/rector-config-web-dir.php rector.php
 ```
 
-If your document root directory is `docroot`, you can copy the `rector-config-docroot-dir.yml`
+If your document root directory is `docroot`, you can copy the `rector-config-docroot-dir.php`
 
 ```bash
-cp vendor/palantirnet/drupal-rector/rector-config-docroot-dir.yml rector.php
+cp vendor/palantirnet/drupal-rector/rector-config-docroot-dir.php rector.php
 ```
 
 If your document root directory is something else you will need to manually copy and edit `rector.php`.
@@ -79,12 +79,12 @@ If your document root directory is something else you will need to manually copy
 Replace the `web` in these paths with your document root.
 
 ```
-parameters:
-  autoload_paths:
-    - 'web/core'
-    - 'web/core/modules'
-    - 'web/modules'
-    - 'web/profiles'
+$parameters->set(Option::AUTOLOAD_PATHS, [
+    'web/core',
+    'web/modules',
+    'web/profiles',
+    'web/themes'
+]);
 ```
 
 ## Suggested workflow
