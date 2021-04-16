@@ -52,8 +52,6 @@ jobs:
         runs-on: ubuntu-latest
         # There are some non-related errors. So this run acts as a canary
         # that we manually review to shake loose errors.
-        # @todo: remove when PHPStan doesn't choke on WebformLikert doc block
-        continue-on-error: true
         steps:
             -   uses: actions/checkout@v2
             -   uses: shivammathur/setup-php@v2
@@ -89,3 +87,5 @@ jobs:
                     # Run Rector
                     cd ~/drupal
                     vendor/bin/rector process web/modules/contrib/webform --debug
+                # @todo: remove when PHPStan doesn't choke on WebformLikert doc block
+                continue-on-error: true
