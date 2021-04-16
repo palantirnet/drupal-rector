@@ -6,8 +6,17 @@ on:
 
 jobs:
     run_rector_on_rector_examples_module:
-        name: rector_examples check
+        name: rector_examples (drupal/${{ matrix.dev_dependencies_package }})
         runs-on: ubuntu-latest
+        strategy:
+            matrix:
+                drupal_version:
+                    - "~8"
+                dev_dependencies_package:
+                    # drupal/core-dev installs phpunit:7
+                    - "core-dev"
+                    # drupal/core-dev-pinned installs phpunit:6
+                    - "core-dev-pinned"
         steps:
             -   uses: actions/checkout@v2
             -   uses: shivammathur/setup-php@v2
@@ -19,14 +28,14 @@ jobs:
 
             -   name: Setup Drupal
                 run: |
-                    COMPOSER_MEMORY_LIMIT=-1 composer create-project drupal/recommended-project:~8 ~/drupal --no-interaction
+                    COMPOSER_MEMORY_LIMIT=-1 composer create-project drupal/recommended-project:${{ matrix.drupal_version }} ~/drupal --no-interaction
                     cd ~/drupal
                     composer config minimum-stability dev
                     composer config prefer-stable true
                     composer config preferred-install dist
                     composer config repositories.0 "{\"type\": \"path\", \"url\": \"$GITHUB_WORKSPACE\", \"options\": {\"symlink\": false}}"
                     composer config repositories.1 composer https://packages.drupal.org/8
-                    COMPOSER_MEMORY_LIMIT=-1 composer require drupal/core-dev:~8 --with-all-dependencies
+                    COMPOSER_MEMORY_LIMIT=-1 composer require drupal/${{ matrix.dev_dependencies_package }}:${{ matrix.drupal_version }} --with-all-dependencies
             -   name: require local druapl-rector
                 run: |
                     cd ~/drupal

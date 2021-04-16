@@ -170,18 +170,14 @@ function drupal_phpunit_populate_class_loader($drupalRoot, $vendorRoot) {
 drupal_phpunit_populate_class_loader($drupalRoot, $drupalVendorRoot);
 
 // Determines the major version of PHPUnit.
-// @see \PHPUnit\Runner\Version\RunnerVersion::getMajor().
+$major = 7;
 if (class_exists(Version::class)) {
     $major = (int) explode('.', Version::id())[0];
-    // Force the alias to PHPUnit 7. This prevents possibly aliasing to
-    // PhpUnit8 or PhpUnit9, which do not exist.
-    if ($major > 7) {
-        $major = 7;
-    }
 }
-else {
-    // Default to the higher option.
-    $major = 6;
+if ($major > 7) {
+    $major = 7;
 }
+// @todo This was added in 8.8.x, which means 8.7.x would fail on this but
+//   people should upgrade to 8.9.x anyways.
 require_once $drupalRoot . "/core/tests/Drupal/TestTools/PhpUnitCompatibility/PhpUnit{$major}/TestCompatibilityTrait.php";
-class_alias("Drupal\TestTools\PhpUnitCompatibility\PhpUnit7\TestCompatibilityTrait", '\Drupal\Tests\PhpunitVersionDependentTestCompatibilityTrait');
+class_alias("Drupal\TestTools\PhpUnitCompatibility\PhpUnit{$major}\TestCompatibilityTrait", '\Drupal\Tests\PhpunitVersionDependentTestCompatibilityTrait');
