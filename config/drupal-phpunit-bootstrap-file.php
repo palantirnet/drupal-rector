@@ -7,6 +7,7 @@
  */
 
 use DrupalFinder\DrupalFinder;
+use PHPUnit\Runner\Version;
 use Rector\Core\Autoloading\BootstrapFilesIncluder;
 use Rector\Core\Exception\ShouldNotHappenException;
 
@@ -168,6 +169,19 @@ function drupal_phpunit_populate_class_loader($drupalRoot, $vendorRoot) {
 // Do class loader population.
 drupal_phpunit_populate_class_loader($drupalRoot, $drupalVendorRoot);
 
-// Force the alias to PHPUnit 7. This prevents possibly aliasing to PhpUnit9.
-require_once $drupalRoot . '/core/tests/Drupal/TestTools/PhpUnitCompatibility/PhpUnit7/TestCompatibilityTrait.php';
+// Determines the major version of PHPUnit.
+// @see \PHPUnit\Runner\Version\RunnerVersion::getMajor().
+if (class_exists(Version::class)) {
+    $major = (int) explode('.', Version::id())[0];
+    // Force the alias to PHPUnit 7. This prevents possibly aliasing to
+    // PhpUnit8 or PhpUnit9, which do not exist.
+    if ($major > 7) {
+        $major = 7;
+    }
+}
+else {
+    // Default to the higher option.
+    $major = 6;
+}
+require_once $drupalRoot . "/core/tests/Drupal/TestTools/PhpUnitCompatibility/PhpUnit{$major}/TestCompatibilityTrait.php";
 class_alias("Drupal\TestTools\PhpUnitCompatibility\PhpUnit7\TestCompatibilityTrait", '\Drupal\Tests\PhpunitVersionDependentTestCompatibilityTrait');
