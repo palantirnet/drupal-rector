@@ -20,7 +20,7 @@ https://www.palantir.net/rector
 
 ## Scope and limitations
 
-The development of this tool is prioritized by the percieved impact of the deprecations and updates. There are many deprecations that often involve several components and for each of these there are several ways to address the deprecation.
+The development of this tool is prioritized by the perceived impact of the deprecations and updates. There are many deprecations that often involve several components and for each of these there are several ways to address the deprecation.
 
 We've tried to determine impact based on:
 - The use of the deprecated functionality in the contributed modules on Drupal.org
@@ -111,7 +111,7 @@ Fatal error: Declaration of _HumbugBox3630ef99eac4\Symfony\Component\HttpKernel\
 ```
 
 You may need to check that you are
-- Running `composer install` from an environment that support Php 7.2 or greater
+- Running `composer install` from an environment that supports Php 7.2 or greater
 - Running Drupal Rector from an environment that supports Php 7.2 or greater
 
 Sometimes people install composer dependencies from one machine (host machine) and run Drupal Rector from another (such as a Lando VM).
