@@ -45,7 +45,7 @@ jobs:
                 run: |
                   cd ~/drupal
                   mkdir -p web/modules/custom
-                  cp vendor/palantirnet/drupal-rector/rector_examples web/modules/custom
+                  cp -R vendor/palantirnet/drupal-rector/rector_examples web/modules/custom
             # dry-run is expected to return exit code 1 if there are changes, which we are expecting to happen, here.
             -   name: Run rector against Drupal (dry-run)
                 run: |
