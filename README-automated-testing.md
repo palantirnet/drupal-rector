@@ -30,9 +30,33 @@ Example setup:
 
 ### Setup
 
-@todo: Provide more information about PhpUnit / PHPStan.
+To run the base PHPUnit tests, which run unit tests against Rectors rules, just run the following:
+
+```
+php vendor/bin/phpunit
+```
+
+You will see that some tests were skipped. These are the Drupal integration tests. To run those, run the following commands:
+
+```
+composer run-script phpunit-drupal8-fixture
+```
+
+Now, when you run PHPUnit, the Drupal integration tests will run.
+
+```
+php vendor/bin/phpunit
+```
 
 ### Adding tests
+
+#### Rector Rules PHPUnit tests
+
+We follow the same testing pattern as Rector.
+
+Read their wonderful documentation: https://github.com/rectorphp/rector/blob/main/docs/how_to_add_test_for_rector_rule.md
+
+#### Functional tests
 
 Tests should be pretty simple. By default, the main test will test the entire `rector_examples` folder and report any differences. Tests can also be made for individual files.
 

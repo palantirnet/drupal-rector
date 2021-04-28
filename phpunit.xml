@@ -8,8 +8,7 @@
          beStrictAboutTodoAnnotatedTests="true"
          colors="true"
          failOnRisky="true"
-         failOnWarning="true"
-         verbose="true">
+         failOnWarning="true">
     <testsuites>
         <testsuite name="default">
             <directory suffix="Test.php">tests/src</directory>

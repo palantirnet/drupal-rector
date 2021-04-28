@@ -60,5 +60,14 @@
         "phpunit/phpunit": "^9.5",
         "rector/rector": "~0.10.0",
         "symfony/yaml": "^5"
+    },
+    "scripts": {
+        "phpunit-drupal8-fixture": [
+            "composer create-project drupal/recommended-project:^8.9 tests/fixtures/drupal",
+            "composer require --dev drupal/core-dev:^8.9 --working-dir tests/fixtures/drupal"
+        ]
+    },
+    "scripts-descriptions": {
+        "phpunit-drupal8-fixture": "Installs a Drupal 8 site for integration testing with PHPUnit"
     }
 }
