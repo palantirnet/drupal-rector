@@ -4,31 +4,14 @@
 
 Github Workflow is used to test that this package can be installed. See `.github`.
 
-## Rector automated functional tests using Behat
+## Rector automated tests
 
-No extra tool is used to run the functional test(s).
-
-PhpUnit is used to run unit tests.
-
-PHPStan is used for the static analysis tests.
-
-This uses Linux / MacOS commands, so they need to be run from that environment.
-
-These tests assume that this repository is installed as a local composer package. This is necessary, because we need a full Drupal site to run the Rector tests.
-
-Example setup:
-```
-# This repository
-/drupal-rector
-# Drupal
-/web/core
-/web/index.php
-# A Composer vendor directory
-/vendor/bin/rector
-...
-```
+* PHPUnit is used to run unit tests.
+* PHPStan is used for the static analysis tests.
 
 ### Setup
+
+We are currently running our tests on PHP 7.3, you may encounter problems when running on PHP 7.4.
 
 To run the base PHPUnit tests, which run unit tests against Rectors rules, just run the following:
 
