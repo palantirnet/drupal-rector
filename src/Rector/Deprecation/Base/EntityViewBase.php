@@ -69,13 +69,8 @@ abstract class EntityViewBase extends AbstractRector
       $view_args[] = $node->args[2]->value;
     }
 
-    if (isset($node->args[3])) {
-      $view_args[] = $node->args[3]->value;
-    }
-
     $view = new Node\Expr\MethodCall($view_builder, $view_method_name, $view_args);
 
     return $view;
-
   }
 }
