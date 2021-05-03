@@ -4,9 +4,9 @@ Automate fixing deprecated Drupal code.
 
 ## Status
 
-![local_package_functional_tests](https://github.com/palantirnet/drupal-rector/workflows/local_package_functional_tests/badge.svg)
-![local_package_run_rector](https://github.com/palantirnet/drupal-rector/workflows/local_package_run_rector/badge.svg)
-![packagist_package_run_rector](https://github.com/palantirnet/drupal-rector/workflows/packagist_package_run_rector/badge.svg)
+![Functional test: Rector examples](https://github.com/palantirnet/drupal-rector/workflows/functional_test__rector_examples/badge.svg)
+![Static analysis: PhpStan](https://github.com/palantirnet/drupal-rector/workflows/static_analysis__phpstan/badge.svg)
+![Unit test: PHPUnit](https://github.com/palantirnet/drupal-rector/workflows/unit_tests__php_unit/badge.svg)
 
 ## Introduction
 
