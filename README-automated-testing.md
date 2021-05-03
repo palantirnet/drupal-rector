@@ -39,6 +39,8 @@ Read their wonderful documentation: https://github.com/rectorphp/rector/blob/mai
 
 #### Functional tests
 
+@todo Describe how to run a functional test locally. Right now, it can only be done as part of the Github Action.
+
 Tests should be pretty simple. By default, the main test will test the entire `rector_examples` folder and report any differences. Tests can also be made for individual files.
 
 The functional tests make a copy of the file or folder we are going to test, so you don't have to worry about overwriting files in those directories.
