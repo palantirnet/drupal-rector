@@ -53,8 +53,5 @@ jobs:
                     cp -R vendor/palantirnet/drupal-rector/rector_examples web/modules/custom
             -   name: Install local dependencies, including Behat.
                 run: composer install
-            # Uncomment to enable SSH access to Github Actions - https://github.com/marketplace/actions/debugging-with-tmate#getting-started
-            -   name: Debugging with tmate
-                uses: mxschmitt/action-tmate@v2
             -   name: Run Behat tests
                 run: vendor/bin/behat
