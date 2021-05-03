@@ -13,23 +13,21 @@ Github Workflow is used to test that this package can be installed. See `.github
 
 We are currently running our tests on PHP 7.3, you may encounter problems when running on PHP 7.4.
 
-To run the base PHPUnit tests, which run unit tests against Rectors rules, just run the following:
-
-```
-php vendor/bin/phpunit
-```
-
-You will see that some tests were skipped. These are the Drupal integration tests. To run those, run the following commands:
+Set up Drupal integration fixtures.
 
 ```
 composer run-script phpunit-drupal8-fixture
 ```
 
-Now, when you run PHPUnit, the Drupal integration tests will run.
+### Running tests locally
 
 ```
-php vendor/bin/phpunit
+vendor/bin/phpunit
 ```
+
+If you did not set up the Drupal integration fixtures, this will produce errors and skip a few of the Drupal integration tests. These errors can be ignored, or you can set up the integration as described above.
+
+`DrupalRector\Tests\DrupalIntegrationTest::testIntegration` ... `OutOfBoundsException: Package "rector/rector" is not installed`
 
 ### Adding tests
 
