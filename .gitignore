@@ -10,5 +10,5 @@
 /vendor
 /composer.lock
 
-/.phpunit.cache
-/tests/fixtures/drupal
+/features/tmp/*
+!/features/tmp/.placeholder

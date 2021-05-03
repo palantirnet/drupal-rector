@@ -4,43 +4,38 @@
 
 Github Workflow is used to test that this package can be installed. See `.github`.
 
-## Rector automated tests
+## Rector automated functional tests using Behat
 
-* PHPUnit is used to run unit tests.
-* PHPStan is used for the static analysis tests.
+Behat (the Php version of Cucumber) is used to run automated tests.
+
+This uses Linux / MacOS commands, so they need to be run from that environment.
+
+These tests assume that this repository is installed as a local composer package. This is necessary, because we need a full Drupal site to run the Rector tests.
+
+Example setup:
+```
+# This repository
+/drupal-rector
+# Drupal
+/web/core
+/web/index.php
+# A Composer vendor directory
+/vendor/bin/rector
+...
+```
+
+The tests are located in `features` with a simple `/features/bootstrap/FeatureContext.php` context file which handles running Rector and comparing files.
 
 ### Setup
 
-We are currently running our tests on PHP 7.3, you may encounter problems when running on PHP 7.4.
+To run the Behat tests, you will need the setup mentioned above. See `.github/workflows/local_package.yml` for an example of how this is done.
 
-Set up Drupal integration fixtures.
+Then run `composer install` to install Behat in this repository's `vendor` directory.
 
-```
-composer run-script phpunit-drupal8-fixture
-```
-
-### Running tests locally
-
-```
-vendor/bin/phpunit
-```
-
-If you did not set up the Drupal integration fixtures, this will produce errors and skip a few of the Drupal integration tests. These errors can be ignored, or you can set up the integration as described above.
-
-`DrupalRector\Tests\DrupalIntegrationTest::testIntegration` ... `OutOfBoundsException: Package "rector/rector" is not installed`
+To run tests, run `vendor/bin/behat`.
 
 ### Adding tests
 
-#### Rector Rules PHPUnit tests
+Tests should be pretty simple. By default, the main test feature `rector_examples.feature` will test the entire `rector_examples` folder and report any differences. Tests can also be made for individual files.
 
-We follow the same testing pattern as Rector.
-
-Read their wonderful documentation: https://github.com/rectorphp/rector/blob/main/docs/how_to_add_test_for_rector_rule.md
-
-#### Functional tests
-
-@todo Describe how to run a functional test locally. Right now, it can only be done as part of the Github Action.
-
-Tests should be pretty simple. By default, the main test will test the entire `rector_examples` folder and report any differences. Tests can also be made for individual files.
-
-The functional tests make a copy of the file or folder we are going to test, so you don't have to worry about overwriting files in those directories.
+The Behat tests make a copy of the file or folder we are going to test, so you don't have to worry about overwriting files in those directories.

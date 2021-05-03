@@ -1,0 +1,59 @@
+name: local_package_functional_tests
+
+# This test will run on every pull request, and on every commit on any branch
+on:
+        [push, pull_request]
+
+jobs:
+    functional_tests:
+        name: Run functional tests using Behat
+        runs-on: ubuntu-latest
+        steps:
+            -   uses: actions/checkout@v2
+            -   uses: shivammathur/setup-php@v2
+                with:
+                    php-version: 7.3
+                    coverage: none # disable xdebug, pcov
+                    extensions: "intl"
+
+            # This is copied from `local_package_run_rector`.
+            -    run: |
+                    # Download the latest Drupal core project and all its dependencies
+                    composer create-project drupal/recommended-project:~8 ../drupal --no-progress
+                    mv ../drupal/* ..
+
+            # This is copied from `local_package_run_rector`.
+            -    run: |
+                    # Install drupal-rector using current github-actions directory (allow testing for both forks and main repo)
+                    cd ..
+                    composer config repositories.drupal-rector '{"type": "path", "url": "drupal-rector", "options": {"symlink": true}}'
+                    composer require palantirnet/drupal-rector:@dev --prefer-source --no-progress
+
+            # This is copied from `local_package_run_rector`.
+            -    run: |
+                    # Prepare rector config files with Drupal specific settings
+                    cd ..
+                    cp vendor/palantirnet/drupal-rector/rector.yml .
+
+            # This is copied from `local_package_run_rector`.
+            # This seems needed for the autoloading to work.
+            -    run: |
+                  # Prepare rector_examples folder in the drupal modules directory
+                  cd ..
+                  mkdir -p web/modules/custom
+                  cp -r vendor/palantirnet/drupal-rector/rector_examples web/modules/custom/.
+
+            -    run: |
+                    # Install phpunit/phpunit on the Drupal site since it's needed for some of our examples.
+                    cd ..
+                    composer require phpunit/phpunit:~7.5
+
+            -    run: |
+                    # Install local packages, including Behat
+                    composer install
+
+            #            -  uses: mxschmitt/action-tmate@v2
+
+            -    run: |
+                    # Run Behat
+                    vendor/bin/behat
