@@ -23,8 +23,9 @@ jobs:
 # START: SHARED DRUPAL INSTALL SETUP
             -   name: Setup Drupal
                 run: |
-                    COMPOSER_MEMORY_LIMIT=-1 composer create-project drupal/recommended-project:~8 ~/drupal --no-interaction
-                    cd ~/drupal
+                    COMPOSER_MEMORY_LIMIT=-1 composer create-project drupal/recommended-project:~8 ../drupal --no-interaction
+                    cd ..
+                    mv drupal/* .
                     composer config minimum-stability dev
                     composer config prefer-stable true
                     composer config preferred-install dist
@@ -33,27 +34,24 @@ jobs:
             # We add a local repository `repositories.0` which takes precendence over the packagist repository that is automatically added.
             -   name: Install Drupal Rector
                 run: |
-                    cd ~/drupal
+                    cd ..
                     composer config repositories.drupal-rector "{\"type\": \"path\", \"url\": \"$GITHUB_WORKSPACE\", \"options\": {\"symlink\": false}}"
                     composer require palantirnet/drupal-rector:@dev --no-progress
             -   name: Install Drupal Rector Config
                 run: |
-                    cd ~/drupal
+                    cd ..
                     cp vendor/palantirnet/drupal-rector/rector.php .
 # END: SHARED DRUPAL INSTALL SETUP
             -   name: Install PHPUnit in the Drupal site since it is required for some of the rules
                 run: |
-                    cd ~/drupal
+                    cd ..
                     composer require phpunit/phpunit:~7.5 --no-progress
             -   name: Prepare rector_examples folder in the drupal modules directory
                 run: |
-                    cd ~/drupal
+                    cd ..
                     mkdir -p web/modules/custom
                     cp -R vendor/palantirnet/drupal-rector/rector_examples web/modules/custom
             -   name: Install local dependencies, including Behat.
                 run: composer install
-            # Uncomment to enable SSH access to Github Actions - https://github.com/marketplace/actions/debugging-with-tmate#getting-started
-            -   name: Debugging with tmate
-                uses: mxschmitt/action-tmate@v2
             -   name: Run Behat tests
                 run: vendor/bin/behat

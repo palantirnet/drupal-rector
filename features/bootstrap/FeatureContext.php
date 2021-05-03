@@ -21,6 +21,13 @@ class FeatureContext implements Context {
   protected $temporaryFolderPath = 'features/tmp';
 
   /**
+   * The Drupal Rector path.
+   *
+   * @var string
+   */
+  protected $drupalRectorPath = 'drupal-rector/';
+
+  /**
    * The path to the test file or folder.
    *
    * @var string
@@ -62,10 +69,13 @@ class FeatureContext implements Context {
    * @When I run Drupal Rector on the file/folder :path
    */
   public function iRunDrupalRectorOnThe($path) {
+    chdir('..');
 
     $output = NULL;
     $return_value = NULL;
-    exec("vendor/bin/rector process --config=features/behat-rector.php $path", $output, $return_value);
+    exec("vendor/bin/rector process $this->drupalRectorPath/$path", $output, $return_value);
+
+    chdir($this->drupalRectorPath);
 
     if ($return_value !== 0) {
       throw new Exception('Rector did not complete successfully.' . PHP_EOL
