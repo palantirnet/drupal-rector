@@ -63,6 +63,7 @@
     },
     "scripts": {
         "phpunit-drupal8-fixture": [
+            "rm -rf tests/fixtures/drupal",
             "composer create-project drupal/recommended-project:^8.9 tests/fixtures/drupal",
             "composer require --dev drupal/core-dev:^8.9 --working-dir tests/fixtures/drupal"
         ]
