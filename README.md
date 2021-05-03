@@ -5,8 +5,6 @@ Automate fixing deprecated Drupal code.
 ## Status
 
 ![Functional test: Rector examples](https://github.com/palantirnet/drupal-rector/workflows/functional_test__rector_examples/badge.svg)
-![Static analysis: PhpStan](https://github.com/palantirnet/drupal-rector/workflows/static_analysis__phpstan/badge.svg)
-![Unit test: PHPUnit](https://github.com/palantirnet/drupal-rector/workflows/unit_tests__php_unit/badge.svg)
 
 ## Introduction
 

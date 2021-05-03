@@ -41,25 +41,16 @@ jobs:
                     cd ~/drupal
                     cp vendor/palantirnet/drupal-rector/rector.php .
 # END: SHARED DRUPAL INSTALL SETUP
+            -   name: Install PHPUnit in the Drupal site since it is required for some of the rules
+                run: |
+                    cd ~/drupal
+                    composer require phpunit/phpunit:~7.5 --no-progress
             -   name: Prepare rector_examples folder in the drupal modules directory
                 run: |
-                  cd ~/drupal
-                  mkdir -p web/modules/custom
-                  cp -R vendor/palantirnet/drupal-rector/rector_examples web/modules/custom
-            # dry-run is expected to return exit code 1 if there are changes, which we are expecting to happen, here.
-            -   name: Run rector against Drupal (dry-run)
-                run: |
                     cd ~/drupal
-                    vendor/bin/rector process web/modules/custom/rector_examples --dry-run --debug || if (($? == 1)); then true; else false; fi
-            -   name: Run rector against Drupal
-                run: |
-                    cd ~/drupal
-                    vendor/bin/rector process web/modules/custom/rector_examples --debug
-            # diff options:
-            # -r: recursive
-            # -u: show the joined context, like git diff
-            # -b: ignore whitespace
-            # -B: ignore lines that are only whitespace
-            -   name: Check that the updated examples match expectations
-                run: |
-                    diff -rubB rector_examples_updated ~/drupal/web/modules/custom/rector_examples
+                    mkdir -p web/modules/custom
+                    cp -R vendor/palantirnet/drupal-rector/rector_examples web/modules/custom
+            -   name: Install local dependencies, including Behat.
+                run: composer install
+            -   name: Run Behat tests
+                run: vendor/bin/behat
