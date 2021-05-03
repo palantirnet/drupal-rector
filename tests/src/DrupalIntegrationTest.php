@@ -15,6 +15,9 @@ use Symfony\Component\Console\Tester\CommandTester;
 
 final class DrupalIntegrationTest extends TestCase {
 
+    /**
+     * Check that the integration test fixtures have been set up.
+     */
     protected function setUp(): void
     {
         parent::setUp();
@@ -31,6 +34,8 @@ HEREDOC
     }
 
     /**
+     * Test that certain Drupal Rector rules are run on certain files.
+     * 
      * @dataProvider integrationData
      */
     public function testIntegration(string $source, array $applied_rules)
@@ -54,6 +59,7 @@ HEREDOC
         $command = $application->find('process');
         $commandTester = new CommandTester($command);
 
+        // Capture the output of the command.
         ob_start();
         $commandTester->execute([
             'source' => $source,
@@ -65,8 +71,14 @@ HEREDOC
             'verbosity' => OutputInterface::VERBOSITY_DEBUG
         ]);
         $output = json_decode(ob_get_clean());
+
+        // Check that there are no errors produced.
         self::assertObjectNotHasAttribute('errors', $output, var_export($output, true));
+        
+        // Check that there is a list of file_diffs.
         self::assertObjectHasAttribute('file_diffs', $output);
+
+        // Check that the rule we expect to apply is reported as applied.
         self::assertEquals($applied_rules, $output->file_diffs[0]->applied_rectors);
     }
 
