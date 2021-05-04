@@ -15,7 +15,7 @@ function simple_example() {
 function lagncode_example() {
   $entity = new stdClass();
   $langcode = 'de';
-  $veiw = entity_view($entity, 'default', $langcode);
+  $view = entity_view($entity, 'default', $langcode);
 }
 
 function reset_cache_example() {
