@@ -18,6 +18,7 @@ use DrupalRector\Rector\Deprecation\EntityInterfaceLinkRector;
 use DrupalRector\Rector\Deprecation\EntityInterfaceUrlInfoRector;
 use DrupalRector\Rector\Deprecation\EntityLoadRector;
 use DrupalRector\Rector\Deprecation\EntityManagerRector;
+use DrupalRector\Rector\Deprecation\EntityViewRector;
 use DrupalRector\Rector\Deprecation\FileLoadRector;
 use DrupalRector\Rector\Deprecation\FormatDateRector;
 use DrupalRector\Rector\Deprecation\LinkGeneratorTraitLRector;
@@ -58,6 +59,8 @@ return static function (ContainerConfigurator $containerConfigurator): void {
     $services->set(EntityInterfaceUrlInfoRector::class);
 
     $services->set(EntityLoadRector::class);
+
+    $services->set(EntityViewRector::class);
 
     $services->set(EntityManagerRector::class);
 
