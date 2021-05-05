@@ -1,7 +1,7 @@
 <?php
 
 /**
- * This demonstrates the deprecated static calls that might be called from procedural code like module files.
+ * This demonstrates the deprecated static calls that might be called from procedural code like `.module` files.
  */
 
 /**
@@ -12,6 +12,9 @@ function simple_example() {
   $view = entity_view($entity, 'default');
 }
 
+/**
+ * An example using all of the arguments.
+ */
 function lagncode_example() {
   $entity = new stdClass();
   $langcode = 'de';

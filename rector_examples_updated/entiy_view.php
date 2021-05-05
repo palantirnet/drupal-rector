@@ -21,10 +21,17 @@ function lagncode_example() {
   $view = \Drupal::entityTypeManager()->getViewBuilder($entity->getEntityTypeId())->view($entity, 'default', $langcode);
 }
 
+function reset_cache_example() {
+  // Not supported.
+}
+
+
 /**
  * An example using all of the arguments as variables.
  */
 function arguments_member_values() {
   $entity = new stdClass();
+  $entity->field_view_mode = 'test';
+
   $view = \Drupal::entityTypeManager()->getViewBuilder($entity->getEntityTypeId())->view($entity, $entity->field_view_mode);
 }
