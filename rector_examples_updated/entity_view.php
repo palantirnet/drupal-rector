@@ -25,9 +25,8 @@ function reset_cache_example() {
   // Not supported.
 }
 
-
 /**
- * An example using all of the arguments as variables.
+ * An example using arguments as member values.
  */
 function arguments_member_values() {
   $entity = new stdClass();
