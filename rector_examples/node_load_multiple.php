@@ -15,8 +15,7 @@ function simple_example() {
  * An example using all of the arguments.
  */
 function all_arguments() {
-  /* @var \Drupal\node\Entity\Node $node */
-  $node = node_load_multiple([123, 456], TRUE);
+  $nodes = node_load_multiple([123, 456], TRUE);
 }
 
 /**
