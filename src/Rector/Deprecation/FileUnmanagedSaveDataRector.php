@@ -3,8 +3,8 @@
 namespace DrupalRector\Rector\Deprecation;
 
 use DrupalRector\Rector\Deprecation\Base\FunctionToServiceBase;
-use Rector\Core\RectorDefinition\CodeSample;
-use Rector\Core\RectorDefinition\RectorDefinition;
+use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
+use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 /**
  * Replaces deprecated file_unmanaged_save_data() calls.
@@ -29,9 +29,9 @@ final class FileUnmanagedSaveDataRector extends FunctionToServiceBase
     /**
      * @inheritdoc
      */
-    public function getDefinition(): RectorDefinition
+    public function getRuleDefinition(): RuleDefinition
     {
-        return new RectorDefinition('Fixes deprecated file_unmanaged_save_data() calls',[
+        return new RuleDefinition('Fixes deprecated file_unmanaged_save_data() calls',[
             new CodeSample(
               <<<'CODE_BEFORE'
 $result = file_unmanaged_save_data($data, $destination, $replace);

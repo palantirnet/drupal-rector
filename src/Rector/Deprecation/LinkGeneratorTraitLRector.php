@@ -7,8 +7,8 @@ use DrupalRector\Utility\TraitsByClassHelperTrait;
 use PhpParser\Node;
 use Rector\NodeTypeResolver\Node\AttributeKey;
 use Rector\Core\Rector\AbstractRector;
-use Rector\Core\RectorDefinition\CodeSample;
-use Rector\Core\RectorDefinition\RectorDefinition;
+use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
+use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 /**
  * Replaces deprecated \Drupal\Core\Routing\LinkGeneratorTrait::l() calls.
@@ -29,9 +29,9 @@ final class LinkGeneratorTraitLRector extends AbstractRector
     /**
      * @inheritdoc
      */
-    public function getDefinition(): RectorDefinition
+    public function getRuleDefinition(): RuleDefinition
     {
-        return new RectorDefinition('Fixes deprecated l() calls',[
+        return new RuleDefinition('Fixes deprecated l() calls',[
             new CodeSample(
                 <<<'CODE_BEFORE'
 $this->l($text, $url);

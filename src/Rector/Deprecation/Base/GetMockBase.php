@@ -3,7 +3,7 @@
 namespace DrupalRector\Rector\Deprecation\Base;
 
 use PhpParser\Node;
-use Rector\NodeTypeResolver\Node\AttributeKey;
+use Rector\NodeCollector\ScopeResolver\ParentClassScopeResolver;
 use Rector\Core\Rector\AbstractRector;
 
 /**
@@ -25,6 +25,15 @@ abstract class GetMockBase extends AbstractRector
   protected $baseClassBeingExtended;
 
   /**
+   * @var ParentClassScopeResolver
+   */
+  protected $parentClassScopeResolver;
+
+  public function __construct(ParentClassScopeResolver $parentClassScopeResolver) {
+      $this->parentClassScopeResolver = $parentClassScopeResolver;
+  }
+
+    /**
    * @inheritdoc
    */
   public function getNodeTypes(): array
@@ -39,8 +48,16 @@ abstract class GetMockBase extends AbstractRector
    */
   public function refactor(Node $node): ?Node
   {
+    $parentClassName = $this->parentClassScopeResolver->resolveParentClassName($node);
     /* @var Node\Expr\MethodCall $node */
-    if ($this->getName($node->name) === 'getMock' && ($node->var instanceof Node\Expr\Variable) && $this->getName($node->var) === 'this' && $node->hasAttribute(AttributeKey::PARENT_CLASS_NAME) && $node->getAttribute(AttributeKey::PARENT_CLASS_NAME) === $this->baseClassBeingExtended) {
+    // This checks for a method call with the method name of `getMock` and that
+    // the variable calling `getMock` is `$this`, not some other variable call,
+    // such as `$myOtherService->getMock` and have unintended consequences.
+    if ($this->getName($node->name) === 'getMock'
+        && ($node->var instanceof Node\Expr\Variable)
+        && $this->getName($node->var) === 'this'
+        && $parentClassName === $this->baseClassBeingExtended
+    ) {
 
       // Build the arguments.
       $method_arguments = $node->args;

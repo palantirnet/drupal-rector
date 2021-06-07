@@ -4,8 +4,8 @@ namespace DrupalRector\Rector\Deprecation;
 
 use PhpParser\Node;
 use Rector\Core\Rector\AbstractRector;
-use Rector\Core\RectorDefinition\CodeSample;
-use Rector\Core\RectorDefinition\RectorDefinition;
+use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
+use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 /**
  * Replaces deprecated \Drupal::l() calls.
@@ -24,9 +24,9 @@ final class DrupalLRector extends AbstractRector
     /**
      * @inheritdoc
      */
-    public function getDefinition(): RectorDefinition
+    public function getRuleDefinition(): RuleDefinition
     {
-        return new RectorDefinition('Fixes deprecated \Drupal::l() calls',[
+        return new RuleDefinition('Fixes deprecated \Drupal::l() calls',[
             new CodeSample(
                 <<<'CODE_BEFORE'
 \Drupal::l('User Login', \Drupal\Core\Url::fromRoute('user.login'));

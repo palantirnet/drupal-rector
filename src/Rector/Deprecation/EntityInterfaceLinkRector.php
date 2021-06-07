@@ -3,8 +3,8 @@
 namespace DrupalRector\Rector\Deprecation;
 
 use DrupalRector\Utility\AddCommentTrait;
-use Rector\Core\RectorDefinition\CodeSample;
-use Rector\Core\RectorDefinition\RectorDefinition;
+use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
+use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 use PhpParser\Node;
 use Rector\Core\Rector\AbstractRector;
 
@@ -26,9 +26,9 @@ final class EntityInterfaceLinkRector extends AbstractRector
     /**
      * @inheritdoc
      */
-    public function getDefinition(): RectorDefinition
+    public function getRuleDefinition(): RuleDefinition
     {
-        return new RectorDefinition('Fixes deprecated link() calls',[
+        return new RuleDefinition('Fixes deprecated link() calls',[
             new CodeSample(
                 <<<'CODE_BEFORE'
 $url = $entity->link();

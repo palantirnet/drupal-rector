@@ -10,7 +10,8 @@
         "ast"
     ],
     "require": {
-        "rector/rector-prefixed": "0.7.29"
+        "rector/rector-prefixed": "~0.10.0",
+        "webflo/drupal-finder": "^1.2"
     },
     "license": "MIT",
     "authors": [
@@ -45,6 +46,7 @@
     "minimum-stability": "dev",
     "prefer-stable": true,
     "require-dev": {
-        "behat/behat": "^3.6"
+        "behat/behat": "^3.6",
+        "symfony/yaml": "^5"
     }
 }

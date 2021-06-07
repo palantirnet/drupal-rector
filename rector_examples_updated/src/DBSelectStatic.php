@@ -2,6 +2,7 @@
 
 namespace Drupal\rector_examples;
 
+use Drupal\core\Database\Database;
 /**
  * Example of static method calls from a class.
  */
@@ -29,7 +30,7 @@ class DBSelectStatic {
    * An example using alias and options.
    */
   public function alias_and_options() {
-    \Drupal\core\Database\Database::getConnection('my_non_default_database')->select('user', 'u', []);
+    Database::getConnection('my_non_default_database')->select('user', 'u', []);
   }
 
   /**

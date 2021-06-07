@@ -3,8 +3,8 @@
 namespace DrupalRector\Rector\Deprecation;
 
 use DrupalRector\Rector\Deprecation\Base\EntityLoadBase;
-use Rector\Core\RectorDefinition\CodeSample;
-use Rector\Core\RectorDefinition\RectorDefinition;
+use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
+use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 /**
  * Replaced deprecated entity_load() calls.
@@ -23,9 +23,9 @@ final class EntityLoadRector extends EntityLoadBase
     /**
      * @inheritdoc
      */
-    public function getDefinition(): RectorDefinition
+    public function getRuleDefinition(): RuleDefinition
     {
-        return new RectorDefinition('Fixes deprecated entity_load() use',[
+        return new RuleDefinition('Fixes deprecated entity_load() use',[
             new CodeSample(
                 <<<'CODE_BEFORE'
 $node = entity_load('node', 123);

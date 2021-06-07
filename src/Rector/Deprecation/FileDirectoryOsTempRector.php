@@ -3,8 +3,8 @@
 namespace DrupalRector\Rector\Deprecation;
 
 use DrupalRector\Rector\Deprecation\Base\FunctionToStatic;
-use Rector\Core\RectorDefinition\CodeSample;
-use Rector\Core\RectorDefinition\RectorDefinition;
+use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
+use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 /**
  * Replaces deprecated file_directory_temp() calls.
@@ -25,9 +25,9 @@ final class FileDirectoryOsTempRector extends FunctionToStatic
     /**
      * @inheritdoc
      */
-    public function getDefinition(): RectorDefinition
+    public function getRuleDefinition(): RuleDefinition
     {
-        return new RectorDefinition('Fixes deprecated file_directory_temp() calls',[
+        return new RuleDefinition('Fixes deprecated file_directory_temp() calls',[
             new CodeSample(
                 <<<'CODE_BEFORE'
 $dir = file_directory_os_temp();

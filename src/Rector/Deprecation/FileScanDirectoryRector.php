@@ -3,8 +3,8 @@
 namespace DrupalRector\Rector\Deprecation;
 
 use DrupalRector\Rector\Deprecation\Base\FunctionToServiceBase;
-use Rector\Core\RectorDefinition\CodeSample;
-use Rector\Core\RectorDefinition\RectorDefinition;
+use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
+use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 /**
  * Replaces deprecated file_scan_directory() calls.
@@ -30,9 +30,9 @@ final class FileScanDirectoryRector extends FunctionToServiceBase
     /**
      * @inheritdoc
      */
-    public function getDefinition(): RectorDefinition
+    public function getRuleDefinition(): RuleDefinition
     {
-        return new RectorDefinition('Fixes deprecated file_scan_directory() calls',[
+        return new RuleDefinition('Fixes deprecated file_scan_directory() calls',[
             new CodeSample(
               <<<'CODE_BEFORE'
 $files = file_scan_directory($directory);

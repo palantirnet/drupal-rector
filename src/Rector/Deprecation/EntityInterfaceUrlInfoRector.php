@@ -3,8 +3,8 @@
 namespace DrupalRector\Rector\Deprecation;
 
 use DrupalRector\Rector\Deprecation\Base\MethodToMethodBase;
-use Rector\Core\RectorDefinition\CodeSample;
-use Rector\Core\RectorDefinition\RectorDefinition;
+use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
+use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 /**
  * Replaces deprecated function call to EntityInterface::urlInfo.
@@ -28,9 +28,9 @@ final class EntityInterfaceUrlInfoRector extends MethodToMethodBase
     /**
      * @inheritdoc
      */
-    public function getDefinition(): RectorDefinition
+    public function getRuleDefinition(): RuleDefinition
     {
-        return new RectorDefinition('Fixes deprecated urlInfo() calls',[
+        return new RuleDefinition('Fixes deprecated urlInfo() calls',[
           new CodeSample(
             <<<'CODE_BEFORE'
 $url = $entity->urlInfo();

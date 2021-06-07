@@ -4,9 +4,7 @@ Automate fixing deprecated Drupal code.
 
 ## Status
 
-![local_package_functional_tests](https://github.com/palantirnet/drupal-rector/workflows/local_package_functional_tests/badge.svg)
-![local_package_run_rector](https://github.com/palantirnet/drupal-rector/workflows/local_package_run_rector/badge.svg)
-![packagist_package_run_rector](https://github.com/palantirnet/drupal-rector/workflows/packagist_package_run_rector/badge.svg)
+![Functional test: Rector examples](https://github.com/palantirnet/drupal-rector/workflows/functional_test__rector_examples/badge.svg)
 
 ## Introduction
 
@@ -58,34 +56,16 @@ $ composer require --dev palantirnet/drupal-rector
 
 ### Create a configuration file in your project
 
-You will need to have a `rector.yml` configuration in the root of your repository. This should sit beside your document root such as `web` or `docroot`.
+You will need to have a `rector.php` configuration in the root of your repository. This should sit beside your document root such as `web` or `docroot`.
 
-This project provides starting files that should handle most use cases.
+This project uses [`webflo/drupal-finder`](https://packagist.org/packages/webflo/drupal-finder) to find your document root that contains Drupal.
 
-If your document root directory is `web`, you can copy the `rector-config-web-dir.yml`
-
-```bash
-cp vendor/palantirnet/drupal-rector/rector-config-web-dir.yml rector.yml
-```
-
-If your document root directory is `docroot`, you can copy the `rector-config-docroot-dir.yml`
+To get started, copy the `rector.php` configuration file provided by this package:
 
 ```bash
-cp vendor/palantirnet/drupal-rector/rector-config-docroot-dir.yml rector.yml
+cp vendor/palantirnet/drupal-rector/rector.php .
 ```
 
-If your document root directory is something else you will need to manually copy and edit `rector.yml`.
-
-Replace the `web` in these paths with your document root.
-
-```
-parameters:
-  autoload_paths:
-    - 'web/core'
-    - 'web/core/modules'
-    - 'web/modules'
-    - 'web/profiles'
-```
 
 ## Suggested workflow
 
@@ -140,7 +120,7 @@ If you are having these issues try running Rector from the environment that has 
 
 ### Iconv error when running Rector in Alpine Docker
 
-If you are getting errors like 
+If you are getting errors like
 
 `iconv(): Wrong charset, conversion from UTF-8 to ASCII//TRANSLIT//IGNORE is not allowed`
 

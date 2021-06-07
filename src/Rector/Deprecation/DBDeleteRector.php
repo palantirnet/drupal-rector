@@ -3,8 +3,8 @@
 namespace DrupalRector\Rector\Deprecation;
 
 use DrupalRector\Rector\Deprecation\Base\DBBase;
-use Rector\Core\RectorDefinition\CodeSample;
-use Rector\Core\RectorDefinition\RectorDefinition;
+use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
+use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 /**
  * Replaces deprecated db_delete() calls.
@@ -26,9 +26,9 @@ final class DBDeleteRector extends DBBase
   /**
    * @inheritdoc
    */
-  public function getDefinition(): RectorDefinition
+  public function getRuleDefinition(): RuleDefinition
   {
-    return new RectorDefinition('Fixes deprecated db_insert() calls',[
+    return new RuleDefinition('Fixes deprecated db_insert() calls',[
       new CodeSample(
         <<<'CODE_BEFORE'
 db_delete($table, $options);

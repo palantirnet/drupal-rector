@@ -2,8 +2,8 @@
 
 namespace DrupalRector\Rector\Deprecation\Base;
 
-use Rector\Core\RectorDefinition\CodeSample;
-use Rector\Core\RectorDefinition\RectorDefinition;
+use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
+use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 /**
  * Renames deprecated Drupal::services().
@@ -30,8 +30,8 @@ abstract class DrupalServiceRenameBase extends StaticArgumentRenameBase {
   /**
    * @inheritdoc
    */
-  public function getDefinition(): RectorDefinition {
-    return new RectorDefinition('Renames the IDs in Drupal::service() calls',[
+  public function getRuleDefinition(): RuleDefinition {
+    return new RuleDefinition('Renames the IDs in Drupal::service() calls',[
       new CodeSample(
         <<<'CODE_BEFORE'
 \Drupal::service('old')->foo();

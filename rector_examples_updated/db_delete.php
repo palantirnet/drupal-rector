@@ -1,5 +1,6 @@
 <?php
 
+use Drupal\core\Database\Database;
 /**
  * This demonstrates the deprecated static calls that might be called from procedural code like `.module` files.
  */
@@ -17,7 +18,7 @@ function simple_example() {
  * An example using options.
  */
 function options() {
-  \Drupal\core\Database\Database::getConnection('my_non_default_database')->delete('user', []);
+  Database::getConnection('my_non_default_database')->delete('user', []);
 }
 
 /**

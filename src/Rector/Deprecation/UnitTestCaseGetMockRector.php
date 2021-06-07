@@ -3,8 +3,8 @@
 namespace DrupalRector\Rector\Deprecation;
 
 use DrupalRector\Rector\Deprecation\Base\GetMockBase;
-use Rector\Core\RectorDefinition\CodeSample;
-use Rector\Core\RectorDefinition\RectorDefinition;
+use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
+use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 /**
  * Replaces deprecated getMock() calls in classes that extend UnitTestCase.
@@ -21,9 +21,9 @@ final class UnitTestCaseGetMockRector extends GetMockBase
     /**
      * @inheritdoc
      */
-    public function getDefinition(): RectorDefinition
+    public function getRuleDefinition(): RuleDefinition
     {
-        return new RectorDefinition('Fixes deprecated getMock() calls',[
+        return new RuleDefinition('Fixes deprecated getMock() calls',[
             new CodeSample(
                 <<<'CODE_BEFORE'
 $this->entityTypeManager = $this->getMock(EntityTypeManagerInterface::class);

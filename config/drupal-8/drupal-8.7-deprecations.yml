@@ -1,8 +1,0 @@
-# Contains automatic fixes for some deprecations introduced in Drupal 8.7.
-services:
-  DrupalRector\Rector\Deprecation\FilePrepareDirectoryRector: ~
-  DrupalRector\Rector\Deprecation\FileCreateDirectoryRector: ~
-  DrupalRector\Rector\Deprecation\FileExistsReplaceRector: ~
-  DrupalRector\Rector\Deprecation\FileUnmanagedSaveDataRector: ~
-  DrupalRector\Rector\Deprecation\FileModifyPermissionsRector: ~
-  DrupalRector\Rector\Deprecation\FileExistsRenameRector: ~

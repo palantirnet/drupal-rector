@@ -3,8 +3,8 @@
 namespace DrupalRector\Rector\Deprecation;
 
 use DrupalRector\Rector\Deprecation\Base\FunctionToServiceBase;
-use Rector\Core\RectorDefinition\CodeSample;
-use Rector\Core\RectorDefinition\RectorDefinition;
+use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
+use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 /**
  * Replaces deprecated drupal_realpath() calls.
@@ -29,9 +29,9 @@ final class DrupalRealpathRector extends FunctionToServiceBase
     /**
      * @inheritdoc
      */
-    public function getDefinition(): RectorDefinition
+    public function getRuleDefinition(): RuleDefinition
     {
-        return new RectorDefinition('Fixes deprecated drupal_realpath() calls',[
+        return new RuleDefinition('Fixes deprecated drupal_realpath() calls',[
             new CodeSample(
               <<<'CODE_BEFORE'
 $path = drupal_realpath($path);
