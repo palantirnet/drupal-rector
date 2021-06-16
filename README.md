@@ -48,6 +48,8 @@ For contribution suggestions, please see the later section of this document.
 
 ## Installation
 
+**NOTE**: To have the best experience with Drupal Rector, your Drupal site should be running version 8.9. [Support for Drupal 9 is in development](https://www.drupal.org/project/rector/issues/3219156)
+
 ### Install Drupal Rector inside a Drupal project.
 
 ```bash
