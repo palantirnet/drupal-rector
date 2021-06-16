@@ -47,6 +47,9 @@
     "prefer-stable": true,
     "require-dev": {
         "behat/behat": "^3.6",
+        "phpstan/extension-installer": "^1.1",
+        "phpstan/phpstan": "^0.12.82",
+        "phpstan/phpstan-deprecation-rules": "^0.12.6",
         "symfony/yaml": "^5"
     }
 }
