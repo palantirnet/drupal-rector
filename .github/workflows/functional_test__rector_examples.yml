@@ -7,7 +7,10 @@ jobs:
     run_functional_test:
         name: Run functional test
 # START: SHARED SETUP
-        runs-on: ubuntu-latest  
+        runs-on: ${{ matrix.operating-system }}
+        strategy:
+            matrix:
+                operating-system: ['ubuntu-latest', 'windows-latest']
         steps:
             -   uses: actions/checkout@v2
             -   uses: shivammathur/setup-php@v2
@@ -23,14 +26,14 @@ jobs:
 # START: SHARED DRUPAL INSTALL SETUP
             -   name: Setup Drupal
                 run: |
-                    COMPOSER_MEMORY_LIMIT=-1 composer create-project drupal/recommended-project:~8 ../drupal --no-interaction
+                    composer create-project drupal/recommended-project:~8 ../drupal --no-interaction
                     cd ..
                     mv drupal/* .
                     composer config minimum-stability dev
                     composer config prefer-stable true
                     composer config preferred-install dist
                     composer config repositories.drupal composer https://packages.drupal.org/8
-                    COMPOSER_MEMORY_LIMIT=-1 composer require drupal/core-dev:~8 --with-all-dependencies
+                    composer require drupal/core-dev:~8 --with-all-dependencies
             # We add a local repository `repositories.0` which takes precendence over the packagist repository that is automatically added.
             -   name: Install Drupal Rector
                 run: |
