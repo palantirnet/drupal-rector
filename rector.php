@@ -15,10 +15,10 @@ return static function (ContainerConfigurator $containerConfigurator): void {
     $drupalFinder->locateRoot(__DIR__);
     $drupalRoot = $drupalFinder->getDrupalRoot();
     $parameters->set(Option::AUTOLOAD_PATHS, [
-        $drupalRoot . '/core',
-        $drupalRoot . '/modules',
-        $drupalRoot . '/profiles',
-        $drupalRoot . '/themes'
+        \realpath($drupalRoot . '/core'),
+        \realpath($drupalRoot . '/modules'),
+        \realpath($drupalRoot . '/profiles'),
+        \realpath($drupalRoot . '/themes')
     ]);
 
     $parameters->set(Option::SKIP, ['*/upgrade_status/tests/modules/*']);
