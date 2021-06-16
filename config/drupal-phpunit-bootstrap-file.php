@@ -11,7 +11,7 @@ use PHPUnit\Runner\Version;
 use Rector\Core\Autoloading\BootstrapFilesIncluder;
 use Rector\Core\Exception\ShouldNotHappenException;
 
-if ($this === NULL || !$this instanceof BootstrapFilesIncluder) {
+if (!isset($this) || !$this instanceof BootstrapFilesIncluder) {
     throw new ShouldNotHappenException('The Drupal PHPUnit Bootstrap file could not access the BootstrapFilesIncluder');
 }
 
