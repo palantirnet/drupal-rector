@@ -6,6 +6,12 @@ Automate fixing deprecated Drupal code.
 
 ![Functional test: Rector examples](https://github.com/palantirnet/drupal-rector/workflows/functional_test__rector_examples/badge.svg)
 
+## Latest release
+
+[Version 0.5.6 for Drupal 8.9 conversions to 9.x](https://github.com/palantirnet/drupal-rector/tree/0.5.6)
+
+*Note that GitHub does not let us have different default homepage and merge branches. If you checked out the project using packagist/composer, read the docs for your version.*
+
 ## Introduction
 
 You can read more details in the following blog post:
