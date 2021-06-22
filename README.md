@@ -64,14 +64,14 @@ $ composer require --dev palantirnet/drupal-rector
 
 ### Create a configuration file in your project
 
-You will need to have a `rector.php` configuration in the root of your repository. This should sit beside your document root such as `web` or `docroot`.
+You will need to have a `rector.yml` configuration in the root of your repository. This should sit beside your document root such as `web` or `docroot`.
 
 This project uses [`webflo/drupal-finder`](https://packagist.org/packages/webflo/drupal-finder) to find your document root that contains Drupal.
 
-To get started, copy the `rector.php` configuration file provided by this package:
+To get started, copy the `rector.yml` configuration file provided by this package:
 
 ```bash
-cp vendor/palantirnet/drupal-rector/rector.php .
+cp vendor/palantirnet/drupal-rector/rector.yml .
 ```
 
 
