@@ -5,19 +5,6 @@ name: functional_test__rector_examples
 on: [push, pull_request]
 
 jobs:
-    # TODO: Probably move to PHPUnit test instead.
-    validate_deprecation_index:
-        name: Validate deprecation index
-        runs-on: ubuntu-latest
-        steps:
-            -   uses: actions/checkout@v2
-            -   uses: shivammathur/setup-php@v2
-                with:
-                    php-version: 8.0
-                    coverage: none # disable xdebug, pcov
-                    tools: composer:v2
-            -   run: composer install
-            -   run: php .github/scripts/validate-decpreation-index.php
     run_functional_test:
         name: Run functional test
         # START: SHARED SETUP

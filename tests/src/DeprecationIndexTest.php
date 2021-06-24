@@ -3,20 +3,28 @@
 namespace DrupalRector\Tests;
 
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\Yaml\Exception\ParseException;
 use Symfony\Component\Yaml\Yaml;
 
 final class DeprecationIndexTest extends TestCase
 {
 
-    public function testIsValidYaml()
+    public function testIsValidYaml(): void
     {
         $contents = file_get_contents(__DIR__ . '/../../deprecation-index.yml');
         self::assertNotFalse($contents);
-        $contents = Yaml::parse($contents);
+        try {
+            $contents = Yaml::parse($contents);
+        } catch (ParseException $exception) {
+            $this->fail(
+                "The YAML was not valid. This is often caused by unescaped quotes.
+        Please use `'` to escape a single quote.\n\n{$exception->getMessage()}"
+            );
+        }
         self::assertIsArray($contents);
     }
 
-    public function testOnlyAsciiCharacters()
+    public function testOnlyAsciiCharacters(): void
     {
         $contents = file_get_contents(__DIR__ . '/../../deprecation-index.yml');
         self::assertNotFalse($contents);
