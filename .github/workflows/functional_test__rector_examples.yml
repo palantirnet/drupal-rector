@@ -1,13 +1,27 @@
+
 name: functional_test__rector_examples
 
 # This test will run on every pull request, and on every commit on any branch
 on: [push, pull_request]
 
 jobs:
+    # TODO: Probably move to PHPUnit test instead.
+    validate_deprecation_index:
+        name: Validate deprecation index
+        runs-on: ubuntu-latest
+        steps:
+            -   uses: actions/checkout@v2
+            -   uses: shivammathur/setup-php@v2
+                with:
+                    php-version: 8.0
+                    coverage: none # disable xdebug, pcov
+                    tools: composer:v2
+            -   run: composer install
+            -   run: php .github/scripts/validate-decpreation-index.php
     run_functional_test:
         name: Run functional test
-# START: SHARED SETUP
-        runs-on: ubuntu-latest  
+        # START: SHARED SETUP
+        runs-on: ubuntu-latest
         steps:
             -   uses: actions/checkout@v2
             -   uses: shivammathur/setup-php@v2
@@ -19,39 +33,41 @@ jobs:
             # Uncomment to enable SSH access to Github Actions - https://github.com/marketplace/actions/debugging-with-tmate#getting-started
             # -   name: Debugging with tmate
             #     uses: mxschmitt/action-tmate@v2
-# END: SHARED SETUP
-# START: SHARED DRUPAL INSTALL SETUP
+            # END: SHARED SETUP
+            # START: SHARED DRUPAL INSTALL SETUP
             -   name: Setup Drupal
-                run: |
-                    COMPOSER_MEMORY_LIMIT=-1 composer create-project drupal/recommended-project:~8 ../drupal --no-interaction
-                    cd ..
-                    mv drupal/* .
-                    composer config minimum-stability dev
-                    composer config prefer-stable true
-                    composer config preferred-install dist
-                    composer config repositories.drupal composer https://packages.drupal.org/8
-                    COMPOSER_MEMORY_LIMIT=-1 composer require drupal/core-dev:~8 --with-all-dependencies
-            # We add a local repository `repositories.0` which takes precendence over the packagist repository that is automatically added.
+                uses: bluehorndigital/setup-drupal@v1.0.1
+                with:
+                    version: '~8'
+                    path: ~/drupal
             -   name: Install Drupal Rector
                 run: |
-                    cd ..
-                    composer config repositories.drupal-rector "{\"type\": \"path\", \"url\": \"$GITHUB_WORKSPACE\", \"options\": {\"symlink\": false}}"
+                    cd ~/drupal
                     composer require palantirnet/drupal-rector:@dev --no-progress
             -   name: Install Drupal Rector Config
                 run: |
-                    cd ..
+                    cd ~/drupal
                     cp vendor/palantirnet/drupal-rector/rector.php .
-# END: SHARED DRUPAL INSTALL SETUP
-            -   name: Install PHPUnit in the Drupal site since it is required for some of the rules
-                run: |
-                    cd ..
-                    composer require phpunit/phpunit:~7.5 --no-progress
+            # END: SHARED DRUPAL INSTALL SETUP
             -   name: Prepare rector_examples folder in the drupal modules directory
                 run: |
-                    cd ..
+                    cd ~/drupal
                     mkdir -p web/modules/custom
                     cp -R vendor/palantirnet/drupal-rector/rector_examples web/modules/custom
-            -   name: Install local dependencies, including Behat.
-                run: composer install
-            -   name: Run Behat tests
-                run: vendor/bin/behat
+            # dry-run is expected to return exit code 1 if there are changes, which we are expecting to happen, here.
+            -   name: Run rector against Drupal (dry-run)
+                run: |
+                    cd ~/drupal
+                    vendor/bin/rector process web/modules/custom/rector_examples --dry-run --debug || if (($? == 1)); then true; else false; fi
+            -   name: Run rector against Drupal
+                run: |
+                    cd ~/drupal
+                    vendor/bin/rector process web/modules/custom/rector_examples --debug
+            # diff options:
+            # -r: recursive
+            # -u: show the joined context, like git diff
+            # -b: ignore whitespace
+            # -B: ignore lines that are only whitespace
+            -   name: Check that the updated examples match expectations
+                run: |
+                    diff -rubB rector_examples_updated ~/drupal/web/modules/custom/rector_examples

@@ -2,40 +2,14 @@
 
 ## Installation test
 
-Github Workflow is used to test that this package can be installed. See `.github`.
+GitHub Action workflows test that this package can be installed. See the workflows in `.github/workflows`.
 
-## Rector automated functional tests using Behat
+## Rector functional testing
 
-Behat (the Php version of Cucumber) is used to run automated tests.
+The functional test takes the `rector_examples` directory in this package and copies it to a Drupal code base.
 
-This uses Linux / MacOS commands, so they need to be run from that environment.
+The workflow then runs `vendor/bin/rector process web/modules/custom/rector_examples` to apply all of the appropriate Rector rules.
 
-These tests assume that this repository is installed as a local composer package. This is necessary, because we need a full Drupal site to run the Rector tests.
+Then, the `diff` command is run to verify the changes match the expected results as found in the `rector_examples_updated` directory.
 
-Example setup:
-```
-# This repository
-/drupal-rector
-# Drupal
-/web/core
-/web/index.php
-# A Composer vendor directory
-/vendor/bin/rector
-...
-```
-
-The tests are located in `features` with a simple `/features/bootstrap/FeatureContext.php` context file which handles running Rector and comparing files.
-
-### Setup
-
-To run the Behat tests, you will need the setup mentioned above. See `.github/workflows/local_package.yml` for an example of how this is done.
-
-Then run `composer install` to install Behat in this repository's `vendor` directory.
-
-To run tests, run `vendor/bin/behat`.
-
-### Adding tests
-
-Tests should be pretty simple. By default, the main test feature `rector_examples.feature` will test the entire `rector_examples` folder and report any differences. Tests can also be made for individual files.
-
-The Behat tests make a copy of the file or folder we are going to test, so you don't have to worry about overwriting files in those directories.
+To add new tests, create a sample file in `rector_examples` and a copy with the expected changes into `rector_examples_updated`.
