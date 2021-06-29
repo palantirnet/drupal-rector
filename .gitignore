@@ -12,3 +12,5 @@
 
 /features/tmp/*
 !/features/tmp/.placeholder
+
+/.phpunit.cache

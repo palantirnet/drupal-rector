@@ -1,0 +1,22 @@
+name: phpunit
+
+# This test will run on every pull request, and on every commit on any branch
+on: [push, pull_request]
+
+jobs:
+    tests:
+        name: 'PHPUnit | PHP ${{ matrix.php-version }}'
+        runs-on: ubuntu-latest
+        strategy:
+            matrix:
+                php-version:
+                    - "8.0"
+        steps:
+            -   uses: actions/checkout@v2
+            -   uses: shivammathur/setup-php@v2
+                with:
+                    php-version: ${{ matrix.php-version }}
+                    coverage: none
+                    tools: composer:v2
+            -    run: composer install
+            -    run: vendor/bin/phpunit

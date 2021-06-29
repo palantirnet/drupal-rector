@@ -33,6 +33,11 @@
             "DrupalRector\\": "src"
         }
     },
+    "autoload-dev": {
+        "psr-4": {
+            "DrupalRector\\Tests\\": "tests/src"
+        }
+    },
     "config": {
         "optimize-autoloader": true,
         "update-with-dependencies": true,
@@ -50,7 +55,8 @@
         "phpstan/extension-installer": "^1.1",
         "phpstan/phpstan": "^0.12.82",
         "phpstan/phpstan-deprecation-rules": "^0.12.6",
-        "rector/rector-src":  "~0.11.0",
+        "phpunit/phpunit": "^9.5",
+        "rector/rector-src": "~0.11.0",
         "symfony/yaml": "^5"
     }
 }
