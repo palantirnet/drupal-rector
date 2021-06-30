@@ -6,7 +6,7 @@ on: [push, pull_request]
 
 jobs:
     run_functional_test:
-        name: Run Functional Test | PHP ${{ matrix.php-version }} | Drupal ${{ matrix.drupal }}"
+        name: Functional Test | PHP ${{ matrix.php-version }} | Drupal ${{ matrix.drupal }}"
         strategy:
             matrix:
                 include:
@@ -14,7 +14,7 @@ jobs:
                       drupal: "^8.9"
                       fixture: "d8"
                     - php-version: "7.4"
-                      drupal: "^9.3"
+                      drupal: "^9.2"
                       fixture: "d9"
 #                    - php-version: "8.0"
 #                      drupal: "9.3.x"
