@@ -72,8 +72,6 @@ CODE_AFTER
         assert($node instanceof Node\Expr\MethodCall);
         if ($this->getName($node->name) === 'drupalPostForm') {
             [$path, $edit, $button, $options, $htmlId] = $this->safeArgDestructure($node);
-            // @todo we _must_ inject drupalGet.
-            // new Node\Expr\MethodCall($node->var, new Node\Identifier('drupalGet'), [$path])
             $pathValue = $path->value;
             assert($pathValue instanceof Node\Scalar\String_);
 
@@ -107,6 +105,8 @@ CODE_AFTER
                 );
             }
 
+            // @todo we _must_ inject drupalGet.
+            // new Node\Expr\MethodCall($node->var, new Node\Identifier('drupalGet'), [$path])
             if ($htmlId === null) {
                 return $this->nodeFactory->createLocalMethodCall('submitForm', [$edit, $button]);
             }
