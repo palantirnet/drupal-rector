@@ -16,9 +16,9 @@ jobs:
                     - php-version: "7.4"
                       drupal: "^9.2"
                       fixture: "d9"
-#                    - php-version: "8.0"
-#                      drupal: "9.3.x"
-#                      fixture: "d9"
+                    - php-version: "8.0"
+                      drupal: "9.3.x"
+                      fixture: "d9"
         runs-on: ubuntu-latest
         steps:
             -   uses: actions/checkout@v2

@@ -7,7 +7,8 @@ use Composer\Autoload\ClassLoader;
 /**
  * Helper class to rewrite PHPUnit's TestCase class.
  *
- * Copied from Drupal core
+ * Copied from Drupal core. Must be periodically updated as Drupal core handles
+ * any other future changes.
  *
  * @see https://git.drupalcode.org/project/drupal/-/raw/9.3.x/core/tests/Drupal/TestTools/PhpUnitCompatibility/PhpUnit8/ClassWriter.php
  */

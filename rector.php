@@ -7,7 +7,10 @@ use Rector\Core\Configuration\Option;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 
 return static function (ContainerConfigurator $containerConfigurator): void {
+    // @todo find out how to only load the relevant rector rules.
+    //   Should we try and load \Drupal::VERSION and check?
     $containerConfigurator->import(__DIR__ .  '/vendor/palantirnet/drupal-rector/config/drupal-8/drupal-8-all-deprecations.php');
+    $containerConfigurator->import(__DIR__ .  '/vendor/palantirnet/drupal-rector/config/drupal-9/drupal-9-all-deprecations.php');
 
     $parameters = $containerConfigurator->parameters();
 
