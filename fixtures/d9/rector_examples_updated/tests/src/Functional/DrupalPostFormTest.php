@@ -13,7 +13,7 @@ class BrowserTestBaseGetMock extends BrowserTestBase {
     public function simple_example() {
         $edit = [];
         $edit['action'] = 'action_goto_action';
-        $this->drupalGet("admin/config/system/actions");
+        $this->drupalGet('admin/config/system/actions');
         $this->submitForm($edit, 'Create');
         $this->assertSession()->statusCodeEquals(200);
     }
@@ -24,7 +24,7 @@ class BrowserTestBaseGetMock extends BrowserTestBase {
     public function with_options_direct() {
         $edit = [];
         $edit['action'] = 'action_goto_action';
-        $this->drupalGet("admin/config/system/actions", ['foo' => 'bar']);
+        $this->drupalGet('admin/config/system/actions', ['foo' => 'bar']);
         $this->submitForm($edit, 'Create');
         $this->assertSession()->statusCodeEquals(200);
     }
@@ -36,7 +36,7 @@ class BrowserTestBaseGetMock extends BrowserTestBase {
         $edit = [];
         $edit['action'] = 'action_goto_action';
         $options = ['foo' => 'bar'];
-        $this->drupalGet("admin/config/system/actions", $options);
+        $this->drupalGet('admin/config/system/actions', $options);
         $this->submitForm($edit, 'Create');
         $this->assertSession()->statusCodeEquals(200);
     }
@@ -47,7 +47,7 @@ class BrowserTestBaseGetMock extends BrowserTestBase {
     public function with_html_id() {
         $edit = [];
         $edit['action'] = 'action_goto_action';
-        $this->drupalGet("admin/config/system/actions", []);
+        $this->drupalGet('admin/config/system/actions', []);
         $this->submitForm($edit, 'Create', 'foo_bar_baz');
         $this->assertSession()->statusCodeEquals(200);
     }
