@@ -26,6 +26,10 @@
         {
             "name": "Daniel Montgomery",
             "email": "montgomery@palantir.net"
+        },
+        {
+            "name": "Matt Glaman",
+            "email": "nmd.matt@gmail.com"
         }
     ],
     "autoload": {
