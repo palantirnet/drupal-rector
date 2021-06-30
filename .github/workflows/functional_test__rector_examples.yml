@@ -1,5 +1,5 @@
 
-name: functional_test__d8_rector_examples
+name: functional_test__rector_examples
 
 # This test will run on every pull request, and on every commit on any branch
 on: [push, pull_request]
@@ -11,10 +11,10 @@ jobs:
             matrix:
                 include:
                     - php-version: "7.4"
-                      drupal: "8.9.x"
+                      drupal: "^8.9"
                       fixture: "d8"
                     - php-version: "7.4"
-                      drupal: "9.3.x"
+                      drupal: "^9.3"
                       fixture: "d9"
 #                    - php-version: "8.0"
 #                      drupal: "9.3.x"
