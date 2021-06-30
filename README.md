@@ -8,7 +8,7 @@ Automate fixing deprecated Drupal code.
 
 ## Latest release
 
-[Version 0.10.0 for Drupal 8.9 conversions to 9.x](https://github.com/palantirnet/drupal-rector/tree/0.10.0)
+[Version 0.11.0 for Drupal 8.9 conversions to 9.x](https://github.com/palantirnet/drupal-rector/tree/0.11.0) -- this version is also the base for Drupal 9 to 10 work.
 
 *Note that GitHub does not let us have different default homepage and merge branches. If you checked out the project using packagist/composer, read the docs for your version.*
 
