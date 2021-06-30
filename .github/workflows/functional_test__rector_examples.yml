@@ -6,26 +6,32 @@ on: [push, pull_request]
 
 jobs:
     run_functional_test:
-        name: D8 Run functional test
-        # START: SHARED SETUP
+        name: Run Functional Test | PHP ${{ matrix.php-version }} | Drupal ${{ matrix.drupal }}"
+        strategy:
+            matrix:
+                include:
+                    - php-version: "7.4"
+                      drupal: "8.9.x"
+                      fixture: "d8"
+                    - php-version: "7.4"
+                      drupal: "9.3.x"
+                      fixture: "d9"
+#                    - php-version: "8.0"
+#                      drupal: "9.3.x"
+#                      fixture: "d9"
         runs-on: ubuntu-latest
         steps:
             -   uses: actions/checkout@v2
             -   uses: shivammathur/setup-php@v2
                 with:
-                    php-version: 7.3
-                    coverage: none # disable xdebug, pcov
+                    php-version: "${{ matrix.php-version }}"
+                    coverage: none
                     tools: composer:v2
-                    extensions: dom, curl, libxml, mbstring, zip, pdo, mysql, pdo_mysql, bcmath, gd, exif, iconv
-            # Uncomment to enable SSH access to Github Actions - https://github.com/marketplace/actions/debugging-with-tmate#getting-started
-            # -   name: Debugging with tmate
-            #     uses: mxschmitt/action-tmate@v2
-            # END: SHARED SETUP
-            # START: SHARED DRUPAL INSTALL SETUP
+                    extensions: dom, curl, libxml, mbstring, zip, pdo, mysql, pdo_mysql, gd
             -   name: Setup Drupal
                 uses: bluehorndigital/setup-drupal@v1.0.1
                 with:
-                    version: '~8'
+                    version: '${{ matrix.drupal }}'
                     path: ~/drupal
             -   name: Install Drupal Rector
                 run: |
@@ -35,12 +41,11 @@ jobs:
                 run: |
                     cd ~/drupal
                     cp vendor/palantirnet/drupal-rector/rector.php .
-            # END: SHARED DRUPAL INSTALL SETUP
             -   name: Prepare rector_examples folder in the drupal modules directory
                 run: |
                     cd ~/drupal
                     mkdir -p web/modules/custom
-                    cp -R vendor/palantirnet/drupal-rector/rector_examples web/modules/custom
+                    cp -R vendor/palantirnet/drupal-rector/fixtures/${{ matrix.fixture }}/rector_examples web/modules/custom
             # dry-run is expected to return exit code 1 if there are changes, which we are expecting to happen, here.
             -   name: Run rector against Drupal (dry-run)
                 run: |
@@ -57,4 +62,4 @@ jobs:
             # -B: ignore lines that are only whitespace
             -   name: Check that the updated examples match expectations
                 run: |
-                    diff -rubB rector_examples_updated ~/drupal/web/modules/custom/rector_examples
+                    diff -rubB fixtures/${{ matrix.fixture }}/rector_examples_updated ~/drupal/web/modules/custom/rector_examples
