@@ -17,7 +17,7 @@ jobs:
                       drupal: "^9.2"
                       fixture: "d9"
                     - php-version: "8.0"
-                      drupal: "^9.3"
+                      drupal: "^9.2"
                       fixture: "d9"
         runs-on: ubuntu-latest
         steps:
