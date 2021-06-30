@@ -47,9 +47,11 @@ CODE_AFTER
             [$path, $edit, $button] = $node->args;
             // @todo we _must_ inject drupalGet.
             // new Node\Expr\MethodCall($node->var, new Node\Identifier('drupalGet'), [$path])
+            $pathValue = $path->value;
+            assert($pathValue instanceof Node\Scalar\String_);
             $this->addDrupalRectorComment(
                 $node,
-                sprintf('You must call `$this->drupalGet("%s");" before submitForm', $path->value)
+                sprintf('You must call `$this->drupalGet("%s");" before submitForm', $pathValue->value)
             );
             return new Node\Expr\MethodCall($node->var, new Node\Identifier('submitForm'), [$edit, $button]);
         }
