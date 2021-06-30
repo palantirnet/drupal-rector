@@ -25,7 +25,6 @@ class BrowserTestBaseGetMock extends BrowserTestBase {
     public function with_options_direct() {
         $edit = [];
         $edit['action'] = 'action_goto_action';
-        $this->drupalPostForm('admin/config/system/actions', $edit, 'Create', ['foo' => 'bar']);
         // TODO: Drupal Rector Notice: Please delete the following comment after you've made any necessary changes.
         // You must call `$this->drupalGet("admin/config/system/actions", ['foo' => 'bar']);" before submitForm
         $this->submitForm($edit, 'Create');
