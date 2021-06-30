@@ -108,9 +108,9 @@ CODE_AFTER
             }
 
             if ($htmlId === null) {
-                return new Node\Expr\MethodCall($node->var, new Node\Identifier('submitForm'), [$edit, $button]);
+                return $this->nodeFactory->createLocalMethodCall('submitForm', [$edit, $button]);
             }
-            return new Node\Expr\MethodCall($node->var, new Node\Identifier('submitForm'), [$edit, $button, $htmlId]);
+            return $this->nodeFactory->createLocalMethodCall('submitForm', [$edit, $button, $htmlId]);
         }
         return null;
     }
