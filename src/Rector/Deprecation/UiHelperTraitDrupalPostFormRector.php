@@ -2,6 +2,7 @@
 
 namespace DrupalRector\Rector\Deprecation;
 
+use DrupalRector\Utility\AddCommentTrait;
 use PhpParser\Node;
 use Rector\Core\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
@@ -9,6 +10,8 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 final class UiHelperTraitDrupalPostFormRector extends AbstractRector
 {
+
+    use AddCommentTrait;
 
     public function getRuleDefinition(): RuleDefinition
     {
@@ -37,15 +40,18 @@ CODE_AFTER
         ];
     }
 
-    public function refactor(Node $node): ?array
+    public function refactor(Node $node): ?Node
     {
         assert($node instanceof Node\Expr\MethodCall);
         if ($this->getName($node->name) === 'drupalPostForm') {
             [$path, $edit, $button] = $node->args;
-            return [
-                new Node\Expr\MethodCall($node->var, new Node\Identifier('drupalGet'), [$path]),
-                new Node\Expr\MethodCall($node->var, new Node\Identifier('submitForm'), [$edit, $button]),
-            ];
+            // @todo we _must_ inject drupalGet.
+            // new Node\Expr\MethodCall($node->var, new Node\Identifier('drupalGet'), [$path])
+            $this->addDrupalRectorComment(
+                $node,
+                sprintf('You must call `$this->drupalGet("%s");" before submitForm', $path->value)
+            );
+            return new Node\Expr\MethodCall($node->var, new Node\Identifier('submitForm'), [$edit, $button]);
         }
         return null;
     }
