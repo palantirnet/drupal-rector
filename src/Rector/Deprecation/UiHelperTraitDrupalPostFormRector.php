@@ -10,8 +10,9 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 final class UiHelperTraitDrupalPostFormRector extends AbstractRector
 {
 
-    public function getRuleDefinition(): RuleDefinition {
-        return new RuleDefinition('Fixes deprecated UiHelperTrait::drupalPostForm() calls',[
+    public function getRuleDefinition(): RuleDefinition
+    {
+        return new RuleDefinition('Fixes deprecated UiHelperTrait::drupalPostForm() calls', [
             new CodeSample(
                 <<<'CODE_BEFORE'
 $edit = [];
@@ -46,5 +47,6 @@ CODE_AFTER
                 new Node\Expr\MethodCall($node->var, new Node\Identifier('submitForm'), [$edit, $button]),
             ];
         }
+        return null;
     }
 }
