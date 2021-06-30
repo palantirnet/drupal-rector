@@ -7,4 +7,7 @@ return static function (ContainerConfigurator $containerConfigurator): void {
     $services = $containerConfigurator->services();
 
     $services->set(UiHelperTraitDrupalPostFormRector::class);
+
+    $parameters = $containerConfigurator->parameters();
+    $parameters->set('drupal_rector_notices_as_comments', true);
 };
