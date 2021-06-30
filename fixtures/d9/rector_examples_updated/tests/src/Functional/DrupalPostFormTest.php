@@ -26,6 +26,9 @@ class BrowserTestBaseGetMock extends BrowserTestBase {
         $edit = [];
         $edit['action'] = 'action_goto_action';
         $this->drupalPostForm('admin/config/system/actions', $edit, 'Create', ['foo' => 'bar']);
+        // TODO: Drupal Rector Notice: Please delete the following comment after you've made any necessary changes.
+        // You must call `$this->drupalGet("admin/config/system/actions", ['foo' => 'bar']);" before submitForm
+        $this->submitForm($edit, 'Create');
         $this->assertSession()->statusCodeEquals(200);
     }
 
@@ -36,7 +39,9 @@ class BrowserTestBaseGetMock extends BrowserTestBase {
         $edit = [];
         $edit['action'] = 'action_goto_action';
         $options = ['foo' => 'bar'];
-        $this->drupalPostForm('admin/config/system/actions', $edit, 'Create', $options);
+        // TODO: Drupal Rector Notice: Please delete the following comment after you've made any necessary changes.
+        // You must call `$this->drupalGet("admin/config/system/actions", $options);" before submitForm
+        $this->submitForm($edit, 'Create');
         $this->assertSession()->statusCodeEquals(200);
     }
 
@@ -46,7 +51,9 @@ class BrowserTestBaseGetMock extends BrowserTestBase {
     public function with_html_id() {
         $edit = [];
         $edit['action'] = 'action_goto_action';
-        $this->drupalPostForm('admin/config/system/actions', $edit, 'Create', [], 'foo_bar_baz');
+        // TODO: Drupal Rector Notice: Please delete the following comment after you've made any necessary changes.
+        // You must call `$this->drupalGet("admin/config/system/actions", []);" before submitForm
+        $this->submitForm($edit, 'Create', 'foo_bar_baz');
         $this->assertSession()->statusCodeEquals(200);
     }
 }
