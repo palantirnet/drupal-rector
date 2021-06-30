@@ -169,15 +169,24 @@ function drupal_phpunit_populate_class_loader($drupalRoot, $vendorRoot) {
 // Do class loader population.
 drupal_phpunit_populate_class_loader($drupalRoot, $drupalVendorRoot);
 
-// Determines the major version of PHPUnit.
-$major = 7;
+// Drupal 8.x supports PHPUnit 6 and 7 and has compatibility traits we must load.
+// @link https://git.drupalcode.org/project/drupal/-/tree/8.9.x/core/tests/Drupal/TestTools/PhpUnitCompatibility
+// @link https://git.drupalcode.org/project/drupal/-/blob/8.9.x/composer.json#L26
+//
+// Drupal 9.x supports PHPUnit 8 and 9 and has compatibility traits we must load.
+// @link https://git.drupalcode.org/project/drupal/-/tree/9.3.x/core/tests/Drupal/TestTools/PhpUnitCompatibility
+// @link https://git.drupalcode.org/project/drupal/-/blob/9.3.x/composer.json#L27
 if (class_exists(Version::class)) {
     $major = (int) explode('.', Version::id())[0];
+    require_once $drupalRoot . "/core/tests/Drupal/TestTools/PhpUnitCompatibility/PhpUnit{$major}/TestCompatibilityTrait.php";
+    class_alias("Drupal\TestTools\PhpUnitCompatibility\PhpUnit{$major}\TestCompatibilityTrait", '\Drupal\Tests\PhpunitVersionDependentTestCompatibilityTrait');
+
+    // Load the Drupal class writer for PHPUnit to mutate the PHPUnit base
+    // classes.
+    // @link https://git.drupalcode.org/project/drupal/-/blob/9.3.x/core/tests/Drupal/TestTools/PhpUnitCompatibility/PhpUnit8/ClassWriter.php
+    if ($major >= 8) {
+        $loader = require $drupalVendorRoot . '/autoload.php';
+        \DrupalRector\Utility\Drupal9\ClassWriter::mutateTestBase($loader);
+    }
 }
-if ($major > 7) {
-    $major = 7;
-}
-// @todo This was added in 8.8.x, which means 8.7.x would fail on this but
-//   people should upgrade to 8.9.x anyways.
-require_once $drupalRoot . "/core/tests/Drupal/TestTools/PhpUnitCompatibility/PhpUnit{$major}/TestCompatibilityTrait.php";
-class_alias("Drupal\TestTools\PhpUnitCompatibility\PhpUnit{$major}\TestCompatibilityTrait", '\Drupal\Tests\PhpunitVersionDependentTestCompatibilityTrait');
+

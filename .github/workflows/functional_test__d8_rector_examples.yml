@@ -1,12 +1,12 @@
 
-name: functional_test__rector_examples
+name: functional_test__d8_rector_examples
 
 # This test will run on every pull request, and on every commit on any branch
 on: [push, pull_request]
 
 jobs:
     run_functional_test:
-        name: Run functional test
+        name: D8 Run functional test
         # START: SHARED SETUP
         runs-on: ubuntu-latest
         steps:
