@@ -29,13 +29,22 @@ CODE_AFTER
         ]);
     }
 
-    public function getNodeTypes(): array {
+    public function getNodeTypes(): array
+    {
         return [
             Node\Expr\MethodCall::class,
         ];
     }
 
-    public function refactor(Node $node) {
-        // TODO: Implement refactor() method.
+    public function refactor(Node $node): ?array
+    {
+        assert($node instanceof Node\Expr\MethodCall);
+        if ($this->getName($node->name) === 'drupalPostForm') {
+            [$path, $edit, $button] = $node->args;
+            return [
+                new Node\Expr\MethodCall($node->var, new Node\Identifier('drupalGet'), [$path]),
+                new Node\Expr\MethodCall($node->var, new Node\Identifier('submitForm'), [$edit, $button]),
+            ];
+        }
     }
 }
