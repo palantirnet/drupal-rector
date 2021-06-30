@@ -30,8 +30,7 @@ class BrowserTestBaseGetMock extends BrowserTestBase {
         $edit = [];
         $edit['action'] = 'action_goto_action';
         $options = ['foo' => 'bar'];
-        // TODO: Drupal Rector Notice: Please delete the following comment after you've made any necessary changes.
-        // You must call `$this->drupalGet("admin/config/system/actions", $options);" before submitForm
+        $this->drupalGet('admin/config/system/actions', $options);
         $this->submitForm($edit, 'Create');
         $this->assertSession()->statusCodeEquals(200);
     }

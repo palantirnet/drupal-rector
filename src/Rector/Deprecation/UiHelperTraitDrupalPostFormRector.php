@@ -2,7 +2,6 @@
 
 namespace DrupalRector\Rector\Deprecation;
 
-use DrupalRector\Utility\AddCommentTrait;
 use PhpParser\Node;
 use Rector\Core\Exception\ShouldNotHappenException;
 use Rector\Core\Rector\AbstractRector;
@@ -11,8 +10,6 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 final class UiHelperTraitDrupalPostFormRector extends AbstractRector
 {
-
-    use AddCommentTrait;
 
     public function getRuleDefinition(): RuleDefinition
     {
@@ -76,37 +73,19 @@ CODE_AFTER
             assert($pathValue instanceof Node\Scalar\String_);
 
             if ($options === null) {
-                $this->addDrupalRectorComment(
-                    $node,
-                    sprintf('You must call `$this->drupalGet("%s");" before submitForm', $pathValue->value)
+                // @phpstan-ignore-next-line
+                $this->addNodeBeforeNode(
+                    $this->nodeFactory->createLocalMethodCall('drupalGet', [$path]),
+                    $node
                 );
             } else {
-                if ($options->value instanceof Node\Expr\Array_) {
-                    $optionsArgs = array_map(function (Node\Expr\ArrayItem $item) {
-                        $key = $this->valueResolver->getValue($item->key);
-                        $value = $this->valueResolver->getValue($item->value);
-                        return "'$key' => '$value'";
-                    }, $options->value->items);
-                    $optionsValue = '[' . implode(', ', $optionsArgs) . ']';
-                } elseif ($options->value instanceof Node\Expr\Variable) {
-                    $optionsValue = '$' . $options->value->name;
-                } else {
-                    throw new ShouldNotHappenException(
-                        'Unexpected argument type passed to $options for drupalPostForm'
-                    );
-                }
-                $this->addDrupalRectorComment(
-                    $node,
-                    sprintf(
-                        'You must call `$this->drupalGet("%s", %s);" before submitForm',
-                        $pathValue->value,
-                        $optionsValue
-                    )
+                // @phpstan-ignore-next-line
+                $this->addNodeBeforeNode(
+                    $this->nodeFactory->createLocalMethodCall('drupalGet', [$path, $options]),
+                    $node
                 );
             }
 
-            // @todo we _must_ inject drupalGet.
-            // new Node\Expr\MethodCall($node->var, new Node\Identifier('drupalGet'), [$path])
             if ($htmlId === null) {
                 return $this->nodeFactory->createLocalMethodCall('submitForm', [$edit, $button]);
             }

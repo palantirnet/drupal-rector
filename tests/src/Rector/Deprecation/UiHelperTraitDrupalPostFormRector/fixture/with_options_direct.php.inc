@@ -28,8 +28,7 @@ class BrowserTestBaseGetMock extends BrowserTestBase {
     public function example() {
         $edit = [];
         $edit['action'] = 'action_goto_action';
-        // TODO: Drupal Rector Notice: Please delete the following comment after you've made any necessary changes.
-        // You must call `$this->drupalGet("admin/config/system/actions", ['foo' => 'bar']);" before submitForm
+        $this->drupalGet('admin/config/system/actions', ['foo' => 'bar']);
         $this->submitForm($edit, 'Create');
         $this->assertSession()->statusCodeEquals(200);
     }
