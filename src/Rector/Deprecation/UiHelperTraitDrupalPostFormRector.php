@@ -5,11 +5,23 @@ namespace DrupalRector\Rector\Deprecation;
 use PhpParser\Node;
 use Rector\Core\Exception\ShouldNotHappenException;
 use Rector\Core\Rector\AbstractRector;
+use Rector\PostRector\Collector\NodesToAddCollector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 final class UiHelperTraitDrupalPostFormRector extends AbstractRector
 {
+
+    /**
+     * @todo remove when property is no longer private in AbstractRector.
+     */
+    private $nodesToAddCollector;
+
+    public function __construct(
+        NodesToAddCollector $nodesToAddCollector
+    ) {
+        $this->nodesToAddCollector = $nodesToAddCollector;
+    }
 
     public function getRuleDefinition(): RuleDefinition
     {
@@ -73,23 +85,18 @@ CODE_AFTER
             assert($pathValue instanceof Node\Scalar\String_);
 
             if ($options === null) {
-                // @phpstan-ignore-next-line
-                $this->addNodeBeforeNode(
-                    $this->nodeFactory->createLocalMethodCall('drupalGet', [$path]),
-                    $node
-                );
+                $drupalGetNode = $this->nodeFactory->createLocalMethodCall('drupalGet', [$path]);
             } else {
-                // @phpstan-ignore-next-line
-                $this->addNodeBeforeNode(
-                    $this->nodeFactory->createLocalMethodCall('drupalGet', [$path, $options]),
-                    $node
-                );
+                $drupalGetNode = $this->nodeFactory->createLocalMethodCall('drupalGet', [$path, $options]);
             }
 
             if ($htmlId === null) {
-                return $this->nodeFactory->createLocalMethodCall('submitForm', [$edit, $button]);
+                $submitFormNode = $this->nodeFactory->createLocalMethodCall('submitForm', [$edit, $button]);
+            } else {
+                $submitFormNode = $this->nodeFactory->createLocalMethodCall('submitForm', [$edit, $button, $htmlId]);
             }
-            return $this->nodeFactory->createLocalMethodCall('submitForm', [$edit, $button, $htmlId]);
+            $this->nodesToAddCollector->addNodeBeforeNode($drupalGetNode, $node);
+            return $submitFormNode;
         }
         return null;
     }
