@@ -35,7 +35,10 @@
     "autoload": {
         "psr-4": {
             "DrupalRector\\": "src"
-        }
+        },
+        "classmap": [
+            "stubs"
+        ]
     },
     "autoload-dev": {
         "psr-4": {
