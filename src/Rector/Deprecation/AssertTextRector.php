@@ -4,7 +4,6 @@ namespace DrupalRector\Rector\Deprecation;
 
 use DrupalRector\Rector\Deprecation\Base\AssertLegacyTraitBase;
 use DrupalRector\Utility\AddCommentTrait;
-use PhpParser\Node;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
