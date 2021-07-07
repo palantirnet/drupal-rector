@@ -5,14 +5,18 @@ namespace DrupalRector\Rector\Deprecation;
 use DrupalRector\Rector\Deprecation\Base\AssertLegacyTraitBase;
 use DrupalRector\Utility\AddCommentTrait;
 use PhpParser\Node;
-use Rector\Core\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 final class AssertTextRector extends AssertLegacyTraitBase
 {
-
     use AddCommentTrait;
+
+    // @codingStandardsIgnoreLine
+    protected $comment = 'Verify the assertion: pageTextContains() for HTML responses, responseContains() for non-HTML responses.' .
+        PHP_EOL . '// The passed text should be HTML decoded, exactly as a human sees it in the browser.';
+    protected $deprecatedMethodName = 'assertText';
+    protected $methodName = 'pageTextContains';
 
     public function getRuleDefinition(): RuleDefinition
     {
@@ -31,21 +35,12 @@ CODE_AFTER
         ]);
     }
 
-    public function refactor(Node $node): ?Node
+    protected function processArgs(array $args): array
     {
-        assert($node instanceof Node\Expr\MethodCall);
-        if ($this->getName($node->name) !== 'assertText') {
-            return null;
-        }
-        $this->addDrupalRectorComment(
-            $node,
-            'Verify the assertion: pageTextContains() for HTML responses, responseContains() for non-HTML responses.'
-            . PHP_EOL . '// The passed text should be HTML decoded, exactly as a human sees it in the browser.'
-        );
         // We do not pass the full `$node->args` to the new method call, as the
         // legacy assert from Simpletest used to support a message. In fact,
         // assertText dropped that, but many code bases still have a second
         // argument for the message. Let's help them drop it.
-        return $this->createAssertSessionMethodCall('pageTextContains', [$node->args[0]]);
+        return [$args[0]];
     }
 }
