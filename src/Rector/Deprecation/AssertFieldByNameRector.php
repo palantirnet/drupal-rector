@@ -2,7 +2,6 @@
 
 namespace DrupalRector\Rector\Deprecation;
 
-use DrupalRector\Rector\Deprecation\Base\AssertLegacyTraitBase;
 use PhpParser\Node;
 use Rector\Core\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
@@ -13,7 +12,7 @@ final class AssertFieldByNameRector extends AbstractRector
 
     public function getRuleDefinition(): RuleDefinition
     {
-        return new RuleDefinition('Fixes deprecated UiHelperTrait::drupalPostForm() calls', [
+        return new RuleDefinition('Fixes deprecated AssertLegacyTrait::assertFieldByName() calls', [
             new CodeSample(
                 <<<'CODE_BEFORE'
 $this->assertFieldByName('field_name', 'expected_value');

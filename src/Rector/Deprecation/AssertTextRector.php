@@ -19,7 +19,7 @@ final class AssertTextRector extends AssertLegacyTraitBase
 
     public function getRuleDefinition(): RuleDefinition
     {
-        return new RuleDefinition('Fixes deprecated UiHelperTrait::drupalPostForm() calls', [
+        return new RuleDefinition('Fixes deprecated AssertLegacyTrait::assertText() calls', [
             new CodeSample(
                 <<<'CODE_BEFORE'
 $this->drupalGet('test-page');
