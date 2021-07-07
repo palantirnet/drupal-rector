@@ -83,7 +83,6 @@ CODE_AFTER
             [$path, $edit, $button, $options, $htmlId] = $this->safeArgDestructure($node);
             $pathValue = $path->value;
             assert($pathValue instanceof Node\Scalar\String_);
-
             if ($options === null) {
                 $drupalGetNode = $this->nodeFactory->createLocalMethodCall('drupalGet', [$path]);
             } else {
