@@ -1,12 +1,12 @@
 <?php declare(strict_types=1);
 
-namespace DrupalRector\Tests\Rector\Deprecation\AssertNoCacheTagRector;
+namespace DrupalRector\Tests\Rector\Deprecation\AssertTitleRector;
 
 use Iterator;
 use Rector\Testing\PHPUnit\AbstractRectorTestCase;
 use Symplify\SmartFileSystem\SmartFileInfo;
 
-class AssertNoCacheTagRectorTest extends AbstractRectorTestCase {
+class AssertTitleRectorTest extends AbstractRectorTestCase {
 
     /**
      * @covers ::refactor
