@@ -11,9 +11,11 @@ use DrupalRector\Rector\Deprecation\AssertFieldByNameRector;
 use DrupalRector\Rector\Deprecation\AssertHeaderRector;
 use DrupalRector\Rector\Deprecation\AssertIdenticalObjectRector;
 use DrupalRector\Rector\Deprecation\AssertIdenticalRector;
+use DrupalRector\Rector\Deprecation\AssertLinkByHrefRector;
 use DrupalRector\Rector\Deprecation\AssertLinkRector;
 use DrupalRector\Rector\Deprecation\AssertNoCacheTagRector;
 use DrupalRector\Rector\Deprecation\AssertNoEscapedRector;
+use DrupalRector\Rector\Deprecation\AssertNoLinkByHrefRector;
 use DrupalRector\Rector\Deprecation\AssertNoLinkRector;
 use DrupalRector\Rector\Deprecation\AssertNoPatternRector;
 use DrupalRector\Rector\Deprecation\AssertNoRawRector;
@@ -61,8 +63,8 @@ return static function (ContainerConfigurator $containerConfigurator): void {
     $services->set(AssertTitleRector::class);
     $services->set(AssertLinkRector::class);
     $services->set(AssertNoLinkRector::class);
-    // @todo AssertLinkByHrefRector
-    // @todo AssertNoLinkByHrefRector
+    $services->set(AssertLinkByHrefRector::class);
+    $services->set(AssertNoLinkByHrefRector::class);
     // @todo AssertNoFieldByIdRector
     // @todo AssertUrlRector
     // @todo AssertOptionRector
