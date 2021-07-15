@@ -1,15 +1,12 @@
 <?php declare(strict_types=1);
 
-namespace DrupalRector\Tests\Rector\Deprecation\AssertFieldByNameRector;
+namespace DrupalRector\Tests\Rector\Deprecation\AssertLinkRector;
 
 use Iterator;
 use Rector\Testing\PHPUnit\AbstractRectorTestCase;
 use Symplify\SmartFileSystem\SmartFileInfo;
 
-/**
- * @coversDefaultClass \DrupalRector\Rector\Deprecation\DatetimeStorageTimezoneRector
- */
-class AssertFieldByNameRectorTest extends AbstractRectorTestCase {
+class AssertLinkRectorTest extends AbstractRectorTestCase {
 
     /**
      * @covers ::refactor
