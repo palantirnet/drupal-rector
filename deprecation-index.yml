@@ -194,7 +194,7 @@
     - entity_load.php
 'entity_view()':
   Rector: EntityViewRector.php
-  PHPStan: 'Use the entity view builder''s view() method for creating a render array'
+  PHPStan: 'Call to deprecated function entity_view(). Deprecated in drupal:8.0.0 and is removed from drupal:9.0.0. Use the entity view builder''s view() method for creating a render array:'
   Examples:
     - entity_view.php
 'node_load()':
@@ -240,7 +240,7 @@
     - entity_create.php
 'entity_delete_multiple()':
   Rector: EntityDeleteMultipleRector.php
-  PHPStan: 'Call to deprecated function entity_delete_multiple(). Deprecated in drupal:8.0.0 and is removed from drupal:9.0.0. Use the entity storage''s delete() method to delete multiple entities.'
+  PHPStan: 'Call to deprecated function entity_delete_multiple(). Deprecated in drupal:8.0.0 and is removed from drupal:9.0.0. Use the entity storage''s \Drupal\Core\Entity\EntityStorageInterface::delete() method to delete multiple entities:'
   Examples:
     - entity_delete_multiple.php
 'SafeMarkup::format()':
@@ -265,6 +265,6 @@
     - datetime_storage_timezone.php
 'EntityType::getLowercaseLabel()':
   Rector: EntityTypeGetLowercaseLabelRector.php
-  PHPStan: 'Call to deprecated method EntityType::getLowercaseLabel(). Deprecated in drupal:8.8.0 and is removed from drupal:9.0.0. Use EntityType::getSingularLabel().'
+  PHPStan: 'Call to deprecated method getLowercaseLabel() of class Drupal\Core\Entity\EntityTypeInterface. Deprecated in drupal:8.8.0 and is removed from drupal:9.0.0. Instead, you should call getSingularLabel(). See https://www.drupal.org/node/3075567'
   Examples:
     - entity_type_get_lowercase_label.php
