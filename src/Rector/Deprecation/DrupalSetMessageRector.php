@@ -4,7 +4,11 @@ namespace DrupalRector\Rector\Deprecation;
 
 use DrupalRector\Utility\AddCommentTrait;
 use DrupalRector\Utility\TraitsByClassHelperTrait;
+use PhpParser\Comment;
 use PhpParser\Node;
+use PHPStan\PhpDocParser\Ast\PhpDoc\GenericTagValueNode;
+use PHPStan\PhpDocParser\Ast\PhpDoc\PhpDocTagNode;
+use Rector\BetterPhpDocParser\PhpDocInfo\PhpDocInfo;
 use Rector\NodeTypeResolver\Node\AttributeKey;
 use Rector\Core\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
@@ -115,7 +119,26 @@ CODE_AFTER
                      * https://git.drupalcode.org/project/devel/blob/8.x-2.0/devel.module#L151
                      * https://git.drupalcode.org/project/devel/blob/8.x-2.0/devel.module#L265
                      */
-                    $this->addDrupalRectorComment($node, 'This needs to be replaced, but Rector was not yet able to replace this because the type of message was set with a variable. If you need to continue to use a variable, you might consider using a switch statement.');
+                    $this->addDrupalRectorComment(
+                        $node,
+                        'This needs to be replaced, but Rector was not yet able to replace this because the type of message was set with a variable. If you need to continue to use a variable, you might consider using a switch statement.'
+                    );
+                    // Since we did not rename the function, Rector will process
+                    // this node multiple times. So we need to flag it with the
+                    // @noRector tag.
+                    $parent_node = $node->getAttribute(AttributeKey::PARENT_NODE);
+                    assert($parent_node instanceof Node);
+                    $comments = $parent_node->getAttribute(AttributeKey::COMMENTS);
+                    $comments[] = new Comment('// @noRector');
+                    $parent_node->setAttribute(AttributeKey::COMMENTS, $comments);
+
+                    // The comments for this node have already been processed
+                    // and stored in an object hash. We need to manually add the
+                    // tag ourselves to the phpDoc object to prevent further
+                    // processing.
+                    $phpDocInfo = $node->getAttribute(AttributeKey::PHP_DOC_INFO);
+                    assert($phpDocInfo instanceof PhpDocInfo);
+                    $phpDocInfo->addPhpDocTagNode(new PhpDocTagNode('@noRector', new GenericTagValueNode('')));
 
                     return $node;
                 }

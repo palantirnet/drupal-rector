@@ -54,7 +54,7 @@ trait AddCommentTrait
                 $comments = $statement_node->getComments();
                 $comments[] = new Comment($comment_with_wrapper);
 
-                $statement_node->setAttribute('comments', $comments);
+                $statement_node->setAttribute(AttributeKey::COMMENTS, $comments);
             }
         }
     }
