@@ -7,8 +7,10 @@ use DrupalRector\Rector\Deprecation\AssertElementNotPresentRector;
 use DrupalRector\Rector\Deprecation\AssertElementPresentRector;
 use DrupalRector\Rector\Deprecation\AssertEqualRector;
 use DrupalRector\Rector\Deprecation\AssertEscapedRector;
+use DrupalRector\Rector\Deprecation\AssertFieldByIdRector;
 use DrupalRector\Rector\Deprecation\AssertFieldByNameRector;
 use DrupalRector\Rector\Deprecation\AssertFieldCheckedRector;
+use DrupalRector\Rector\Deprecation\AssertFieldRector;
 use DrupalRector\Rector\Deprecation\AssertHeaderRector;
 use DrupalRector\Rector\Deprecation\AssertIdenticalObjectRector;
 use DrupalRector\Rector\Deprecation\AssertIdenticalRector;
@@ -16,8 +18,10 @@ use DrupalRector\Rector\Deprecation\AssertLinkByHrefRector;
 use DrupalRector\Rector\Deprecation\AssertLinkRector;
 use DrupalRector\Rector\Deprecation\AssertNoCacheTagRector;
 use DrupalRector\Rector\Deprecation\AssertNoEscapedRector;
+use DrupalRector\Rector\Deprecation\AssertNoFieldByIdRector;
 use DrupalRector\Rector\Deprecation\AssertNoFieldByNameRector;
 use DrupalRector\Rector\Deprecation\AssertNoFieldCheckedRector;
+use DrupalRector\Rector\Deprecation\AssertNoFieldRector;
 use DrupalRector\Rector\Deprecation\AssertNoLinkByHrefRector;
 use DrupalRector\Rector\Deprecation\AssertNoLinkRector;
 use DrupalRector\Rector\Deprecation\AssertNoOptionRector;
@@ -29,6 +33,7 @@ use DrupalRector\Rector\Deprecation\AssertNotIdenticalRector;
 use DrupalRector\Rector\Deprecation\AssertNoUniqueTextRector;
 use DrupalRector\Rector\Deprecation\AssertOptionByTextRector;
 use DrupalRector\Rector\Deprecation\AssertOptionRector;
+use DrupalRector\Rector\Deprecation\AssertOptionSelectedRector;
 use DrupalRector\Rector\Deprecation\AssertPatternRector;
 use DrupalRector\Rector\Deprecation\AssertRawRector;
 use DrupalRector\Rector\Deprecation\AssertRector;
@@ -49,7 +54,7 @@ return static function (ContainerConfigurator $containerConfigurator): void {
     $services = $containerConfigurator->services();
 
     $services->set(UiHelperTraitDrupalPostFormRector::class);
-    // AssertLegactTrait items
+    // AssertLegacyTrait items
     // @see https://www.drupal.org/project/rector/issues/3222671
     // @see https://www.drupal.org/node/3129738
     $services->set(AssertRector::class);
@@ -68,9 +73,9 @@ return static function (ContainerConfigurator $containerConfigurator): void {
     $services->set(AssertResponseRector::class);
     $services->set(AssertFieldByNameRector::class);
     $services->set(AssertNoFieldByNameRector::class);
-    // @todo AssertFieldByIdRector::class
-    // @todo AssertFieldRector::class
-    // @todo AssertNoFieldRector::class
+    $services->set(AssertFieldByIdRector::class);
+    $services->set(AssertFieldRector::class);
+    $services->set(AssertNoFieldRector::class);
     $services->set(AssertRawRector::class);
     $services->set(AssertNoRawRector::class);
     $services->set(AssertTitleRector::class);
@@ -78,12 +83,12 @@ return static function (ContainerConfigurator $containerConfigurator): void {
     $services->set(AssertNoLinkRector::class);
     $services->set(AssertLinkByHrefRector::class);
     $services->set(AssertNoLinkByHrefRector::class);
-    // @todo AssertNoFieldByIdRector
+    $services->set(AssertNoFieldByIdRector::class);
     $services->set(AssertUrlRector::class);
     $services->set(AssertOptionRector::class);
     $services->set(AssertOptionByTextRector::class);
     $services->set(AssertNoOptionRector::class);
-    // @todo AssertOptionSelectedRector
+    $services->set(AssertOptionSelectedRector::class);
     $services->set(AssertFieldCheckedRector::class);
     $services->set(AssertNoFieldCheckedRector::class);
     // @todo AssertFieldByXPathRector

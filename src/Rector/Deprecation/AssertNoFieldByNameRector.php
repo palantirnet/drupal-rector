@@ -28,7 +28,7 @@ CODE_BEFORE
                 <<<'CODE_AFTER'
     $this->assertSession()->fieldValueNotEquals('name', '');
     $this->assertSession()->fieldValueNotEquals('name', 'not the value');
-    $this->assertSession()->assertNoFieldByName('notexisting', '');
+    $this->assertSession()->fieldValueNotEquals('notexisting', '');
     $this->assertSession()->fieldNotExists('notexisting');
 CODE_AFTER
             )
