@@ -52,6 +52,7 @@ CODE_AFTER
 
         $valueArg = $args[1]->value;
         if ($valueArg instanceof Node\Expr\ConstFetch && \strtolower($valueArg->name->toString()) === 'null') {
+            $this->addDrupalRectorComment($node, $this->comment);
             return $this->createAssertSessionMethodCall('fieldNotExists', [$args[0]]);
         }
 
