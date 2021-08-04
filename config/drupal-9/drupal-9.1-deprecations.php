@@ -15,6 +15,7 @@ use DrupalRector\Rector\Deprecation\AssertLinkByHrefRector;
 use DrupalRector\Rector\Deprecation\AssertLinkRector;
 use DrupalRector\Rector\Deprecation\AssertNoCacheTagRector;
 use DrupalRector\Rector\Deprecation\AssertNoEscapedRector;
+use DrupalRector\Rector\Deprecation\AssertNoFieldByNameRector;
 use DrupalRector\Rector\Deprecation\AssertNoLinkByHrefRector;
 use DrupalRector\Rector\Deprecation\AssertNoLinkRector;
 use DrupalRector\Rector\Deprecation\AssertNoPatternRector;
@@ -22,13 +23,16 @@ use DrupalRector\Rector\Deprecation\AssertNoRawRector;
 use DrupalRector\Rector\Deprecation\AssertNotEqualRector;
 use DrupalRector\Rector\Deprecation\AssertNoTextRector;
 use DrupalRector\Rector\Deprecation\AssertNotIdenticalRector;
+use DrupalRector\Rector\Deprecation\AssertNoUniqueTextRector;
 use DrupalRector\Rector\Deprecation\AssertPatternRector;
 use DrupalRector\Rector\Deprecation\AssertRawRector;
 use DrupalRector\Rector\Deprecation\AssertRector;
 use DrupalRector\Rector\Deprecation\AssertResponseRector;
 use DrupalRector\Rector\Deprecation\AssertTextRector;
 use DrupalRector\Rector\Deprecation\AssertTitleRector;
+use DrupalRector\Rector\Deprecation\AssertUniqueTextRector;
 use DrupalRector\Rector\Deprecation\BuildXPathQueryRector;
+use DrupalRector\Rector\Deprecation\PassRector;
 use DrupalRector\Rector\Deprecation\UiHelperTraitDrupalPostFormRector;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 
@@ -45,16 +49,16 @@ return static function (ContainerConfigurator $containerConfigurator): void {
     $services->set(AssertIdenticalRector::class);
     $services->set(AssertNotIdenticalRector::class);
     $services->set(AssertIdenticalObjectRector::class);
-    // @todo PassRector::class
+    $services->set(PassRector::class);
     $services->set(AssertElementPresentRector::class);
     $services->set(AssertElementNotPresentRector::class);
     $services->set(AssertTextRector::class);
     $services->set(AssertNoTextRector::class);
-    // @todo AssertUniqueTextRector::class
-    // @todo AssertNoUniqueTextRector::class
+    $services->set(AssertUniqueTextRector::class);
+    $services->set(AssertNoUniqueTextRector::class);
     $services->set(AssertResponseRector::class);
     $services->set(AssertFieldByNameRector::class);
-    // @todo AssertNoFieldByNameRector::class
+    $services->set(AssertNoFieldByNameRector::class);
     // @todo AssertFieldByIdRector::class
     // @todo AssertFieldRector::class
     // @todo AssertNoFieldRector::class
