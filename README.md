@@ -1,3 +1,5 @@
+[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/from-referrer/)
+
 # Drupal Rector
 
 Automate fixing deprecated Drupal code.
@@ -148,11 +150,25 @@ Thanks for your interest in contributing!
 
 Our goal is to make contributing to this project easy for people. While we've made certain architectural decisions here to hopefully achieve that goal, it's a work in progress and feedback is appreciated.
 
-### Development environment
+## Development environment
 
-We recommend using our `drupal-rector-sandbox` development environment [https://github.com/palantirnet/drupal-rector-sandbox](https://github.com/palantirnet/drupal-rector-sandbox)
+We recommend using Gitpod, a full development environment in the cloud.
+<br>
+Click on this button to start -
+<br>
+[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/from-referrer/)
+<br>
+The Gitpod environment comes with a Drupal website installed under `drupal-website/` directory<br>
+Here's how you can run Drupal Rector in that environment:
+```
+cd drupal-website
+composer require drupal/pathauto
+vendor/bin/rector process web/modules/contrib/pathauto --dry-run
+```
 
-Alternatively, you can use your existing Drupal project and follow the instructions in [README](https://github.com/palantirnet/drupal-rector-sandbox/blob/master/README.md#developing-with-drupal-rector)
+Alternatively, you can use our `drupal-rector-sandbox` development environment locally [https://github.com/palantirnet/drupal-rector-sandbox](https://github.com/palantirnet/drupal-rector-sandbox)
+
+Or you can use your existing Drupal project and follow the instructions in [README](https://github.com/palantirnet/drupal-rector-sandbox/blob/master/README.md#developing-with-drupal-rector)
 
 ### Adding a Rector rule
 

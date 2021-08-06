@@ -6,6 +6,12 @@
 !/.editorconfig
 !.gitkeep
 
+# Drupal website for testing
+!.gitpod/
+!.gitpod.yml
+!.gitpod/.gitpod.Dockerfile
+/drupal-website/
+
 # Other ignored paths and files.
 /vendor
 /composer.lock
