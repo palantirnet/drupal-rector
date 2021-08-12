@@ -444,3 +444,27 @@
     Rector: UiHelperTraitDrupalPostFormRector.php
     PHPStan: 'Deprecated in drupal:9.1.0 and is removed from drupal:10.0.0. Use $this->submitForm() instead.'
     Examples:
+'AssertLegacyTrait::constructFieldXpath()':
+    Rector: ConstructFieldXpathRector.php
+    PHPStan: 'Deprecated in drupal:8.5.0 and is removed from drupal:10.0.0. Use $this->getSession()->getPage()->findField() instead.'
+    Examples:
+'path.alias_manager':
+    Rector: PathAliasManagerServiceNameRector.php
+    PHPStan: 'Renames deprecated Drupal::services('path.alias_manager') argument'
+    Examples:
+'path.alias_repository':
+    Rector: PathAliasRepositoryRector.php
+    PHPStan: 'Renames deprecated Drupal::services('path.alias_repository') argument.'
+    Examples:
+'path.alias_whitelist':
+    Rector: PathAliasWhitelistServiceNameRector.php
+    PHPStan: 'Renames deprecated Drupal::services('path.alias_whitelist') argument.'
+    Examples:
+'path_processor_alias':
+    Rector: PathProcessorAliasServiceNameRector.php
+    PHPStan: 'Renames deprecated Drupal::services('path_processor_alias') argument.'
+    Examples:
+'path_subscriber':
+    Rector: PathSubscriberServiceNameRector.php
+    PHPStan: 'Renames deprecated Drupal::services('path_subscriber') argument.'
+    Examples:
