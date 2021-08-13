@@ -12,7 +12,7 @@ final class AssertOptionSelectedRector extends AbstractRector
 
     public function getRuleDefinition(): RuleDefinition
     {
-        return new RuleDefinition('Fixes deprecated UiHelperTrait::drupalPostForm() calls', [
+        return new RuleDefinition('Fixes deprecated AssertLegacyTrait::assertOptionSelected() calls', [
             new CodeSample(
                 <<<'CODE_BEFORE'
     $this->assertOptionSelected('options', 2);
