@@ -152,7 +152,7 @@ Our goal is to make contributing to this project easy for people. While we've ma
 
 ## Development environment
 
-We recommend using Gitpod, a full development environment in the cloud.
+You may use Gitpod, a full development environment in the cloud.
 <br>
 Click on this button to start -
 <br>
