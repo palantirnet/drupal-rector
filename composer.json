@@ -35,15 +35,15 @@
     "autoload": {
         "psr-4": {
             "DrupalRector\\": "src"
-        },
-        "classmap": [
-            "stubs"
-        ]
+        }
     },
     "autoload-dev": {
         "psr-4": {
             "DrupalRector\\Tests\\": "tests/src"
-        }
+        },
+        "classmap": [
+            "stubs"
+        ]
     },
     "config": {
         "optimize-autoloader": true,
