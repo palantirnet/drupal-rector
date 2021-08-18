@@ -12,7 +12,7 @@ final class PassRector extends AbstractRector
 
     public function getRuleDefinition(): RuleDefinition
     {
-        return new RuleDefinition('Fixes deprecated AssertLegacyTrait::assertEqual() calls', [
+        return new RuleDefinition('Fixes deprecated AssertLegacyTrait::pass() calls', [
             new CodeSample(
                 <<<'CODE_BEFORE'
 $this->pass('The whole transaction is rolled back when a duplicate key insert occurs.');

@@ -268,3 +268,6 @@
   PHPStan: 'Call to deprecated method EntityType::getLowercaseLabel(). Deprecated in drupal:8.8.0 and is removed from drupal:9.0.0. Use EntityType::getSingularLabel().'
   Examples:
     - entity_type_get_lowercase_label.php
+'AssertLegacyTrait::pass()':
+    Rector: PassRector.php
+    PHPStan: "Call to deprecated method pass() of class Drupal\\Tests\\BrowserTestBase. Deprecated in drupal:8.0.0 and is removed from drupal:10.0.0. PHPUnit interrupts a test as soon as a test assertion fails, so there is usually no need to call this method. If a test's logic relies on this method, refactor the test."
