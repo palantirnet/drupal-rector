@@ -48,10 +48,13 @@ use DrupalRector\Rector\Deprecation\GetAllOptionsRector;
 use DrupalRector\Rector\Deprecation\GetRawContentRector;
 use DrupalRector\Rector\Deprecation\PassRector;
 use DrupalRector\Rector\Deprecation\UiHelperTraitDrupalPostFormRector;
+use Rector\PHPUnit\Set\PHPUnitSetList;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 
 return static function (ContainerConfigurator $containerConfigurator): void {
     $services = $containerConfigurator->services();
+
+    $containerConfigurator->import(PHPUnitSetList::PHPUNIT_90);
 
     $services->set(UiHelperTraitDrupalPostFormRector::class);
     // AssertLegacyTrait items
