@@ -434,7 +434,7 @@
     Examples:
 'AssertLegacyTrait::getAllOptions()':
     Rector: GetAllOptionsRector.php
-    PHPStan: 'Deprecated in drupal:8.5.0 and is removed from drupal:10.0.0. Use $element->findAll('xpath', 'option') instead.'
+    PHPStan: "Deprecated in drupal:8.5.0 and is removed from drupal:10.0.0. Use $element->findAll('xpath', 'option') instead."
     Examples:
 'AssertLegacyTrait::getRawContent()':
     Rector: GetRawContentRector.php
@@ -450,21 +450,21 @@
     Examples:
 'path.alias_manager':
     Rector: PathAliasManagerServiceNameRector.php
-    PHPStan: 'Renames deprecated Drupal::services('path.alias_manager') argument'
+    PHPStan: "Renames deprecated Drupal::services('path.alias_manager') argument"
     Examples:
 'path.alias_repository':
     Rector: PathAliasRepositoryRector.php
-    PHPStan: 'Renames deprecated Drupal::services('path.alias_repository') argument.'
+    PHPStan: "Renames deprecated Drupal::services('path.alias_repository') argument."
     Examples:
 'path.alias_whitelist':
     Rector: PathAliasWhitelistServiceNameRector.php
-    PHPStan: 'Renames deprecated Drupal::services('path.alias_whitelist') argument.'
+    PHPStan: "Renames deprecated Drupal::services('path.alias_whitelist') argument."
     Examples:
 'path_processor_alias':
     Rector: PathProcessorAliasServiceNameRector.php
-    PHPStan: 'Renames deprecated Drupal::services('path_processor_alias') argument.'
+    PHPStan: "Renames deprecated Drupal::services('path_processor_alias') argument."
     Examples:
 'path_subscriber':
     Rector: PathSubscriberServiceNameRector.php
-    PHPStan: 'Renames deprecated Drupal::services('path_subscriber') argument.'
+    PHPStan: "Renames deprecated Drupal::services('path_subscriber') argument."
     Examples:
