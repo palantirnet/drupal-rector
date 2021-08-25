@@ -14,7 +14,7 @@ final class AssertEscapedRector extends AssertLegacyTraitBase
 
     public function getRuleDefinition(): RuleDefinition
     {
-        return new RuleDefinition('Fixes deprecated AssertLegacyTrait::assertEscaped() calls', [
+        return new RuleDefinition('Fixes deprecated \Drupal\FunctionalTests\AssertLegacyTrait::assertEscaped() calls', [
             new CodeSample(
                 <<<'CODE_BEFORE'
 $this->assertEscaped('Demonstrate block regions (<"Cat" & \'Mouse\'>)');

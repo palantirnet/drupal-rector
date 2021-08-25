@@ -14,7 +14,7 @@ final class BuildXPathQueryRector extends AssertLegacyTraitBase
 
     public function getRuleDefinition(): RuleDefinition
     {
-        return new RuleDefinition('Fixes deprecated AssertLegacyTrait::assertResponse() calls', [
+        return new RuleDefinition('Fixes deprecated \Drupal\FunctionalTests\AssertLegacyTrait::assertResponse() calls', [
             new CodeSample(
                 <<<'CODE_BEFORE'
 $xpath = $this->buildXPathQuery('//select[@name=:name]', [':name' => $name]);

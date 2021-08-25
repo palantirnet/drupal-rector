@@ -15,7 +15,7 @@ final class AssertRector extends AssertLegacyTraitBase
 
     public function getRuleDefinition(): RuleDefinition
     {
-        return new RuleDefinition('Fixes deprecated AssertLegacyTrait::assert() calls', [
+        return new RuleDefinition('Fixes deprecated \Drupal\KernelTests\AssertLegacyTrait::assert() calls', [
             new CodeSample(
                 <<<'CODE_BEFORE'
 $this->assert($foo);

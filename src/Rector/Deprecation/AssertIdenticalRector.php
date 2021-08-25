@@ -15,7 +15,7 @@ final class AssertIdenticalRector extends AssertLegacyTraitBase
 
     public function getRuleDefinition(): RuleDefinition
     {
-        return new RuleDefinition('Fixes deprecated AssertLegacyTrait::assertIdentical() calls', [
+        return new RuleDefinition('Fixes deprecated \Drupal\KernelTests\AssertLegacyTrait::assertIdentical() calls', [
             new CodeSample(
                 <<<'CODE_BEFORE'
 $this->assertIdentical('Actual', 'Expected', 'Message');

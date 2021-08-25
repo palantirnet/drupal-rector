@@ -14,7 +14,7 @@ final class AssertOptionByTextRector extends AssertLegacyTraitBase
 
     public function getRuleDefinition(): RuleDefinition
     {
-        return new RuleDefinition('Fixes deprecated AssertLegacyTrait::assertOptionByText() calls', [
+        return new RuleDefinition('Fixes deprecated \Drupal\FunctionalTests\AssertLegacyTrait::assertOptionByText() calls', [
             new CodeSample(
                 <<<'CODE_BEFORE'
 $this->assertOptionByText('edit-settings-view-mode', 'default');

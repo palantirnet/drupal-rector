@@ -15,7 +15,7 @@ final class AssertLinkRector extends AssertLegacyTraitBase
 
     public function getRuleDefinition(): RuleDefinition
     {
-        return new RuleDefinition('Fixes deprecated AssertLegacyTrait::assertLink() calls', [
+        return new RuleDefinition('Fixes deprecated \Drupal\FunctionalTests\AssertLegacyTrait::assertLink() calls', [
             new CodeSample(
                 <<<'CODE_BEFORE'
 $this->assertLink('Anonymous comment title');

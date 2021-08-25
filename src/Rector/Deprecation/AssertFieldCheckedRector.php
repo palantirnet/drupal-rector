@@ -14,7 +14,7 @@ final class AssertFieldCheckedRector extends AssertLegacyTraitBase
 
     public function getRuleDefinition(): RuleDefinition
     {
-        return new RuleDefinition('Fixes deprecated AssertLegacyTrait::assertFieldChecked() calls', [
+        return new RuleDefinition('Fixes deprecated \Drupal\FunctionalTests\AssertLegacyTrait::assertFieldChecked() calls', [
             new CodeSample(
                 <<<'CODE_BEFORE'
 $this->assertFieldChecked('edit-settings-view-mode', 'default');

@@ -14,7 +14,7 @@ final class AssertTitleRector extends AssertLegacyTraitBase
 
     public function getRuleDefinition(): RuleDefinition
     {
-        return new RuleDefinition('Fixes deprecated AssertLegacyTrait::assertTitle() calls', [
+        return new RuleDefinition('Fixes deprecated \Drupal\FunctionalTests\AssertLegacyTrait::assertTitle() calls', [
             new CodeSample(
                 <<<'CODE_BEFORE'
 $this->assertTitle('Block layout | Drupal');

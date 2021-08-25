@@ -15,7 +15,7 @@ final class AssertCacheTagRector extends AssertLegacyTraitBase
 
     public function getRuleDefinition(): RuleDefinition
     {
-        return new RuleDefinition('Fixes deprecated AssertLegacyTrait::assertCacheTag() calls', [
+        return new RuleDefinition('Fixes deprecated \Drupal\FunctionalTests\AssertLegacyTrait::assertCacheTag() calls', [
             new CodeSample(
                 <<<'CODE_BEFORE'
 $this->assertCacheTag('some-cache-tag');

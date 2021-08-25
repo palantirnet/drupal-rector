@@ -14,7 +14,7 @@ final class AssertRawRector extends AssertLegacyTraitBase
 
     public function getRuleDefinition(): RuleDefinition
     {
-        return new RuleDefinition('Fixes deprecated AssertLegacyTrait::assertRaw() calls', [
+        return new RuleDefinition('Fixes deprecated \Drupal\FunctionalTests\AssertLegacyTrait::assertRaw() calls', [
             new CodeSample(
                 <<<'CODE_BEFORE'
 $this->assertRaw('bartik/logo.svg');

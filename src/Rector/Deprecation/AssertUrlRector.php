@@ -14,7 +14,7 @@ final class AssertUrlRector extends AssertLegacyTraitBase
 
     public function getRuleDefinition(): RuleDefinition
     {
-        return new RuleDefinition('Fixes deprecated AssertLegacyTrait::assertUrl() calls', [
+        return new RuleDefinition('Fixes deprecated \Drupal\FunctionalTests\AssertLegacyTrait::assertUrl() calls', [
             new CodeSample(
                 <<<'CODE_BEFORE'
 $this->assertUrl('myrootuser');

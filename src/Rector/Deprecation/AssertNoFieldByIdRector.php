@@ -12,7 +12,7 @@ final class AssertNoFieldByIdRector extends AbstractRector
 
     public function getRuleDefinition(): RuleDefinition
     {
-        return new RuleDefinition('Fixes deprecated AssertLegacyTrait::assertNoFieldById() calls', [
+        return new RuleDefinition('Fixes deprecated \Drupal\FunctionalTests\AssertLegacyTrait::assertNoFieldById() calls', [
             new CodeSample(
                 <<<'CODE_BEFORE'
     $this->assertNoFieldById('name');

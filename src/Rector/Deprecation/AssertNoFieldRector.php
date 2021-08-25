@@ -15,7 +15,7 @@ final class AssertNoFieldRector extends AssertLegacyTraitBase
 
     public function getRuleDefinition(): RuleDefinition
     {
-        return new RuleDefinition('Fixes deprecated AssertLegacyTrait::assertNoField() calls', [
+        return new RuleDefinition('Fixes deprecated \Drupal\FunctionalTests\AssertLegacyTrait::assertNoField() calls', [
             new CodeSample(
                 <<<'CODE_BEFORE'
     $this->assertNoField('files[upload]', 'Found file upload field.');

@@ -23,7 +23,7 @@ final class BrowserTestBaseGetMockRector extends GetMockBase
      */
     public function getRuleDefinition(): RuleDefinition
     {
-        return new RuleDefinition('Fixes deprecated getMock() calls',[
+        return new RuleDefinition('Fixes deprecated \Drupal\Tests\BrowserTestBase\getMock() calls', [
             new CodeSample(
                 <<<'CODE_BEFORE'
 $this->entityTypeManager = $this->getMock(EntityTypeManagerInterface::class);

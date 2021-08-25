@@ -14,7 +14,7 @@ final class AssertNoOptionRector extends AssertLegacyTraitBase
 
     public function getRuleDefinition(): RuleDefinition
     {
-        return new RuleDefinition('Fixes deprecated AssertLegacyTrait::assertNoOption() calls', [
+        return new RuleDefinition('Fixes deprecated \Drupal\FunctionalTests\AssertLegacyTrait::assertNoOption() calls', [
             new CodeSample(
                 <<<'CODE_BEFORE'
 $this->assertNoOption('edit-settings-view-mode', 'default');

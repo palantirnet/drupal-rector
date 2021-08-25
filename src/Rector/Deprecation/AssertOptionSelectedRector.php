@@ -12,7 +12,7 @@ final class AssertOptionSelectedRector extends AbstractRector
 
     public function getRuleDefinition(): RuleDefinition
     {
-        return new RuleDefinition('Fixes deprecated AssertLegacyTrait::assertOptionSelected() calls', [
+        return new RuleDefinition('Fixes deprecated \Drupal\FunctionalTests\AssertLegacyTrait::assertOptionSelected() calls', [
             new CodeSample(
                 <<<'CODE_BEFORE'
     $this->assertOptionSelected('options', 2);

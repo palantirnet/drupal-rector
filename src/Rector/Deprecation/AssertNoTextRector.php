@@ -19,7 +19,7 @@ final class AssertNoTextRector extends AssertLegacyTraitBase
 
     public function getRuleDefinition(): RuleDefinition
     {
-        return new RuleDefinition('Fixes deprecated AssertLegacyTrait::assertNoText() calls', [
+        return new RuleDefinition('Fixes deprecated \Drupal\FunctionalTests\AssertLegacyTrait::assertNoText() calls', [
             new CodeSample(
                 <<<'CODE_BEFORE'
 $this->drupalGet('test-page');

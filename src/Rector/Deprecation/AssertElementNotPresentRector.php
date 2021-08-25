@@ -14,7 +14,7 @@ final class AssertElementNotPresentRector extends AssertLegacyTraitBase
 
     public function getRuleDefinition(): RuleDefinition
     {
-        return new RuleDefinition('Fixes deprecated AssertLegacyTrait::assertElementNotPresent() calls', [
+        return new RuleDefinition('Fixes deprecated \Drupal\FunctionalTests\AssertLegacyTrait::assertElementNotPresent() calls', [
             new CodeSample(
                 <<<'CODE_BEFORE'
 $this->assertElementNotPresent('css', '.region-content-message.region-empty');

@@ -14,7 +14,7 @@ final class AssertHeaderRector extends AssertLegacyTraitBase
 
     public function getRuleDefinition(): RuleDefinition
     {
-        return new RuleDefinition('Fixes deprecated AssertLegacyTrait::assertHeader calls', [
+        return new RuleDefinition('Fixes deprecated \Drupal\FunctionalTests\AssertLegacyTrait::assertHeader() calls', [
             new CodeSample(
                 <<<'CODE_BEFORE'
 $this->assertHeader('Foo', 'Bar');

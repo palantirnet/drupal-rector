@@ -14,7 +14,7 @@ final class AssertPatternRector extends AssertLegacyTraitBase
 
     public function getRuleDefinition(): RuleDefinition
     {
-        return new RuleDefinition('Fixes deprecated AssertLegacyTrait::assertPattern() calls', [
+        return new RuleDefinition('Fixes deprecated \Drupal\FunctionalTests\AssertLegacyTrait::assertPattern() calls', [
             new CodeSample(
                 <<<'CODE_BEFORE'
 $this->assertPattern('|<h4[^>]*></h4>|', 'No empty H4 element found.');

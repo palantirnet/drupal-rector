@@ -16,7 +16,7 @@ final class AssertNoFieldByNameRector extends AssertLegacyTraitBase
 
     public function getRuleDefinition(): RuleDefinition
     {
-        return new RuleDefinition('Fixes deprecated AssertLegacyTrait::assertNoFieldByName() calls', [
+        return new RuleDefinition('Fixes deprecated \Drupal\FunctionalTests\AssertLegacyTrait::assertNoFieldByName() calls', [
             new CodeSample(
                 <<<'CODE_BEFORE'
     $this->assertNoFieldByName('name');

@@ -12,7 +12,7 @@ final class ConstructFieldXpathRector extends AbstractRector {
 
     public function getRuleDefinition(): RuleDefinition
     {
-        return new RuleDefinition('Fixes deprecated AssertLegacyTrait::constructFieldXpath() calls', [
+        return new RuleDefinition('Fixes deprecated \Drupal\FunctionalTests\AssertLegacyTrait::constructFieldXpath() calls', [
             new CodeSample(
                 <<<'CODE_BEFORE'
 $this->constructFieldXpath('id', 'edit-preferred-admin-langcode')

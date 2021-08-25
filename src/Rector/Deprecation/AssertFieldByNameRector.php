@@ -12,7 +12,7 @@ final class AssertFieldByNameRector extends AbstractRector
 
     public function getRuleDefinition(): RuleDefinition
     {
-        return new RuleDefinition('Fixes deprecated AssertLegacyTrait::assertFieldByName() calls', [
+        return new RuleDefinition('Fixes deprecated \Drupal\FunctionalTests\AssertLegacyTrait::assertFieldByName() calls', [
             new CodeSample(
                 <<<'CODE_BEFORE'
 $this->assertFieldByName('field_name', 'expected_value');

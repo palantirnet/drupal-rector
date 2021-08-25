@@ -28,7 +28,7 @@ final class AssertNoUniqueTextRector extends AbstractRector
 
     public function getRuleDefinition(): RuleDefinition
     {
-        return new RuleDefinition('Fixes deprecated AssertLegacyTrait::assertUniqueText() calls', [
+        return new RuleDefinition('Fixes deprecated \Drupal\FunctionalTests\AssertLegacyTrait::assertUniqueText() calls', [
             new CodeSample(
                 <<<'CODE_BEFORE'
 $this->assertUniqueText('Color set');

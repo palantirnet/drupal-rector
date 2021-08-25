@@ -14,7 +14,7 @@ final class AssertNoEscapedRector extends AssertLegacyTraitBase
 
     public function getRuleDefinition(): RuleDefinition
     {
-        return new RuleDefinition('Fixes deprecated AssertLegacyTrait::assertNoEscaped() calls', [
+        return new RuleDefinition('Fixes deprecated \Drupal\FunctionalTests\AssertLegacyTrait::assertNoEscaped() calls', [
             new CodeSample(
                 <<<'CODE_BEFORE'
 $this->assertNoEscaped('<div class="escaped">');

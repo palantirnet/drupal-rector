@@ -15,7 +15,7 @@ final class AssertNotEqualRector extends AssertLegacyTraitBase
 
     public function getRuleDefinition(): RuleDefinition
     {
-        return new RuleDefinition('Fixes deprecated AssertLegacyTrait::assertNotEqual() calls', [
+        return new RuleDefinition('Fixes deprecated \Drupal\KernelTests\AssertLegacyTrait::assertNotEqual() calls', [
             new CodeSample(
                 <<<'CODE_BEFORE'
 $this->assertNotEqual('Actual', 'Expected', 'Message');

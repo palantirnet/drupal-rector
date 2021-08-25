@@ -15,7 +15,7 @@ final class AssertLinkByHrefRector extends AssertLegacyTraitBase
 
     public function getRuleDefinition(): RuleDefinition
     {
-        return new RuleDefinition('Fixes deprecated AssertLegacyTrait::assertLinkByHref() calls', [
+        return new RuleDefinition('Fixes deprecated \Drupal\FunctionalTests\AssertLegacyTrait::assertLinkByHref() calls', [
             new CodeSample(
                 <<<'CODE_BEFORE'
 $this->assertLinkByHref('user/1/translations');
