@@ -12,4 +12,9 @@ if (class_exists('Drupal\FunctionalTests\AssertLegacyTrait')) {
 
 trait AssertLegacyTrait {
     use BaseAssertLegacyTrait;
+
+    protected function assertNoUniqueText($text, $message = '') {
+        $this->assertTrue(TRUE, $message);
+    }
+
 }
