@@ -268,3 +268,194 @@
   PHPStan: 'Call to deprecated method EntityType::getLowercaseLabel(). Deprecated in drupal:8.8.0 and is removed from drupal:9.0.0. Use EntityType::getSingularLabel().'
   Examples:
     - entity_type_get_lowercase_label.php
+'AssertLegacyTrait::assert()':
+    Rector: AssertRector.php
+    PHPStan: 'Call to deprecated method assert() of class Drupal\Tests\BrowserTestBase. Deprecated in drupal:8.0.0 and is removed from drupal:10.0.0. Use $this->assertTrue() instead.'
+    Examples:
+'AssertLegacyTrait::assertCacheTag()':
+    Rector: AssertCacheTagRector.php
+    PHPStan: 'Call to deprecated method assertCacheTag() of class Drupal\Tests\BrowserTestBase. Deprecated in drupal:8.2.0 and is removed from drupal:10.0.0. Use $this->assertSession()->responseHeaderContains() instead.'
+    Examples:
+'AssertLegacyTrait::assertElementNotPresent()':
+    Rector: AssertElementNotPresentRector.php
+    PHPStan: 'Call to deprecated method assertElementNotPresent() of class Drupal\Tests\BrowserTestBase. Deprecated in drupal:8.2.0 and is removed from drupal:10.0.0. Use $this->assertSession()->elementNotExists() instead.'
+    Examples:
+'AssertLegacyTrait::assertElementPresent()':
+    Rector: AssertElementPresentRector.php
+    PHPStan: 'Call to deprecated method assertElementPresent() of class Drupal\Tests\BrowserTestBase. Deprecated in drupal:8.2.0 and is removed from drupal:10.0.0. Use $this->assertSession()->elementExists() instead.'
+    Examples:
+'AssertLegacyTrait::assertEqual()':
+    Rector: AssertEqualRector.php
+    PHPStan: 'Call to deprecated method assertEqual() of class Drupal\Tests\BrowserTestBase. Deprecated in drupal:8.0.0 and is removed from drupal:10.0.0. Use $this->assertEquals() instead.'
+    Examples:
+'AssertLegacyTrait::assertEscaped()':
+    Rector: AssertEscapedRector.php
+    PHPStan: 'Call to deprecated method assertEscaped() of class Drupal\Tests\BrowserTestBase. Deprecated in drupal:8.2.0 and is removed from drupal:10.0.0. Use $this->assertSession()->assertEscaped() instead.'
+    Examples:
+'AssertLegacyTrait::assertFieldByName()':
+    Rector: AssertFieldByNameRector.php
+    PHPStan: 'Call to deprecated method assertFieldByName() of class Drupal\Tests\BrowserTestBase. Deprecated in drupal:8.2.0 and is removed from drupal:10.0.0. Use $this->assertSession()->fieldExists() or $this->assertSession()->buttonExists() or $this->assertSession()->fieldValueEquals() instead.'
+    Examples:
+'AssertLegacyTrait::assertHeader()':
+    Rector: AssertHeaderRector.php
+    PHPStan: 'Call to deprecated method assertHeader() of class Drupal\Tests\BrowserTestBase. Deprecated in drupal:8.3.0 and is removed from drupal:10.0.0. Use $this->assertSession()->responseHeaderEquals() instead.'
+    Examples:
+'AssertLegacyTrait::assertIdentical()':
+    Rector: AssertIdenticalRector.php
+    PHPStan: 'Call to deprecated method assertIdentical() of class Drupal\Tests\BrowserTestBase. Deprecated in drupal:8.0.0 and is removed from drupal:10.0.0. Use $this->assertSame() instead.'
+    Examples:
+'AssertLegacyTrait::assertLink()':
+    Rector: AssertLinkRector.php
+    PHPStan: 'Call to deprecated method assertLink() of class Drupal\Tests\BrowserTestBase. Deprecated in drupal:8.2.0 and is removed from drupal:10.0.0. Use $this->assertSession()->linkExists() instead.'
+    Examples:
+'AssertLegacyTrait::assertLinkByHref()':
+    Rector: AssertLinkByHrefRector.php
+    PHPStan: 'Call to deprecated method assertLinkByHref() of class Drupal\Tests\BrowserTestBase. Deprecated in drupal:8.2.0 and is removed from drupal:10.0.0. Use $this->assertSession()->linkByHrefExists() instead.'
+    Examples:
+'AssertLegacyTrait::assertNoCacheTag()':
+    Rector: AssertNoCacheTagRector.php
+    PHPStan: 'Call to deprecated method assertNoCacheTag() of class Drupal\Tests\BrowserTestBase. Deprecated in drupal:8.4.0 and is removed from drupal:10.0.0. Use $this->assertSession()->responseHeaderNotContains() instead.'
+    Examples:
+'AssertLegacyTrait::assertNoLink()':
+    Rector: AssertNoLinkRector.php
+    PHPStan: 'Call to deprecated method assertNoLink() of class Drupal\Tests\BrowserTestBase. Deprecated in drupal:8.2.0 and is removed from drupal:10.0.0. Use $this->assertSession()->linkNotExists() instead.'
+    Examples:
+'AssertLegacyTrait::assertNoLinkByHref()':
+    Rector: AssertNoLinkByHrefRector.php
+    PHPStan: 'Call to deprecated method assertNoLinkByHref() of class Drupal\Tests\BrowserTestBase. Deprecated in drupal:8.2.0 and is removed from drupal:10.0.0. Use $this->assertSession()->linkByHrefNotExists() instead.'
+    Examples:
+'AssertLegacyTrait::assertNoPattern()':
+    Rector: AssertNoPatternRector.php
+    PHPStan: 'Call to deprecated method assertNoPattern() of class Drupal\Tests\BrowserTestBase. Deprecated in drupal:8.4.0 and is removed from drupal:10.0.0. Use $this->assertSession()->responseNotMatches() instead.'
+    Examples:
+'AssertLegacyTrait::assertNoRaw()':
+    Rector: AssertNoRawRector.php
+    PHPStan: 'Call to deprecated method assertNoRaw() of class Drupal\Tests\BrowserTestBase. Deprecated in drupal:8.2.0 and is removed from drupal:10.0.0. Use $this->assertSession()->responseNotContains() instead.'
+    Examples:
+'AssertLegacyTrait::assertNotEqual()':
+    Rector: AssertNotEqualRector.php
+    PHPStan: 'Call to deprecated method assertNotEqual() of class Drupal\Tests\BrowserTestBase. Deprecated in drupal:8.0.0 and is removed from drupal:10.0.0. Use $this->assertNotEquals() instead.'
+    Examples:
+'AssertLegacyTrait::assertNoText()':
+    Rector: AssertNoTextRector.php
+    PHPStan: 'Call to deprecated method assertNoText() of class Drupal\Tests\BrowserTestBase. Deprecated in drupal:8.2.0 and is removed from drupal:10.0.0. Use - $this->assertSession()->responseNotContains() for non-HTML responses, like XML or Json. - $this->assertSession()->pageTextNotContains() for HTML responses. Unlike the deprecated assertNoText(), the passed text should be HTML decoded, exactly as a human sees it in the browser.'
+    Examples:
+'AssertLegacyTrait::assertNotIdentical()':
+    Rector: AssertNotIdenticalRector.php
+    PHPStan: 'Call to deprecated method assertNotIdentical() of class Drupal\Tests\BrowserTestBase. Deprecated in drupal:8.0.0 and is removed from drupal:10.0.0. Use $this->assertNotSame() instead.'
+    Examples:
+'AssertLegacyTrait::assertPattern()':
+    Rector: AssertPatternRector.php
+    PHPStan: 'Call to deprecated method assertPattern() of class Drupal\Tests\BrowserTestBase. Deprecated in drupal:8.2.0 and is removed from drupal:10.0.0. Use $this->assertSession()->responseMatches() instead.'
+    Examples:
+'AssertLegacyTrait::assertRaw()':
+    Rector: AssertRawRector.php
+    PHPStan: 'Call to deprecated method assertRaw() of class Drupal\Tests\BrowserTestBase. Deprecated in drupal:8.2.0 and is removed from drupal:10.0.0. Use $this->assertSession()->responseContains() instead.'
+    Examples:
+'AssertLegacyTrait::assertResponse()':
+    Rector: AssertResponseRector.php
+    PHPStan: 'Call to deprecated method assertResponse() of class Drupal\Tests\BrowserTestBase. Deprecated in drupal:8.2.0 and is removed from drupal:10.0.0. Use $this->assertSession()->statusCodeEquals() instead.'
+    Examples:
+'AssertLegacyTrait::assertText()':
+    Rector: AssertTextRector.php
+    PHPStan: 'Call to deprecated method assertText() of class Drupal\Tests\BrowserTestBase. Deprecated in drupal:8.2.0 and is removed from drupal:10.0.0. Use - $this->assertSession()->responseContains() for non-HTML responses, like XML or Json. - $this->assertSession()->pageTextContains() for HTML responses. Unlike the deprecated assertText(), the passed text should be HTML decoded, exactly as a human sees it in the browser.'
+    Examples:
+'AssertLegacyTrait::assertTitle()':
+    Rector: AssertTitleRector.php
+    PHPStan: 'Call to deprecated method assertTitle() of class Drupal\Tests\BrowserTestBase. Deprecated in drupal:8.2.0 and is removed from drupal:10.0.0. Use $this->assertSession()->titleEquals() instead.'
+    Examples:
+'AssertLegacyTrait::buildXPathQuery()':
+    Rector: BuildXPathQueryRector.php
+    PHPStan: 'Call to deprecated method buildXPathQuery() of class Drupal\Tests\BrowserTestBase. Deprecated in drupal:8.2.0 and is removed from drupal:10.0.0. Use $this->assertSession()->buildXPathQuery() instead.'
+    Examples:
+'UiHelperTrait::drupalPostForm()':
+    Rector: UiHelperTraitDrupalPostFormRector.php
+    PHPStan: 'Call to deprecated method drupalPostForm() of class Drupal\Tests\BrowserTestBase. Deprecated in drupal:9.1.0 and is removed from drupal:10.0.0. Use $this->submitForm() instead.'
+    Examples:
+'AssertLegacyTrait::assertField()':
+    Rector: AssertFieldRector.php
+    PHPStan: 'Call to deprecated method assertField() of class Drupal\Tests\BrowserTestBase. Deprecated in drupal:8.2.0 and is removed from drupal:10.0.0. Use $this->assertSession()->fieldExists() or $this->assertSession()->buttonExists() instead.'
+    Examples:
+'AssertLegacyTrait::assertFieldById()':
+    Rector: AssertFieldByIdRector.php
+    PHPStan: 'Call to deprecated method assertFieldById() of class Drupal\Tests\BrowserTestBase. Deprecated in drupal:8.2.0 and is removed from drupal:10.0.0. Use $this->assertSession()->fieldExists() or $this->assertSession()->buttonExists() or $this->assertSession()->fieldValueEquals() instead.'
+    Examples:
+'AssertLegacyTrait::assertFieldChecked()':
+    Rector: AssertFieldCheckedRector.php
+    PHPStan: 'Call to deprecated method assertFieldChecked() of class Drupal\Tests\BrowserTestBase. Deprecated in drupal:8.2.0 and is removed from drupal:10.0.0. Use $this->assertSession()->checkboxChecked() instead.'
+    Examples:
+'AssertLegacyTrait::assertNoField()':
+    Rector: AssertNoFieldRector.php
+    PHPStan: 'Call to deprecated method assertNoField() of class Drupal\Tests\BrowserTestBase. Deprecated in drupal:8.2.0 and is removed from drupal:10.0.0. Use $this->assertSession()->fieldNotExists() or $this->assertSession()->buttonNotExists() instead.'
+    Examples:
+'AssertLegacyTrait::assertNoFieldById()':
+    Rector: AssertNoFieldByIdRector.php
+    PHPStan: 'Call to deprecated method assertNoFieldById() of class Drupal\Tests\BrowserTestBase. Deprecated in drupal:8.2.0 and is removed from drupal:10.0.0. Use $this->assertSession()->fieldNotExists() or $this->assertSession()->buttonNotExists() or $this->assertSession()->fieldValueNotEquals() instead.'
+    Examples:
+'AssertLegacyTrait::assertNoFieldByName()':
+    Rector: AssertNoFieldByNameRector.php
+    PHPStan: 'Call to deprecated method assertNoFieldByName() of class Drupal\Tests\BrowserTestBase. Deprecated in drupal:8.2.0 and is removed from drupal:10.0.0. Use $this->assertSession()->fieldNotExists() or $this->assertSession()->buttonNotExists() or $this->assertSession()->fieldValueNotEquals() instead.'
+    Examples:
+'AssertLegacyTrait::assertNoFieldChecked()':
+    Rector: AssertNoFieldCheckedRector.php
+    PHPStan: 'Call to deprecated method assertNoFieldChecked() of class Drupal\Tests\BrowserTestBase. Deprecated in drupal:8.2.0 and is removed from drupal:10.0.0. Use $this->assertSession()->checkboxNotChecked() instead.'
+    Examples:
+'AssertLegacyTrait::assertNoOption()':
+    Rector: AssertNoOptionRector.php
+    PHPStan: 'Call to deprecated method assertNoOption() of class Drupal\Tests\BrowserTestBase. Deprecated in drupal:8.2.0 and is removed from drupal:10.0.0. Use $this->assertSession()->optionNotExists() instead.'
+    Examples:
+'AssertLegacyTrait::assertNoUniqueText()':
+    Rector: AssertNoUniqueTextRector.php
+    PHPStan: 'Call to deprecated method assertNoUniqueText() of class Drupal\Tests\BrowserTestBase. Deprecated in drupal:8.2.0 and is removed from drupal:10.0.0. Instead, use $this->getSession()->pageTextMatchesCount() if you know the cardinality in advance, or $this->getSession()->getPage()->getText() and substr_count().'
+    Examples:
+'AssertLegacyTrait::assertOption()':
+    Rector: AssertOptionRector.php
+    PHPStan: 'Call to deprecated method assertOption() of class Drupal\Tests\BrowserTestBase. Deprecated in drupal:8.2.0 and is removed from drupal:10.0.0. Use $this->assertSession()->optionExists() instead.'
+    Examples:
+'AssertLegacyTrait::assertOptionByText()':
+    Rector: AssertOptionByTextRector.php
+    PHPStan: 'Call to deprecated method assertOptionByText() of class Drupal\Tests\BrowserTestBase. Deprecated in drupal:8.4.0 and is removed from drupal:10.0.0. Use $this->assertSession()->optionExists() instead.'
+    Examples:
+'AssertLegacyTrait::assertOptionSelected()':
+    Rector: AssertOptionSelectedRector.php
+    PHPStan: 'Call to deprecated method assertOptionSelected() of class Drupal\Tests\BrowserTestBase. Deprecated in drupal:8.2.0 and is removed from drupal:10.0.0. Use $this->assertSession()->optionExists() instead and check the "selected" attribute yourself.'
+    Examples:
+'AssertLegacyTrait::assertUniqueText()':
+    Rector: AssertUniqueTextRector.php
+    PHPStan: 'Call to deprecated method assertUniqueText() of class Drupal\Tests\BrowserTestBase. Deprecated in drupal:8.2.0 and is removed from drupal:10.0.0. Use $this->getSession()->pageTextContainsOnce() or $this->getSession()->pageTextMatchesCount() instead.'
+    Examples:
+'AssertLegacyTrait::assertUrl()':
+    Rector: AssertUrlRector.php
+    PHPStan: 'Call to deprecated method assertUrl() of class Drupal\Tests\BrowserTestBase. Deprecated in drupal:8.2.0 and is removed from drupal:10.0.0. Use $this->assertSession()->addressEquals() instead.'
+    Examples:
+'AssertLegacyTrait::constructFieldXpath()':
+    Rector: ConstructFieldXpathRector.php
+    PHPStan: 'Call to deprecated method constructFieldXpath() of class Drupal\Tests\BrowserTestBase. Deprecated in drupal:8.5.0 and is removed from drupal:10.0.0. Use $this->getSession()->getPage()->findField() instead.'
+    Examples:
+'AssertLegacyTrait::getRawContent()':
+    Rector: GetRawContentRector.php
+    PHPStan: 'Call to deprecated method getRawContent() of class Drupal\Tests\BrowserTestBase. Deprecated in drupal:8.2.0 and is removed from drupal:10.0.0. Use $this->getSession()->getPage()->getContent() instead.'
+    Examples:
+'path.alias_manager':
+    Rector: PathAliasManagerServiceNameRector.php
+    PHPStan: "Renames deprecated Drupal::services('path.alias_manager') argument"
+    Examples:
+'path.alias_repository':
+    Rector: PathAliasRepositoryRector.php
+    PHPStan: "Renames deprecated Drupal::services('path.alias_repository') argument."
+    Examples:
+'path.alias_whitelist':
+    Rector: PathAliasWhitelistServiceNameRector.php
+    PHPStan: "Renames deprecated Drupal::services('path.alias_whitelist') argument."
+    Examples:
+'path_processor_alias':
+    Rector: PathProcessorAliasServiceNameRector.php
+    PHPStan: "Renames deprecated Drupal::services('path_processor_alias') argument."
+    Examples:
+'path_subscriber':
+    Rector: PathSubscriberServiceNameRector.php
+    PHPStan: "Renames deprecated Drupal::services('path_subscriber') argument."
+    Examples:
+'AssertLegacyTrait::pass()':
+    Rector: PassRector.php
+    PHPStan: "Call to deprecated method pass() of class Drupal\\Tests\\BrowserTestBase. Deprecated in drupal:8.0.0 and is removed from drupal:10.0.0. PHPUnit interrupts a test as soon as a test assertion fails, so there is usually no need to call this method. If a test's logic relies on this method, refactor the test."

@@ -2,7 +2,7 @@
 
 namespace DrupalRector\Rector\Deprecation;
 
-use DrupalRector\Rector\Deprecation\Base\AssertLegacyTraitBase;
+use DrupalRector\Utility\GetDeclaringSourceTrait;
 use PhpParser\Node;
 use Rector\Core\Exception\ShouldNotHappenException;
 use Rector\Core\Rector\AbstractRector;
@@ -14,6 +14,8 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 final class AssertNoUniqueTextRector extends AbstractRector
 {
+
+    use GetDeclaringSourceTrait;
 
     /**
      * @todo remove when property is no longer private in AbstractRector.
@@ -28,14 +30,16 @@ final class AssertNoUniqueTextRector extends AbstractRector
 
     public function getRuleDefinition(): RuleDefinition
     {
-        return new RuleDefinition('Fixes deprecated AssertLegacyTrait::assertUniqueText() calls', [
+        return new RuleDefinition('Fixes deprecated AssertLegacyTrait::assertNoUniqueText() calls', [
             new CodeSample(
                 <<<'CODE_BEFORE'
-$this->assertUniqueText('Color set');
+$this->assertNoUniqueText('Duplicated message');
 CODE_BEFORE
                 ,
                 <<<'CODE_AFTER'
-$this->getSession()->pageTextContainsOnce('Color set')
+$page_text = $this->getSession()->getPage()->getText();
+$nr_found = substr_count($page_text, 'Duplicated message');
+$this->assertGreaterThan(1, $nr_found, "'Duplicated message' found more than once on the page");
 CODE_AFTER
             )
         ]);
@@ -52,6 +56,9 @@ CODE_AFTER
     {
         assert($node instanceof Node\Expr\MethodCall);
         if ($this->getName($node->name) !== 'assertNoUniqueText') {
+            return null;
+        }
+        if ($this->getDeclaringSource($node) !== 'Drupal\FunctionalTests\AssertLegacyTrait') {
             return null;
         }
         if (count($node->args) === 0) {
@@ -73,7 +80,7 @@ CODE_AFTER
 
         $assertedText = $node->args[0]->value;
         if ($assertedText instanceof Node\Scalar\String_) {
-            $assertedText = $assertedText->value;
+            $assertedText = new Node\Scalar\EncapsedStringPart($assertedText->value);
         } elseif (!$assertedText instanceof Node\Expr\Variable) {
             throw new \RuntimeException(__CLASS__ . ' cannot handle argument of type ' . get_class($assertedText));
         }

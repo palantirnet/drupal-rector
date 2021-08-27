@@ -38,7 +38,7 @@ jobs:
             -   name: Set drupal-rector to current hash
                 working-directory: '../drupal-rector-sandbox'
                 run:
-                    composer require palantirnet/drupal-rector:dev-${{ github.sha }} --no-update
+                    composer require palantirnet/drupal-rector:"*" --no-update
             -   name: Install Composer
                 working-directory: '../drupal-rector-sandbox'
                 run: ddev composer update

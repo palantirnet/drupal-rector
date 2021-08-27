@@ -23,7 +23,7 @@ class BrowserTestBaseGetMock extends BrowserTestBase {
      * A simple example using the class property.
      */
     public function example() {
-        $this->assertSession()->responseHeaderContains('some-cache-tag');
+        $this->assertSession()->responseHeaderContains('X-Drupal-Cache-Tags', 'some-cache-tag');
     }
 }
 ?>

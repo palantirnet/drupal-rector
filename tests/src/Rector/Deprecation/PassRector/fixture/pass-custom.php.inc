@@ -4,11 +4,15 @@ use Drupal\Tests\BrowserTestBase;
 
 class BrowserTestBaseGetMock extends BrowserTestBase {
 
+    protected function pass(string $message) {
+        // Overridden.
+    }
+
     /**
      * A simple example using the class property.
      */
     public function example() {
-        $this->assertNoCacheTag('some-cache-tag');
+        $this->pass('The whole transaction is rolled back when a duplicate key insert occurs.');
     }
 }
 ?>
@@ -19,11 +23,15 @@ use Drupal\Tests\BrowserTestBase;
 
 class BrowserTestBaseGetMock extends BrowserTestBase {
 
+    protected function pass(string $message) {
+        // Overridden.
+    }
+
     /**
      * A simple example using the class property.
      */
     public function example() {
-        $this->assertSession()->responseHeaderNotContains('X-Drupal-Cache-Tags', 'some-cache-tag');
+        $this->pass('The whole transaction is rolled back when a duplicate key insert occurs.');
     }
 }
 ?>
