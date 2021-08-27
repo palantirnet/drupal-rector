@@ -2,17 +2,17 @@
 
 namespace DrupalRector\Rector\Deprecation;
 
+use DrupalRector\Utility\GetDeclaringSourceTrait;
 use PhpParser\Node;
-use PHPStan\Analyser\Scope;
-use PHPStan\Reflection\Php\PhpMethodReflection;
 use Rector\Core\Rector\AbstractRector;
 use Rector\NodeCollector\ScopeResolver\ParentClassScopeResolver;
-use Rector\NodeTypeResolver\Node\AttributeKey;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 final class PassRector extends AbstractRector
 {
+
+    use GetDeclaringSourceTrait;
 
     /**
      * @var ParentClassScopeResolver
@@ -52,20 +52,7 @@ CODE_AFTER
             return null;
         }
 
-        // @todo Maybe make this a service? Definitely needed in AssertLegacyTraitBase.
-        $scope = $node->getAttribute(AttributeKey::SCOPE);
-        assert($scope instanceof Scope);
-        $classReflection = $scope->getClassReflection();
-        assert($classReflection !== null);
-        $passReflection = $classReflection->getMethod('pass', $scope);
-        if (!$passReflection instanceof PhpMethodReflection) {
-            return null;
-        }
-        $declaringTrait = $passReflection->getDeclaringTrait();
-        if ($declaringTrait === null) {
-            return null;
-        }
-        if ($declaringTrait->getName() === 'Drupal\KernelTests\AssertLegacyTrait') {
+        if ($this->getDeclaringSource($node) === 'Drupal\KernelTests\AssertLegacyTrait') {
             $this->removeNode($node);
         }
 
