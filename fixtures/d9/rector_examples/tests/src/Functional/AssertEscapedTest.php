@@ -4,7 +4,7 @@ namespace Drupal\Tests\rector_examples\Functional;
 
 use Drupal\Tests\BrowserTestBase;
 
-class AssertElementPresentTest extends BrowserTestBase {
+class AssertEscapedTest extends BrowserTestBase {
 
     public function testAssertElementPresent() {
         $this->assertEscaped('Demonstrate block regions (<"Cat" & \'Mouse\'>)');

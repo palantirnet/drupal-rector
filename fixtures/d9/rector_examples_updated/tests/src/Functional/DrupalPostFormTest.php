@@ -5,7 +5,7 @@ namespace Drupal\Tests\rector_examples\Functional;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Tests\BrowserTestBase;
 
-class BrowserTestBaseGetMock extends BrowserTestBase {
+class DrupalPostFormTest extends BrowserTestBase {
 
     /**
      * A simple example using the class property.
