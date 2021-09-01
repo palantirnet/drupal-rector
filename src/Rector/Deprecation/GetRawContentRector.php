@@ -2,6 +2,7 @@
 
 namespace DrupalRector\Rector\Deprecation;
 
+use DrupalRector\Utility\GetDeclaringSourceTrait;
 use PhpParser\Node;
 use Rector\Core\Rector\AbstractRector;
 use Rector\NodeCollector\ScopeResolver\ParentClassScopeResolver;
@@ -10,6 +11,8 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 final class GetRawContentRector extends AbstractRector
 {
+
+    use GetDeclaringSourceTrait;
 
     /**
      * @var ParentClassScopeResolver
@@ -50,9 +53,7 @@ CODE_AFTER
         if ($this->getName($node->name) !== 'getRawContent') {
             return null;
         }
-        // @todo definitely needs tests on \Drupal\FunctionalJavascriptTests\WebDriverTestBase
-        $parentClassName = $this->parentClassScopeResolver->resolveParentClassName($node);
-        if ($parentClassName !== 'Drupal\Tests\BrowserTestBase') {
+        if ($this->getDeclaringSource($node) === 'Drupal\FunctionalTests\AssertLegacyTrait') {
             return null;
         }
 
