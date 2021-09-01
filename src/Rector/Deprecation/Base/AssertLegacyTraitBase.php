@@ -3,6 +3,7 @@
 namespace DrupalRector\Rector\Deprecation\Base;
 
 use DrupalRector\Utility\AddCommentTrait;
+use DrupalRector\Utility\GetDeclaringSourceTrait;
 use PhpParser\Node;
 use Rector\Core\Rector\AbstractRector;
 
@@ -10,11 +11,13 @@ abstract class AssertLegacyTraitBase extends AbstractRector
 {
 
     use AddCommentTrait;
+    use GetDeclaringSourceTrait;
 
     protected $comment = '';
     protected $deprecatedMethodName;
     protected $methodName;
     protected $isAssertSessionMethod = true;
+    protected $declaringSource = 'Drupal\FunctionalTests\AssertLegacyTrait';
 
     public function getNodeTypes(): array
     {
@@ -33,6 +36,9 @@ abstract class AssertLegacyTraitBase extends AbstractRector
     {
         assert($node instanceof Node\Expr\MethodCall);
         if ($this->getName($node->name) !== $this->deprecatedMethodName) {
+            return null;
+        }
+        if ($this->getDeclaringSource($node) !== $this->declaringSource) {
             return null;
         }
 

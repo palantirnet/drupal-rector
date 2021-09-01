@@ -12,6 +12,7 @@ final class AssertEqualRector extends AssertLegacyTraitBase
     protected $deprecatedMethodName = 'assertEqual';
     protected $methodName = 'assertEquals';
     protected $isAssertSessionMethod = false;
+    protected $declaringSource = 'Drupal\KernelTests\AssertLegacyTrait';
 
     public function getRuleDefinition(): RuleDefinition
     {

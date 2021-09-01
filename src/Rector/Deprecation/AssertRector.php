@@ -12,6 +12,7 @@ final class AssertRector extends AssertLegacyTraitBase
     protected $deprecatedMethodName = 'assert';
     protected $methodName = 'assertTrue';
     protected $isAssertSessionMethod = false;
+    protected $declaringSource = 'Drupal\KernelTests\AssertLegacyTrait';
 
     public function getRuleDefinition(): RuleDefinition
     {
