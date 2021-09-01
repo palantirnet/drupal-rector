@@ -7,8 +7,8 @@ use Drupal\Tests\BrowserTestBase;
 class AssertElementPresentTest extends BrowserTestBase {
 
     public function testAssertElementPresent() {
-        $this->assertElementPresent('css', '.region-content-message.region-empty');
-        $this->assertElementNotPresent('css', '.region-content-message.region-empty');
+        $this->assertEscaped('Demonstrate block regions (<"Cat" & \'Mouse\'>)');
+        $this->assertNoEscaped('<div class="escaped">');
     }
 
 }
