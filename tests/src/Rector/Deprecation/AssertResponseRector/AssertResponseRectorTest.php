@@ -1,14 +1,11 @@
 <?php declare(strict_types=1);
 
-namespace DrupalRector\Tests\Rector\Deprecation\AssertTextRector;
+namespace DrupalRector\Tests\Rector\Deprecation\AssertResponseRector;
 
 use Iterator;
 use Rector\Testing\PHPUnit\AbstractRectorTestCase;
 use Symplify\SmartFileSystem\SmartFileInfo;
 
-/**
- * @coversDefaultClass \DrupalRector\Rector\Deprecation\DatetimeStorageTimezoneRector
- */
 class AssertResponseRectorTest extends AbstractRectorTestCase {
 
     /**
