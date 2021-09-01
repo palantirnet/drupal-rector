@@ -6,8 +6,12 @@ use Drupal\Tests\BrowserTestBase;
 
 class AssertFieldTest extends BrowserTestBase {
 
-    public function testExample() {
+    public function testField() {
         $this->assertField('files[upload]', 'Found file upload field.');
+    }
+
+    public function testNoField() {
+        $this->assertNoField('files[upload]', 'Found file upload field.');
     }
 
 }
