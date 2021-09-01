@@ -67,6 +67,34 @@ trait AssertLegacyTrait {
         $this->assertSession()->responseMatches($pattern);
     }
 
+    protected function assertRaw($raw) {
+        $this->assertSession()->responseContains($raw);
+    }
+
+    protected function assertNoRaw($raw) {
+        $this->assertSession()->responseNotContains($raw);
+    }
+
+    protected function assertResponse($code) {
+        $this->assertSession()->statusCodeEquals($code);
+    }
+
+    protected function assertText($text) {
+
+    }
+
+    protected function assertNoText($text) {
+
+    }
+
+    protected function assertTitle($expected_title) {
+        return $this->assertSession()->titleEquals($expected_title);
+    }
+
+    protected function buildXPathQuery($xpath, array $args = []) {
+        return $this->assertSession()->buildXPathQuery($xpath, $args);
+    }
+
     protected function assertNoUniqueText($text, $message = '') {
         $this->assertTrue(TRUE, $message);
     }
