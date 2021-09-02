@@ -12,11 +12,6 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 final class UiHelperTraitDrupalPostFormRector extends AbstractRector
 {
 
-    /**
-     * @todo remove when property is no longer private in AbstractRector.
-     */
-    private $nodesToAddCollector;
-
     public function __construct(
         NodesToAddCollector $nodesToAddCollector
     ) {
