@@ -8,7 +8,7 @@ Automate fixing deprecated Drupal code.
 
 ## Latest release
 
-[Version 0.11.2 for Drupal 8.x and 9.x deprecations](https://github.com/palantirnet/drupal-rector/tree/0.11.2). Note that Drupal 9 deprecation testing recommends PHP 8.
+[Version 0.11.3 for Drupal 8.x and 9.x deprecations](https://github.com/palantirnet/drupal-rector/tree/0.11.3). Note that Drupal 9 deprecation testing recommends PHP 8.
 
 *Note that GitHub does not let us have different default homepage and merge branches. If you checked out the project using packagist/composer, read the docs for your version.*
 
@@ -48,13 +48,13 @@ Our hope is that as we learn more about Rector, we may be able to update these r
 
 ## Issues are managed on [drupal.org](https://www.drupal.org/project/rector)
 
-https://www.drupal.org/project/rector
+https://www.drupal.org/project/issues/rector
 
 For contribution suggestions, please see the later section of this document.
 
 ## Installation
 
-**NOTE**: To have the best experience with Drupal Rector, your Drupal site should be running version 8.9. [Support for Drupal 9 is in development](https://www.drupal.org/project/rector/issues/3219156)
+**NOTE**: To have the best experience with Drupal Rector, your Drupal site should be running version 8.9 or higher.
 
 ### Install Drupal Rector inside a Drupal project.
 
