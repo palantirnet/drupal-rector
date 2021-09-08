@@ -16,6 +16,9 @@ class AssertFieldByNameTest extends BrowserTestBase {
         $this->assertSession()->fieldValueNotEquals('name', '');
         $this->assertSession()->fieldValueNotEquals('name', 'not the value');
         $this->assertSession()->fieldValueNotEquals('notexisting', '');
+        // TODO: Drupal Rector Notice: Please delete the following comment after you've made any necessary changes.
+        // Verify the assertion: buttonNotExists() if this is for a button.
         $this->assertSession()->fieldNotExists('notexisting');
     }
+
 }
