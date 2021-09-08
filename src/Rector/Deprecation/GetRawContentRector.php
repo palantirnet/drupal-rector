@@ -47,7 +47,7 @@ CODE_AFTER
     public function refactor(Node $node): ?Node
     {
         assert($node instanceof Node\Expr\MethodCall);
-        if ($this->getName($node->name) !== 'constructFieldXpath') {
+        if ($this->getName($node->name) !== 'getRawContent') {
             return null;
         }
         // @todo definitely needs tests on \Drupal\FunctionalJavascriptTests\WebDriverTestBase
