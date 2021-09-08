@@ -24,11 +24,9 @@ class UnitTestCaseGetMock extends UnitTestCase {
   /**
    * An example of chaining method calls.
    *
-   * This should not get updated, since `getMockBuilder()` is not deprecated.
+   * This will be updated by Rector PHPUnit.
    */
   public function chaining_method_calls() {
-    $this->entityTypeManager = $this->getMockBuilder('Drupal\Core\Entity\EntityTypeManagerInterface')
-      ->disableOriginalConstructor()
-      ->getMock();
+      $this->entityTypeManager = $this->createMock('Drupal\Core\Entity\EntityTypeManagerInterface');
   }
 }
