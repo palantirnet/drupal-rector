@@ -15,7 +15,7 @@ final class AssertFieldRector extends AssertLegacyTraitBase
 
     public function getRuleDefinition(): RuleDefinition
     {
-        return new RuleDefinition('Fixes deprecated AssertLegacyTrait::assertEscaped() calls', [
+        return new RuleDefinition('Fixes deprecated AssertLegacyTrait::assertField() calls', [
             new CodeSample(
                 <<<'CODE_BEFORE'
     $this->assertField('files[upload]', 'Found file upload field.');

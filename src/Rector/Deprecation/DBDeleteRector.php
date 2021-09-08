@@ -28,7 +28,7 @@ final class DBDeleteRector extends DBBase
    */
   public function getRuleDefinition(): RuleDefinition
   {
-    return new RuleDefinition('Fixes deprecated db_insert() calls',[
+    return new RuleDefinition('Fixes deprecated db_delete() calls',[
       new CodeSample(
         <<<'CODE_BEFORE'
 db_delete($table, $options);

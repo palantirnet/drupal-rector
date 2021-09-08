@@ -27,7 +27,7 @@ final class FileDirectoryOsTempRector extends FunctionToStatic
      */
     public function getRuleDefinition(): RuleDefinition
     {
-        return new RuleDefinition('Fixes deprecated file_directory_temp() calls',[
+        return new RuleDefinition('Fixes deprecated file_directory_os_temp() calls',[
             new CodeSample(
                 <<<'CODE_BEFORE'
 $dir = file_directory_os_temp();

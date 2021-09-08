@@ -24,7 +24,7 @@ final class GetAllOptionsRector extends AbstractRector
 
     public function getRuleDefinition(): RuleDefinition
     {
-        return new RuleDefinition('Fixes deprecated AssertLegacyTrait::getRawContent() calls', [
+        return new RuleDefinition('Fixes deprecated AssertLegacyTrait::getAllOptions() calls', [
             new CodeSample(
                 <<<'CODE_BEFORE'
     $this->drupalGet('/form-test/select');
