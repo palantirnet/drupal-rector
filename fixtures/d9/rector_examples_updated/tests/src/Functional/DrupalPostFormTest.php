@@ -2,7 +2,6 @@
 
 namespace Drupal\Tests\rector_examples\Functional;
 
-use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Tests\BrowserTestBase;
 
 class DrupalPostFormTest extends BrowserTestBase {
