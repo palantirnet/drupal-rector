@@ -6,7 +6,8 @@ use Drupal\Tests\BrowserTestBase;
 
 class PassTest extends BrowserTestBase {
 
-    public function testExample() {
+    public function testExample()
+    {
     }
 
 }

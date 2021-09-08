@@ -27,11 +27,11 @@ final class GetRawContentRector extends AbstractRector
         return new RuleDefinition('Fixes deprecated AssertLegacyTrait::getRawContent() calls', [
             new CodeSample(
                 <<<'CODE_BEFORE'
-$this->getRawContent()
+$this->getRawContent();
 CODE_BEFORE
                 ,
                 <<<'CODE_AFTER'
-$this->getSession()->getPage()->getContent()
+$this->getSession()->getPage()->getContent();
 CODE_AFTER
             )
         ]);
