@@ -55,6 +55,12 @@ CODE_AFTER
             $this->nodeFactory->createArgs(['selected'])
         );
 
+        if ($message === null) {
+            return $this->nodeFactory->createLocalMethodCall('assertTrue', [
+                $this->nodeFactory->createArg($hasAttributeNode),
+            ]);
+        }
+
         return $this->nodeFactory->createLocalMethodCall('assertTrue', [
             $this->nodeFactory->createArg($hasAttributeNode),
             $this->nodeFactory->createArg($message)
