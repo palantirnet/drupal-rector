@@ -17,6 +17,11 @@ final class AssertNoUniqueTextRector extends AbstractRector
 
     use GetDeclaringSourceTrait;
 
+    /**
+     * @todo remove when property is no longer private in AbstractRector.
+     */
+    protected $nodesToAddCollector;
+
     public function __construct(
         NodesToAddCollector $nodesToAddCollector
     ) {
