@@ -22,10 +22,10 @@ final class AssertFieldByIdRector extends AbstractRector
 CODE_BEFORE
                 ,
                 <<<'CODE_AFTER'
-    $this->assertSession()->fieldValueEquals('name', '');
-    $this->assertSession()->fieldValueEquals('name', 'not the value');
-    $this->assertSession()->fieldValueEquals('notexisting', '');
-    $this->assertSession()->fieldExists('notexisting');
+    $this->assertSession()->fieldExists('edit-name');
+    $this->assertSession()->fieldValueEquals('edit-name', 'Test name');
+    $this->assertSession()->fieldExists('edit-description');
+    $this->assertSession()->fieldValueEquals('edit-description', '');
 CODE_AFTER
             )
         ]);
@@ -57,7 +57,7 @@ CODE_AFTER
         }
         // Check if argument two is a `null` and convert to fieldExists.
         $arg2 = $args[1]->value;
-        if ($arg2 instanceof Node\Expr\ConstFetch && (string) $arg2->name === 'null') {
+        if ($arg2 instanceof Node\Expr\ConstFetch && strtolower((string) $arg2->name) === 'null') {
             return $this->nodeFactory->createMethodCall($assertSessionNode, 'fieldExists', [$args[0]]);
         }
 

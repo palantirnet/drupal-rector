@@ -22,8 +22,8 @@ CODE_BEFORE
                 ,
                 <<<'CODE_AFTER'
 $this->assertSession()->fieldValueEquals('field_name', 'expected_value');
-$this->assertSession()->fieldExists("field_name[0][value][date]", '', 'Date element found.');
-$this->assertSession()->fieldExists("field_name[0][value][time]", null, 'Time element found.');
+$this->assertSession()->fieldValueEquals("field_name[0][value][date]", '');
+$this->assertSession()->fieldExists("field_name[0][value][time]");
 CODE_AFTER
             )
         ]);
@@ -55,7 +55,7 @@ CODE_AFTER
         }
         // Check if argument two is a `null` and convert to fieldExists.
         $arg2 = $args[1]->value;
-        if ($arg2 instanceof Node\Expr\ConstFetch && (string) $arg2->name === 'null') {
+        if ($arg2 instanceof Node\Expr\ConstFetch && strtolower((string) $arg2->name) === 'null') {
             return $this->nodeFactory->createMethodCall($assertSessionNode, 'fieldExists', [$args[0]]);
         }
 

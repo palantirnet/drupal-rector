@@ -57,7 +57,7 @@ CODE_AFTER
         }
         // Check if argument two is a `null` and convert to fieldExists.
         $arg2 = $args[1]->value;
-        if ($arg2 instanceof Node\Expr\ConstFetch && (string) $arg2->name === 'null') {
+        if ($arg2 instanceof Node\Expr\ConstFetch && strtolower((string) $arg2->name) === 'null') {
             return $this->nodeFactory->createMethodCall($assertSessionNode, 'fieldNotExists', [$args[0]]);
         }
 

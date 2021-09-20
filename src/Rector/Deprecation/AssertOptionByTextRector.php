@@ -21,7 +21,7 @@ $this->assertOptionByText('edit-settings-view-mode', 'default');
 CODE_BEFORE
                 ,
                 <<<'CODE_AFTER'
-$this->assertSession()->assertOptionByText('edit-settings-view-mode', 'default');
+$this->assertSession()->optionExists('edit-settings-view-mode', 'default');
 CODE_AFTER
             ),
 

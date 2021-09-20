@@ -27,11 +27,11 @@ final class GetRawContentRector extends AbstractRector
         return new RuleDefinition('Fixes deprecated AssertLegacyTrait::getRawContent() calls', [
             new CodeSample(
                 <<<'CODE_BEFORE'
-$this->getRawContent()
+$this->getRawContent();
 CODE_BEFORE
                 ,
                 <<<'CODE_AFTER'
-$this->getSession()->getPage()->getContent()
+$this->getSession()->getPage()->getContent();
 CODE_AFTER
             )
         ]);
@@ -47,7 +47,7 @@ CODE_AFTER
     public function refactor(Node $node): ?Node
     {
         assert($node instanceof Node\Expr\MethodCall);
-        if ($this->getName($node->name) !== 'constructFieldXpath') {
+        if ($this->getName($node->name) !== 'getRawContent') {
             return null;
         }
         // @todo definitely needs tests on \Drupal\FunctionalJavascriptTests\WebDriverTestBase

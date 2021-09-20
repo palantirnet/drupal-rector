@@ -19,7 +19,7 @@ final class AssertOptionSelectedRector extends AbstractRector
 CODE_BEFORE
                 ,
                 <<<'CODE_AFTER'
-    $this->assertTrue($this->assertSession()->optionExists($id, $option)->hasAttribute('selected'), $message);
+    $this->assertTrue($this->assertSession()->optionExists('options', 2)->hasAttribute('selected'));
 CODE_AFTER
             )
         ]);
@@ -54,6 +54,12 @@ CODE_AFTER
             'hasAttribute',
             $this->nodeFactory->createArgs(['selected'])
         );
+
+        if ($message === null) {
+            return $this->nodeFactory->createLocalMethodCall('assertTrue', [
+                $this->nodeFactory->createArg($hasAttributeNode),
+            ]);
+        }
 
         return $this->nodeFactory->createLocalMethodCall('assertTrue', [
             $this->nodeFactory->createArg($hasAttributeNode),

@@ -15,11 +15,11 @@ final class ConstructFieldXpathRector extends AbstractRector {
         return new RuleDefinition('Fixes deprecated AssertLegacyTrait::constructFieldXpath() calls', [
             new CodeSample(
                 <<<'CODE_BEFORE'
-$this->constructFieldXpath('id', 'edit-preferred-admin-langcode')
+$this->constructFieldXpath('id', 'edit-preferred-admin-langcode');
 CODE_BEFORE
                 ,
                 <<<'CODE_AFTER'
-$this->getSession()->getPage()->findField('edit-preferred-admin-langcode')
+$this->getSession()->getPage()->findField('edit-preferred-admin-langcode');
 CODE_AFTER
             )
         ]);

@@ -1,12 +1,13 @@
 <?php declare(strict_types=1);
 
-namespace DrupalRector\Tests\Rector\Deprecation\AssertPatternRector;
+namespace DrupalRector\Tests\Rector\Deprecation\AssertFieldByIdRector;
 
 use Iterator;
 use Rector\Testing\PHPUnit\AbstractRectorTestCase;
 use Symplify\SmartFileSystem\SmartFileInfo;
 
-class AssertHeaderRectorTest extends AbstractRectorTestCase {
+class AssertFieldByIdRectorTest extends AbstractRectorTestCase
+{
 
     /**
      * @covers ::refactor
