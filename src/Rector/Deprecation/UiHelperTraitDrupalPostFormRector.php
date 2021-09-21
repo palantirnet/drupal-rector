@@ -12,12 +12,6 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 final class UiHelperTraitDrupalPostFormRector extends AbstractRector
 {
 
-    public function __construct(
-        NodesToAddCollector $nodesToAddCollector
-    ) {
-        $this->nodesToAddCollector = $nodesToAddCollector;
-    }
-
     public function getRuleDefinition(): RuleDefinition
     {
         return new RuleDefinition('Fixes deprecated UiHelperTrait::drupalPostForm() calls', [

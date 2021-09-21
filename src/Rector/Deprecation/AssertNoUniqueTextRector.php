@@ -17,12 +17,6 @@ final class AssertNoUniqueTextRector extends AbstractRector
 
     use GetDeclaringSourceTrait;
 
-    public function __construct(
-        NodesToAddCollector $nodesToAddCollector
-    ) {
-        $this->nodesToAddCollector = $nodesToAddCollector;
-    }
-
     public function getRuleDefinition(): RuleDefinition
     {
         return new RuleDefinition('Fixes deprecated AssertLegacyTrait::assertNoUniqueText() calls', [
