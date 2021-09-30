@@ -6,6 +6,9 @@ use Drupal\Tests\BrowserTestBase;
 
 class ConstructFieldXpathTest extends BrowserTestBase {
 
+    /**
+     * @doesNotPerformAssertions
+     */
     public function testExample() {
         $this->drupalGet('/form-test/select');
         $this->getSession()->getPage()->findField('edit-preferred-admin-langcode');

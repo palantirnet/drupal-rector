@@ -6,6 +6,9 @@ use Drupal\Tests\BrowserTestBase;
 
 class PassTest extends BrowserTestBase {
 
+    /**
+     * @doesNotPerformAssertions
+     */
     public function testExample()
     {
     }
