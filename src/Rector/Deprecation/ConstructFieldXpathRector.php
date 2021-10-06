@@ -42,7 +42,7 @@ CODE_AFTER
         if ($this->getName($node->name) !== 'constructFieldXpath') {
             return null;
         }
-        if ($this->getDeclaringSource($node) === 'Drupal\FunctionalTests\AssertLegacyTrait') {
+        if ($this->getDeclaringSource($node) !== 'Drupal\FunctionalTests\AssertLegacyTrait') {
             return null;
         }
         $args = $node->args;

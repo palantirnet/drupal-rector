@@ -55,7 +55,7 @@ CODE_AFTER
         if ($this->getName($node->name) !== 'getAllOptions') {
             return null;
         }
-        if ($this->getDeclaringSource($node) === 'Drupal\FunctionalTests\AssertLegacyTrait') {
+        if ($this->getDeclaringSource($node) !== 'Drupal\FunctionalTests\AssertLegacyTrait') {
             return null;
         }
 
