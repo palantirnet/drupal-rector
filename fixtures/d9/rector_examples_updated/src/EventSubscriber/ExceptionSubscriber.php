@@ -9,7 +9,7 @@ use Drupal\Core\ParamConverter\ParamNotConvertedException;
 class ExceptionSubscriber extends CustomPageExceptionHtmlSubscriber {
 
     public function on404(ExceptionEvent $event) {
-        $exception = $event->getException();
+        $exception = $event->getThrowable();
         $previous = $exception->getPrevious();
         if ($previous instanceof ParamNotConvertedException) {
             // logic
