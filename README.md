@@ -8,7 +8,7 @@ Automate fixing deprecated Drupal code.
 
 ## Latest release
 
-[Version 0.11.3 for Drupal 8.x and 9.x deprecations](https://github.com/palantirnet/drupal-rector/tree/0.11.3). Note that Drupal 9 deprecation testing recommends PHP 8.
+[Version 0.11.4 for Drupal 8.x and 9.x deprecations](https://github.com/palantirnet/drupal-rector/tree/0.11.4). Note that Drupal 9 deprecation testing recommends PHP 8.
 
 *Note that GitHub does not let us have different default homepage and merge branches. If you checked out the project using packagist/composer, read the docs for your version.*
 
