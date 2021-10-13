@@ -12,6 +12,7 @@ final class AssertIdenticalRector extends AssertLegacyTraitBase
     protected $deprecatedMethodName = 'assertIdentical';
     protected $methodName = 'assertSame';
     protected $isAssertSessionMethod = false;
+    protected $declaringSource = 'Drupal\KernelTests\AssertLegacyTrait';
 
     public function getRuleDefinition(): RuleDefinition
     {

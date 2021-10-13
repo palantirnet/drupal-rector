@@ -2,12 +2,16 @@
 
 namespace DrupalRector\Rector\Deprecation;
 
+use DrupalRector\Utility\GetDeclaringSourceTrait;
 use PhpParser\Node;
 use Rector\Core\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
-final class ConstructFieldXpathRector extends AbstractRector {
+final class ConstructFieldXpathRector extends AbstractRector
+{
+
+    use GetDeclaringSourceTrait;
 
 
     public function getRuleDefinition(): RuleDefinition
@@ -36,6 +40,9 @@ CODE_AFTER
     {
         assert($node instanceof Node\Expr\MethodCall);
         if ($this->getName($node->name) !== 'constructFieldXpath') {
+            return null;
+        }
+        if ($this->getDeclaringSource($node) !== 'Drupal\FunctionalTests\AssertLegacyTrait') {
             return null;
         }
         $args = $node->args;
