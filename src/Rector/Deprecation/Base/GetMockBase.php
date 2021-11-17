@@ -3,8 +3,10 @@
 namespace DrupalRector\Rector\Deprecation\Base;
 
 use PhpParser\Node;
-use Rector\NodeCollector\ScopeResolver\ParentClassScopeResolver;
+use PHPStan\Analyser\Scope;
 use Rector\Core\Rector\AbstractRector;
+use Rector\NodeCollector\ScopeResolver\ParentClassScopeResolver;
+use Rector\NodeTypeResolver\Node\AttributeKey;
 
 /**
  * Replaces deprecated getMock() calls in classes.
@@ -48,7 +50,12 @@ abstract class GetMockBase extends AbstractRector
    */
   public function refactor(Node $node): ?Node
   {
-    $parentClassName = $this->parentClassScopeResolver->resolveParentClassName($node);
+    $scope = $node->getAttribute(AttributeKey::SCOPE);
+    if (!$scope instanceof Scope) {
+      return null;
+    }
+
+    $parentClassName = $this->parentClassScopeResolver->resolveParentClassName($scope);
     /* @var Node\Expr\MethodCall $node */
     // This checks for a method call with the method name of `getMock` and that
     // the variable calling `getMock` is `$this`, not some other variable call,
