@@ -2,6 +2,8 @@
 
 namespace DrupalRector\Utility;
 
+use PhpParser\Node\Stmt\Class_;
+
 /**
  * Helps to figure out which traits are used by a class.
  */
@@ -35,5 +37,17 @@ trait TraitsByClassHelperTrait
         }
 
         return $this->_traitsByClasses[$class];
+    }
+
+    final protected function checkClassTypeHasTrait(?Class_ $class, string $trait): bool
+    {
+        if ($class === null) {
+            return false;
+        }
+        $className = $this->nodeNameResolver->getName($class);
+        return in_array(
+            $trait,
+            $this->getTraitsByClass($className)
+        );
     }
 }
