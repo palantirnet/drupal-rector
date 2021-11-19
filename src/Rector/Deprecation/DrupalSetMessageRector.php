@@ -9,6 +9,7 @@ use PhpParser\Node;
 use PHPStan\PhpDocParser\Ast\PhpDoc\GenericTagValueNode;
 use PHPStan\PhpDocParser\Ast\PhpDoc\PhpDocTagNode;
 use Rector\BetterPhpDocParser\PhpDocInfo\PhpDocInfo;
+use Rector\Core\Exception\ShouldNotHappenException;
 use Rector\NodeTypeResolver\Node\AttributeKey;
 use Rector\Core\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
@@ -69,10 +70,12 @@ CODE_AFTER
     {
         /** @var Node\Expr\FuncCall $node */
         if ($this->getName($node->name) === 'drupal_set_message') {
-            $class_name = $node->getAttribute(AttributeKey::CLASS_NAME);
-
-            if ($class_name && in_array('Drupal\Core\Messenger\MessengerTrait', $this->getTraitsByClass($class_name))) {
-                $messenger_service = new Node\Expr\MethodCall(new Node\Expr\Variable('this'), new Node\Identifier('messenger'));
+            $class = $this->betterNodeFinder->findParentType($node, Node\Stmt\Class_::class);
+            if ($this->checkClassTypeHasTrait($class, 'Drupal\Core\Messenger\MessengerTrait')) {
+                $messenger_service = new Node\Expr\MethodCall(
+                    new Node\Expr\Variable('this'),
+                    new Node\Identifier('messenger')
+                );
             } else {
                 // TODO: Add the messanger trait to a class that doesn't have it.
                 // For now, we are using a static call.

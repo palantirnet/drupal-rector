@@ -61,10 +61,10 @@ CODE_AFTER
     {
         /** @var Node\Expr\MethodCall $node */
           if ($this->getName($node->name) === 'l') {
-            $class_name = $node->getAttribute(AttributeKey::CLASS_NAME);
+              $class = $this->betterNodeFinder->findParentType($node, Node\Stmt\Class_::class);
 
             // Check if class has LinkGeneratorTrait.
-            if ($class_name && in_array('Drupal\Core\Routing\LinkGeneratorTrait', $this->getTraitsByClass($class_name))) {
+            if ($this->checkClassTypeHasTrait($class, 'Drupal\Core\Routing\LinkGeneratorTrait')) {
               $this->addDrupalRectorComment($node, 'Please manually remove the `use LinkGeneratorTrait;` statement from this class.');
 
               // Replace with a static call to Link::fromTextAndUrl().

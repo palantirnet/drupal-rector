@@ -1,15 +1,14 @@
 <?php declare(strict_types=1);
 
-namespace DrupalRector\Tests\Rector\Deprecation\AssertPatternRector;
+namespace DrupalRector\Tests\Rector\Deprecation\GetMockRector;
 
 use Iterator;
 use Rector\Testing\PHPUnit\AbstractRectorTestCase;
 use Symplify\SmartFileSystem\SmartFileInfo;
 
-class AssertPatternRectorTest extends AbstractRectorTestCase {
+class GetMockRectorTest extends AbstractRectorTestCase {
 
     /**
-     * @covers ::refactor
      * @dataProvider provideData()
      */
     public function test(SmartFileInfo $fileInfo): void

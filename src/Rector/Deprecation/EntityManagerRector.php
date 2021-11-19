@@ -4,8 +4,9 @@ namespace DrupalRector\Rector\Deprecation;
 
 use DrupalRector\Utility\AddCommentTrait;
 use PhpParser\Node;
-use Rector\NodeCollector\ScopeResolver\ParentClassScopeResolver;
+use PHPStan\Analyser\Scope;
 use Rector\Core\Rector\AbstractRector;
+use Rector\NodeCollector\ScopeResolver\ParentClassScopeResolver;
 use Rector\NodeTypeResolver\Node\AttributeKey;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
@@ -91,27 +92,31 @@ CODE_AFTER
         return $node;
       }
 
-        $parentClassName = $this->parentClassScopeResolver->resolveParentClassName($node);
-      if ($node instanceof Node\Expr\MethodCall && $parentClassName === 'Drupal\Core\Controller\ControllerBase') {
-        // If we call a method on `entityManager`, we need to check that method and we can call the correct service that the method uses.
-        $next_node = $node->getAttribute(AttributeKey::NEXT_NODE);
+        $scope = $node->getAttribute(AttributeKey::SCOPE);
+        if ($scope instanceof Scope) {
+            $parentClassName = $this->parentClassScopeResolver->resolveParentClassName($scope);
+            if ($node instanceof Node\Expr\MethodCall && $parentClassName === 'Drupal\Core\Controller\ControllerBase') {
+                // If we call a method on `entityManager`, we need to check that method and we can call the correct service that the method uses.
+                $next_node = $node->getAttribute(AttributeKey::NEXT_NODE);
 
-        if (!is_null($next_node)) {
-          $service = $this->getServiceByMethodName($this->getName($next_node));
+                if (!is_null($next_node)) {
+                    $service = $this->getServiceByMethodName($this->getName($next_node));
 
-          // This creates a service call like `\Drupal::service('entity_type.manager').
-          // This doesn't use dependency injection, but it should work.
-          $node = new Node\Expr\StaticCall(new Node\Name\FullyQualified('Drupal'), 'service', [new Node\Arg(new Node\Scalar\String_($service))]);
+                    // This creates a service call like `\Drupal::service('entity_type.manager').
+                    // This doesn't use dependency injection, but it should work.
+                    $node = new Node\Expr\StaticCall(new Node\Name\FullyQualified('Drupal'), 'service', [new Node\Arg(new Node\Scalar\String_($service))]);
+                }
+                else {
+                    // If we are making a direct call to ->entityManager(), we can assume the new class will also have entityTypeManager.
+                    $this->addDrupalRectorComment($node, 'We are assuming that we want to use the `$this->entityTypeManager` injected service since no method was called here directly. Please confirm this is the case. If another service is needed, you may need to inject that yourself. See https://www.drupal.org/node/2549139 for more information.');
+
+                    $node = new Node\Expr\MethodCall(new Node\Expr\Variable('this'), new Node\Identifier('entityTypeManager'));
+                }
+
+                return $node;
+            }
         }
-        else {
-          // If we are making a direct call to ->entityManager(), we can assume the new class will also have entityTypeManager.
-          $this->addDrupalRectorComment($node, 'We are assuming that we want to use the `$this->entityTypeManager` injected service since no method was called here directly. Please confirm this is the case. If another service is needed, you may need to inject that yourself. See https://www.drupal.org/node/2549139 for more information.');
 
-          $node = new Node\Expr\MethodCall(new Node\Expr\Variable('this'), new Node\Identifier('entityTypeManager'));
-        }
-
-        return $node;
-      }
     }
 
     return null;
