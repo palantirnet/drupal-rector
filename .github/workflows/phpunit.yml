@@ -10,7 +10,7 @@ jobs:
         strategy:
             matrix:
                 php-version:
-                    - "8.0"
+                    - "8.1"
         steps:
             -   uses: actions/checkout@v2
             -   uses: shivammathur/setup-php@v2

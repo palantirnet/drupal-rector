@@ -49,7 +49,12 @@
         "optimize-autoloader": true,
         "update-with-dependencies": true,
         "preferred-install": "dist",
-        "sort-packages": true
+        "sort-packages": true,
+        "allow-plugins": {
+            "phpstan/extension-installer": true,
+            "rector/extension-installer": true,
+            "cweagans/composer-patches": true
+        }
     },
     "replace": {
         "palantirnet/drupal8-rector": "*",
