@@ -8,6 +8,9 @@ use PhpParser\Comment;
 use PhpParser\Node;
 use PHPStan\PhpDocParser\Ast\PhpDoc\GenericTagValueNode;
 use PHPStan\PhpDocParser\Ast\PhpDoc\PhpDocTagNode;
+use PHPStan\Type\Constant\ConstantStringType;
+use PHPStan\Type\Generic\GenericClassStringType;
+use PHPStan\Type\StringType;
 use Rector\BetterPhpDocParser\PhpDocInfo\PhpDocInfo;
 use Rector\Core\Exception\ShouldNotHappenException;
 use Rector\NodeTypeResolver\Node\AttributeKey;
@@ -92,10 +95,22 @@ CODE_AFTER
 
             // Message's type parameter is optional. Use it if present.
             if (array_key_exists(1, $node->args)) {
-                if (method_exists($node->args[1]->value, '__toString')) {
-                    $method_name = 'add' . ucfirst((string) $node->args[1]->value);
+                $messageTypeArgType = $this->nodeTypeResolver->getType($node->args[1]->value);
+                $messageType = '';
+
+                if ($messageTypeArgType instanceof ConstantStringType) {
+                    $messageType = $messageTypeArgType->getValue();
                 } elseif ($node->args[1]->value instanceof Node\Scalar\String_) {
-                    $method_name = 'add' . ucfirst($node->args[1]->value->value);
+                    $messageType = $node->args[1]->value->value;
+                }
+
+                if ($messageType !== '') {
+                    if (in_array($messageType, ['error', 'status', 'warning'], true)) {
+                        $method_name = 'add' . ucfirst($messageType);
+                    } else {
+                        $method_name = 'addMessage';
+                        $method_arguments[] = $node->args[1];
+                    }
                 } else {
                     /*
                      * For now, if we hit a more complex situation, we don't process this instance of the depracation.
