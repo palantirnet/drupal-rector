@@ -1,0 +1,10 @@
+<?php
+
+function extension_paths() {
+    \Drupal::service('extension.list.module')->getPath('node');
+    \Drupal::service('extension.list.theme')->getPath('seven');
+    \Drupal::service('extension.list.profile')->getPath('standard');
+    \Drupal::service('extension.list.module')->getPathname('node');
+    \Drupal::service('extension.list.theme')->getPathname('seven');
+    \Drupal::service('extension.list.profile')->getPathname('standard');
+}

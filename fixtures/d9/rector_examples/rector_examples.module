@@ -1,0 +1,10 @@
+<?php
+
+function extension_paths() {
+    drupal_get_path('module', 'node');
+    drupal_get_path('theme', 'seven');
+    drupal_get_path('profile', 'standard');
+    drupal_get_filename('module', 'node');
+    drupal_get_filename('theme', 'seven');
+    drupal_get_filename('profile', 'standard');
+}
