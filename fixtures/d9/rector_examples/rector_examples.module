@@ -8,3 +8,8 @@ function extension_paths() {
     drupal_get_filename('theme', 'seven');
     drupal_get_filename('profile', 'standard');
 }
+
+function rector_examples_with_render() {
+    $build = [];
+    $output = render($build);
+}

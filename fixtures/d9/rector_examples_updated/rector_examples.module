@@ -8,3 +8,8 @@ function extension_paths() {
     \Drupal::service('extension.list.theme')->getPathname('seven');
     \Drupal::service('extension.list.profile')->getPathname('standard');
 }
+
+function rector_examples_with_render() {
+    $build = [];
+    $output = \Drupal::service('renderer')->render($build);
+}
