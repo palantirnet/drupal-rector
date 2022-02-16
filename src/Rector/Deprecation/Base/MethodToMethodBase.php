@@ -4,6 +4,7 @@ namespace DrupalRector\Rector\Deprecation\Base;
 
 use DrupalRector\Utility\AddCommentTrait;
 use PhpParser\Node;
+use PHPStan\Type\ObjectType;
 use Rector\Core\Rector\AbstractRector;
 
 /**
@@ -56,23 +57,33 @@ abstract class MethodToMethodBase extends AbstractRector
      */
     public function refactor(Node $node): ?Node
     {
-        /** @var Node\Expr\MethodCall $node */
-        // TODO: Check the class to see if it implements $this->className.
-        if ($this->getName($node->name) === $this->deprecatedMethodName) {
+        assert($node instanceof Node\Expr\MethodCall);
+        if ($this->getName($node->name) !== $this->deprecatedMethodName) {
+            return null;
+        }
+        $callerType = $this->nodeTypeResolver->getType($node->var);
+        $expectedType = new ObjectType($this->className);
+
+        $isSuperOf = $expectedType->isSuperTypeOf($callerType);
+        if ($isSuperOf->yes()) {
+            $node->name = new Node\Name($this->methodName);
+            return $node;
+        }
+
+        if ($isSuperOf->maybe()) {
             $node_var = $node->var->name;
 
             if ($node->var instanceof Node\Expr\Variable) {
-              $node_var = "$$node_var";
+                $node_var = "$$node_var";
             }
-
             if ($node->var instanceof Node\Expr\MethodCall) {
-              $node_var = "$node_var()";
+                $node_var = "$node_var()";
             }
-
-            $this->addDrupalRectorComment($node, "Please confirm that `$node_var` is an instance of `$this->className`. Only the method name and not the class name was checked for this replacement, so this may be a false positive.");
-            
+            $this->addDrupalRectorComment(
+                $node,
+                "Please confirm that `$node_var` is an instance of `$this->className`. Only the method name and not the class name was checked for this replacement, so this may be a false positive."
+            );
             $node->name = new Node\Name($this->methodName);
-
             return $node;
         }
 
