@@ -68,7 +68,7 @@
         "phpstan/phpstan": "^1.0",
         "phpstan/phpstan-deprecation-rules": "^1.0",
         "phpunit/phpunit": "^9.5",
-        "rector/rector-src": "~0.12",
+        "rector/rector-src": "dev-main",
         "symfony/yaml": "^5"
     }
 }
