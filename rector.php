@@ -28,7 +28,6 @@ return static function (ContainerConfigurator $containerConfigurator): void {
     $parameters->set(Option::FILE_EXTENSIONS, ['php', 'module', 'theme', 'install', 'profile', 'inc', 'engine']);
     $parameters->set(Option::AUTO_IMPORT_NAMES, true);
     $parameters->set(Option::IMPORT_SHORT_CLASSES, false);
-    $parameters->set(Option::IMPORT_DOC_BLOCKS, false);
 
     $parameters->set('drupal_rector_notices_as_comments', true);
 };
