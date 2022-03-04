@@ -57,9 +57,12 @@ abstract class EntityLoadBase extends AbstractRector
         // This will work for node_load, etc.
         $method_name = $this->entityType . '_load';
     }
+    $method_name_multiple = $method_name . '_multiple';
 
     /** @var Node\Expr\FuncCall $node */
-    if ($this->getName($node->name) === $method_name) {
+    if (in_array($this->getName($node->name), [$method_name, $method_name_multiple])) {
+        $is_multiple = $this->getName($node->name) === $method_name_multiple;
+
         // We are doing this here, because we know we have access to arguments since we have already checked the method name.
         if ($is_rector_rule_entity_load) {
             // Since we have one more argument, all the array keys are one greater.
@@ -76,8 +79,8 @@ abstract class EntityLoadBase extends AbstractRector
             $entity_type = new Node\Arg(new Node\Scalar\String_($this->entityType));
         }
 
-        /* @var Node\Arg $entity_id. */
-        $entity_id = $node->args[0 + $argument_offset];
+        /* @var Node\Arg $entity_ids. */
+        $entity_ids = $node->args[0 + $argument_offset];
 
         $name = new Node\Name\FullyQualified('Drupal');
 
@@ -95,9 +98,9 @@ abstract class EntityLoadBase extends AbstractRector
         $getStorage_node = new Node\Expr\MethodCall($var, $getStorage_method_name, [$entity_type]);
 
         // Create the simple version of the entity load.
-        $load_method_name = new Node\Identifier('load');
+        $load_method_name = new Node\Identifier($is_multiple ? 'loadMultiple' : 'load');
 
-        $new_node = new Node\Expr\MethodCall($getStorage_node, $load_method_name, [$entity_id]);
+        $new_node = new Node\Expr\MethodCall($getStorage_node, $load_method_name, [$entity_ids]);
 
         // We need to account for the `reset` option which adds a method to the chain.
         // We will replace the original method with a ternary to evaluate and provide both options.
@@ -109,14 +112,14 @@ abstract class EntityLoadBase extends AbstractRector
 
             $resetCache_method_name = new Node\Identifier('resetCache');
 
-            $reset_args = [
+            $reset_args = $is_multiple ?
+                $entity_ids :
                 // This creates a new argument that wraps the entity ID in an array.
-                new Node\Arg(new Node\Expr\Array_([new Node\Expr\ArrayItem($entity_id->value)])),
-            ];
+                new Node\Arg(new Node\Expr\Array_([new Node\Expr\ArrayItem($entity_ids->value)]));
 
-            $entity_load_reset_node = new Node\Expr\MethodCall($getStorage_node, $resetCache_method_name, $reset_args);
+            $entity_load_reset_node = new Node\Expr\MethodCall($getStorage_node, $resetCache_method_name, [$reset_args]);
 
-            $entity_load_reset_node = new Node\Expr\MethodCall($entity_load_reset_node, $load_method_name, [$entity_id]);
+            $entity_load_reset_node = new Node\Expr\MethodCall($entity_load_reset_node, $load_method_name, [$entity_ids]);
 
             // Replace the new_node with a ternary.
             $new_node = new Node\Expr\Ternary($reset_flag->value, $entity_load_reset_node, $new_node);
