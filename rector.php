@@ -28,7 +28,6 @@ return static function (ContainerConfigurator $containerConfigurator): void {
     $parameters->set(Option::FILE_EXTENSIONS, ['php', 'module', 'theme', 'install', 'profile', 'inc', 'engine']);
     $parameters->set(Option::AUTO_IMPORT_NAMES, true);
     $parameters->set(Option::IMPORT_SHORT_CLASSES, false);
-    $parameters->set(Option::APPLY_AUTO_IMPORT_NAMES_ON_CHANGED_FILES_ONLY, true);
     // @phpstan-ignore-next-line
     $parameters->set(Option::IMPORT_DOC_BLOCKS, false);
 
