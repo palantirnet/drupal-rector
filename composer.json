@@ -14,7 +14,7 @@
         "webflo/drupal-finder": "^1.2"
     },
     "conflict": {
-        "rector/rector": ">=0.12.21"
+        "rector/rector": ">0.12.18"
     },
     "license": "MIT",
     "authors": [
@@ -71,7 +71,7 @@
         "phpstan/phpstan": "^1.0",
         "phpstan/phpstan-deprecation-rules": "^1.0",
         "phpunit/phpunit": "^9.5",
-        "rector/rector-src": "dev-main#4b351a730638cdf31f97dc02ca708f096582d604",
+        "rector/rector-src": "dev-main#f82fa3182cf021adbce60e2c6d9e823df5737881",
         "symfony/yaml": "^5 || ^6"
     }
 }
