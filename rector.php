@@ -26,7 +26,7 @@ return static function (ContainerConfigurator $containerConfigurator): void {
 
     $parameters->set(Option::SKIP, ['*/upgrade_status/tests/modules/*']);
     $parameters->set(Option::FILE_EXTENSIONS, ['php', 'module', 'theme', 'install', 'profile', 'inc', 'engine']);
-    $parameters->set(Option::AUTO_IMPORT_NAMES, false);
+    $parameters->set(Option::AUTO_IMPORT_NAMES, true);
     $parameters->set(Option::IMPORT_SHORT_CLASSES, false);
     // @phpstan-ignore-next-line
     $parameters->set(Option::IMPORT_DOC_BLOCKS, false);
