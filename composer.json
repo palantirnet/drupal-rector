@@ -13,6 +13,9 @@
         "rector/rector": "~0.12",
         "webflo/drupal-finder": "^1.2"
     },
+    "conflict": {
+        "rector/rector": ">0.12.17"
+    },
     "license": "MIT",
     "authors": [
         {
@@ -68,7 +71,14 @@
         "phpstan/phpstan": "^1.0",
         "phpstan/phpstan-deprecation-rules": "^1.0",
         "phpunit/phpunit": "^9.5",
-        "rector/rector-src": "dev-main",
+        "rector/rector-src": "dev-main#77a4582d5044446b8da43ab91a09082fa0413a23",
+        "rector/rector-cakephp": "dev-main#eab7b7992e3462c40b2eb8f7ab6d2013eaf20c76",
+        "rector/rector-doctrine": "dev-main#21431cc9e81990191be9c235e67c631ed518d0a3",
+        "rector/rector-laravel": "dev-main#31d9892d1f2abd41a118589ad76a065bb24150ea",
+        "rector/rector-nette": "dev-main#7aa632f0fd210b0795cb92b98e648164049db80e",
+        "rector/rector-phpoffice": "dev-main#1e12437861bb9e06f776b9f9be5811a7bf219729",
+        "rector/rector-phpunit": "dev-main#baf6f9eaa1eadc03d61ac6f414077d85b0540dfa",
+        "rector/rector-symfony": "dev-main#a3ad2a20c028535c7d26ba85bed729d838eb9297",
         "symfony/yaml": "^5 || ^6"
     }
 }
