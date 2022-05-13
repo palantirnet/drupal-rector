@@ -48,6 +48,7 @@ use DrupalRector\Rector\Deprecation\GetAllOptionsRector;
 use DrupalRector\Rector\Deprecation\GetRawContentRector;
 use DrupalRector\Rector\Deprecation\PassRector;
 use DrupalRector\Rector\Deprecation\UiHelperTraitDrupalPostFormRector;
+use DrupalRector\Rector\Deprecation\UserPasswordRector;
 use Rector\PHPUnit\Set\PHPUnitSetList;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 
@@ -108,4 +109,5 @@ return static function (ContainerConfigurator $containerConfigurator): void {
     $services->set(ConstructFieldXpathRector::class);
     $services->set(GetRawContentRector::class);
     $services->set(GetAllOptionsRector::class);
+    $services->set(UserPasswordRector::class);
 };
