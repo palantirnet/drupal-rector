@@ -7,7 +7,6 @@
  */
 
 use DrupalFinder\DrupalFinder;
-use PHPUnit\Runner\Version;
 use Rector\Core\Autoloading\BootstrapFilesIncluder;
 use Rector\Core\Exception\ShouldNotHappenException;
 
@@ -88,7 +87,7 @@ function drupal_phpunit_contrib_extension_directory_roots($root) {
     $paths[] = is_dir("$path/profiles") ? realpath("$path/profiles") : NULL;
     $paths[] = is_dir("$path/themes") ? realpath("$path/themes") : NULL;
   }
-  return array_filter($paths, 'file_exists');
+  return array_filter(array_filter($paths), 'file_exists');
 }
 
 /**
@@ -169,24 +168,10 @@ function drupal_phpunit_populate_class_loader($drupalRoot, $vendorRoot) {
 // Do class loader population.
 drupal_phpunit_populate_class_loader($drupalRoot, $drupalVendorRoot);
 
-// Drupal 8.x supports PHPUnit 6 and 7 and has compatibility traits we must load.
-// @link https://git.drupalcode.org/project/drupal/-/tree/8.9.x/core/tests/Drupal/TestTools/PhpUnitCompatibility
-// @link https://git.drupalcode.org/project/drupal/-/blob/8.9.x/composer.json#L26
-//
-// Drupal 9.x supports PHPUnit 8 and 9 and has compatibility traits we must load.
-// @link https://git.drupalcode.org/project/drupal/-/tree/9.3.x/core/tests/Drupal/TestTools/PhpUnitCompatibility
-// @link https://git.drupalcode.org/project/drupal/-/blob/9.3.x/composer.json#L27
-if (class_exists(Version::class)) {
-    $major = (int) explode('.', Version::id())[0];
-    require_once $drupalRoot . "/core/tests/Drupal/TestTools/PhpUnitCompatibility/PhpUnit{$major}/TestCompatibilityTrait.php";
-    class_alias("Drupal\TestTools\PhpUnitCompatibility\PhpUnit{$major}\TestCompatibilityTrait", '\Drupal\Tests\PhpunitVersionDependentTestCompatibilityTrait');
-
-    // Load the Drupal class writer for PHPUnit to mutate the PHPUnit base
-    // classes.
-    // @link https://git.drupalcode.org/project/drupal/-/blob/9.3.x/core/tests/Drupal/TestTools/PhpUnitCompatibility/PhpUnit8/ClassWriter.php
-    if ($major >= 8) {
-        $loader = require $drupalVendorRoot . '/autoload.php';
-        \DrupalRector\Utility\Drupal9\ClassWriter::mutateTestBase($loader);
+$autoloader = require $drupalVendorRoot . '/autoload.php';
+if ($autoloader instanceof \Composer\Autoload\ClassLoader) {
+    if (interface_exists(\PHPUnit\Framework\Test::class)
+        && class_exists('Drupal\TestTools\PhpUnitCompatibility\PhpUnit8\ClassWriter')) {
+        \Drupal\TestTools\PhpUnitCompatibility\PhpUnit8\ClassWriter::mutateTestBase($autoloader);
     }
 }
-
