@@ -20,6 +20,8 @@ final class UiHelperTraitDrupalPostFormRector extends AbstractRector
 $edit = [];
 $edit['action'] = 'action_goto_action';
 $this->drupalPostForm('admin/config/system/actions', $edit, 'Create');
+$edit['action'] = 'action_goto_action_1';
+$this->drupalPostForm(null, $edit, 'Edit');
 CODE_BEFORE
                 ,
                 <<<'CODE_AFTER'
@@ -27,6 +29,8 @@ $edit = [];
 $edit['action'] = 'action_goto_action';
 $this->drupalGet('admin/config/system/actions');
 $this->submitForm($edit, 'Create');
+$edit['action'] = 'action_goto_action_1';
+$this->submitForm($edit, 'Edit');
 CODE_AFTER
             )
         ]);
@@ -70,20 +74,24 @@ CODE_AFTER
         assert($node instanceof Node\Expr\MethodCall);
         if ($this->getName($node->name) === 'drupalPostForm') {
             [$path, $edit, $button, $options, $htmlId] = $this->safeArgDestructure($node);
-            $pathValue = $path->value;
-            assert($pathValue instanceof Node\Scalar\String_);
-            if ($options === null) {
-                $drupalGetNode = $this->nodeFactory->createLocalMethodCall('drupalGet', [$path]);
-            } else {
-                $drupalGetNode = $this->nodeFactory->createLocalMethodCall('drupalGet', [$path, $options]);
-            }
 
             if ($htmlId === null) {
                 $submitFormNode = $this->nodeFactory->createLocalMethodCall('submitForm', [$edit, $button]);
             } else {
                 $submitFormNode = $this->nodeFactory->createLocalMethodCall('submitForm', [$edit, $button, $htmlId]);
             }
-            $this->nodesToAddCollector->addNodeBeforeNode($drupalGetNode, $node);
+
+            $pathValue = $path->value;
+            if (!$pathValue instanceof Node\Expr\ConstFetch || strtolower((string) $pathValue->name) !== 'null') {
+                assert($pathValue instanceof Node\Scalar\String_);
+                if ($options === null) {
+                    $drupalGetNode = $this->nodeFactory->createLocalMethodCall('drupalGet', [$path]);
+                } else {
+                    $drupalGetNode = $this->nodeFactory->createLocalMethodCall('drupalGet', [$path, $options]);
+                }
+                $this->nodesToAddCollector->addNodeBeforeNode($drupalGetNode, $node);
+            }
+
             return $submitFormNode;
         }
         return null;
