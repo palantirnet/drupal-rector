@@ -10,11 +10,11 @@
         "ast"
     ],
     "require": {
-        "rector/rector": "~0.12",
+        "rector/rector": "~0.12.19",
         "webflo/drupal-finder": "^1.2"
     },
     "conflict": {
-        "rector/rector": ">0.12.17"
+        "rector/rector": ">0.12.19"
     },
     "license": "MIT",
     "authors": [
@@ -71,14 +71,14 @@
         "phpstan/phpstan": "^1.0",
         "phpstan/phpstan-deprecation-rules": "^1.0",
         "phpunit/phpunit": "^9.5",
-        "rector/rector-src": "dev-main#77a4582d5044446b8da43ab91a09082fa0413a23",
-        "rector/rector-cakephp": "dev-main#eab7b7992e3462c40b2eb8f7ab6d2013eaf20c76",
-        "rector/rector-doctrine": "dev-main#21431cc9e81990191be9c235e67c631ed518d0a3",
-        "rector/rector-laravel": "dev-main#31d9892d1f2abd41a118589ad76a065bb24150ea",
-        "rector/rector-nette": "dev-main#7aa632f0fd210b0795cb92b98e648164049db80e",
-        "rector/rector-phpoffice": "dev-main#1e12437861bb9e06f776b9f9be5811a7bf219729",
-        "rector/rector-phpunit": "dev-main#baf6f9eaa1eadc03d61ac6f414077d85b0540dfa",
-        "rector/rector-symfony": "dev-main#a3ad2a20c028535c7d26ba85bed729d838eb9297",
+        "rector/rector-src": "dev-main#cbefb243e25ad213b187a55e5e50ec34b627b547",
+        "rector/rector-cakephp": "dev-main#d1fa93dbf332a0170deaf37467b40735727003fb",
+        "rector/rector-doctrine": "dev-main#96ff8cbaf186e5d89a88a3ff49b55cb15d04519f",
+        "rector/rector-laravel": "dev-main#6bee4284d50e84eb5d027ff266801b2a1c903a33",
+        "rector/rector-nette": "dev-main#0aaf0a6d587b387982a6844538bce58c96cda86f",
+        "rector/rector-phpoffice": "dev-main#f23c4bf79c1f8a18349ab0b96bba8333dd7b823b",
+        "rector/rector-phpunit": "dev-main#5952218df3e5240c6e0f67ea8e7b5e004b575e8b",
+        "rector/rector-symfony": "dev-main#d0a6487e51d4959f4d2d6e0b3e8fa541505309ce",
         "symfony/yaml": "^5 || ^6"
     }
 }
