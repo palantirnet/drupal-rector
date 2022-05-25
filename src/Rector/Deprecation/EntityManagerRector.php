@@ -5,6 +5,7 @@ namespace DrupalRector\Rector\Deprecation;
 use DrupalRector\Utility\AddCommentTrait;
 use PhpParser\Node;
 use PHPStan\Analyser\Scope;
+use Rector\Core\Contract\Rector\ConfigurableRectorInterface;
 use Rector\Core\Rector\AbstractRector;
 use Rector\NodeCollector\ScopeResolver\ParentClassScopeResolver;
 use Rector\NodeTypeResolver\Node\AttributeKey;
@@ -31,7 +32,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  * - Complex use case handling when a different service is needed and the
  * method does not directly call the service
  */
-final class EntityManagerRector extends AbstractRector
+final class EntityManagerRector extends AbstractRector implements ConfigurableRectorInterface
 {
 
     use AddCommentTrait;
@@ -41,20 +42,15 @@ final class EntityManagerRector extends AbstractRector
      */
     protected $parentClassScopeResolver;
 
-    private $parameterProvider;
-
-
     public function __construct(
-        ParentClassScopeResolver $parentClassScopeResolver,
-        ParameterProvider $parameterProvider
+        ParentClassScopeResolver $parentClassScopeResolver
     ) {
         $this->parentClassScopeResolver = $parentClassScopeResolver;
-        $this->parameterProvider = $parameterProvider;
     }
 
-    protected function getParameterProvider(): ParameterProvider
+    public function configure(array $configuration): void
     {
-        return $this->parameterProvider;
+        $this->configureNoticesAsComments($configuration);
     }
 
     /**

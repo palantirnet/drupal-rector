@@ -11,7 +11,10 @@ use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigura
 return static function (ContainerConfigurator $containerConfigurator): void {
     $services = $containerConfigurator->services();
 
-    $services->set(DrupalSetMessageRector::class);
+    $services->set(DrupalSetMessageRector::class)
+        ->configure([
+            'drupal_rector_notices_as_comments' => '%drupal_rector_notices_as_comments%',
+        ]);
 
     $services->set(DatetimeDateStorageFormatRector::class);
 

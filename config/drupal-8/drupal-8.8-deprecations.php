@@ -35,7 +35,10 @@ return static function (ContainerConfigurator $containerConfigurator): void {
 
     $services->set(EntityGetFormDisplayRector::class);
 
-    $services->set(EntityTypeGetLowercaseLabelRector::class);
+    $services->set(EntityTypeGetLowercaseLabelRector::class)
+        ->configure([
+            'drupal_rector_notices_as_comments' => '%drupal_rector_notices_as_comments%',
+        ]);
 
     $services->set(FileScanDirectoryRector::class);
 

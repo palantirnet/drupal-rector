@@ -5,10 +5,10 @@ namespace DrupalRector\Rector\Deprecation\Base;
 use DrupalRector\Utility\AddCommentTrait;
 use PhpParser\Node;
 use PHPStan\Type\Constant\ConstantStringType;
+use Rector\Core\Contract\Rector\ConfigurableRectorInterface;
 use Rector\Core\Rector\AbstractRector;
-use Symplify\PackageBuilder\Parameter\ParameterProvider;
 
-abstract class ExtensionPathBase extends AbstractRector
+abstract class ExtensionPathBase extends AbstractRector implements ConfigurableRectorInterface
 {
     use AddCommentTrait;
 
@@ -16,16 +16,9 @@ abstract class ExtensionPathBase extends AbstractRector
 
     protected $methodName;
 
-    private $parameterProvider;
-
-    public function __construct(ParameterProvider $parameterProvider)
+    public function configure(array $configuration): void
     {
-        $this->parameterProvider = $parameterProvider;
-    }
-
-    protected function getParameterProvider(): ParameterProvider
-    {
-        return $this->parameterProvider;
+        $this->configureNoticesAsComments($configuration);
     }
 
     public function getNodeTypes(): array

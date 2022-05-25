@@ -12,7 +12,13 @@ use Symplify\PackageBuilder\Parameter\ParameterProvider;
  */
 trait AddCommentTrait
 {
-    abstract protected function getParameterProvider(): ParameterProvider;
+
+    protected $noticesAsComments = false;
+
+    protected function configureNoticesAsComments(array $configuration): void
+    {
+        $this->noticesAsComments = $configuration['drupal_rector_notices_as_comments'] ?? false;
+    }
 
     /**
      * Get the closest statement for the node.
@@ -47,7 +53,7 @@ trait AddCommentTrait
         // great idea since we are assuming the property exists, but it does in
         // `AbstractRector` which all of our rules extend in some form or
         // another.
-        if ($this->getParameterProvider()->provideParameter('drupal_rector_notices_as_comments')) {
+        if ($this->noticesAsComments) {
             $comment_with_wrapper = "// TODO: Drupal Rector Notice: Please delete the following comment after you've made any necessary changes." . PHP_EOL
                 . "// $comment";
 

@@ -5,6 +5,7 @@ namespace DrupalRector\Rector\Deprecation\Base;
 use DrupalRector\Utility\AddCommentTrait;
 use PhpParser\Node;
 use PHPStan\Type\ObjectType;
+use Rector\Core\Contract\Rector\ConfigurableRectorInterface;
 use Rector\Core\Rector\AbstractRector;
 use Symplify\PackageBuilder\Parameter\ParameterProvider;
 
@@ -18,7 +19,7 @@ use Symplify\PackageBuilder\Parameter\ParameterProvider;
  * - Checks the variable has a certain class.
  *
  */
-abstract class MethodToMethodBase extends AbstractRector
+abstract class MethodToMethodBase extends AbstractRector implements ConfigurableRectorInterface
 {
     use AddCommentTrait;
 
@@ -43,16 +44,9 @@ abstract class MethodToMethodBase extends AbstractRector
      */
     protected $className;
 
-    private $parameterProvider;
-
-    public function __construct(ParameterProvider $parameterProvider)
+    public function configure(array $configuration): void
     {
-        $this->parameterProvider = $parameterProvider;
-    }
-
-    protected function getParameterProvider(): ParameterProvider
-    {
-        return $this->parameterProvider;
+        $this->configureNoticesAsComments($configuration);
     }
 
     /**

@@ -4,6 +4,7 @@ namespace DrupalRector\Rector\Deprecation\Base;
 
 use DrupalRector\Utility\AddCommentTrait;
 use PhpParser\Node;
+use Rector\Core\Contract\Rector\ConfigurableRectorInterface;
 use Rector\Core\Rector\AbstractRector;
 use Symplify\PackageBuilder\Parameter\ParameterProvider;
 
@@ -30,7 +31,7 @@ use Symplify\PackageBuilder\Parameter\ParameterProvider;
  * - Inject the database connection
  * - Use calls to Database::getConnection() if the container is not yet available
  */
-abstract class DBBase extends AbstractRector
+abstract class DBBase extends AbstractRector implements ConfigurableRectorInterface
 {
     use AddCommentTrait;
 
@@ -50,16 +51,9 @@ abstract class DBBase extends AbstractRector
      */
     protected $optionsArgumentPosition;
 
-    private $parameterProvider;
-
-    public function __construct(ParameterProvider $parameterProvider)
+    public function configure(array $configuration): void
     {
-        $this->parameterProvider = $parameterProvider;
-    }
-
-    protected function getParameterProvider(): ParameterProvider
-    {
-        return $this->parameterProvider;
+        $this->configureNoticesAsComments($configuration);
     }
 
     /**

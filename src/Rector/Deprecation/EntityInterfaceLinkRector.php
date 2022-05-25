@@ -3,6 +3,7 @@
 namespace DrupalRector\Rector\Deprecation;
 
 use DrupalRector\Utility\AddCommentTrait;
+use Rector\Core\Contract\Rector\ConfigurableRectorInterface;
 use Symplify\PackageBuilder\Parameter\ParameterProvider;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
@@ -20,21 +21,14 @@ use Rector\Core\Rector\AbstractRector;
  * Improvement opportunities:
  * - Checks the variable has a certain class.
  */
-final class EntityInterfaceLinkRector extends AbstractRector
+final class EntityInterfaceLinkRector extends AbstractRector implements ConfigurableRectorInterface
 {
 
     use AddCommentTrait;
 
-    private $parameterProvider;
-
-    public function __construct(ParameterProvider $parameterProvider)
+    public function configure(array $configuration): void
     {
-        $this->parameterProvider = $parameterProvider;
-    }
-
-    protected function getParameterProvider(): ParameterProvider
-    {
-        return $this->parameterProvider;
+        $this->configureNoticesAsComments($configuration);
     }
 
     /**

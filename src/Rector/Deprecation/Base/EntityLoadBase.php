@@ -4,6 +4,7 @@ namespace DrupalRector\Rector\Deprecation\Base;
 
 use DrupalRector\Utility\AddCommentTrait;
 use PhpParser\Node;
+use Rector\Core\Contract\Rector\ConfigurableRectorInterface;
 use Rector\Core\Rector\AbstractRector;
 use Symplify\PackageBuilder\Parameter\ParameterProvider;
 
@@ -19,7 +20,7 @@ use Symplify\PackageBuilder\Parameter\ParameterProvider;
  * Improvement opportunities
  * - Dependency injection
  */
-abstract class EntityLoadBase extends AbstractRector
+abstract class EntityLoadBase extends AbstractRector implements ConfigurableRectorInterface
 {
 
     use AddCommentTrait;
@@ -33,16 +34,9 @@ abstract class EntityLoadBase extends AbstractRector
      */
     protected $entityType;
 
-    private $parameterProvider;
-
-    public function __construct(ParameterProvider $parameterProvider)
+    public function configure(array $configuration): void
     {
-        $this->parameterProvider = $parameterProvider;
-    }
-
-    protected function getParameterProvider(): ParameterProvider
-    {
-        return $this->parameterProvider;
+        $this->configureNoticesAsComments($configuration);
     }
 
     /**
