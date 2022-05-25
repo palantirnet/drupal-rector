@@ -7,6 +7,7 @@ use DrupalRector\Utility\TraitsByClassHelperTrait;
 use PhpParser\Node;
 use Rector\NodeTypeResolver\Node\AttributeKey;
 use Rector\Core\Rector\AbstractRector;
+use Symplify\PackageBuilder\Parameter\ParameterProvider;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
@@ -25,6 +26,18 @@ final class LinkGeneratorTraitLRector extends AbstractRector
 {
     use TraitsByClassHelperTrait;
     use AddCommentTrait;
+
+    private $parameterProvider;
+
+    public function __construct(ParameterProvider $parameterProvider)
+    {
+        $this->parameterProvider = $parameterProvider;
+    }
+
+    protected function getParameterProvider(): ParameterProvider
+    {
+        return $this->parameterProvider;
+    }
 
     /**
      * @inheritdoc

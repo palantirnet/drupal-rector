@@ -6,6 +6,7 @@ use DrupalRector\Utility\AddCommentTrait;
 use PhpParser\Node;
 use PHPStan\Type\ObjectType;
 use Rector\Core\Rector\AbstractRector;
+use Symplify\PackageBuilder\Parameter\ParameterProvider;
 
 /**
  * Replaces deprecated method calls with a new method.
@@ -41,6 +42,18 @@ abstract class MethodToMethodBase extends AbstractRector
      * @var string
      */
     protected $className;
+
+    private $parameterProvider;
+
+    public function __construct(ParameterProvider $parameterProvider)
+    {
+        $this->parameterProvider = $parameterProvider;
+    }
+
+    protected function getParameterProvider(): ParameterProvider
+    {
+        return $this->parameterProvider;
+    }
 
     /**
      * @inheritdoc

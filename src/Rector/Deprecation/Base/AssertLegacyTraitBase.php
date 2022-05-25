@@ -6,6 +6,7 @@ use DrupalRector\Utility\AddCommentTrait;
 use DrupalRector\Utility\GetDeclaringSourceTrait;
 use PhpParser\Node;
 use Rector\Core\Rector\AbstractRector;
+use Symplify\PackageBuilder\Parameter\ParameterProvider;
 
 abstract class AssertLegacyTraitBase extends AbstractRector
 {
@@ -18,6 +19,18 @@ abstract class AssertLegacyTraitBase extends AbstractRector
     protected $methodName;
     protected $isAssertSessionMethod = true;
     protected $declaringSource = 'Drupal\FunctionalTests\AssertLegacyTrait';
+
+    private $parameterProvider;
+
+    public function __construct(ParameterProvider $parameterProvider)
+    {
+        $this->parameterProvider = $parameterProvider;
+    }
+
+    protected function getParameterProvider(): ParameterProvider
+    {
+        return $this->parameterProvider;
+    }
 
     public function getNodeTypes(): array
     {

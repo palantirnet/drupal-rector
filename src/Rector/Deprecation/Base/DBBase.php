@@ -5,6 +5,7 @@ namespace DrupalRector\Rector\Deprecation\Base;
 use DrupalRector\Utility\AddCommentTrait;
 use PhpParser\Node;
 use Rector\Core\Rector\AbstractRector;
+use Symplify\PackageBuilder\Parameter\ParameterProvider;
 
 /**
  * Base class for replacing deprecated db_*() calls.
@@ -48,6 +49,18 @@ abstract class DBBase extends AbstractRector
      * @var int
      */
     protected $optionsArgumentPosition;
+
+    private $parameterProvider;
+
+    public function __construct(ParameterProvider $parameterProvider)
+    {
+        $this->parameterProvider = $parameterProvider;
+    }
+
+    protected function getParameterProvider(): ParameterProvider
+    {
+        return $this->parameterProvider;
+    }
 
     /**
      * Return the name of the new method.

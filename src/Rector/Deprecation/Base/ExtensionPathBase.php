@@ -6,6 +6,7 @@ use DrupalRector\Utility\AddCommentTrait;
 use PhpParser\Node;
 use PHPStan\Type\Constant\ConstantStringType;
 use Rector\Core\Rector\AbstractRector;
+use Symplify\PackageBuilder\Parameter\ParameterProvider;
 
 abstract class ExtensionPathBase extends AbstractRector
 {
@@ -14,6 +15,18 @@ abstract class ExtensionPathBase extends AbstractRector
     protected $functionName;
 
     protected $methodName;
+
+    private $parameterProvider;
+
+    public function __construct(ParameterProvider $parameterProvider)
+    {
+        $this->parameterProvider = $parameterProvider;
+    }
+
+    protected function getParameterProvider(): ParameterProvider
+    {
+        return $this->parameterProvider;
+    }
 
     public function getNodeTypes(): array
     {

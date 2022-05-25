@@ -5,12 +5,15 @@ namespace DrupalRector\Utility;
 use PhpParser\Comment;
 use PhpParser\Node;
 use Rector\NodeTypeResolver\Node\AttributeKey;
+use Symplify\PackageBuilder\Parameter\ParameterProvider;
 
 /**
  * Provides an easy way to add a comment to a statement.
  */
 trait AddCommentTrait
 {
+    abstract protected function getParameterProvider(): ParameterProvider;
+
     /**
      * Get the closest statement for the node.
      *
@@ -44,7 +47,7 @@ trait AddCommentTrait
         // great idea since we are assuming the property exists, but it does in
         // `AbstractRector` which all of our rules extend in some form or
         // another.
-        if ($this->parameterProvider->provideParameter('drupal_rector_notices_as_comments')) {
+        if ($this->getParameterProvider()->provideParameter('drupal_rector_notices_as_comments')) {
             $comment_with_wrapper = "// TODO: Drupal Rector Notice: Please delete the following comment after you've made any necessary changes." . PHP_EOL
                 . "// $comment";
 
