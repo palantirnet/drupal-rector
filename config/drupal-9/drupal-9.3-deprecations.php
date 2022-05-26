@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 use DrupalRector\Rector\Deprecation\DrupalGetFilenameRector;
 use DrupalRector\Rector\Deprecation\DrupalGetPathRector;
-use DrupalRector\Rector\Deprecation\FileBuildUrlRector;
+use DrupalRector\Rector\Deprecation\FileBuildUriRector;
 use DrupalRector\Rector\Deprecation\FileUrlGenerator;
 use DrupalRector\Rector\Deprecation\RenderRector;
 use DrupalRector\Rector\Deprecation\FileCopyRector;
@@ -34,5 +34,5 @@ return static function (ContainerConfigurator $containerConfigurator): void {
     $services->set(FileCopyRector::class);
 
     // Change record: https://www.drupal.org/node/3223091.
-    $services->set(FileBuildUrlRector::class);
+    $services->set(FileBuildUriRector::class);
 };
