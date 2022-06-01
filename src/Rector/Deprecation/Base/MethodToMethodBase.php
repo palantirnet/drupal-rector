@@ -5,7 +5,9 @@ namespace DrupalRector\Rector\Deprecation\Base;
 use DrupalRector\Utility\AddCommentTrait;
 use PhpParser\Node;
 use PHPStan\Type\ObjectType;
+use Rector\Core\Contract\Rector\ConfigurableRectorInterface;
 use Rector\Core\Rector\AbstractRector;
+use Symplify\PackageBuilder\Parameter\ParameterProvider;
 
 /**
  * Replaces deprecated method calls with a new method.
@@ -17,7 +19,7 @@ use Rector\Core\Rector\AbstractRector;
  * - Checks the variable has a certain class.
  *
  */
-abstract class MethodToMethodBase extends AbstractRector
+abstract class MethodToMethodBase extends AbstractRector implements ConfigurableRectorInterface
 {
     use AddCommentTrait;
 
@@ -41,6 +43,11 @@ abstract class MethodToMethodBase extends AbstractRector
      * @var string
      */
     protected $className;
+
+    public function configure(array $configuration): void
+    {
+        $this->configureNoticesAsComments($configuration);
+    }
 
     /**
      * @inheritdoc

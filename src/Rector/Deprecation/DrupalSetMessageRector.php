@@ -12,7 +12,7 @@ use PHPStan\Type\Constant\ConstantStringType;
 use PHPStan\Type\Generic\GenericClassStringType;
 use PHPStan\Type\StringType;
 use Rector\BetterPhpDocParser\PhpDocInfo\PhpDocInfo;
-use Rector\Core\Exception\ShouldNotHappenException;
+use Rector\Core\Contract\Rector\ConfigurableRectorInterface;
 use Rector\NodeTypeResolver\Node\AttributeKey;
 use Rector\Core\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
@@ -33,10 +33,15 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  * - Add trait for classes
  *   - `use MessengerTrait;`
  */
-final class DrupalSetMessageRector extends AbstractRector
+final class DrupalSetMessageRector extends AbstractRector implements ConfigurableRectorInterface
 {
     use TraitsByClassHelperTrait;
     use AddCommentTrait;
+
+    public function configure(array $configuration): void
+    {
+        $this->configureNoticesAsComments($configuration);
+    }
 
     /**
      * @inheritdoc

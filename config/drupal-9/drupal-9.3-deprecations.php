@@ -16,8 +16,14 @@ return static function (ContainerConfigurator $containerConfigurator): void {
     $services = $containerConfigurator->services();
 
     // Change record: https://www.drupal.org/node/2940438.
-    $services->set(DrupalGetPathRector::class);
-    $services->set(DrupalGetFilenameRector::class);
+    $services->set(DrupalGetPathRector::class)
+        ->configure([
+            'drupal_rector_notices_as_comments' => '%drupal_rector_notices_as_comments%',
+        ]);
+    $services->set(DrupalGetFilenameRector::class)
+        ->configure([
+            'drupal_rector_notices_as_comments' => '%drupal_rector_notices_as_comments%',
+        ]);
 
     // Change record: https://www.drupal.org/node/2939099.
     $services->set(RenderRector::class);

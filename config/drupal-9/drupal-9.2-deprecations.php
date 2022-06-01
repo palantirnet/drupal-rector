@@ -12,5 +12,8 @@ return static function (ContainerConfigurator $containerConfigurator): void {
     $services = $containerConfigurator->services();
 
     // Change record: https://www.drupal.org/node/3187914
-    $services->set(ClearCsrfTokenSeed::class);
+    $services->set(ClearCsrfTokenSeed::class)
+        ->configure([
+            'drupal_rector_notices_as_comments' => '%drupal_rector_notices_as_comments%',
+        ]);
 };

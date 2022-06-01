@@ -30,15 +30,30 @@ use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigura
 return static function (ContainerConfigurator $containerConfigurator): void {
     $services = $containerConfigurator->services();
 
-    $services->set(DBInsertRector::class);
+    $services->set(DBInsertRector::class)
+        ->configure([
+            'drupal_rector_notices_as_comments' => '%drupal_rector_notices_as_comments%',
+        ]);
 
-    $services->set(DBSelectRector::class);
+    $services->set(DBSelectRector::class)
+        ->configure([
+            'drupal_rector_notices_as_comments' => '%drupal_rector_notices_as_comments%',
+        ]);
 
-    $services->set(DBQueryRector::class);
+    $services->set(DBQueryRector::class)
+        ->configure([
+            'drupal_rector_notices_as_comments' => '%drupal_rector_notices_as_comments%',
+        ]);
 
-    $services->set(DBDeleteRector::class);
+    $services->set(DBDeleteRector::class)
+        ->configure([
+            'drupal_rector_notices_as_comments' => '%drupal_rector_notices_as_comments%',
+        ]);
 
-    $services->set(DBUpdateRector::class);
+    $services->set(DBUpdateRector::class)
+        ->configure([
+            'drupal_rector_notices_as_comments' => '%drupal_rector_notices_as_comments%',
+        ]);
 
     $services->set(DrupalRenderRector::class);
 
@@ -54,25 +69,49 @@ return static function (ContainerConfigurator $containerConfigurator): void {
 
     $services->set(EntityDeleteMultipleRector::class);
 
-    $services->set(EntityInterfaceLinkRector::class);
+    $services->set(EntityInterfaceLinkRector::class)
+        ->configure([
+            'drupal_rector_notices_as_comments' => '%drupal_rector_notices_as_comments%',
+        ]);
 
-    $services->set(EntityInterfaceUrlInfoRector::class);
+    $services->set(EntityInterfaceUrlInfoRector::class)
+        ->configure([
+            'drupal_rector_notices_as_comments' => '%drupal_rector_notices_as_comments%',
+        ]);
 
-    $services->set(EntityLoadRector::class);
+    $services->set(EntityLoadRector::class)
+        ->configure([
+            'drupal_rector_notices_as_comments' => '%drupal_rector_notices_as_comments%',
+        ]);
 
     $services->set(EntityViewRector::class);
 
-    $services->set(EntityManagerRector::class);
+    $services->set(EntityManagerRector::class)
+        ->configure([
+            'drupal_rector_notices_as_comments' => '%drupal_rector_notices_as_comments%',
+        ]);
 
     $services->set(FormatDateRector::class);
 
-    $services->set(FileLoadRector::class);
+    $services->set(FileLoadRector::class)
+        ->configure([
+            'drupal_rector_notices_as_comments' => '%drupal_rector_notices_as_comments%',
+        ]);
 
-    $services->set(LinkGeneratorTraitLRector::class);
+    $services->set(LinkGeneratorTraitLRector::class)
+        ->configure([
+            'drupal_rector_notices_as_comments' => '%drupal_rector_notices_as_comments%',
+        ]);
 
-    $services->set(NodeLoadRector::class);
+    $services->set(NodeLoadRector::class)
+        ->configure([
+            'drupal_rector_notices_as_comments' => '%drupal_rector_notices_as_comments%',
+        ]);
 
     $services->set(SafeMarkupFormatRector::class);
 
-    $services->set(UserLoadRector::class);
+    $services->set(UserLoadRector::class)
+        ->configure([
+            'drupal_rector_notices_as_comments' => '%drupal_rector_notices_as_comments%',
+        ]);
 };

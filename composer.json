@@ -10,11 +10,11 @@
         "ast"
     ],
     "require": {
-        "rector/rector": "~0.12.19",
+        "rector/rector": "~0.12.21",
         "webflo/drupal-finder": "^1.2"
     },
     "conflict": {
-        "rector/rector": ">0.12.19"
+        "rector/rector": ">0.12.21"
     },
     "license": "MIT",
     "authors": [
@@ -65,20 +65,24 @@
     },
     "minimum-stability": "dev",
     "prefer-stable": true,
+    "extra": {
+        "enable-patching-note": "We need the following to allow rector/rector-src to patch dependencies.",
+        "enable-patching": true
+    },
     "require-dev": {
         "php": "^8.0",
         "phpstan/extension-installer": "^1.1",
         "phpstan/phpstan": "^1.0",
         "phpstan/phpstan-deprecation-rules": "^1.0",
         "phpunit/phpunit": "^9.5",
-        "rector/rector-src": "dev-main#cbefb243e25ad213b187a55e5e50ec34b627b547",
+        "rector/rector-src": "dev-main#11fdd74f8abe3deefbb2492c00868c57184fd484",
         "rector/rector-cakephp": "dev-main#d1fa93dbf332a0170deaf37467b40735727003fb",
-        "rector/rector-doctrine": "dev-main#96ff8cbaf186e5d89a88a3ff49b55cb15d04519f",
-        "rector/rector-laravel": "dev-main#6bee4284d50e84eb5d027ff266801b2a1c903a33",
-        "rector/rector-nette": "dev-main#0aaf0a6d587b387982a6844538bce58c96cda86f",
-        "rector/rector-phpoffice": "dev-main#f23c4bf79c1f8a18349ab0b96bba8333dd7b823b",
-        "rector/rector-phpunit": "dev-main#5952218df3e5240c6e0f67ea8e7b5e004b575e8b",
-        "rector/rector-symfony": "dev-main#d0a6487e51d4959f4d2d6e0b3e8fa541505309ce",
+        "rector/rector-doctrine": "dev-main#ae06e92e71b741f43906374a699eb041882259c3",
+        "rector/rector-laravel": "dev-main#48a1f3458dc9536a32dae0507ba53fc2d3d28f01",
+        "rector/rector-nette": "dev-main#e01d41e5caa10ff5057d3b922c95ba4f15d41657",
+        "rector/rector-phpoffice": "dev-main#4b9837410f4b1f2002693d94a0c4c483abf37e7f",
+        "rector/rector-phpunit": "dev-main#41775450593f1a94c30a562865c5340f4118880c",
+        "rector/rector-symfony": "dev-main#6e679917c27895e94314c436b44821e091384e8e",
         "symfony/yaml": "^5 || ^6"
     }
 }

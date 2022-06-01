@@ -5,9 +5,10 @@ namespace DrupalRector\Rector\Deprecation\Base;
 use DrupalRector\Utility\AddCommentTrait;
 use DrupalRector\Utility\GetDeclaringSourceTrait;
 use PhpParser\Node;
+use Rector\Core\Contract\Rector\ConfigurableRectorInterface;
 use Rector\Core\Rector\AbstractRector;
 
-abstract class AssertLegacyTraitBase extends AbstractRector
+abstract class AssertLegacyTraitBase extends AbstractRector implements ConfigurableRectorInterface
 {
 
     use AddCommentTrait;
@@ -18,6 +19,11 @@ abstract class AssertLegacyTraitBase extends AbstractRector
     protected $methodName;
     protected $isAssertSessionMethod = true;
     protected $declaringSource = 'Drupal\FunctionalTests\AssertLegacyTrait';
+
+    public function configure(array $configuration): void
+    {
+        $this->configureNoticesAsComments($configuration);
+    }
 
     public function getNodeTypes(): array
     {

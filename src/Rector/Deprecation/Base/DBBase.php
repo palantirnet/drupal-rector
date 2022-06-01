@@ -4,7 +4,9 @@ namespace DrupalRector\Rector\Deprecation\Base;
 
 use DrupalRector\Utility\AddCommentTrait;
 use PhpParser\Node;
+use Rector\Core\Contract\Rector\ConfigurableRectorInterface;
 use Rector\Core\Rector\AbstractRector;
+use Symplify\PackageBuilder\Parameter\ParameterProvider;
 
 /**
  * Base class for replacing deprecated db_*() calls.
@@ -29,7 +31,7 @@ use Rector\Core\Rector\AbstractRector;
  * - Inject the database connection
  * - Use calls to Database::getConnection() if the container is not yet available
  */
-abstract class DBBase extends AbstractRector
+abstract class DBBase extends AbstractRector implements ConfigurableRectorInterface
 {
     use AddCommentTrait;
 
@@ -48,6 +50,11 @@ abstract class DBBase extends AbstractRector
      * @var int
      */
     protected $optionsArgumentPosition;
+
+    public function configure(array $configuration): void
+    {
+        $this->configureNoticesAsComments($configuration);
+    }
 
     /**
      * Return the name of the new method.

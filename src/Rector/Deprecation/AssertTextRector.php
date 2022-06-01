@@ -3,13 +3,11 @@
 namespace DrupalRector\Rector\Deprecation;
 
 use DrupalRector\Rector\Deprecation\Base\AssertLegacyTraitBase;
-use DrupalRector\Utility\AddCommentTrait;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 final class AssertTextRector extends AssertLegacyTraitBase
 {
-    use AddCommentTrait;
 
     // @codingStandardsIgnoreLine
     protected $comment = 'Verify the assertion: pageTextContains() for HTML responses, responseContains() for non-HTML responses.' .

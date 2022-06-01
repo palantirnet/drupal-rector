@@ -5,15 +5,21 @@ namespace DrupalRector\Rector\Deprecation\Base;
 use DrupalRector\Utility\AddCommentTrait;
 use PhpParser\Node;
 use PHPStan\Type\Constant\ConstantStringType;
+use Rector\Core\Contract\Rector\ConfigurableRectorInterface;
 use Rector\Core\Rector\AbstractRector;
 
-abstract class ExtensionPathBase extends AbstractRector
+abstract class ExtensionPathBase extends AbstractRector implements ConfigurableRectorInterface
 {
     use AddCommentTrait;
 
     protected $functionName;
 
     protected $methodName;
+
+    public function configure(array $configuration): void
+    {
+        $this->configureNoticesAsComments($configuration);
+    }
 
     public function getNodeTypes(): array
     {
