@@ -10,6 +10,7 @@
         "ast"
     ],
     "require": {
+        "rector/rector": "~0.13.8",
         "webflo/drupal-finder": "^1.2"
     },
     "license": "MIT",
