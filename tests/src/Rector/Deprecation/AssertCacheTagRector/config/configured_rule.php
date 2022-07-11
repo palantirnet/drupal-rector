@@ -2,20 +2,15 @@
 
 use DrupalRector\Rector\Deprecation\AssertCacheTagRector;
 use DrupalRector\Rector\Deprecation\AssertNoCacheTagRector;
-use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 
-return static function (ContainerConfigurator $containerConfigurator): void {
-    $services = $containerConfigurator->services();
+return static function (Rector\Config\RectorConfig $rectorConfig): void {
+    $rectorConfig->ruleWithConfiguration(AssertCacheTagRector::class, [
+        'drupal_rector_notices_as_comments' => '%drupal_rector_notices_as_comments%',
+    ]);
+    $rectorConfig->ruleWithConfiguration(AssertNoCacheTagRector::class, [
+        'drupal_rector_notices_as_comments' => '%drupal_rector_notices_as_comments%',
+    ]);
 
-    $services->set(AssertCacheTagRector::class)
-        ->configure([
-            'drupal_rector_notices_as_comments' => '%drupal_rector_notices_as_comments%',
-        ]);
-    $services->set(AssertNoCacheTagRector::class)
-        ->configure([
-            'drupal_rector_notices_as_comments' => '%drupal_rector_notices_as_comments%',
-        ]);
-
-    $parameters = $containerConfigurator->parameters();
+    $parameters = $rectorConfig->parameters();
     $parameters->set('drupal_rector_notices_as_comments', true);
 };

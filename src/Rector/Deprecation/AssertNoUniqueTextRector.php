@@ -54,18 +54,20 @@ CODE_AFTER
             throw new ShouldNotHappenException('assertNoUniqueText had no arguments');
         }
 
+        $nodes = [];
+
         $getSessionNode = $this->nodeFactory->createLocalMethodCall('getSession');
         $getPageNode = $this->nodeFactory->createMethodCall($getSessionNode, 'getPage');
         $getTextNode = $this->nodeFactory->createMethodCall($getPageNode, 'getText');
         $pageTextVar = new Node\Expr\Variable('page_text');
-        $this->nodesToAddCollector->addNodeBeforeNode(new Node\Expr\Assign($pageTextVar, $getTextNode), $node);
+        $nodes[] = new Node\Expr\Assign($pageTextVar, $getTextNode);
 
         $nrFoundVar = new Node\Expr\Variable('nr_found');
         $substrCountNode = $this->nodeFactory->createFuncCall(
             'substr_count',
             [new Node\Arg($pageTextVar), $node->args[0]]
         );
-        $this->nodesToAddCollector->addNodeBeforeNode(new Node\Expr\Assign($nrFoundVar, $substrCountNode), $node);
+        $nodes[] = new Node\Expr\Assign($nrFoundVar, $substrCountNode);
 
         $assertedText = $node->args[0]->value;
         if ($assertedText instanceof Node\Scalar\String_) {
@@ -74,7 +76,7 @@ CODE_AFTER
             throw new \RuntimeException(__CLASS__ . ' cannot handle argument of type ' . get_class($assertedText));
         }
 
-        return $this->nodeFactory->createLocalMethodCall(
+        $methodCall = $this->nodeFactory->createLocalMethodCall(
             'assertGreaterThan',
             [
                 new Node\Arg(new Node\Scalar\LNumber(1)),
@@ -87,5 +89,7 @@ CODE_AFTER
                 ]))
             ]
         );
+        $nodes[] = $methodCall;
+        return $nodes;
     }
 }

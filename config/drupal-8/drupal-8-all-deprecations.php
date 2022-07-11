@@ -2,19 +2,18 @@
 
 declare(strict_types=1);
 
-use Rector\Core\Configuration\Option;
+use Rector\Config\RectorConfig;
 use Rector\PHPUnit\Set\PHPUnitSetList;
-use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 
-return static function (ContainerConfigurator $containerConfigurator): void {
-    $containerConfigurator->import(__DIR__ . '/drupal-8.*');
+return static function (RectorConfig $rectorConfig): void {
+    $rectorConfig->import(__DIR__ . '/drupal-8.*');
 
-    $containerConfigurator->import(PHPUnitSetList::PHPUNIT_60);
-    $containerConfigurator->import(PHPUnitSetList::PHPUNIT_70);
+    $rectorConfig->sets([
+        PHPUnitSetList::PHPUNIT_60,
+        PHPUnitSetList::PHPUNIT_70
+    ]);
 
-    $parameters = $containerConfigurator->parameters();
-
-    $parameters->set(Option::BOOTSTRAP_FILES, [
+    $rectorConfig->bootstrapFiles([
         __DIR__ . '/../drupal-phpunit-bootstrap-file.php'
     ]);
 };

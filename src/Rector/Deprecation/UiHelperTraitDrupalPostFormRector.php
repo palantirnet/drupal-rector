@@ -69,7 +69,7 @@ CODE_AFTER
         throw new ShouldNotHappenException('Unexpected argument count for drupalPostForm');
     }
 
-    public function refactor(Node $node): ?Node
+    public function refactor(Node $node): ?array
     {
         assert($node instanceof Node\Expr\MethodCall);
         if ($this->getName($node->name) === 'drupalPostForm') {
@@ -89,10 +89,10 @@ CODE_AFTER
                 } else {
                     $drupalGetNode = $this->nodeFactory->createLocalMethodCall('drupalGet', [$path, $options]);
                 }
-                $this->nodesToAddCollector->addNodeBeforeNode($drupalGetNode, $node);
+                return [$drupalGetNode, $submitFormNode];
             }
 
-            return $submitFormNode;
+            return [$submitFormNode];
         }
         return null;
     }
