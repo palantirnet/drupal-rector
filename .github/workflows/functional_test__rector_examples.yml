@@ -33,6 +33,9 @@ jobs:
                 with:
                     version: '${{ matrix.drupal }}'
                     path: ~/drupal
+            -   run: |
+                    cd ~/drupal
+                    composer config --no-plugins allow-plugins.composer/installers true
             -   name: Install Drupal Rector
                 run: |
                     cd ~/drupal

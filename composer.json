@@ -10,7 +10,6 @@
         "ast"
     ],
     "require": {
-        "rector/rector": "^0.13.8",
         "webflo/drupal-finder": "^1.2"
     },
     "license": "MIT",
@@ -63,7 +62,6 @@
     "minimum-stability": "dev",
     "prefer-stable": true,
     "extra": {
-        "enable-patching-note": "We need the following to allow rector/rector-src to patch dependencies.",
         "enable-patching": true
     },
     "require-dev": {
@@ -73,13 +71,6 @@
         "phpstan/phpstan-deprecation-rules": "^1.0",
         "phpunit/phpunit": "^9.5",
         "rector/rector-src": "dev-main",
-        "rector/rector-cakephp": "dev-main",
-        "rector/rector-doctrine": "dev-main",
-        "rector/rector-laravel": "dev-main",
-        "rector/rector-nette": "dev-main",
-        "rector/rector-phpoffice": "dev-main",
-        "rector/rector-phpunit": "dev-main",
-        "rector/rector-symfony": "dev-main",
         "symfony/yaml": "^5 || ^6"
     }
 }

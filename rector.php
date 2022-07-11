@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 use DrupalFinder\DrupalFinder;
 use Rector\Config\RectorConfig;
-use Rector\Core\Configuration\Option;
 
 return static function (RectorConfig $rectorConfig): void {
     // @todo find out how to only load the relevant rector rules.
