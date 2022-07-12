@@ -71,6 +71,7 @@
     },
     "require-dev": {
         "php": "^8.0",
+        "cweagans/composer-patches": "^1.7.2",
         "phpstan/extension-installer": "^1.1",
         "phpstan/phpstan": "^1.0",
         "phpstan/phpstan-deprecation-rules": "^1.0",
@@ -83,6 +84,7 @@
         "rector/rector-phpoffice": "dev-main#4b9837410f4b1f2002693d94a0c4c483abf37e7f",
         "rector/rector-phpunit": "dev-main#41775450593f1a94c30a562865c5340f4118880c",
         "rector/rector-symfony": "dev-main#6e679917c27895e94314c436b44821e091384e8e",
+        "symplify/vendor-patches": "^11.0",
         "symfony/yaml": "^5 || ^6"
     }
 }
