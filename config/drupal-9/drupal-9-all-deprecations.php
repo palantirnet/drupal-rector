@@ -7,6 +7,7 @@ use Rector\Config\RectorConfig;
 
 return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->sets([
+        Drupal9SetList::DRUPAL_90,
         Drupal9SetList::DRUPAL_91,
         Drupal9SetList::DRUPAL_92,
         Drupal9SetList::DRUPAL_93,
