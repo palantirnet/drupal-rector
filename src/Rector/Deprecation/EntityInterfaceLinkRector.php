@@ -74,7 +74,7 @@ CODE_AFTER
 
             $toLink_node = $node;
 
-            $toLink_node->name = new Node\Name('toLink');
+            $toLink_node->name = new Node\Identifier('toLink');
 
             // Add ->toString();
             $new_node = new Node\Expr\MethodCall($toLink_node,

@@ -50,6 +50,7 @@ abstract class GetMockBase extends AbstractRector
    */
   public function refactor(Node $node): ?Node
   {
+    assert($node instanceof Node\Expr\MethodCall);
     $scope = $node->getAttribute(AttributeKey::SCOPE);
     if (!$scope instanceof Scope) {
       return null;

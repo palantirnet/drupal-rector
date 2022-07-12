@@ -1,0 +1,11 @@
+parameters:
+	ignoreErrors:
+		-
+			message: "#^Access to an undefined property PhpParser\\\\Node\\\\Expr\\:\\:\\$items\\.$#"
+			count: 3
+			path: src/Rector/Deprecation/Base/DBBase.php
+
+		-
+			message: "#^Access to an undefined property PhpParser\\\\Node\\\\Expr\\:\\:\\$name\\.$#"
+			count: 1
+			path: src/Rector/Deprecation/Base/MethodToMethodBase.php

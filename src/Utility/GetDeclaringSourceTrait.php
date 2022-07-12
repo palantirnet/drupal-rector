@@ -4,6 +4,7 @@ namespace DrupalRector\Utility;
 
 use PhpParser\Node;
 use PHPStan\Analyser\Scope;
+use PHPStan\Reflection\Php\PhpMethodReflection;
 use Rector\NodeTypeResolver\Node\AttributeKey;
 
 trait GetDeclaringSourceTrait
@@ -28,6 +29,10 @@ trait GetDeclaringSourceTrait
         $name = $this->getName($expr->name);
         if ($expr instanceof Node\Expr\MethodCall) {
             $exprReflection = $classReflection->getMethod($name, $scope);
+            // Concrete method has getDeclaringTrait, not interface.
+            if (!$exprReflection instanceof PhpMethodReflection) {
+                return null;
+            }
         } elseif ($expr instanceof Node\Expr\PropertyFetch) {
             $exprReflection = $classReflection->getProperty($name, $scope);
         } else {

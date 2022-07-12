@@ -26,6 +26,7 @@ class RequestTimeConstRector extends AbstractRector
      */
     public function refactor(Node $node): ?Node
     {
+        assert($node instanceof Node\Expr\ConstFetch);
         if (! $this->isName($node->name, $this->deprecatedConstant)) {
             return null;
         }

@@ -73,7 +73,7 @@ abstract class MethodToMethodBase extends AbstractRector implements Configurable
 
         $isSuperOf = $expectedType->isSuperTypeOf($callerType);
         if ($isSuperOf->yes()) {
-            $node->name = new Node\Name($this->methodName);
+            $node->name = new Node\Identifier($this->methodName);
             return $node;
         }
 
@@ -90,7 +90,7 @@ abstract class MethodToMethodBase extends AbstractRector implements Configurable
                 $node,
                 "Please confirm that `$node_var` is an instance of `$this->className`. Only the method name and not the class name was checked for this replacement, so this may be a false positive."
             );
-            $node->name = new Node\Name($this->methodName);
+            $node->name = new Node\Identifier($this->methodName);
             return $node;
         }
 

@@ -88,6 +88,7 @@ CODE_AFTER
      */
     public function refactor(Node $node): ?Node
     {
+        assert($node instanceof Node\Expr\StaticCall || $node instanceof Node\Expr\MethodCall);
         if ($this->getName($node->name) === 'entityManager') {
             if ($node instanceof Node\Expr\StaticCall && $this->getName($node->class) === 'Drupal') {
                 $service = 'entity_type.manager';

@@ -57,6 +57,7 @@ CODE_AFTER
      */
     public function refactor(Node $node): ?Node
     {
+        assert($node instanceof Node\Expr\FuncCall);
         if ($this->getName($node->name) !== 'entity_view') {
             return NULL;
         }

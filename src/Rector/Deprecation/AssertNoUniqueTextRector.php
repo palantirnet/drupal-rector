@@ -6,9 +6,6 @@ use DrupalRector\Utility\GetDeclaringSourceTrait;
 use PhpParser\Node;
 use Rector\Core\Exception\ShouldNotHappenException;
 use Rector\Core\Rector\AbstractRector;
-use Rector\PostRector\Collector\NodesToAddCollector;
-use Symplify\Astral\ValueObject\AttributeKey;
-use Symplify\RuleDocGenerator\ValueObject\AbstractCodeSample;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
