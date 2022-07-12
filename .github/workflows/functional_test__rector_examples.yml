@@ -35,6 +35,7 @@ jobs:
                     path: ~/drupal
             -   run: |
                     cd ~/drupal
+                    composer config --no-plugins allow-plugins.drupal/core-composer-scaffold true
                     composer config --no-plugins allow-plugins.composer/installers true
                     composer config --no-plugins allow-plugins.dealerdirect/phpcodesniffer-composer-installer true
             -   name: Install Drupal Rector

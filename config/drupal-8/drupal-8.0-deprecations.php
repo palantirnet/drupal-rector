@@ -25,93 +25,68 @@ use DrupalRector\Rector\Deprecation\LinkGeneratorTraitLRector;
 use DrupalRector\Rector\Deprecation\NodeLoadRector;
 use DrupalRector\Rector\Deprecation\SafeMarkupFormatRector;
 use DrupalRector\Rector\Deprecation\UserLoadRector;
-use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
+use Rector\Config\RectorConfig;
 
-return static function (ContainerConfigurator $containerConfigurator): void {
-    $services = $containerConfigurator->services();
+return static function (RectorConfig $rectorConfig): void {
+    $rectorConfig->ruleWithConfiguration(DBInsertRector::class, [
+        'drupal_rector_notices_as_comments' => '%drupal_rector_notices_as_comments%',
+    ]);
+    $rectorConfig->ruleWithConfiguration(DBSelectRector::class, [
+        'drupal_rector_notices_as_comments' => '%drupal_rector_notices_as_comments%',
+    ]);
+    $rectorConfig->ruleWithConfiguration(DBQueryRector::class, [
+        'drupal_rector_notices_as_comments' => '%drupal_rector_notices_as_comments%',
+    ]);
+    $rectorConfig->ruleWithConfiguration(DBDeleteRector::class, [
+        'drupal_rector_notices_as_comments' => '%drupal_rector_notices_as_comments%',
+    ]);
+    $rectorConfig->ruleWithConfiguration(DBUpdateRector::class, [
+        'drupal_rector_notices_as_comments' => '%drupal_rector_notices_as_comments%',
+    ]);
 
-    $services->set(DBInsertRector::class)
-        ->configure([
+    $rectorConfig->rule(DrupalRenderRector::class);
+    $rectorConfig->rule(DrupalRenderRootRector::class);
+    $rectorConfig->rule(DrupalURLRector::class);
+    $rectorConfig->rule(DrupalLRector::class);
+    $rectorConfig->rule(DrupalRealpathRector::class);
+    $rectorConfig->rule(EntityCreateRector::class);
+    $rectorConfig->rule(EntityDeleteMultipleRector::class);
+
+    $rectorConfig->ruleWithConfiguration(EntityInterfaceLinkRector::class, [
             'drupal_rector_notices_as_comments' => '%drupal_rector_notices_as_comments%',
         ]);
 
-    $services->set(DBSelectRector::class)
-        ->configure([
+    $rectorConfig->ruleWithConfiguration(EntityInterfaceUrlInfoRector::class, [
             'drupal_rector_notices_as_comments' => '%drupal_rector_notices_as_comments%',
         ]);
 
-    $services->set(DBQueryRector::class)
-        ->configure([
+    $rectorConfig->ruleWithConfiguration(EntityLoadRector::class, [
             'drupal_rector_notices_as_comments' => '%drupal_rector_notices_as_comments%',
         ]);
 
-    $services->set(DBDeleteRector::class)
-        ->configure([
+    $rectorConfig->rule(EntityViewRector::class);
+
+    $rectorConfig->ruleWithConfiguration(EntityManagerRector::class, [
             'drupal_rector_notices_as_comments' => '%drupal_rector_notices_as_comments%',
         ]);
 
-    $services->set(DBUpdateRector::class)
-        ->configure([
+    $rectorConfig->rule(FormatDateRector::class);
+
+    $rectorConfig->ruleWithConfiguration(FileLoadRector::class, [
             'drupal_rector_notices_as_comments' => '%drupal_rector_notices_as_comments%',
         ]);
 
-    $services->set(DrupalRenderRector::class);
-
-    $services->set(DrupalRenderRootRector::class);
-
-    $services->set(DrupalURLRector::class);
-
-    $services->set(DrupalLRector::class);
-
-    $services->set(DrupalRealpathRector::class);
-
-    $services->set(EntityCreateRector::class);
-
-    $services->set(EntityDeleteMultipleRector::class);
-
-    $services->set(EntityInterfaceLinkRector::class)
-        ->configure([
+    $rectorConfig->ruleWithConfiguration(LinkGeneratorTraitLRector::class, [
             'drupal_rector_notices_as_comments' => '%drupal_rector_notices_as_comments%',
         ]);
 
-    $services->set(EntityInterfaceUrlInfoRector::class)
-        ->configure([
+    $rectorConfig->ruleWithConfiguration(NodeLoadRector::class, [
             'drupal_rector_notices_as_comments' => '%drupal_rector_notices_as_comments%',
         ]);
 
-    $services->set(EntityLoadRector::class)
-        ->configure([
-            'drupal_rector_notices_as_comments' => '%drupal_rector_notices_as_comments%',
-        ]);
+    $rectorConfig->rule(SafeMarkupFormatRector::class);
 
-    $services->set(EntityViewRector::class);
-
-    $services->set(EntityManagerRector::class)
-        ->configure([
-            'drupal_rector_notices_as_comments' => '%drupal_rector_notices_as_comments%',
-        ]);
-
-    $services->set(FormatDateRector::class);
-
-    $services->set(FileLoadRector::class)
-        ->configure([
-            'drupal_rector_notices_as_comments' => '%drupal_rector_notices_as_comments%',
-        ]);
-
-    $services->set(LinkGeneratorTraitLRector::class)
-        ->configure([
-            'drupal_rector_notices_as_comments' => '%drupal_rector_notices_as_comments%',
-        ]);
-
-    $services->set(NodeLoadRector::class)
-        ->configure([
-            'drupal_rector_notices_as_comments' => '%drupal_rector_notices_as_comments%',
-        ]);
-
-    $services->set(SafeMarkupFormatRector::class);
-
-    $services->set(UserLoadRector::class)
-        ->configure([
+    $rectorConfig->ruleWithConfiguration(UserLoadRector::class, [
             'drupal_rector_notices_as_comments' => '%drupal_rector_notices_as_comments%',
         ]);
 };

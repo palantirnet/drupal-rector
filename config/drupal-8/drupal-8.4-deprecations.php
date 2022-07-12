@@ -2,12 +2,13 @@
 
 declare(strict_types=1);
 
-use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
+use DrupalRector\Rector\Deprecation\BrowserTestBaseGetMockRector;
+use DrupalRector\Rector\Deprecation\KernelTestBaseGetMockRector;
+use DrupalRector\Rector\Deprecation\UnitTestCaseGetMockRector;
+use Rector\Config\RectorConfig;
 
-return static function (ContainerConfigurator $containerConfigurator): void {
-    $services = $containerConfigurator->services();
-
-    $services->set(\DrupalRector\Rector\Deprecation\BrowserTestBaseGetMockRector::class);
-    $services->set(\DrupalRector\Rector\Deprecation\KernelTestBaseGetMockRector::class);
-    $services->set(\DrupalRector\Rector\Deprecation\UnitTestCaseGetMockRector::class);
+return static function (RectorConfig $rectorConfig): void {
+    $rectorConfig->rule(BrowserTestBaseGetMockRector::class);
+    $rectorConfig->rule(KernelTestBaseGetMockRector::class);
+    $rectorConfig->rule(UnitTestCaseGetMockRector::class);
 };

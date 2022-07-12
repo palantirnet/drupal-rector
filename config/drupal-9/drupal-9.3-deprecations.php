@@ -12,33 +12,29 @@ use DrupalRector\Rector\Deprecation\FileMoveRector;
 use DrupalRector\Rector\Deprecation\FileSaveDataRector;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 
-return static function (ContainerConfigurator $containerConfigurator): void {
-    $services = $containerConfigurator->services();
-
+return static function (\Rector\Config\RectorConfig $rectorConfig): void {
     // Change record: https://www.drupal.org/node/2940438.
-    $services->set(DrupalGetPathRector::class)
-        ->configure([
+    $rectorConfig->ruleWithConfiguration(DrupalGetPathRector::class, [
             'drupal_rector_notices_as_comments' => '%drupal_rector_notices_as_comments%',
         ]);
-    $services->set(DrupalGetFilenameRector::class)
-        ->configure([
+    $rectorConfig->ruleWithConfiguration(DrupalGetFilenameRector::class, [
             'drupal_rector_notices_as_comments' => '%drupal_rector_notices_as_comments%',
         ]);
 
     // Change record: https://www.drupal.org/node/2939099.
-    $services->set(RenderRector::class);
+    $rectorConfig->rule(RenderRector::class);
 
 
     // Change record: https://www.drupal.org/node/2940031
-    $services->set(FileUrlGenerator\FileCreateUrlRector::class);
-    $services->set(FileUrlGenerator\FileUrlTransformRelativeRector::class);
-    $services->set(FileUrlGenerator\FromUriRector::class);
+    $rectorConfig->rule(FileUrlGenerator\FileCreateUrlRector::class);
+    $rectorConfig->rule(FileUrlGenerator\FileUrlTransformRelativeRector::class);
+    $rectorConfig->rule(FileUrlGenerator\FromUriRector::class);
 
     // Change record: https://www.drupal.org/node/3223520.
-    $services->set(FileSaveDataRector::class);
-    $services->set(FileMoveRector::class);
-    $services->set(FileCopyRector::class);
+    $rectorConfig->rule(FileSaveDataRector::class);
+    $rectorConfig->rule(FileMoveRector::class);
+    $rectorConfig->rule(FileCopyRector::class);
 
     // Change record: https://www.drupal.org/node/3223091.
-    $services->set(FileBuildUriRector::class);
+    $rectorConfig->rule(FileBuildUriRector::class);
 };

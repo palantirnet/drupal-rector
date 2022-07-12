@@ -3,13 +3,18 @@
 declare(strict_types=1);
 
 use DrupalFinder\DrupalFinder;
+use DrupalRector\Set\Drupal8SetList;
+use DrupalRector\Set\Drupal9SetList;
 use Rector\Config\RectorConfig;
 
 return static function (RectorConfig $rectorConfig): void {
+    // Adjust the set lists to be more granular to your Drupal requirements.
     // @todo find out how to only load the relevant rector rules.
     //   Should we try and load \Drupal::VERSION and check?
-    $rectorConfig->import(__DIR__ .  '/vendor/palantirnet/drupal-rector/config/drupal-8/drupal-8-all-deprecations.php');
-    $rectorConfig->import(__DIR__ .  '/vendor/palantirnet/drupal-rector/config/drupal-9/drupal-9-all-deprecations.php');
+    $rectorConfig->sets([
+        Drupal8SetList::DRUPAL_8,
+        Drupal9SetList::DRUPAL_9
+    ]);
 
     $parameters = $rectorConfig->parameters();
 

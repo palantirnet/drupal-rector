@@ -3,10 +3,8 @@
 declare(strict_types=1);
 
 use DrupalRector\Rector\Deprecation\RequestTimeConstRector;
-use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
+use Rector\Config\RectorConfig;
 
-return static function (ContainerConfigurator $containerConfigurator): void {
-    $services = $containerConfigurator->services();
-
-    $services->set(RequestTimeConstRector::class);
+return static function (RectorConfig $rectorConfig): void {
+    $rectorConfig->rule(RequestTimeConstRector::class);
 };

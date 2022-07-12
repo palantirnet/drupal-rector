@@ -14,35 +14,23 @@ use DrupalRector\Rector\Deprecation\PathAliasRepositoryRector;
 use DrupalRector\Rector\Deprecation\PathAliasWhitelistServiceNameRector;
 use DrupalRector\Rector\Deprecation\PathProcessorAliasServiceNameRector;
 use DrupalRector\Rector\Deprecation\PathSubscriberServiceNameRector;
-use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 
-return static function (ContainerConfigurator $containerConfigurator): void {
-    $services = $containerConfigurator->services();
+return static function (\Rector\Config\RectorConfig $rectorConfig): void {
+    $rectorConfig->rule(PathAliasManagerServiceNameRector::class);
+    $rectorConfig->rule(PathAliasWhitelistServiceNameRector::class);
+    $rectorConfig->rule(PathSubscriberServiceNameRector::class);
+    $rectorConfig->rule(PathProcessorAliasServiceNameRector::class);
+    $rectorConfig->rule(PathAliasRepositoryRector::class);
+    $rectorConfig->rule(FileDefaultSchemeRector::class);
+    $rectorConfig->rule(EntityGetDisplayRector::class);
+    $rectorConfig->rule(EntityGetFormDisplayRector::class);
 
-    $services->set(PathAliasManagerServiceNameRector::class);
+    $rectorConfig->ruleWithConfiguration(
+        EntityTypeGetLowercaseLabelRector::class, [
+        'drupal_rector_notices_as_comments' => '%drupal_rector_notices_as_comments%',
+    ]);
 
-    $services->set(PathAliasWhitelistServiceNameRector::class);
-
-    $services->set(PathSubscriberServiceNameRector::class);
-
-    $services->set(PathProcessorAliasServiceNameRector::class);
-
-    $services->set(PathAliasRepositoryRector::class);
-
-    $services->set(FileDefaultSchemeRector::class);
-
-    $services->set(EntityGetDisplayRector::class);
-
-    $services->set(EntityGetFormDisplayRector::class);
-
-    $services->set(EntityTypeGetLowercaseLabelRector::class)
-        ->configure([
-            'drupal_rector_notices_as_comments' => '%drupal_rector_notices_as_comments%',
-        ]);
-
-    $services->set(FileScanDirectoryRector::class);
-
-    $services->set(FileDirectoryTempRector::class);
-
-    $services->set(FileUriTargetRector::class);
+    $rectorConfig->rule(FileScanDirectoryRector::class);
+    $rectorConfig->rule(FileDirectoryTempRector::class);
+    $rectorConfig->rule(FileUriTargetRector::class);
 };

@@ -6,19 +6,13 @@ use DrupalRector\Rector\Deprecation\DatetimeDateStorageFormatRector;
 use DrupalRector\Rector\Deprecation\DatetimeDatetimeStorageFormatRector;
 use DrupalRector\Rector\Deprecation\DatetimeStorageTimezoneRector;
 use DrupalRector\Rector\Deprecation\DrupalSetMessageRector;
-use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
+use Rector\Config\RectorConfig;
 
-return static function (ContainerConfigurator $containerConfigurator): void {
-    $services = $containerConfigurator->services();
-
-    $services->set(DrupalSetMessageRector::class)
-        ->configure([
-            'drupal_rector_notices_as_comments' => '%drupal_rector_notices_as_comments%',
-        ]);
-
-    $services->set(DatetimeDateStorageFormatRector::class);
-
-    $services->set(DatetimeDatetimeStorageFormatRector::class);
-
-    $services->set(DatetimeStorageTimezoneRector::class);
+return static function (RectorConfig $rectorConfig): void {
+    $rectorConfig->ruleWithConfiguration(DrupalSetMessageRector::class, [
+        'drupal_rector_notices_as_comments' => '%drupal_rector_notices_as_comments%',
+    ]);
+    $rectorConfig->rule(DatetimeDateStorageFormatRector::class);
+    $rectorConfig->rule(DatetimeDatetimeStorageFormatRector::class);
+    $rectorConfig->rule(DatetimeStorageTimezoneRector::class);
 };
