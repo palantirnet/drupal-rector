@@ -102,6 +102,7 @@ CODE_AFTER
                 }
                 // We have to use the deprecated `addNodeBeforeNode` due to
                 // https://github.com/rectorphp/rector/discussions/6538.
+                // @phpstan-ignore-next-line
                 $this->nodesToAddCollector->addNodeBeforeNode($drupalGetNode, $node);
             }
 

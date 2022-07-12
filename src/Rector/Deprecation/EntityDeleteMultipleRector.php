@@ -76,10 +76,8 @@ CODE_AFTER
                 $entity_values = $node->args[1];
             }
 
-            $node_load_mutliple = new Node\Expr\MethodCall($getStorage_node, $create_method_load_multiple, [$entity_values]);
-            $new_node = new Node\Expr\MethodCall($getStorage_node, $create_method_delete, [$node_load_mutliple]);
-
-            return $new_node;
+            $node_load_multiple = new Node\Expr\MethodCall($getStorage_node, $create_method_load_multiple, [$entity_values]);
+            return new Node\Expr\MethodCall($getStorage_node, $create_method_delete, [new Node\Arg($node_load_multiple)]);
         }
 
         return null;
