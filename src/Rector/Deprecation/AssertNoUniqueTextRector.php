@@ -6,11 +6,23 @@ use DrupalRector\Utility\GetDeclaringSourceTrait;
 use PhpParser\Node;
 use Rector\Core\Exception\ShouldNotHappenException;
 use Rector\Core\Rector\AbstractRector;
+use Rector\PostRector\Collector\NodesToAddCollector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 final class AssertNoUniqueTextRector extends AbstractRector
 {
+
+    /**
+     * @readonly
+     * @var \Rector\PostRector\Collector\NodesToAddCollector
+     */
+    private $nodesToAddCollector;
+
+    public function __construct(NodesToAddCollector $nodesToAddCollector)
+    {
+        $this->nodesToAddCollector = $nodesToAddCollector;
+    }
 
     use GetDeclaringSourceTrait;
 
@@ -57,14 +69,16 @@ CODE_AFTER
         $getPageNode = $this->nodeFactory->createMethodCall($getSessionNode, 'getPage');
         $getTextNode = $this->nodeFactory->createMethodCall($getPageNode, 'getText');
         $pageTextVar = new Node\Expr\Variable('page_text');
-        $nodes[] = new Node\Expr\Assign($pageTextVar, $getTextNode);
+        // @phpstan-ignore-next-line
+        $this->nodesToAddCollector->addNodeBeforeNode(new Node\Expr\Assign($pageTextVar, $getTextNode), $node);
 
         $nrFoundVar = new Node\Expr\Variable('nr_found');
         $substrCountNode = $this->nodeFactory->createFuncCall(
             'substr_count',
             [new Node\Arg($pageTextVar), $node->args[0]]
         );
-        $nodes[] = new Node\Expr\Assign($nrFoundVar, $substrCountNode);
+        // @phpstan-ignore-next-line
+        $this->nodesToAddCollector->addNodeBeforeNode(new Node\Expr\Assign($nrFoundVar, $substrCountNode), $node);
 
         $assertedText = $node->args[0]->value;
         if ($assertedText instanceof Node\Scalar\String_) {
@@ -73,7 +87,7 @@ CODE_AFTER
             throw new \RuntimeException(__CLASS__ . ' cannot handle argument of type ' . get_class($assertedText));
         }
 
-        $methodCall = $this->nodeFactory->createLocalMethodCall(
+        return $this->nodeFactory->createLocalMethodCall(
             'assertGreaterThan',
             [
                 new Node\Arg(new Node\Scalar\LNumber(1)),
@@ -86,7 +100,5 @@ CODE_AFTER
                 ]))
             ]
         );
-        $nodes[] = $methodCall;
-        return $nodes;
     }
 }
