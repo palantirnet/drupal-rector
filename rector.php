@@ -13,7 +13,7 @@ return static function (RectorConfig $rectorConfig): void {
     //   Should we try and load \Drupal::VERSION and check?
     $rectorConfig->sets([
         Drupal8SetList::DRUPAL_8,
-        Drupal9SetList::DRUPAL_9
+        Drupal9SetList::DRUPAL_9,
     ]);
 
     $parameters = $rectorConfig->parameters();

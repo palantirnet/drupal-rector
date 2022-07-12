@@ -80,6 +80,19 @@ To get started, copy the `rector.php` configuration file provided by this packag
 cp vendor/palantirnet/drupal-rector/rector.php .
 ```
 
+By default, Drupal Rector will fix deprecated code for all versions of Drupal. If you want to change this behavior, modify
+the sets used in the `rector.php` config. For example, if your site is still on Drupal 9.3 and you cannot fix deprecations
+made in Drupal 9.4, use the following configuration:
+
+```php
+$rectorConfig->sets([
+    Drupal9SetList::DRUPAL_91,
+    Drupal9SetList::DRUPAL_92,
+    Drupal9SetList::DRUPAL_93,
+]);
+```
+
+This is more granular than the `Drupal9SetList::DRUPAL_9` set.
 
 ## Suggested workflow
 
