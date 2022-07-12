@@ -110,8 +110,7 @@ return static function (\Rector\Config\RectorConfig $rectorConfig): void {
     $rectorConfig->ruleWithConfiguration(AssertNoFieldRector::class, [
             'drupal_rector_notices_as_comments' => '%drupal_rector_notices_as_comments%',
         ]);
-    $rectorConfig->set(AssertRawRector::class)
-        ->configure([
+    $rectorConfig->ruleWithConfiguration(AssertRawRector::class, [
             'drupal_rector_notices_as_comments' => '%drupal_rector_notices_as_comments%',
         ]);
     $rectorConfig->ruleWithConfiguration(AssertNoRawRector::class, [
