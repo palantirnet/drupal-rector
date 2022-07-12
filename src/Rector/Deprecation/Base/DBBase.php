@@ -80,7 +80,7 @@ abstract class DBBase extends AbstractRector implements ConfigurableRectorInterf
      */
     public function refactor(Node $node): ?Node
     {
-        assert($node instanceof Node\Expr\FuncCall);
+        /** @var Node\Expr\FuncCall $node */
         if ($this->getName($node->name) === $this->deprecatedMethodName) {
 
             // TODO: Check if we have are in a class and inject \Drupal\Core\Database\Connection

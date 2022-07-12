@@ -12,6 +12,10 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 final class UiHelperTraitDrupalPostFormRector extends AbstractRector
 {
 
+    /**
+     * @readonly
+     * @var \Rector\PostRector\Collector\NodesToAddCollector
+     */
     private $nodesToAddCollector;
 
     public function __construct(NodesToAddCollector $nodesToAddCollector)
