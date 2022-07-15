@@ -52,170 +52,134 @@ use DrupalRector\Rector\Deprecation\UserPasswordRector;
 use Rector\PHPUnit\Set\PHPUnitSetList;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 
-return static function (ContainerConfigurator $containerConfigurator): void {
-    $services = $containerConfigurator->services();
+return static function (\Rector\Config\RectorConfig $rectorConfig): void {
+    $rectorConfig->sets([
+        PHPUnitSetList::PHPUNIT_90,
+    ]);
 
-    $containerConfigurator->import(PHPUnitSetList::PHPUNIT_90);
-
-    $services->set(UiHelperTraitDrupalPostFormRector::class);
+    $rectorConfig->rule(UiHelperTraitDrupalPostFormRector::class);
     // AssertLegacyTrait items
     // @see https://www.drupal.org/project/rector/issues/3222671
     // @see https://www.drupal.org/node/3129738
-    $services->set(AssertRector::class)
-        ->configure([
+    $rectorConfig->ruleWithConfiguration(AssertRector::class, [
             'drupal_rector_notices_as_comments' => '%drupal_rector_notices_as_comments%',
         ]);
-    $services->set(AssertEqualRector::class)
-        ->configure([
+    $rectorConfig->ruleWithConfiguration(AssertEqualRector::class, [
             'drupal_rector_notices_as_comments' => '%drupal_rector_notices_as_comments%',
         ]);
-    $services->set(AssertNotEqualRector::class)
-        ->configure([
+    $rectorConfig->ruleWithConfiguration(AssertNotEqualRector::class, [
             'drupal_rector_notices_as_comments' => '%drupal_rector_notices_as_comments%',
         ]);
-    $services->set(AssertIdenticalRector::class)
-        ->configure([
+    $rectorConfig->ruleWithConfiguration(AssertIdenticalRector::class, [
             'drupal_rector_notices_as_comments' => '%drupal_rector_notices_as_comments%',
         ]);
-    $services->set(AssertNotIdenticalRector::class)
-        ->configure([
+    $rectorConfig->ruleWithConfiguration(AssertNotIdenticalRector::class, [
             'drupal_rector_notices_as_comments' => '%drupal_rector_notices_as_comments%',
         ]);
-    $services->set(AssertIdenticalObjectRector::class)
-        ->configure([
+    $rectorConfig->ruleWithConfiguration(AssertIdenticalObjectRector::class, [
             'drupal_rector_notices_as_comments' => '%drupal_rector_notices_as_comments%',
         ]);
-    $services->set(PassRector::class);
-    $services->set(AssertElementPresentRector::class)
-        ->configure([
+    $rectorConfig->rule(PassRector::class);
+    $rectorConfig->ruleWithConfiguration(AssertElementPresentRector::class, [
             'drupal_rector_notices_as_comments' => '%drupal_rector_notices_as_comments%',
         ]);
-    $services->set(AssertElementNotPresentRector::class)
-        ->configure([
+    $rectorConfig->ruleWithConfiguration(AssertElementNotPresentRector::class, [
             'drupal_rector_notices_as_comments' => '%drupal_rector_notices_as_comments%',
         ]);
-    $services->set(AssertTextRector::class)
-        ->configure([
+    $rectorConfig->ruleWithConfiguration(AssertTextRector::class, [
             'drupal_rector_notices_as_comments' => '%drupal_rector_notices_as_comments%',
         ]);
-    $services->set(AssertNoTextRector::class)
-        ->configure([
+    $rectorConfig->ruleWithConfiguration(AssertNoTextRector::class, [
             'drupal_rector_notices_as_comments' => '%drupal_rector_notices_as_comments%',
         ]);
-    $services->set(AssertUniqueTextRector::class)
-        ->configure([
+    $rectorConfig->ruleWithConfiguration(AssertUniqueTextRector::class, [
             'drupal_rector_notices_as_comments' => '%drupal_rector_notices_as_comments%',
         ]);
-    $services->set(AssertNoUniqueTextRector::class);
-    $services->set(AssertResponseRector::class)
-        ->configure([
+    $rectorConfig->rule(AssertNoUniqueTextRector::class);
+    $rectorConfig->ruleWithConfiguration(AssertResponseRector::class, [
             'drupal_rector_notices_as_comments' => '%drupal_rector_notices_as_comments%',
         ]);
-    $services->set(AssertFieldByNameRector::class);
-    $services->set(AssertNoFieldByNameRector::class)
-        ->configure([
+    $rectorConfig->rule(AssertFieldByNameRector::class);
+    $rectorConfig->ruleWithConfiguration(AssertNoFieldByNameRector::class, [
             'drupal_rector_notices_as_comments' => '%drupal_rector_notices_as_comments%',
         ]);
-    $services->set(AssertFieldByIdRector::class);
-    $services->set(AssertFieldRector::class)
-        ->configure([
+    $rectorConfig->rule(AssertFieldByIdRector::class);
+    $rectorConfig->ruleWithConfiguration(AssertFieldRector::class, [
             'drupal_rector_notices_as_comments' => '%drupal_rector_notices_as_comments%',
         ]);
-    $services->set(AssertNoFieldRector::class)
-        ->configure([
+    $rectorConfig->ruleWithConfiguration(AssertNoFieldRector::class, [
             'drupal_rector_notices_as_comments' => '%drupal_rector_notices_as_comments%',
         ]);
-    $services->set(AssertRawRector::class)
-        ->configure([
+    $rectorConfig->ruleWithConfiguration(AssertRawRector::class, [
             'drupal_rector_notices_as_comments' => '%drupal_rector_notices_as_comments%',
         ]);
-    $services->set(AssertNoRawRector::class)
-        ->configure([
+    $rectorConfig->ruleWithConfiguration(AssertNoRawRector::class, [
             'drupal_rector_notices_as_comments' => '%drupal_rector_notices_as_comments%',
         ]);
-    $services->set(AssertTitleRector::class)
-        ->configure([
+    $rectorConfig->ruleWithConfiguration(AssertTitleRector::class, [
             'drupal_rector_notices_as_comments' => '%drupal_rector_notices_as_comments%',
         ]);
-    $services->set(AssertLinkRector::class)
-        ->configure([
+    $rectorConfig->ruleWithConfiguration(AssertLinkRector::class, [
             'drupal_rector_notices_as_comments' => '%drupal_rector_notices_as_comments%',
         ]);
-    $services->set(AssertNoLinkRector::class)
-        ->configure([
+    $rectorConfig->ruleWithConfiguration(AssertNoLinkRector::class, [
             'drupal_rector_notices_as_comments' => '%drupal_rector_notices_as_comments%',
         ]);
-    $services->set(AssertLinkByHrefRector::class)
-        ->configure([
+    $rectorConfig->ruleWithConfiguration(AssertLinkByHrefRector::class, [
             'drupal_rector_notices_as_comments' => '%drupal_rector_notices_as_comments%',
         ]);
-    $services->set(AssertNoLinkByHrefRector::class)
-        ->configure([
+    $rectorConfig->ruleWithConfiguration(AssertNoLinkByHrefRector::class, [
             'drupal_rector_notices_as_comments' => '%drupal_rector_notices_as_comments%',
         ]);
-    $services->set(AssertNoFieldByIdRector::class);
-    $services->set(AssertUrlRector::class)
-        ->configure([
+    $rectorConfig->rule(AssertNoFieldByIdRector::class);
+    $rectorConfig->ruleWithConfiguration(AssertUrlRector::class, [
             'drupal_rector_notices_as_comments' => '%drupal_rector_notices_as_comments%',
         ]);
-    $services->set(AssertOptionRector::class)
-        ->configure([
+    $rectorConfig->ruleWithConfiguration(AssertOptionRector::class, [
             'drupal_rector_notices_as_comments' => '%drupal_rector_notices_as_comments%',
         ]);
-    $services->set(AssertOptionByTextRector::class)
-        ->configure([
+    $rectorConfig->ruleWithConfiguration(AssertOptionByTextRector::class, [
             'drupal_rector_notices_as_comments' => '%drupal_rector_notices_as_comments%',
         ]);
-    $services->set(AssertNoOptionRector::class)
-        ->configure([
+    $rectorConfig->ruleWithConfiguration(AssertNoOptionRector::class, [
             'drupal_rector_notices_as_comments' => '%drupal_rector_notices_as_comments%',
         ]);
-    $services->set(AssertOptionSelectedRector::class);
-    $services->set(AssertFieldCheckedRector::class)
-        ->configure([
+    $rectorConfig->rule(AssertOptionSelectedRector::class);
+    $rectorConfig->ruleWithConfiguration(AssertFieldCheckedRector::class, [
             'drupal_rector_notices_as_comments' => '%drupal_rector_notices_as_comments%',
         ]);
-    $services->set(AssertNoFieldCheckedRector::class)
-        ->configure([
+    $rectorConfig->ruleWithConfiguration(AssertNoFieldCheckedRector::class, [
             'drupal_rector_notices_as_comments' => '%drupal_rector_notices_as_comments%',
         ]);
     // @todo AssertFieldByXPathRector
     // @todo AssertNoFieldByXPathRector
     // @todo AssertFieldsByValueRector
-    $services->set(AssertEscapedRector::class)
-        ->configure([
+    $rectorConfig->ruleWithConfiguration(AssertEscapedRector::class, [
             'drupal_rector_notices_as_comments' => '%drupal_rector_notices_as_comments%',
         ]);
-    $services->set(AssertNoEscapedRector::class)
-        ->configure([
+    $rectorConfig->ruleWithConfiguration(AssertNoEscapedRector::class, [
             'drupal_rector_notices_as_comments' => '%drupal_rector_notices_as_comments%',
         ]);
-    $services->set(AssertPatternRector::class)
-        ->configure([
+    $rectorConfig->ruleWithConfiguration(AssertPatternRector::class, [
             'drupal_rector_notices_as_comments' => '%drupal_rector_notices_as_comments%',
         ]);
-    $services->set(AssertNoPatternRector::class)
-        ->configure([
+    $rectorConfig->ruleWithConfiguration(AssertNoPatternRector::class, [
             'drupal_rector_notices_as_comments' => '%drupal_rector_notices_as_comments%',
         ]);
-    $services->set(AssertCacheTagRector::class)
-        ->configure([
+    $rectorConfig->ruleWithConfiguration(AssertCacheTagRector::class, [
             'drupal_rector_notices_as_comments' => '%drupal_rector_notices_as_comments%',
         ]);
-    $services->set(AssertNoCacheTagRector::class)
-        ->configure([
+    $rectorConfig->ruleWithConfiguration(AssertNoCacheTagRector::class, [
             'drupal_rector_notices_as_comments' => '%drupal_rector_notices_as_comments%',
         ]);
-    $services->set(AssertHeaderRector::class)
-        ->configure([
+    $rectorConfig->ruleWithConfiguration(AssertHeaderRector::class, [
             'drupal_rector_notices_as_comments' => '%drupal_rector_notices_as_comments%',
         ]);
-    $services->set(BuildXPathQueryRector::class)
-        ->configure([
+    $rectorConfig->ruleWithConfiguration(BuildXPathQueryRector::class, [
             'drupal_rector_notices_as_comments' => '%drupal_rector_notices_as_comments%',
         ]);
-    $services->set(ConstructFieldXpathRector::class);
-    $services->set(GetRawContentRector::class);
-    $services->set(GetAllOptionsRector::class);
-    $services->set(UserPasswordRector::class);
+    $rectorConfig->rule(ConstructFieldXpathRector::class);
+    $rectorConfig->rule(GetRawContentRector::class);
+    $rectorConfig->rule(GetAllOptionsRector::class);
+    $rectorConfig->rule(UserPasswordRector::class);
 };

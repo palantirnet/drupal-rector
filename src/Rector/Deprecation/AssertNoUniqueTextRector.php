@@ -7,13 +7,22 @@ use PhpParser\Node;
 use Rector\Core\Exception\ShouldNotHappenException;
 use Rector\Core\Rector\AbstractRector;
 use Rector\PostRector\Collector\NodesToAddCollector;
-use Symplify\Astral\ValueObject\AttributeKey;
-use Symplify\RuleDocGenerator\ValueObject\AbstractCodeSample;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 final class AssertNoUniqueTextRector extends AbstractRector
 {
+
+    /**
+     * @readonly
+     * @var \Rector\PostRector\Collector\NodesToAddCollector
+     */
+    private $nodesToAddCollector;
+
+    public function __construct(NodesToAddCollector $nodesToAddCollector)
+    {
+        $this->nodesToAddCollector = $nodesToAddCollector;
+    }
 
     use GetDeclaringSourceTrait;
 
@@ -54,10 +63,13 @@ CODE_AFTER
             throw new ShouldNotHappenException('assertNoUniqueText had no arguments');
         }
 
+        $nodes = [];
+
         $getSessionNode = $this->nodeFactory->createLocalMethodCall('getSession');
         $getPageNode = $this->nodeFactory->createMethodCall($getSessionNode, 'getPage');
         $getTextNode = $this->nodeFactory->createMethodCall($getPageNode, 'getText');
         $pageTextVar = new Node\Expr\Variable('page_text');
+        // @phpstan-ignore-next-line
         $this->nodesToAddCollector->addNodeBeforeNode(new Node\Expr\Assign($pageTextVar, $getTextNode), $node);
 
         $nrFoundVar = new Node\Expr\Variable('nr_found');
@@ -65,6 +77,7 @@ CODE_AFTER
             'substr_count',
             [new Node\Arg($pageTextVar), $node->args[0]]
         );
+        // @phpstan-ignore-next-line
         $this->nodesToAddCollector->addNodeBeforeNode(new Node\Expr\Assign($nrFoundVar, $substrCountNode), $node);
 
         $assertedText = $node->args[0]->value;

@@ -12,6 +12,17 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 final class UiHelperTraitDrupalPostFormRector extends AbstractRector
 {
 
+    /**
+     * @readonly
+     * @var \Rector\PostRector\Collector\NodesToAddCollector
+     */
+    private $nodesToAddCollector;
+
+    public function __construct(NodesToAddCollector $nodesToAddCollector)
+    {
+        $this->nodesToAddCollector = $nodesToAddCollector;
+    }
+
     public function getRuleDefinition(): RuleDefinition
     {
         return new RuleDefinition('Fixes deprecated UiHelperTrait::drupalPostForm() calls', [
@@ -46,7 +57,7 @@ CODE_AFTER
     /**
      * @param \PhpParser\Node\Expr\MethodCall $node
      *
-     * @return \PhpParser\Node\Arg[]
+     * @return array<int, ?\PhpParser\Node\Arg>
      * @throws \Rector\Core\Exception\ShouldNotHappenException
      */
     private function safeArgDestructure(Node\Expr\MethodCall $node): array
@@ -69,7 +80,7 @@ CODE_AFTER
         throw new ShouldNotHappenException('Unexpected argument count for drupalPostForm');
     }
 
-    public function refactor(Node $node): ?Node
+    public function refactor(Node $node)
     {
         assert($node instanceof Node\Expr\MethodCall);
         if ($this->getName($node->name) === 'drupalPostForm') {
@@ -89,6 +100,9 @@ CODE_AFTER
                 } else {
                     $drupalGetNode = $this->nodeFactory->createLocalMethodCall('drupalGet', [$path, $options]);
                 }
+                // We have to use the deprecated `addNodeBeforeNode` due to
+                // https://github.com/rectorphp/rector/discussions/6538.
+                // @phpstan-ignore-next-line
                 $this->nodesToAddCollector->addNodeBeforeNode($drupalGetNode, $node);
             }
 

@@ -10,11 +10,8 @@
         "ast"
     ],
     "require": {
-        "rector/rector": "~0.12.21",
+        "rector/rector": "~0.13.8",
         "webflo/drupal-finder": "^1.2"
-    },
-    "conflict": {
-        "rector/rector": ">0.12.21"
     },
     "license": "MIT",
     "authors": [
@@ -66,23 +63,17 @@
     "minimum-stability": "dev",
     "prefer-stable": true,
     "extra": {
-        "enable-patching-note": "We need the following to allow rector/rector-src to patch dependencies.",
         "enable-patching": true
     },
     "require-dev": {
         "php": "^8.0",
+        "cweagans/composer-patches": "^1.7.2",
         "phpstan/extension-installer": "^1.1",
         "phpstan/phpstan": "^1.0",
         "phpstan/phpstan-deprecation-rules": "^1.0",
         "phpunit/phpunit": "^9.5",
-        "rector/rector-src": "dev-main#11fdd74f8abe3deefbb2492c00868c57184fd484",
-        "rector/rector-cakephp": "dev-main#d1fa93dbf332a0170deaf37467b40735727003fb",
-        "rector/rector-doctrine": "dev-main#ae06e92e71b741f43906374a699eb041882259c3",
-        "rector/rector-laravel": "dev-main#48a1f3458dc9536a32dae0507ba53fc2d3d28f01",
-        "rector/rector-nette": "dev-main#e01d41e5caa10ff5057d3b922c95ba4f15d41657",
-        "rector/rector-phpoffice": "dev-main#4b9837410f4b1f2002693d94a0c4c483abf37e7f",
-        "rector/rector-phpunit": "dev-main#41775450593f1a94c30a562865c5340f4118880c",
-        "rector/rector-symfony": "dev-main#6e679917c27895e94314c436b44821e091384e8e",
+        "rector/rector-src": "dev-main",
+        "symplify/vendor-patches": "^11.0",
         "symfony/yaml": "^5 || ^6"
     }
 }

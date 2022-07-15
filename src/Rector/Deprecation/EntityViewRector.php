@@ -74,22 +74,20 @@ CODE_AFTER
 
         $entityRef_type_id = new Node\Expr\MethodCall($entity_reference, $getEntityTypeId_method_name);
 
-        $view_builder = new Node\Expr\MethodCall($var, $getViewBuilder_method_name, [$entityRef_type_id]);
+        $view_builder = new Node\Expr\MethodCall($var, $getViewBuilder_method_name, [new Node\Arg($entityRef_type_id)]);
 
         $view_method_name = new Node\Identifier('view');
 
         $view_args = [
-            $node->args[0]->value,
-            $node->args[1]->value,
+            $node->args[0],
+            $node->args[1],
         ];
 
         if (isset($node->args[2])) {
-            $view_args[] = $node->args[2]->value;
+            $view_args[] = $node->args[2];
         }
 
-        $view = new Node\Expr\MethodCall($view_builder, $view_method_name, $view_args);
-
-        return $view;
+        return new Node\Expr\MethodCall($view_builder, $view_method_name, $view_args);
     }
 
 }

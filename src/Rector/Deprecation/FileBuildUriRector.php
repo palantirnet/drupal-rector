@@ -58,9 +58,9 @@ CODE_AFTER
             'config',
             [new Node\Arg(new Node\Scalar\String_('system.file'))]
         );
-        $scheme = new Node\Expr\MethodCall($config, new Node\Identifier('get'), [new Node\Scalar\String_('default_scheme')]);
+        $scheme = new Node\Expr\MethodCall($config, new Node\Identifier('get'), [new Node\Arg(new Node\Scalar\String_('default_scheme'))]);
 
-        $arg = new Node\Expr\BinaryOp\Concat(
+        $arg = New Node\Arg(new Node\Expr\BinaryOp\Concat(
             $scheme,
             // The nested concatenation is enclosed in parentheses.
             // @see https://github.com/rectorphp/rector/issues/7188
@@ -68,7 +68,7 @@ CODE_AFTER
                 new Node\Scalar\String_('://'),
                 $node->getArgs()[0]->value
             )
-        );
+        ));
 
         $service = new Node\Expr\StaticCall(
             new Node\Name\FullyQualified('Drupal'),

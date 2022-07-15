@@ -2,15 +2,18 @@
 
 declare(strict_types=1);
 
-use Rector\Core\Configuration\Option;
-use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
+use DrupalRector\Set\Drupal9SetList;
+use Rector\Config\RectorConfig;
 
-return static function (ContainerConfigurator $containerConfigurator): void {
-    $containerConfigurator->import(__DIR__ . '/drupal-9.*');
+return static function (RectorConfig $rectorConfig): void {
+    $rectorConfig->sets([
+        Drupal9SetList::DRUPAL_90,
+        Drupal9SetList::DRUPAL_91,
+        Drupal9SetList::DRUPAL_92,
+        Drupal9SetList::DRUPAL_93,
+    ]);
 
-    $parameters = $containerConfigurator->parameters();
-
-    $parameters->set(Option::BOOTSTRAP_FILES, [
+    $rectorConfig->bootstrapFiles([
         __DIR__ . '/../drupal-phpunit-bootstrap-file.php'
     ]);
 };
