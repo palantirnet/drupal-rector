@@ -94,7 +94,6 @@ CODE_AFTER
 
             $pathValue = $path->value;
             if (!$pathValue instanceof Node\Expr\ConstFetch || strtolower((string) $pathValue->name) !== 'null') {
-                assert($pathValue instanceof Node\Scalar\String_);
                 if ($options === null) {
                     $drupalGetNode = $this->nodeFactory->createLocalMethodCall('drupalGet', [$path]);
                 } else {
