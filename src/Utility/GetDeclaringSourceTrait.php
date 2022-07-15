@@ -22,7 +22,9 @@ trait GetDeclaringSourceTrait
     protected function getDeclaringSource(Node\Expr $expr): ?string
     {
         $scope = $expr->getAttribute(AttributeKey::SCOPE);
-        assert($scope instanceof Scope);
+        if (!$scope instanceof Scope) {
+            return null;
+        }
         $classReflection = $scope->getClassReflection();
         assert($classReflection !== null);
 
