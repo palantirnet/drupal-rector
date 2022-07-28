@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use DrupalRector\Rector\Property\ProtectedStaticModulesPropertyRector;
 use Rector\PHPUnit\Set\PHPUnitSetList;
 use Rector\Symfony\Set\SymfonySetList;
 
@@ -14,4 +15,5 @@ return static function (\Rector\Config\RectorConfig $rectorConfig): void {
         SymfonySetList::SYMFONY_43,
         SymfonySetList::SYMFONY_44
     ]);
+    $rectorConfig->rule(ProtectedStaticModulesPropertyRector::class);
 };
