@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use DrupalRector\Rector\Class_\FunctionalTestDefaultThemePropertyRector;
 use DrupalRector\Rector\Deprecation\EntityGetDisplayRector;
 use DrupalRector\Rector\Deprecation\EntityGetFormDisplayRector;
 use DrupalRector\Rector\Deprecation\EntityTypeGetLowercaseLabelRector;
@@ -33,4 +34,6 @@ return static function (\Rector\Config\RectorConfig $rectorConfig): void {
     $rectorConfig->rule(FileScanDirectoryRector::class);
     $rectorConfig->rule(FileDirectoryTempRector::class);
     $rectorConfig->rule(FileUriTargetRector::class);
+
+    $rectorConfig->rule(FunctionalTestDefaultThemePropertyRector::class);
 };
