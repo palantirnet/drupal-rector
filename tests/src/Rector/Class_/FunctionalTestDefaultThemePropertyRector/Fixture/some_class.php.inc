@@ -5,6 +5,11 @@ namespace Rector\Tests\DrupalRector\Rector\Class_\FunctionalTestDefaultThemeProp
 use Drupal\Tests\BrowserTestBase;
 
 class SomeClassTest extends BrowserTestBase {
+
+    public function simple_example() {
+        $this->assertTrue(TRUE);
+    }
+
 }
 
 ?>
@@ -15,9 +20,16 @@ namespace Rector\Tests\DrupalRector\Rector\Class_\FunctionalTestDefaultThemeProp
 
 use Drupal\Tests\BrowserTestBase;
 
-class SomeClassTest extends BrowserTestBase
-{
+class SomeClassTest extends BrowserTestBase {
+
+    /**
+     * {@inheritdoc}
+     */
     protected $defaultTheme = 'stark';
+    public function simple_example() {
+        $this->assertTrue(TRUE);
+    }
+
 }
 
 ?>

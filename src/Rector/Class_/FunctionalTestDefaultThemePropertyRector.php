@@ -74,6 +74,7 @@ CODE_SAMPLE
         $propertyBuilder = new PropertyBuilder('defaultTheme');
         $propertyBuilder->makeProtected();
         $propertyBuilder->setDefault('stark');
+        $propertyBuilder->setDocComment("/**\n * {@inheritdoc}\n */");
         $node->stmts = array_merge([$propertyBuilder->getNode()], $node->stmts);
 
         return $node;
