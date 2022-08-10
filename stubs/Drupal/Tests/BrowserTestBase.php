@@ -15,4 +15,13 @@ abstract class BrowserTestBase extends TestCase
 {
     use AssertLegacyTrait;
 
+    /**
+     * The theme to install as the default for testing.
+     *
+     * Defaults to the install profile's default theme, if it specifies any.
+     *
+     * @var string
+     */
+    protected $defaultTheme;
+
 }

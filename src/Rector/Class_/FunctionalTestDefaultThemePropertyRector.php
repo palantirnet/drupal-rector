@@ -6,9 +6,11 @@ namespace DrupalRector\Rector\Class_;
 
 use Drupal\Tests\BrowserTestBase;
 use PhpParser\Node;
+use PHPStan\Reflection\ReflectionProviderStaticAccessor;
 use PHPStan\Type\ObjectType;
 use Rector\Core\Exception\ShouldNotHappenException;
 use Rector\Core\Rector\AbstractRector;
+use Rector\NodeTypeResolver\Node\AttributeKey;
 use Symplify\Astral\ValueObject\NodeBuilder\PropertyBuilder;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
@@ -58,6 +60,10 @@ CODE_SAMPLE
         if ($node->isAbstract() || $node->isAnonymous()) {
             return null;
         }
+        if ($node->getProperty('defaultTheme') !== null) {
+            return null;
+        }
+
         $type = $this->nodeTypeResolver->getType($node);
         if (!$type instanceof ObjectType) {
             throw new ShouldNotHappenException(__CLASS__ . ' type for node was not ' . ObjectType::class);
@@ -65,17 +71,16 @@ CODE_SAMPLE
         if ($type->isSuperTypeOf(new ObjectType(BrowserTestBase::class))->no()) {
             return null;
         }
-        if ($type->hasProperty('defaultTheme')->yes()) {
-            // @todo check value. if `classy` change to `starterkit`?
-            return null;
-        }
+
         // Is processed by \Rector\PostRector\Rector\PropertyAddingPostRector
         // Sets as `private`, which we need `protected` and default value.
         $propertyBuilder = new PropertyBuilder('defaultTheme');
         $propertyBuilder->makeProtected();
         $propertyBuilder->setDefault('stark');
         $propertyBuilder->setDocComment("/**\n * {@inheritdoc}\n */");
-        $node->stmts = array_merge([$propertyBuilder->getNode()], $node->stmts);
+        $property = $propertyBuilder->getNode();
+        $this->phpDocInfoFactory->createFromNode($property);
+        $node->stmts = array_merge([$property], $node->stmts);
 
         return $node;
     }
