@@ -5,6 +5,7 @@ namespace Rector\Tests\DrupalRector\Rector\Class_\FunctionalTestDefaultThemeProp
 use Drupal\Tests\BrowserTestBase;
 
 abstract class Foo extends BrowserTestBase {
+
     /**
      * {@inheritdoc}
      */
@@ -28,6 +29,7 @@ namespace Rector\Tests\DrupalRector\Rector\Class_\FunctionalTestDefaultThemeProp
 use Drupal\Tests\BrowserTestBase;
 
 abstract class Foo extends BrowserTestBase {
+
     /**
      * {@inheritdoc}
      */
