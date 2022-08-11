@@ -5,12 +5,12 @@ declare(strict_types=1);
 namespace DrupalRector\Rector\Class_;
 
 use Drupal\Tests\BrowserTestBase;
+use PhpParser\Builder\Property;
 use PhpParser\Node;
 use PHPStan\Analyser\Scope;
 use PHPStan\Type\ObjectType;
 use Rector\Core\Exception\ShouldNotHappenException;
 use Rector\Core\Rector\AbstractScopeAwareRector;
-use Symplify\Astral\ValueObject\NodeBuilder\PropertyBuilder;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
@@ -89,7 +89,7 @@ CODE_SAMPLE
 
         // Is processed by \Rector\PostRector\Rector\PropertyAddingPostRector
         // Sets as `private`, which we need `protected` and default value.
-        $propertyBuilder = new PropertyBuilder('defaultTheme');
+        $propertyBuilder = new Property('defaultTheme');
         $propertyBuilder->makeProtected();
         $propertyBuilder->setDefault('stark');
         $propertyBuilder->setDocComment("/**\n * {@inheritdoc}\n */");
