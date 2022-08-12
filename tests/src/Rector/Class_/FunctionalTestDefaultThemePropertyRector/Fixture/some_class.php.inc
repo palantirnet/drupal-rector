@@ -26,6 +26,7 @@ class SomeClassTest extends BrowserTestBase {
      * {@inheritdoc}
      */
     protected $defaultTheme = 'stark';
+
     public function simple_example() {
         $this->assertTrue(TRUE);
     }

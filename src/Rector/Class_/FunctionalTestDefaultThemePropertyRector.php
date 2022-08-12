@@ -95,7 +95,7 @@ CODE_SAMPLE
         $propertyBuilder->setDocComment("/**\n * {@inheritdoc}\n */");
         $property = $propertyBuilder->getNode();
         $this->phpDocInfoFactory->createFromNode($property);
-        $node->stmts = array_merge([$property], $node->stmts);
+        $node->stmts = array_merge([$property, new Node\Stmt\Nop()], $node->stmts);
 
         return $node;
     }
