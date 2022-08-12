@@ -6,6 +6,11 @@ use Drupal\Tests\BrowserTestBase;
 
 class GetAllOptionsTest extends BrowserTestBase {
 
+    /**
+     * {@inheritdoc}
+     */
+    protected $defaultTheme = 'stark';
+
     public function testExample() {
         $this->drupalGet('/form-test/select');
         $this->assertCount(6, $this->cssSelect('select[name="opt_groups"]')[0]->findAll('xpath', '//option'));

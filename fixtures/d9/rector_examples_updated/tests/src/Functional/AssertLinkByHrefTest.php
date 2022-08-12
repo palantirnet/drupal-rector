@@ -6,6 +6,11 @@ use Drupal\Tests\BrowserTestBase;
 
 class AssertLinkByHrefTest extends BrowserTestBase {
 
+    /**
+     * {@inheritdoc}
+     */
+    protected $defaultTheme = 'stark';
+
     public function testLinkByHref() {
         $this->assertSession()->linkByHrefExists('user/1/translations');
     }

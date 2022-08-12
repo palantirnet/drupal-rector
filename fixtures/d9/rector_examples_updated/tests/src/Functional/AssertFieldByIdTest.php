@@ -6,6 +6,11 @@ use Drupal\Tests\BrowserTestBase;
 
 class AssertFieldByIdTest extends BrowserTestBase {
 
+    /**
+     * {@inheritdoc}
+     */
+    protected $defaultTheme = 'stark';
+
     public function testFieldById() {
         $this->assertSession()->fieldExists('edit-name');
         $this->assertSession()->fieldValueEquals('edit-name', 'Test name');

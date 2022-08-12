@@ -7,6 +7,11 @@ use Drupal\Tests\BrowserTestBase;
 class DrupalPostFormTest extends BrowserTestBase {
 
     /**
+     * {@inheritdoc}
+     */
+    protected $defaultTheme = 'stark';
+
+    /**
      * A simple example using the class property.
      */
     public function simple_example() {

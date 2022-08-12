@@ -6,6 +6,11 @@ use Drupal\Tests\BrowserTestBase;
 
 class AssertCacheTagTest extends BrowserTestBase {
 
+    /**
+     * {@inheritdoc}
+     */
+    protected $defaultTheme = 'stark';
+
     public function testAssertCacheTag() {
         $this->drupalGet('');
         $this->assertSession()->responseHeaderContains('X-Drupal-Cache-Tags', 'config:block_list');

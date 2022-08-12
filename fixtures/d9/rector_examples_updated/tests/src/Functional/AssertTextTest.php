@@ -6,6 +6,11 @@ use Drupal\Tests\BrowserTestBase;
 
 class AssertTextTest extends BrowserTestBase {
 
+    /**
+     * {@inheritdoc}
+     */
+    protected $defaultTheme = 'stark';
+
     public function testAssertText() {
         $current_content = $this->randomMachineName();
         $this->drupalGet('test-page');

@@ -6,6 +6,11 @@ use Drupal\Tests\BrowserTestBase;
 
 class AssertPatternTest extends BrowserTestBase {
 
+    /**
+     * {@inheritdoc}
+     */
+    protected $defaultTheme = 'stark';
+
     public function testExample() {
         $this->assertSession()->responseMatches('|<h4[^>]*></h4>|', 'No empty H4 element found.');
         $this->assertSession()->responseNotMatches('|<h4[^>]*></h4>|', 'No empty H4 element found.');

@@ -6,6 +6,11 @@ use Drupal\Tests\BrowserTestBase;
 
 class AssertOptionTest extends BrowserTestBase {
 
+    /**
+     * {@inheritdoc}
+     */
+    protected $defaultTheme = 'stark';
+
     public function testExample() {
         $this->assertSession()->optionExists('edit-settings-view-mode', 'default');
         $this->assertSession()->optionNotExists('edit-settings-view-mode', 'default');

@@ -6,6 +6,11 @@ use Drupal\Tests\BrowserTestBase;
 
 class AssertUniqueTextTest extends BrowserTestBase {
 
+    /**
+     * {@inheritdoc}
+     */
+    protected $defaultTheme = 'stark';
+
     public function testAssertText() {
         $this->assertSession()->pageTextContainsOnce('Color set');
         $page_text = $this->getSession()->getPage()->getText();
