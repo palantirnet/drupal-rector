@@ -12,7 +12,7 @@ abstract class Foo extends BrowserTestBase {
     protected $defaultTheme = 'stark';
 }
 
-class SomeClassTest extends Foo {
+class FooTest extends Foo {
 
     public function simple_example() {
         $this->assertTrue(TRUE);
@@ -36,7 +36,7 @@ abstract class Foo extends BrowserTestBase {
     protected $defaultTheme = 'stark';
 }
 
-class SomeClassTest extends Foo {
+class FooTest extends Foo {
 
     public function simple_example() {
         $this->assertTrue(TRUE);

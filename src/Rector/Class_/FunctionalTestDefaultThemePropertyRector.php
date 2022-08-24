@@ -7,10 +7,9 @@ namespace DrupalRector\Rector\Class_;
 use Drupal\Tests\BrowserTestBase;
 use PhpParser\Builder\Property;
 use PhpParser\Node;
-use PHPStan\Analyser\Scope;
 use PHPStan\Type\ObjectType;
 use Rector\Core\Exception\ShouldNotHappenException;
-use Rector\Core\Rector\AbstractScopeAwareRector;
+use Rector\Core\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
@@ -19,7 +18,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  *
  * @see \DrupalRector\Tests\Rector\Class_\FunctionalTestDefaultThemePropertyRector\FunctionalTestDefaultThemePropertyRectorTest
  */
-final class FunctionalTestDefaultThemePropertyRector extends AbstractScopeAwareRector
+final class FunctionalTestDefaultThemePropertyRector extends AbstractRector
 {
 
     public function getRuleDefinition(): RuleDefinition
@@ -53,7 +52,7 @@ CODE_SAMPLE
     /**
      * @param \PhpParser\Node\Stmt\Class_ $node
      */
-    public function refactorWithScope(Node $node, Scope $scope): ?Node
+    public function refactor(Node $node): ?Node
     {
         assert($node instanceof Node\Stmt\Class_);
         if ($node->isAbstract() || $node->isAnonymous()) {
@@ -70,8 +69,16 @@ CODE_SAMPLE
         if ($type->isSuperTypeOf(new ObjectType(BrowserTestBase::class))->no()) {
             return null;
         }
-        $defaultThemeProperty = $type->getProperty('defaultTheme', $scope);
-        $nativeProperty = $defaultThemeProperty->getDeclaringClass()->getNativeProperty('defaultTheme');
+        $classReflection = $type->getClassReflection();
+        if ($classReflection === null || !$classReflection->hasNativeProperty('defaultTheme')) {
+            throw new ShouldNotHappenException(
+                sprintf(
+                    "Functional test class %s should have had a defaultTheme property but one not found.",
+                    $type->getClassName()
+                )
+            );
+        }
+        $nativeProperty = $classReflection->getNativeProperty('defaultTheme');
 
         // Get the default value for the property. PHPStan's reflection for
         // getting the default value as an expression throws a LogicException
