@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use DrupalRector\Rector\ConstFetch\SymfonyCmfRouteObjectInterfaceConstantsRector;
 use DrupalRector\Rector\Deprecation\AssertCacheTagRector;
 use DrupalRector\Rector\Deprecation\AssertElementNotPresentRector;
 use DrupalRector\Rector\Deprecation\AssertElementPresentRector;
@@ -182,4 +183,5 @@ return static function (\Rector\Config\RectorConfig $rectorConfig): void {
     $rectorConfig->rule(GetRawContentRector::class);
     $rectorConfig->rule(GetAllOptionsRector::class);
     $rectorConfig->rule(UserPasswordRector::class);
+    $rectorConfig->rule(SymfonyCmfRouteObjectInterfaceConstantsRector::class);
 };
