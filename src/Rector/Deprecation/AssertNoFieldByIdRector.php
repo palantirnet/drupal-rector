@@ -17,14 +17,12 @@ final class AssertNoFieldByIdRector extends AbstractRector
                 <<<'CODE_BEFORE'
     $this->assertNoFieldById('name');
     $this->assertNoFieldById('name', 'not the value');
-    $this->assertNoFieldById('notexisting');
     $this->assertNoFieldById('notexisting', NULL);
 CODE_BEFORE
                 ,
                 <<<'CODE_AFTER'
-    $this->assertSession()->fieldValueNotEquals('name', '');
+    $this->assertSession()->assertNoFieldById('name');
     $this->assertSession()->fieldValueNotEquals('name', 'not the value');
-    $this->assertSession()->fieldValueNotEquals('notexisting', '');
     $this->assertSession()->fieldNotExists('notexisting');
 CODE_AFTER
             )
@@ -52,8 +50,7 @@ CODE_AFTER
         $assertSessionNode = $this->nodeFactory->createLocalMethodCall('assertSession');
 
         if (count($args) === 1) {
-            $args[] = $this->nodeFactory->createArg('');
-            return $this->nodeFactory->createMethodCall($assertSessionNode, 'fieldValueNotEquals', $args);
+            return $this->nodeFactory->createMethodCall($assertSessionNode, 'fieldNotExists', [$args[0]]);
         }
         // Check if argument two is a `null` and convert to fieldExists.
         $arg2 = $args[1]->value;
