@@ -13,3 +13,7 @@ function rector_examples_with_render() {
     $build = [];
     $output = \Drupal::service('renderer')->render($build);
 }
+
+function rector_examples_module_load_install() {
+    \Drupal::moduleHandler()->loadInclude('foo', 'install');
+}

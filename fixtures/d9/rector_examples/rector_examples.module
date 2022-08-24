@@ -13,3 +13,7 @@ function rector_examples_with_render() {
     $build = [];
     $output = render($build);
 }
+
+function rector_examples_module_load_install() {
+    module_load_install('foo');
+}
