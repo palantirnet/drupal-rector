@@ -11,9 +11,9 @@ jobs:
                     # TODO: 8.0 is not supported on Drupal 8, use with Drupal 9.
                     # - "8.0"
         steps:
-            -   uses: actions/checkout@v2
+            -   uses: actions/checkout@v3
             -   name: Clone drupal-rector-sandbox
-                uses: actions/checkout@v2
+                uses: actions/checkout@v3
                 with:
                     repository: palantirnet/drupal-rector-sandbox
                     path: 'drupal-rector-sandbox'
