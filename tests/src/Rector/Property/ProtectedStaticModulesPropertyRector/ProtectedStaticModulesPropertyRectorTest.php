@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace DrupalRector\Tests\Rector\Property\ProtectedStaticModulesPropertyRector;
 
+use Iterator;
 use Rector\Testing\PHPUnit\AbstractRectorTestCase;
 
 final class ProtectedStaticModulesPropertyRectorTest extends AbstractRectorTestCase
@@ -11,13 +12,13 @@ final class ProtectedStaticModulesPropertyRectorTest extends AbstractRectorTestC
     /**
      * @dataProvider provideData()
      */
-    public function test(\Symplify\SmartFileSystem\SmartFileInfo $fileInfo): void
+    public function test(string $filePath): void
     {
-        $this->doTestFileInfo($fileInfo);
+        $this->doTestFile($filePath);
     }
 
     /**
-     * @return \Iterator<\Symplify\SmartFileSystem\SmartFileInfo>
+     * @return Iterator<<string>>
      */
     public function provideData(): \Iterator
     {

@@ -15,13 +15,13 @@ class DatetimeStorageTimezoneRectorTest extends AbstractRectorTestCase {
      * @covers ::refactor
      * @dataProvider provideData()
      */
-    public function test(SmartFileInfo $fileInfo): void
+    public function test(string $filePath): void
     {
-        $this->doTestFileInfo($fileInfo);
+        $this->doTestFile($filePath);
     }
 
     /**
-     * @return Iterator<SmartFileInfo>
+     * @return Iterator<<string>>
      */
     public function provideData(): Iterator
     {
