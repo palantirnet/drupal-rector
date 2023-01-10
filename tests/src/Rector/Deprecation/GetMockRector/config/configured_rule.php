@@ -3,9 +3,9 @@
 use DrupalRector\Rector\Deprecation\BrowserTestBaseGetMockRector;
 use DrupalRector\Rector\Deprecation\KernelTestBaseGetMockRector;
 use DrupalRector\Rector\Deprecation\UnitTestCaseGetMockRector;
-use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
+use Rector\Config\RectorConfig;
 
-return static function (ContainerConfigurator $containerConfigurator): void {
+return static function (RectorConfig $containerConfigurator): void {
     $services = $containerConfigurator->services();
 
     $services->set(UnitTestCaseGetMockRector::class);

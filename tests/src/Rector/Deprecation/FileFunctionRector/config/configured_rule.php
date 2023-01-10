@@ -4,9 +4,9 @@ use DrupalRector\Rector\Deprecation\FileBuildUriRector;
 use DrupalRector\Rector\Deprecation\FileCopyRector;
 use DrupalRector\Rector\Deprecation\FileMoveRector;
 use DrupalRector\Rector\Deprecation\FileSaveDataRector;
-use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
+use Rector\Config\RectorConfig;
 
-return static function (ContainerConfigurator $containerConfigurator): void {
+return static function (RectorConfig $containerConfigurator): void {
     $services = $containerConfigurator->services();
 
     $services->set(FileSaveDataRector::class);

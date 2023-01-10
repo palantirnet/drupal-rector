@@ -1,10 +1,12 @@
 <?php declare(strict_types=1);
 
 use DrupalRector\Rector\Deprecation\DatetimeStorageTimezoneRector;
-use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
+use Rector\Config\RectorConfig;
 
-return static function (ContainerConfigurator $containerConfigurator): void {
+return static function (RectorConfig $containerConfigurator): void {
     $services = $containerConfigurator->services();
 
     $services->set(DatetimeStorageTimezoneRector::class);
+    $parameters = $containerConfigurator->parameters();
+    $parameters->set('drupal_rector_notices_as_comments', true);
 };

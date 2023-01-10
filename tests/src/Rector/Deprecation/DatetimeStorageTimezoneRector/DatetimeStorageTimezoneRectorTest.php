@@ -17,7 +17,7 @@ class DatetimeStorageTimezoneRectorTest extends AbstractRectorTestCase {
      */
     public function test(string $filePath): void
     {
-        $this->doTestFile($filePath);
+       $this->doTestFile($filePath);
     }
 
     /**

@@ -3,9 +3,9 @@
 use DrupalRector\Rector\Deprecation\AssertEqualRector;
 use DrupalRector\Rector\Deprecation\AssertNotEqualRector;
 use DrupalRector\Rector\Deprecation\AssertRector;
-use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
+use Rector\Config\RectorConfig;
 
-return static function (ContainerConfigurator $containerConfigurator): void {
+return static function (RectorConfig $containerConfigurator): void {
     $services = $containerConfigurator->services();
 
     $services->set(AssertRector::class);

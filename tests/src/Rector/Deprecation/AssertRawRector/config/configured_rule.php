@@ -2,9 +2,9 @@
 
 use DrupalRector\Rector\Deprecation\AssertNoRawRector;
 use DrupalRector\Rector\Deprecation\AssertRawRector;
-use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
+use Rector\Config\RectorConfig;
 
-return static function (ContainerConfigurator $containerConfigurator): void {
+return static function (RectorConfig $containerConfigurator): void {
     $services = $containerConfigurator->services();
 
     $services->set(AssertRawRector::class);

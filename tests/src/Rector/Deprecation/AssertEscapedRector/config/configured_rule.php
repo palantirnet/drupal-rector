@@ -2,9 +2,9 @@
 
 use DrupalRector\Rector\Deprecation\AssertEscapedRector;
 use DrupalRector\Rector\Deprecation\AssertNoEscapedRector;
-use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
+use Rector\Config\RectorConfig;
 
-return static function (ContainerConfigurator $containerConfigurator): void {
+return static function (RectorConfig $containerConfigurator): void {
     $services = $containerConfigurator->services();
 
     $services->set(AssertEscapedRector::class)

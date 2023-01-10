@@ -1,15 +1,12 @@
 <?php declare(strict_types=1);
 
 use DrupalRector\Rector\Deprecation\DrupalGetFilenameRector;
-use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
+use Rector\Config\RectorConfig;
 
-return static function (ContainerConfigurator $containerConfigurator): void {
+return static function (RectorConfig $containerConfigurator): void {
     $services = $containerConfigurator->services();
 
-    $services->set(DrupalGetFilenameRector::class)
-        ->configure([
-            'drupal_rector_notices_as_comments' => '%drupal_rector_notices_as_comments%',
-        ]);
+    $services->set(DrupalGetFilenameRector::class);
 
     $parameters = $containerConfigurator->parameters();
     $parameters->set('drupal_rector_notices_as_comments', true);
