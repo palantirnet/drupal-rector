@@ -14,8 +14,7 @@ class DrupalGetFilenameRectorTest extends AbstractRectorTestCase {
      */
     public function test(string $filePath): void
     {
-      //  $this->doTestFile($filePath);
-        $this->assertEquals(2,2);
+        $this->doTestFile($filePath);
     }
 
     /**

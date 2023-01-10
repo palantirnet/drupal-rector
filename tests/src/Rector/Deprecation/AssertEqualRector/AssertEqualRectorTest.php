@@ -6,9 +6,6 @@ use Iterator;
 use Rector\Testing\PHPUnit\AbstractRectorTestCase;
 use Symplify\SmartFileSystem\SmartFileInfo;
 
-/**
- * @coversDefaultClass \DrupalRector\Rector\Deprecation\DatetimeStorageTimezoneRector
- */
 class AssertEqualRectorTest extends AbstractRectorTestCase {
 
     /**
