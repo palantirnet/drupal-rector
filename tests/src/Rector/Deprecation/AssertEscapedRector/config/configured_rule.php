@@ -2,20 +2,10 @@
 
 use DrupalRector\Rector\Deprecation\AssertEscapedRector;
 use DrupalRector\Rector\Deprecation\AssertNoEscapedRector;
+use DrupalRector\Tests\Rector\Deprecation\DeprecationBase;
 use Rector\Config\RectorConfig;
 
-return static function (RectorConfig $containerConfigurator): void {
-    $services = $containerConfigurator->services();
-
-    $services->set(AssertEscapedRector::class)
-        ->configure([
-            'drupal_rector_notices_as_comments' => '%drupal_rector_notices_as_comments%',
-        ]);
-    $services->set(AssertNoEscapedRector::class)
-        ->configure([
-            'drupal_rector_notices_as_comments' => '%drupal_rector_notices_as_comments%',
-        ]);
-
-    $parameters = $containerConfigurator->parameters();
-    $parameters->set('drupal_rector_notices_as_comments', true);
+return static function (RectorConfig $rectorConfig): void {
+    DeprecationBase::addClass(AssertEscapedRector::class, $rectorConfig);
+    DeprecationBase::addClass(AssertNoEscapedRector::class, $rectorConfig);
 };
