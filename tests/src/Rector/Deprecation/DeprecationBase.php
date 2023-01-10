@@ -26,8 +26,7 @@ class DeprecationBase {
             ]);
         }
         else {
-            $services = $rectorConfig->services();
-            $services->set($rectorClass);
+            $rectorConfig->rule($rectorClass);
         }
 
         self::addParameters($rectorConfig);
