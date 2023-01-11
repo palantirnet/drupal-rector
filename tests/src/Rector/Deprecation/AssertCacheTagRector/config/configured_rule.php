@@ -2,15 +2,10 @@
 
 use DrupalRector\Rector\Deprecation\AssertCacheTagRector;
 use DrupalRector\Rector\Deprecation\AssertNoCacheTagRector;
+use DrupalRector\Tests\Rector\Deprecation\DeprecationBase;
+use Rector\Config\RectorConfig;
 
-return static function (Rector\Config\RectorConfig $rectorConfig): void {
-    $rectorConfig->ruleWithConfiguration(AssertCacheTagRector::class, [
-        'drupal_rector_notices_as_comments' => '%drupal_rector_notices_as_comments%',
-    ]);
-    $rectorConfig->ruleWithConfiguration(AssertNoCacheTagRector::class, [
-        'drupal_rector_notices_as_comments' => '%drupal_rector_notices_as_comments%',
-    ]);
-
-    $parameters = $rectorConfig->parameters();
-    $parameters->set('drupal_rector_notices_as_comments', true);
+return static function (RectorConfig $rectorConfig): void {
+    DeprecationBase::addClass(AssertCacheTagRector::class, $rectorConfig);
+    DeprecationBase::addClass(AssertNoCacheTagRector::class, $rectorConfig);
 };

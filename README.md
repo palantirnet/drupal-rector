@@ -8,13 +8,11 @@ Automate fixing deprecated Drupal code.
 
 ## Latest release
 
-[Version 0.13.1 for Drupal 8.x and 9.x deprecations](https://github.com/palantirnet/drupal-rector/tree/0.13.1). Note that Drupal 9 deprecation testing recommends PHP 8.
+[Version 0.15.0 for Drupal 8.x and 9.x deprecations](https://github.com/palantirnet/drupal-rector/tree/0.15.0). Note that Drupal 9 deprecation testing recommends PHP 8.
 
 ### Release notes
 
 * The 0.13.0 and higher releases of drupal-rector will include Rector 0.13.8+. The upgrade path should be as simple as re-copying the configuration file. `cp vendor/palantirnet/drupal-rector/rector.php`
-
-* The 0.12.4 is a stable release pinned to Rector 0.12.21. Developers should be aware that Rector 0.12.22 introduces breaking changes to how we handle Drupal configuration.
 
 *Note that GitHub does not let us have different default homepage and merge branches. If you checked out the project using packagist/composer, read the docs for your version.*
 
@@ -170,9 +168,7 @@ Our goal is to make contributing to this project easy for people. While we've ma
 
 ### Development environment
 
-We recommend using our `drupal-rector-sandbox` development environment [https://github.com/palantirnet/drupal-rector-sandbox](https://github.com/palantirnet/drupal-rector-sandbox)
-
-Alternatively, you can use your existing Drupal project and follow the instructions in [README](https://github.com/palantirnet/drupal-rector-sandbox/blob/master/README.md#developing-with-drupal-rector)
+See the instructions in [README](https://github.com/palantirnet/drupal-rector-sandbox/blob/master/README.md#developing-with-drupal-rector)
 
 ### Adding a Rector rule
 

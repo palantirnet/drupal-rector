@@ -1,15 +1,13 @@
 <?php declare(strict_types=1);
 
-use DrupalRector\Rector\Deprecation\FileUrlGenerator;
-use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
+use DrupalRector\Rector\Deprecation\FileUrlGenerator\FileCreateUrlRector;
+use DrupalRector\Rector\Deprecation\FileUrlGenerator\FileUrlTransformRelativeRector;
+use DrupalRector\Rector\Deprecation\FileUrlGenerator\FromUriRector;
+use DrupalRector\Tests\Rector\Deprecation\DeprecationBase;
+use Rector\Config\RectorConfig;
 
-return static function (ContainerConfigurator $containerConfigurator): void {
-    $services = $containerConfigurator->services();
-
-    $services->set(FileUrlGenerator\FileCreateUrlRector::class);
-    $services->set(FileUrlGenerator\FileUrlTransformRelativeRector::class);
-    $services->set(FileUrlGenerator\FromUriRector::class);
-
-    $parameters = $containerConfigurator->parameters();
-    $parameters->set('drupal_rector_notices_as_comments', true);
+return static function (RectorConfig $rectorConfig): void {
+    DeprecationBase::addClass(FileCreateUrlRector::class, $rectorConfig, FALSE);
+    DeprecationBase::addClass(FileUrlTransformRelativeRector::class, $rectorConfig, FALSE);
+    DeprecationBase::addClass(FromUriRector::class, $rectorConfig, FALSE);
 };

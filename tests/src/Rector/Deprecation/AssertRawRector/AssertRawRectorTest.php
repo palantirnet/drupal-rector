@@ -6,22 +6,19 @@ use Iterator;
 use Rector\Testing\PHPUnit\AbstractRectorTestCase;
 use Symplify\SmartFileSystem\SmartFileInfo;
 
-/**
- * @coversDefaultClass \DrupalRector\Rector\Deprecation\DatetimeStorageTimezoneRector
- */
 class AssertRawRectorTest extends AbstractRectorTestCase {
 
     /**
      * @covers ::refactor
      * @dataProvider provideData()
      */
-    public function test(SmartFileInfo $fileInfo): void
+    public function test(string $filePath): void
     {
-        $this->doTestFileInfo($fileInfo);
+        $this->doTestFile($filePath);
     }
 
     /**
-     * @return Iterator<SmartFileInfo>
+     * @return Iterator<<string>>
      */
     public function provideData(): Iterator
     {

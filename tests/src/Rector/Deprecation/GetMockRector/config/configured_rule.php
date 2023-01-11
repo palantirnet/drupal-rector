@@ -3,15 +3,11 @@
 use DrupalRector\Rector\Deprecation\BrowserTestBaseGetMockRector;
 use DrupalRector\Rector\Deprecation\KernelTestBaseGetMockRector;
 use DrupalRector\Rector\Deprecation\UnitTestCaseGetMockRector;
-use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
+use DrupalRector\Tests\Rector\Deprecation\DeprecationBase;
+use Rector\Config\RectorConfig;
 
-return static function (ContainerConfigurator $containerConfigurator): void {
-    $services = $containerConfigurator->services();
-
-    $services->set(UnitTestCaseGetMockRector::class);
-    $services->set(KernelTestBaseGetMockRector::class);
-    $services->set(BrowserTestBaseGetMockRector::class);
-
-    $parameters = $containerConfigurator->parameters();
-    $parameters->set('drupal_rector_notices_as_comments', true);
+return static function (RectorConfig $rectorConfig): void {
+    DeprecationBase::addClass(BrowserTestBaseGetMockRector::class, $rectorConfig, FALSE);
+    DeprecationBase::addClass(KernelTestBaseGetMockRector::class, $rectorConfig, FALSE);
+    DeprecationBase::addClass(UnitTestCaseGetMockRector::class, $rectorConfig, FALSE);
 };
