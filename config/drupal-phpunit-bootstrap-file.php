@@ -20,7 +20,6 @@ if ($parameterProvider === NULL) {
     throw new ShouldNotHappenException('We were unable to access the parameter provider from the BootstrapFilesIncluder.');
 }
 
-/** @phpstan-ignore-next-line */
 $autoloadPaths = $parameterProvider->provideArrayParameter(\Rector\Core\Configuration\Option::AUTOLOAD_PATHS);
 if (count($autoloadPaths) === 0) {
     throw new \RuntimeException('No autoload paths were specified.');
