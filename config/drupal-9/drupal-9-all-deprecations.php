@@ -13,7 +13,7 @@ return static function (RectorConfig $rectorConfig): void {
         Drupal9SetList::DRUPAL_93,
     ]);
 
-    $rectorConfig->bootstrapFiles([
+    $rectorConfig->autoloadPaths([
         __DIR__ . '/../drupal-phpunit-bootstrap-file.php'
     ]);
 };
