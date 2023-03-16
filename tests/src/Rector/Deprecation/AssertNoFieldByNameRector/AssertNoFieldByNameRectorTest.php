@@ -10,7 +10,7 @@ class AssertNoFieldByNameRectorTest extends AbstractRectorTestCase {
 
     /**
      * @covers ::refactor
-     * @dataProvider provideData()
+     * @dataProvider provideData
      */
     public function test(string $filePath): void
     {
