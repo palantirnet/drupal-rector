@@ -46,11 +46,13 @@ jobs:
                     cd ~/drupal
                     mkdir -p web/modules/custom
                     cp -R vendor/palantirnet/drupal-rector/fixtures/${{ matrix.fixture }}/rector_examples web/modules/custom
-            # dry-run is expected to return exit code 1 if there are changes, which we are expecting to happen, here.
+            # dry-run is expected to return exit code 2 if there are changes, which we are expecting to happen, here.
+            # an error code of 1 represents other errors.
+            # @see \Rector\Core\Console\ExitCode::CHANGED_CODE
             -   name: Run rector against Drupal (dry-run)
                 run: |
                     cd ~/drupal
-                    vendor/bin/rector process web/modules/custom/rector_examples --dry-run --debug || if (($? == 1)); then true; else false; fi
+                    vendor/bin/rector process web/modules/custom/rector_examples --dry-run --debug || if (($? == 2)); then true; else false; fi
             -   name: Run rector against Drupal
                 run: |
                     cd ~/drupal
