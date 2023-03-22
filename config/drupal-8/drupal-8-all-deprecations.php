@@ -27,7 +27,7 @@ return static function (RectorConfig $rectorConfig): void {
     // the following rule adds unneeded annotations.
     $rectorConfig->services()->remove(AddDoesNotPerformAssertionToNonAssertingTestRector::class);
 
-    $rectorConfig->autoloadPaths([
+    $rectorConfig->bootstrapFiles([
         __DIR__ . '/../drupal-phpunit-bootstrap-file.php'
     ]);
 };
