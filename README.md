@@ -8,7 +8,7 @@ Automate fixing deprecated Drupal code.
 
 ## Latest release
 
-[Version 0.15.0 for Drupal 8.x and 9.x deprecations](https://github.com/palantirnet/drupal-rector/tree/0.15.0). Note that Drupal 9 deprecation testing recommends PHP 8.
+[Version 0.15.1 for Drupal 8.x and 9.x deprecations](https://github.com/palantirnet/drupal-rector/tree/0.15.1). Note that Drupal 9 deprecation testing recommends PHP 8.
 
 ### Release notes
 
