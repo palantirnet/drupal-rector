@@ -9,7 +9,7 @@ use Symplify\SmartFileSystem\SmartFileInfo;
 class GetMockRectorTest extends AbstractRectorTestCase {
 
     /**
-     * @dataProvider provideData()
+     * @dataProvider provideData
      */
     public function test(string $filePath): void
     {
@@ -19,9 +19,9 @@ class GetMockRectorTest extends AbstractRectorTestCase {
     /**
      * @return Iterator<<string>>
      */
-    public function provideData(): Iterator
+    public static function provideData(): Iterator
     {
-        return $this->yieldFilesFromDirectory(__DIR__ . '/fixture');
+        return self::yieldFilesFromDirectory(__DIR__ . '/fixture');
     }
 
     public function provideConfigFilePath(): string

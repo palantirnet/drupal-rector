@@ -10,24 +10,8 @@ use DrupalFinder\DrupalFinder;
 use Rector\Core\Autoloading\BootstrapFilesIncluder;
 use Rector\Core\Exception\ShouldNotHappenException;
 
-if (!isset($this) || !$this instanceof BootstrapFilesIncluder) {
-    throw new ShouldNotHappenException('The Drupal PHPUnit Bootstrap file could not access the BootstrapFilesIncluder');
-}
-
-/** @phpstan-ignore-next-line */
-$parameterProvider = $this->parameterProvider;
-if ($parameterProvider === NULL) {
-    throw new ShouldNotHappenException('We were unable to access the parameter provider from the BootstrapFilesIncluder.');
-}
-
-/** @phpstan-ignore-next-line */
-$autoloadPaths = $parameterProvider->provideArrayParameter(\Rector\Core\Configuration\Option::AUTOLOAD_PATHS);
-if (count($autoloadPaths) === 0) {
-    throw new \RuntimeException('No autoload paths were specified.');
-}
-
 $drupalFinder = new DrupalFinder();
-$drupalFinder->locateRoot($autoloadPaths[0]);
+$drupalFinder->locateRoot(__DIR__);
 $drupalRoot = $drupalFinder->getDrupalRoot();
 $drupalVendorRoot = $drupalFinder->getVendorDir();
 

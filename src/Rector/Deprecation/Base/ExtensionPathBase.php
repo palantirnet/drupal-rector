@@ -4,7 +4,6 @@ namespace DrupalRector\Rector\Deprecation\Base;
 
 use DrupalRector\Utility\AddCommentTrait;
 use PhpParser\Node;
-use PHPStan\Type\Constant\ConstantStringType;
 use Rector\Core\Contract\Rector\ConfigurableRectorInterface;
 use Rector\Core\Rector\AbstractRector;
 
@@ -42,7 +41,7 @@ abstract class ExtensionPathBase extends AbstractRector implements ConfigurableR
         [$extensionType, $extensionName] = $args;
 
         $extensionTypeValueType = $this->nodeTypeResolver->getType($extensionType->value);
-        if ($extensionTypeValueType instanceof ConstantStringType) {
+        if ($extensionTypeValueType->getConstantStrings()) {
             $extensionType = $extensionTypeValueType->getValue();
         }
 

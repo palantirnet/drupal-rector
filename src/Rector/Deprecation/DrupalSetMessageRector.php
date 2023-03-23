@@ -8,7 +8,6 @@ use PhpParser\Comment;
 use PhpParser\Node;
 use PHPStan\PhpDocParser\Ast\PhpDoc\GenericTagValueNode;
 use PHPStan\PhpDocParser\Ast\PhpDoc\PhpDocTagNode;
-use PHPStan\Type\Constant\ConstantStringType;
 use PHPStan\Type\Generic\GenericClassStringType;
 use PHPStan\Type\StringType;
 use Rector\BetterPhpDocParser\PhpDocInfo\PhpDocInfo;
@@ -103,7 +102,7 @@ CODE_AFTER
                 $messageTypeArgType = $this->nodeTypeResolver->getType($node->args[1]->value);
                 $messageType = '';
 
-                if ($messageTypeArgType instanceof ConstantStringType) {
+                if ($messageTypeArgType->getConstantStrings()) {
                     $messageType = $messageTypeArgType->getValue();
                 } elseif ($node->args[1]->value instanceof Node\Scalar\String_) {
                     $messageType = $node->args[1]->value->value;

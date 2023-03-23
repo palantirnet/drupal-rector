@@ -10,7 +10,7 @@ use Rector\Testing\PHPUnit\AbstractRectorTestCase;
 final class ProtectedStaticModulesPropertyRectorTest extends AbstractRectorTestCase
 {
     /**
-     * @dataProvider provideData()
+     * @dataProvider provideData
      */
     public function test(string $filePath): void
     {
@@ -20,9 +20,9 @@ final class ProtectedStaticModulesPropertyRectorTest extends AbstractRectorTestC
     /**
      * @return Iterator<<string>>
      */
-    public function provideData(): \Iterator
+    public static function provideData(): \Iterator
     {
-        return $this->yieldFilesFromDirectory(__DIR__.'/Fixture');
+        return self::yieldFilesFromDirectory(__DIR__.'/Fixture');
     }
 
     public function provideConfigFilePath(): string
