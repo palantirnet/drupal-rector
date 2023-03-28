@@ -7,9 +7,22 @@ namespace DrupalRector\Rector;
 use DrupalRector\Contract\DrupalCoreRectorInterface;
 use PhpParser\Node;
 use Rector\Core\Rector\AbstractRector;
+use Rector\PostRector\Collector\NodesToAddCollector;
 
 abstract class AbstractDrupalCoreRector extends AbstractRector implements DrupalCoreRectorInterface
 {
+
+
+    /**
+     * @readonly
+     * @var \Rector\PostRector\Collector\NodesToAddCollector
+     */
+    private $nodesToAddCollector;
+
+    public function __construct(NodesToAddCollector $nodesToAddCollector)
+    {
+        $this->nodesToAddCollector = $nodesToAddCollector;
+    }
 
     public function refactor(Node $node)
     {
@@ -20,7 +33,21 @@ abstract class AbstractDrupalCoreRector extends AbstractRector implements Drupal
         if ($result === null) {
             return $result;
         }
-        // TODO: add BC compatibility layer here
+        $versionCompare = $this->nodeFactory->createFuncCall(
+            'version_compare',
+            [
+                $this->nodeFactory->createClassConstFetch(\Drupal::class, 'VERSION'),
+                $this->getVersion(),
+                '>=',
+            ]
+        );
+        $if = new Node\Stmt\If_($versionCompare, [
+            'stmts' => [new Node\Stmt\Expression($result)],
+            'else' => new Node\Stmt\Else_([
+                new Node\Stmt\Expression($node)
+            ]),
+        ]);
+        $this->nodesToAddCollector->addNodeBeforeNode($if, $node);
         return $result;
     }
 
