@@ -4,7 +4,6 @@ namespace DrupalRector\Tests\Rector\Deprecation\UserPasswordRector;
 
 use Iterator;
 use Rector\Testing\PHPUnit\AbstractRectorTestCase;
-use Symplify\SmartFileSystem\SmartFileInfo;
 
 class UserPasswordRectorTest extends AbstractRectorTestCase {
 

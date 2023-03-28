@@ -2,12 +2,12 @@
 
 namespace DrupalRector\Rector\Deprecation;
 
+use DrupalRector\Rector\AbstractDrupalCoreRector;
 use PhpParser\Node;
-use Rector\Core\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
-final class UserPasswordRector extends AbstractRector
+final class UserPasswordRector extends AbstractDrupalCoreRector
 {
     /**
      * @inheritdoc
@@ -42,11 +42,6 @@ CODE_AFTER
     public function getVersion(): string
     {
         return '9.1.0';
-    }
-
-    public function refactor(Node $node)
-    {
-        return $this->doRefactor($node);
     }
 
     /**
