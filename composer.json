@@ -1,7 +1,7 @@
 {
     "name": "palantirnet/drupal-rector",
     "description": "Instant fixes for your Drupal code by using Rector.",
-    "type": "library",
+    "type": "rector-extension",
     "keywords": [
         "code style",
         "rector",
@@ -63,7 +63,12 @@
     "minimum-stability": "dev",
     "prefer-stable": true,
     "extra": {
-        "enable-patching": true
+        "enable-patching": true,
+        "rector": {
+            "includes": [
+                "config/config.php"
+            ]
+        }
     },
     "require-dev": {
         "php": "^8.1",

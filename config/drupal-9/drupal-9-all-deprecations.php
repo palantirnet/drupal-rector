@@ -12,8 +12,4 @@ return static function (RectorConfig $rectorConfig): void {
         Drupal9SetList::DRUPAL_92,
         Drupal9SetList::DRUPAL_93,
     ]);
-
-    $rectorConfig->bootstrapFiles([
-        __DIR__ . '/../drupal-phpunit-bootstrap-file.php'
-    ]);
 };

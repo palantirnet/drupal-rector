@@ -26,8 +26,4 @@ return static function (RectorConfig $rectorConfig): void {
     // Drupal performs assertions in the ::setUp methods of its test suites,
     // the following rule adds unneeded annotations.
     $rectorConfig->services()->remove(AddDoesNotPerformAssertionToNonAssertingTestRector::class);
-
-    $rectorConfig->bootstrapFiles([
-        __DIR__ . '/../drupal-phpunit-bootstrap-file.php'
-    ]);
 };
