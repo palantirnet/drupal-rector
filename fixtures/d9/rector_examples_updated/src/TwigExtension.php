@@ -2,33 +2,8 @@
 
 namespace Drupal\twig_tweak;
 
-use Drupal\Component\Utility\NestedArray;
-use Drupal\Component\Utility\Unicode;
-use Drupal\Component\Uuid\Uuid;
-use Drupal\Core\Block\BlockPluginInterface;
-use Drupal\Core\Block\TitleBlockPluginInterface;
-use Drupal\Core\Entity\EntityInterface;
-use Drupal\Core\Field\EntityReferenceFieldItemListInterface;
-use Drupal\Core\Field\FieldItemInterface;
-use Drupal\Core\Field\FieldItemListInterface;
-use Drupal\Core\Field\Plugin\Field\FieldType\EntityReferenceItem;
-use Drupal\Core\Link;
-use Drupal\Core\Plugin\ContextAwarePluginInterface;
-use Drupal\Core\Render\Element;
-use Drupal\Core\Render\Markup;
-use Drupal\Core\Site\Settings;
-use Drupal\Core\Url;
-use Drupal\file\Entity\File;
-use Drupal\file\FileInterface;
-use Drupal\image\Entity\ImageStyle;
-use Drupal\media\MediaInterface;
-use Drupal\media\Plugin\media\Source\OEmbedInterface;
-use Symfony\Cmf\Component\Routing\RouteObjectInterface;
-
 /**
  * Twig extension with some useful functions and filters.
- *
- * Dependencies are not injected for performance reason.
  */
 class TwigExtension extends \Twig_Extension {
 
