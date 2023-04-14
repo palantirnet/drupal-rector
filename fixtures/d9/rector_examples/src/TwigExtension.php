@@ -2,20 +2,17 @@
 
 namespace Drupal\twig_tweak;
 
-use Twig\Extension\AbstractExtension;
-use Twig\TwigFunction;
-use Twig\TwigFilter;
 /**
  * Twig extension with some useful functions and filters.
  */
-class TwigExtension extends AbstractExtension {
+class TwigExtension extends \Twig_Extension {
 
     /**
      * {@inheritdoc}
      */
     public function getFunctions() {
         return [
-            new TwigFunction('drupal_config', [$this, 'drupalConfig']),
+            new \Twig_SimpleFunction('drupal_config', [$this, 'drupalConfig']),
         ];
     }
 
@@ -24,7 +21,7 @@ class TwigExtension extends AbstractExtension {
      */
     public function getFilters() {
         return [
-            new TwigFilter('token_replace', [$this, 'tokenReplaceFilter']),
+            new \Twig_SimpleFilter('token_replace', [$this, 'tokenReplaceFilter']),
         ];
     }
 
