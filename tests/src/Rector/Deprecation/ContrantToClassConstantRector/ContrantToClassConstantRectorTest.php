@@ -6,7 +6,7 @@ use Iterator;
 use Rector\Testing\PHPUnit\AbstractRectorTestCase;
 use Symplify\SmartFileSystem\SmartFileInfo;
 
-class DatetimeStorageTimezoneRectorTest extends AbstractRectorTestCase {
+class ContrantToClassConstantRectorTest extends AbstractRectorTestCase {
 
     /**
      * @covers ::refactor
