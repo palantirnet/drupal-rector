@@ -46,9 +46,9 @@ class ConstantToClassConstantRector extends AbstractRector implements Configurab
      */
     public function configure(array $configuration): void
     {
-        $this->deprecatedConstant = $configuration['deprecated_constant'];
-        $this->constantFullyQualifiedClassName = $configuration['constant_fully_qualified_class_name'];
-        $this->constant = $configuration['constant'];
+        $this->deprecatedConstant = $configuration[static::DEPRECATED_CONSTANT];
+        $this->constantFullyQualifiedClassName = $configuration[static::CONSTANT_FULLY_QUALIFIED_CLASS_NAME];
+        $this->constant = $configuration[static::CONSTANT];
     }
 
     /**
