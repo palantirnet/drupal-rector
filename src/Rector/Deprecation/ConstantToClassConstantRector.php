@@ -42,7 +42,7 @@ class ConstantToClassConstantRector extends AbstractRector implements Configurab
     const CONSTANT = 'constant';
 
     /**
-     * @param array{'deprecated_constant': string, 'constant_fully_qualified_class_name': string, 'constant': string} $configuration
+     * @param array $configuration
      */
     public function configure(array $configuration): void
     {
