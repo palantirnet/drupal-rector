@@ -23,8 +23,7 @@ class DeprecationBase {
      */
     public static function addClass(string $rectorClass, RectorConfig $rectorConfig, bool $add_notice_config = TRUE, array $configuration = []) {
         if ($add_notice_config) {
-            $configuration = ['drupal_rector_notices_as_comments' => '%drupal_rector_notices_as_comments%'] + $configuration;
-
+            $configuration['drupal_rector_notices_as_comments'] = '%drupal_rector_notices_as_comments%';
             $rectorConfig->ruleWithConfiguration($rectorClass, $configuration);
         } else if (count($configuration) > 0) {
             $rectorConfig->ruleWithConfiguration($rectorClass, $configuration);
