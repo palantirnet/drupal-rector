@@ -21,11 +21,14 @@ class DeprecationBase {
      * @param array $configuration
      *   Configuration for the configured rule.
      */
-    public static function addClass(string $rectorClass, RectorConfig $rectorConfig, bool $add_config = TRUE, array $configuration = []) {
-        if ($add_config) {
-            $rectorConfig->ruleWithConfiguration($rectorClass, ['drupal_rector_notices_as_comments' => '%drupal_rector_notices_as_comments%'] + $configuration);
-        }
-        else {
+    public static function addClass(string $rectorClass, RectorConfig $rectorConfig, bool $add_notice_config = TRUE, array $configuration = []) {
+        if ($add_notice_config) {
+            $configuration = ['drupal_rector_notices_as_comments' => '%drupal_rector_notices_as_comments%'] + $configuration;
+
+            $rectorConfig->ruleWithConfiguration($rectorClass, $configuration);
+        } else if (count($configuration) > 0) {
+            $rectorConfig->ruleWithConfiguration($rectorClass, $configuration);
+        } else {
             $rectorConfig->rule($rectorClass);
         }
 
