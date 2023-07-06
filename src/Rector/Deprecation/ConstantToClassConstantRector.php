@@ -5,7 +5,7 @@ namespace DrupalRector\Rector\Deprecation;
 use PhpParser\Node;
 use Rector\Core\Contract\Rector\ConfigurableRectorInterface;
 use Rector\Core\Rector\AbstractRector;
-use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
+use Symplify\RuleDocGenerator\ValueObject\CodeSample\ConfiguredCodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 /**
@@ -56,15 +56,21 @@ class ConstantToClassConstantRector extends AbstractRector implements Configurab
      */
     public function getRuleDefinition(): RuleDefinition
     {
-        return new RuleDefinition('Fixes deprecated {deprecated_constant} use', [
-            new CodeSample(
+        return new RuleDefinition('Fixes deprecated contant use', [
+            new ConfiguredCodeSample(
                 <<<'CODE_BEFORE'
-$result = file_unmanaged_copy($source, $destination, {deprecated_constant});
+$result = file_unmanaged_copy($source, $destination, DEPRECATED_CONSTANT);
 CODE_BEFORE
                 ,
                 <<<'CODE_AFTER'
-$result = file_unmanaged_copy($source, $destination, {constant_fully_qualified_class_name}::{constant});
+$result = file_unmanaged_copy($source, $destination, \Drupal\MyClass::CONSTANT);
 CODE_AFTER
+                ,
+                [
+                    self::DEPRECATED_CONSTANT => 'DEPRECATED_CONSTANT',
+                    self::CONSTANT_FULLY_QUALIFIED_CLASS_NAME => 'Drupal\MyClass',
+                    self::CONSTANT => 'CONSTANT',
+                ]
             )
         ]);
     }
