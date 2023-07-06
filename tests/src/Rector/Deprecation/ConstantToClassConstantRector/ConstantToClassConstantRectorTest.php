@@ -1,12 +1,12 @@
 <?php declare(strict_types=1);
 
-namespace DrupalRector\Tests\Rector\Deprecation\DatetimeStorageTimezoneRector;
+namespace DrupalRector\Tests\Rector\Deprecation\ConstantToClassConstantRector;
 
 use Iterator;
 use Rector\Testing\PHPUnit\AbstractRectorTestCase;
 use Symplify\SmartFileSystem\SmartFileInfo;
 
-class ContrantToClassConstantRectorTest extends AbstractRectorTestCase {
+class ConstantToClassConstantRectorTest extends AbstractRectorTestCase {
 
     /**
      * @covers ::refactor
