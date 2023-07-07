@@ -5,7 +5,7 @@ parameters:
 		- src
 		- rector.php
 # See https://phpstan.org/blog/preprocessing-ast-for-custom-rules
-# Changing this in phpstant 1.6 means refactoring calls to getAttribute('parent')
+# Changing this in phpstan 1.6 means refactoring calls to getAttribute('parent')
 conditionalTags:
     PhpParser\NodeVisitor\NodeConnectingVisitor:
         phpstan.parser.richParserNodeVisitor: true
