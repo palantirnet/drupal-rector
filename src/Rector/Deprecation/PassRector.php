@@ -4,8 +4,8 @@ namespace DrupalRector\Rector\Deprecation;
 
 use DrupalRector\Utility\GetDeclaringSourceTrait;
 use PhpParser\Node;
+use PhpParser\NodeTraverser;
 use Rector\Core\Rector\AbstractRector;
-use Rector\NodeCollector\ScopeResolver\ParentClassScopeResolver;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
@@ -13,16 +13,6 @@ final class PassRector extends AbstractRector
 {
 
     use GetDeclaringSourceTrait;
-
-    /**
-     * @var ParentClassScopeResolver
-     */
-    protected $parentClassScopeResolver;
-
-    public function __construct(ParentClassScopeResolver $parentClassScopeResolver)
-    {
-        $this->parentClassScopeResolver = $parentClassScopeResolver;
-    }
 
     public function getRuleDefinition(): RuleDefinition
     {
@@ -41,19 +31,28 @@ CODE_AFTER
     public function getNodeTypes(): array
     {
         return [
-            Node\Expr\MethodCall::class,
+            Node\Stmt\Expression::class,
         ];
     }
 
     public function refactor(Node $node)
     {
-        assert($node instanceof Node\Expr\MethodCall);
-        if ($this->getName($node->name) !== 'pass') {
+        assert($node instanceof Node\Stmt\Expression);
+
+        if (!($node->expr instanceof Node\Expr\MethodCall)) {
             return null;
         }
 
-        if ($this->getDeclaringSource($node) === 'Drupal\KernelTests\AssertLegacyTrait') {
-            $this->removeNode($node);
+        if ($this->getName($node->expr->name) !== 'pass') {
+            return null;
+        }
+
+        if ($this->getDeclaringSource($node->expr) === 'Drupal\KernelTests\AssertLegacyTrait') {
+            if (method_exists($this, 'removeNode')) {
+                $this->removeNode($node);
+            } else {
+                return NodeTraverser::REMOVE_NODE;
+            }
         }
 
         return $node;
