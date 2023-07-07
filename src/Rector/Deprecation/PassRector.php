@@ -6,7 +6,6 @@ use DrupalRector\Utility\GetDeclaringSourceTrait;
 use PhpParser\Node;
 use PhpParser\NodeTraverser;
 use Rector\Core\Rector\AbstractRector;
-use Rector\NodeCollector\ScopeResolver\ParentClassScopeResolver;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
@@ -14,16 +13,6 @@ final class PassRector extends AbstractRector
 {
 
     use GetDeclaringSourceTrait;
-
-    /**
-     * @var ParentClassScopeResolver
-     */
-    protected $parentClassScopeResolver;
-
-    public function __construct(ParentClassScopeResolver $parentClassScopeResolver)
-    {
-        $this->parentClassScopeResolver = $parentClassScopeResolver;
-    }
 
     public function getRuleDefinition(): RuleDefinition
     {
@@ -59,7 +48,7 @@ CODE_AFTER
         }
 
         if ($this->getDeclaringSource($node->expr) === 'Drupal\KernelTests\AssertLegacyTrait') {
-            return NodeTraverser::REMOVE_NODE;
+            $this->removeNode($node);
         }
 
         return $node;
