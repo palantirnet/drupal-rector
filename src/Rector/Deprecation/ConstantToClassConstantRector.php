@@ -6,8 +6,6 @@ use DrupalRector\Rector\ValueObject\ConstantToClass;
 use PhpParser\Node;
 use Rector\Core\Contract\Rector\ConfigurableRectorInterface;
 use Rector\Core\Rector\AbstractRector;
-use Rector\Renaming\Contract\MethodCallRenameInterface;
-use RectorPrefix202304\Webmozart\Assert\Assert;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\ConfiguredCodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
@@ -29,7 +27,15 @@ class ConstantToClassConstantRector extends AbstractRector implements Configurab
      */
     public function configure(array $configuration): void
     {
-        Assert::allIsAOf($configuration, ConstantToClass::class);
+        foreach ($configuration as $value) {
+            if (!($value instanceof ConstantToClass)) {
+                throw new \InvalidArgumentException(sprintf(
+                    'Each configuration item must be an instance of "%s"',
+                    ConstantToClass::class
+                ));
+            }
+        }
+
         $this->constantToClassRenames = $configuration;
     }
 
@@ -75,7 +81,7 @@ CODE_AFTER
     public function refactor(Node $node): ?Node
     {
         /** @var Node\Expr\ConstFetch $node */
-        foreach ( $this->constantToClassRenames as $constantToClassRename) {
+        foreach ($this->constantToClassRenames as $constantToClassRename) {
             if ($this->getName($node->name) === $constantToClassRename->getDeprecated()) {
                 // We add a fully qualified class name and the parameters in `rector.php` adds the use statement.
                 $fully_qualified_class = new Node\Name\FullyQualified($constantToClassRename->getClass());
