@@ -41,8 +41,6 @@ CODE_AFTER
     {
         assert($node instanceof Node\Stmt\Expression);
 
-
-
         if (!($node->expr instanceof Node\Expr\MethodCall)) {
             return null;
         }
@@ -53,6 +51,7 @@ CODE_AFTER
         if ($this->getDeclaringSource($node->expr) !== 'Drupal\FunctionalTests\AssertLegacyTrait') {
             return null;
         }
+
         if (count($node->expr->args) === 0) {
             throw new ShouldNotHappenException('assertNoUniqueText had no arguments');
         }
@@ -63,7 +62,6 @@ CODE_AFTER
         $getPageNode = $this->nodeFactory->createMethodCall($getSessionNode, 'getPage');
         $getTextNode = $this->nodeFactory->createMethodCall($getPageNode, 'getText');
         $pageTextVar = new Node\Expr\Variable('page_text');
-
 
         $assign = new Node\Expr\Assign($pageTextVar, $getTextNode);
         $nodes[] = new Node\Stmt\Expression($assign);
@@ -83,7 +81,6 @@ CODE_AFTER
         } elseif (!$assertedText instanceof Node\Expr\Variable) {
             throw new \RuntimeException(__CLASS__ . ' cannot handle argument of type ' . get_class($assertedText));
         }
-
 
         $methodCall = $this->nodeFactory->createLocalMethodCall(
             'assertGreaterThan',
