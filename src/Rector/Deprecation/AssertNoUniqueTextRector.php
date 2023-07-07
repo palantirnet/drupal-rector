@@ -40,9 +40,6 @@ CODE_AFTER
     public function refactor(Node $node)
     {
         assert($node instanceof Node\Stmt\Expression);
-
-
-
         if (!($node->expr instanceof Node\Expr\MethodCall)) {
             return null;
         }
@@ -64,7 +61,6 @@ CODE_AFTER
         $getTextNode = $this->nodeFactory->createMethodCall($getPageNode, 'getText');
         $pageTextVar = new Node\Expr\Variable('page_text');
 
-
         $assign = new Node\Expr\Assign($pageTextVar, $getTextNode);
         $nodes[] = new Node\Stmt\Expression($assign);
 
@@ -83,7 +79,6 @@ CODE_AFTER
         } elseif (!$assertedText instanceof Node\Expr\Variable) {
             throw new \RuntimeException(__CLASS__ . ' cannot handle argument of type ' . get_class($assertedText));
         }
-
 
         $methodCall = $this->nodeFactory->createLocalMethodCall(
             'assertGreaterThan',
