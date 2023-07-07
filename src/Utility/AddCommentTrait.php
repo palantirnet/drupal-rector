@@ -33,9 +33,9 @@ trait AddCommentTrait
         if ($node instanceof Node\Stmt) {
             $statement_node = $node;
         }
-        elseif ($node->hasAttribute(AttributeKey::PARENT_NODE)) {
-            $parent_node = $node->getAttribute(AttributeKey::PARENT_NODE);
-
+        // Attribute::PARENT_NODE was deprecated but PhpParser uses 'parent' still.
+        elseif ($node->hasAttribute('parent')) {
+            $parent_node = $node->getAttribute('parent');
             $statement_node = $this->getClosestStatementNode($parent_node);
         }
 
