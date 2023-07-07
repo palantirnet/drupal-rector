@@ -148,12 +148,13 @@ CODE_AFTER
                     // Since we did not rename the function, Rector will process
                     // this node multiple times. So we need to flag it with the
                     // @noRector tag.
-                    $parent_node = $node->getAttribute(AttributeKey::PARENT_NODE);
-                    assert($parent_node instanceof Node);
-                    $comments = $parent_node->getAttribute(AttributeKey::COMMENTS);
-                    $comments[] = new Comment('// @noRector');
-                    $parent_node->setAttribute(AttributeKey::COMMENTS, $comments);
-
+                    if ($node->hasAttribute('parent')) {
+                        $parent_node = $node->getAttribute('parent');
+                        assert($parent_node instanceof Node);
+                        $comments = $parent_node->getAttribute(AttributeKey::COMMENTS);
+                        $comments[] = new Comment('// @noRector');
+                        $parent_node->setAttribute(AttributeKey::COMMENTS, $comments);
+                    }
                     // The comments for this node have already been processed
                     // and stored in an object hash. We need to manually add the
                     // tag ourselves to the phpDoc object to prevent further
