@@ -4,6 +4,7 @@ namespace DrupalRector\Rector\Deprecation;
 
 use DrupalRector\Utility\GetDeclaringSourceTrait;
 use PhpParser\Node;
+use PhpParser\NodeTraverser;
 use Rector\Core\Rector\AbstractRector;
 use Rector\NodeCollector\ScopeResolver\ParentClassScopeResolver;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
@@ -41,19 +42,19 @@ CODE_AFTER
     public function getNodeTypes(): array
     {
         return [
-            Node\Expr\MethodCall::class,
+            Node\Stmt\Expression::class,
         ];
     }
 
     public function refactor(Node $node)
     {
-        assert($node instanceof Node\Expr\MethodCall);
-        if ($this->getName($node->name) !== 'pass') {
+        assert($node instanceof Node\Stmt\Expression);
+        if ($this->getName($node->expr->name) !== 'pass') {
             return null;
         }
 
-        if ($this->getDeclaringSource($node) === 'Drupal\KernelTests\AssertLegacyTrait') {
-            $this->removeNode($node);
+        if ($this->getDeclaringSource($node->expr) === 'Drupal\KernelTests\AssertLegacyTrait') {
+            return NodeTraverser::REMOVE_NODE;
         }
 
         return $node;
