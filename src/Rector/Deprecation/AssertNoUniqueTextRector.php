@@ -6,24 +6,11 @@ use DrupalRector\Utility\GetDeclaringSourceTrait;
 use PhpParser\Node;
 use Rector\Core\Exception\ShouldNotHappenException;
 use Rector\Core\Rector\AbstractRector;
-use Rector\PostRector\Collector\NodesToAddCollector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 final class AssertNoUniqueTextRector extends AbstractRector
 {
-
-    /**
-     * @readonly
-     * @var \Rector\PostRector\Collector\NodesToAddCollector
-     */
-    private $nodesToAddCollector;
-
-    public function __construct(NodesToAddCollector $nodesToAddCollector)
-    {
-        $this->nodesToAddCollector = $nodesToAddCollector;
-    }
-
     use GetDeclaringSourceTrait;
 
     public function getRuleDefinition(): RuleDefinition
@@ -46,48 +33,54 @@ CODE_AFTER
     public function getNodeTypes(): array
     {
         return [
-            Node\Expr\MethodCall::class,
+            Node\Stmt\Expression::class,
         ];
     }
 
     public function refactor(Node $node)
     {
-        assert($node instanceof Node\Expr\MethodCall);
-        if ($this->getName($node->name) !== 'assertNoUniqueText') {
+        assert($node instanceof Node\Stmt\Expression);
+        if (!($node->expr instanceof Node\Expr\MethodCall)) {
             return null;
         }
-        if ($this->getDeclaringSource($node) !== 'Drupal\FunctionalTests\AssertLegacyTrait') {
+
+        if ($this->getName($node->expr->name) !== 'assertNoUniqueText') {
             return null;
         }
-        if (count($node->args) === 0) {
+        if ($this->getDeclaringSource($node->expr) !== 'Drupal\FunctionalTests\AssertLegacyTrait') {
+            return null;
+        }
+        if (count($node->expr->args) === 0) {
             throw new ShouldNotHappenException('assertNoUniqueText had no arguments');
         }
 
+        /** @var Node\Stmt[] $nodes */
         $nodes = [];
-
         $getSessionNode = $this->nodeFactory->createLocalMethodCall('getSession');
         $getPageNode = $this->nodeFactory->createMethodCall($getSessionNode, 'getPage');
         $getTextNode = $this->nodeFactory->createMethodCall($getPageNode, 'getText');
         $pageTextVar = new Node\Expr\Variable('page_text');
-        // @phpstan-ignore-next-line
-        $this->nodesToAddCollector->addNodeBeforeNode(new Node\Expr\Assign($pageTextVar, $getTextNode), $node);
+
+        $assign = new Node\Expr\Assign($pageTextVar, $getTextNode);
+        $nodes[] = new Node\Stmt\Expression($assign);
 
         $nrFoundVar = new Node\Expr\Variable('nr_found');
         $substrCountNode = $this->nodeFactory->createFuncCall(
             'substr_count',
-            [new Node\Arg($pageTextVar), $node->args[0]]
+            [new Node\Arg($pageTextVar), $node->expr->args[0]]
         );
-        // @phpstan-ignore-next-line
-        $this->nodesToAddCollector->addNodeBeforeNode(new Node\Expr\Assign($nrFoundVar, $substrCountNode), $node);
 
-        $assertedText = $node->args[0]->value;
+        $assignSubStrCount = new Node\Expr\Assign($nrFoundVar, $substrCountNode);
+        $nodes[] = new Node\Stmt\Expression($assignSubStrCount);
+
+        $assertedText = $node->expr->args[0]->value;
         if ($assertedText instanceof Node\Scalar\String_) {
             $assertedText = new Node\Scalar\EncapsedStringPart($assertedText->value);
         } elseif (!$assertedText instanceof Node\Expr\Variable) {
             throw new \RuntimeException(__CLASS__ . ' cannot handle argument of type ' . get_class($assertedText));
         }
 
-        return $this->nodeFactory->createLocalMethodCall(
+        $methodCall = $this->nodeFactory->createLocalMethodCall(
             'assertGreaterThan',
             [
                 new Node\Arg(new Node\Scalar\LNumber(1)),
@@ -100,5 +93,8 @@ CODE_AFTER
                 ]))
             ]
         );
+        $nodes[] = new Node\Stmt\Expression($methodCall);
+
+        return $nodes;
     }
 }

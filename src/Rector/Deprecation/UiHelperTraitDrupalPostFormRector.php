@@ -12,17 +12,6 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 final class UiHelperTraitDrupalPostFormRector extends AbstractRector
 {
 
-    /**
-     * @readonly
-     * @var \Rector\PostRector\Collector\NodesToAddCollector
-     */
-    private $nodesToAddCollector;
-
-    public function __construct(NodesToAddCollector $nodesToAddCollector)
-    {
-        $this->nodesToAddCollector = $nodesToAddCollector;
-    }
-
     public function getRuleDefinition(): RuleDefinition
     {
         return new RuleDefinition('Fixes deprecated UiHelperTrait::drupalPostForm() calls', [
@@ -50,7 +39,7 @@ CODE_AFTER
     public function getNodeTypes(): array
     {
         return [
-            Node\Expr\MethodCall::class,
+            Node\Stmt\Expression::class,
         ];
     }
 
@@ -82,9 +71,16 @@ CODE_AFTER
 
     public function refactor(Node $node)
     {
-        assert($node instanceof Node\Expr\MethodCall);
-        if ($this->getName($node->name) === 'drupalPostForm') {
-            [$path, $edit, $button, $options, $htmlId] = $this->safeArgDestructure($node);
+        assert($node instanceof Node\Stmt\Expression);
+
+        if (!($node->expr instanceof Node\Expr\MethodCall)) {
+            return null;
+        }
+
+        if ($this->getName($node->expr->name) === 'drupalPostForm') {
+            /** @var Node\Stmt[] $nodes */
+
+            [$path, $edit, $button, $options, $htmlId] = $this->safeArgDestructure($node->expr);
 
             if ($htmlId === null) {
                 $submitFormNode = $this->nodeFactory->createLocalMethodCall('submitForm', [$edit, $button]);
@@ -99,13 +95,11 @@ CODE_AFTER
                 } else {
                     $drupalGetNode = $this->nodeFactory->createLocalMethodCall('drupalGet', [$path, $options]);
                 }
-                // We have to use the deprecated `addNodeBeforeNode` due to
-                // https://github.com/rectorphp/rector/discussions/6538.
-                // @phpstan-ignore-next-line
-                $this->nodesToAddCollector->addNodeBeforeNode($drupalGetNode, $node);
+                $nodes[] = new Node\Stmt\Expression($drupalGetNode);
             }
+            $nodes[] = new Node\Stmt\Expression($submitFormNode);
 
-            return $submitFormNode;
+            return $nodes;
         }
         return null;
     }
