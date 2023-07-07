@@ -2,9 +2,12 @@
 
 namespace DrupalRector\Rector\Deprecation;
 
+use DrupalRector\Rector\ValueObject\ConstantToClass;
 use PhpParser\Node;
 use Rector\Core\Contract\Rector\ConfigurableRectorInterface;
 use Rector\Core\Rector\AbstractRector;
+use Rector\Renaming\Contract\MethodCallRenameInterface;
+use RectorPrefix202304\Webmozart\Assert\Assert;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\ConfiguredCodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
@@ -17,42 +20,17 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 class ConstantToClassConstantRector extends AbstractRector implements ConfigurableRectorInterface
 {
     /**
-     * The deprecated constant.
-     *
-     * @var string
+     * @var ConstantToClass[]
      */
-    protected $deprecatedConstant;
-
-    /**
-     * The replacement fully qualified class name.
-     *
-     * @var string
-     */
-    protected $constantFullyQualifiedClassName;
-
-    /**
-     * The replacement constant.
-     *
-     * @var string
-     */
-    protected $constant;
-
-    const DEPRECATED_CONSTANT = 'deprecated_constant';
-    const CONSTANT_FULLY_QUALIFIED_CLASS_NAME = 'constant_fully_qualified_class_name';
-    const CONSTANT = 'constant';
+    private array $constantToClassRenames;
 
     /**
      * @param array $configuration
      */
     public function configure(array $configuration): void
     {
-        $this->deprecatedConstant = $configuration[static::DEPRECATED_CONSTANT] ?? '';
-        $this->constantFullyQualifiedClassName = $configuration[static::CONSTANT_FULLY_QUALIFIED_CLASS_NAME] ?? '';
-        $this->constant = $configuration[static::CONSTANT] ?? '';
-
-        if ($this->deprecatedConstant === '' || $this->constantFullyQualifiedClassName === '' || $this->constant === '') {
-            throw new \InvalidArgumentException('You must set the deprecated constant, the replacement fully qualified class name and the replacement constant.');
-        }
+        Assert::allIsAOf($configuration, ConstantToClass::class);
+        $this->constantToClassRenames = $configuration;
     }
 
     /**
@@ -71,9 +49,11 @@ $result = file_unmanaged_copy($source, $destination, \Drupal\MyClass::CONSTANT);
 CODE_AFTER
                 ,
                 [
-                    self::DEPRECATED_CONSTANT => 'DEPRECATED_CONSTANT',
-                    self::CONSTANT_FULLY_QUALIFIED_CLASS_NAME => 'Drupal\MyClass',
-                    self::CONSTANT => 'CONSTANT',
+                    new ConstantToClass(
+                        'DEPRECATED_CONSTANT',
+                        'Drupal\MyClass',
+                        'CONSTANT'
+                    ),
                 ]
             )
         ]);
@@ -94,17 +74,16 @@ CODE_AFTER
      */
     public function refactor(Node $node): ?Node
     {
-        /** @var Node\Expr\FuncCall $node */
-        if ($this->getName($node->name) === $this->deprecatedConstant) {
+        /** @var Node\Expr\ConstFetch $node */
+        foreach ( $this->constantToClassRenames as $constantToClassRename) {
+            if ($this->getName($node->name) === $constantToClassRename->getDeprecated()) {
+                // We add a fully qualified class name and the parameters in `rector.php` adds the use statement.
+                $fully_qualified_class = new Node\Name\FullyQualified($constantToClassRename->getClass());
 
-            // We add a fully qualified class name and the parameters in `rector.php` adds the use statement.
-            $fully_qualified_class = new Node\Name\FullyQualified($this->constantFullyQualifiedClassName);
+                $name = new Node\Identifier($constantToClassRename->getConstant());
 
-            $name = new Node\Identifier($this->constant);
-
-            $node = new Node\Expr\ClassConstFetch($fully_qualified_class, $name);
-
-            return $node;
+                return new Node\Expr\ClassConstFetch($fully_qualified_class, $name);
+            }
         }
 
         return null;
