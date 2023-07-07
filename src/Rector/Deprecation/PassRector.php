@@ -5,6 +5,7 @@ namespace DrupalRector\Rector\Deprecation;
 use DrupalRector\Utility\GetDeclaringSourceTrait;
 use PhpParser\Node;
 use PhpParser\NodeTraverser;
+use PhpParser\NodeVisitor;
 use Rector\Core\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
@@ -48,7 +49,11 @@ CODE_AFTER
         }
 
         if ($this->getDeclaringSource($node->expr) === 'Drupal\KernelTests\AssertLegacyTrait') {
-            $this->removeNode($node);
+            if (method_exists($this, 'removeNode')) {
+                $this->removeNode($node);
+            } else {
+                return NodeVisitor::REMOVE_NODE;
+            }
         }
 
         return $node;
