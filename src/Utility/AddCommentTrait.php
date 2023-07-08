@@ -15,9 +15,10 @@ trait AddCommentTrait
 
     protected $noticesAsComments = false;
 
-    protected function configureNoticesAsComments(array $configuration): void
+    protected function configureNoticesAsComments(array &$configuration): void
     {
         $this->noticesAsComments = $configuration['drupal_rector_notices_as_comments'] ?? false;
+        unset($configuration['drupal_rector_notices_as_comments']);
     }
 
     /**
