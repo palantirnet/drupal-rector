@@ -12,7 +12,6 @@ return static function (RectorConfig $rectorConfig): void {
         'drupal_rector_notices_as_comments' => '%drupal_rector_notices_as_comments%',
     ]);
 
-
     /**
      * Replaces deprecated DATETIME_DATE_STORAGE_FORMAT, DATETIME_DATETIME_STORAGE_FORMAT, DATETIME_STORAGE_TIMEZONE constant use.
      *
