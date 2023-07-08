@@ -3,6 +3,7 @@
 namespace DrupalRector\Rector\Deprecation;
 
 use DrupalRector\Utility\AddCommentTrait;
+use DrupalRector\Utility\FindParentByTypeTrait;
 use DrupalRector\Utility\TraitsByClassHelperTrait;
 use PhpParser\Comment;
 use PhpParser\Node;
@@ -36,6 +37,7 @@ final class DrupalSetMessageRector extends AbstractRector implements Configurabl
 {
     use TraitsByClassHelperTrait;
     use AddCommentTrait;
+    use FindParentByTypeTrait;
 
     public function configure(array $configuration): void
     {
@@ -77,7 +79,7 @@ CODE_AFTER
     {
         /** @var Node\Expr\FuncCall $node */
         if ($this->getName($node->name) === 'drupal_set_message') {
-            $class = $this->betterNodeFinder->findParentType($node, Node\Stmt\Class_::class);
+            $class = $this->findParentType($node, Node\Stmt\Class_::class);
             if ($this->checkClassTypeHasTrait($class, 'Drupal\Core\Messenger\MessengerTrait')) {
                 $messenger_service = new Node\Expr\MethodCall(
                     new Node\Expr\Variable('this'),
