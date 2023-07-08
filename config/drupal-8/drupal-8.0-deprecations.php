@@ -61,8 +61,12 @@ return static function (RectorConfig $rectorConfig): void {
         ]);
 
     $rectorConfig->ruleWithConfiguration(EntityLoadRector::class, [
-            'drupal_rector_notices_as_comments' => '%drupal_rector_notices_as_comments%',
-        ]);
+        new \DrupalRector\Rector\ValueObject\EntityLoad('entity'),
+        new \DrupalRector\Rector\ValueObject\EntityLoad('file'),
+        new \DrupalRector\Rector\ValueObject\EntityLoad('node'),
+        new \DrupalRector\Rector\ValueObject\EntityLoad('user'),
+        'drupal_rector_notices_as_comments' => '%drupal_rector_notices_as_comments%',
+    ]);
 
     $rectorConfig->rule(EntityViewRector::class);
 
@@ -72,21 +76,9 @@ return static function (RectorConfig $rectorConfig): void {
 
     $rectorConfig->rule(FormatDateRector::class);
 
-    $rectorConfig->ruleWithConfiguration(FileLoadRector::class, [
-            'drupal_rector_notices_as_comments' => '%drupal_rector_notices_as_comments%',
-        ]);
-
     $rectorConfig->ruleWithConfiguration(LinkGeneratorTraitLRector::class, [
             'drupal_rector_notices_as_comments' => '%drupal_rector_notices_as_comments%',
         ]);
 
-    $rectorConfig->ruleWithConfiguration(NodeLoadRector::class, [
-            'drupal_rector_notices_as_comments' => '%drupal_rector_notices_as_comments%',
-        ]);
-
     $rectorConfig->rule(SafeMarkupFormatRector::class);
-
-    $rectorConfig->ruleWithConfiguration(UserLoadRector::class, [
-            'drupal_rector_notices_as_comments' => '%drupal_rector_notices_as_comments%',
-        ]);
 };
