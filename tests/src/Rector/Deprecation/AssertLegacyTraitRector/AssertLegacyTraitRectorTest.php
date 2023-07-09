@@ -1,12 +1,12 @@
 <?php declare(strict_types=1);
 
-namespace DrupalRector\Tests\Rector\Deprecation\AssertHeaderRector;
+namespace DrupalRector\Tests\Rector\Deprecation\AssertLegacyTraitRector;
 
 use Iterator;
 use Rector\Testing\PHPUnit\AbstractRectorTestCase;
 use Symplify\SmartFileSystem\SmartFileInfo;
 
-class AssertHeaderRectorTest extends AbstractRectorTestCase {
+class AssertLegacyTraitRectorTest extends AbstractRectorTestCase {
 
     /**
      * @covers ::refactor

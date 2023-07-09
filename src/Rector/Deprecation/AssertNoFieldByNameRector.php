@@ -2,17 +2,21 @@
 
 namespace DrupalRector\Rector\Deprecation;
 
-use DrupalRector\Rector\Deprecation\Base\AssertLegacyTraitBase;
+use DrupalRector\Utility\AddCommentTrait;
+use DrupalRector\Utility\GetDeclaringSourceTrait;
 use PhpParser\Node;
+use Rector\Core\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
-final class AssertNoFieldByNameRector extends AssertLegacyTraitBase
+final class AssertNoFieldByNameRector extends AbstractRector
 {
+    use AddCommentTrait;
+    use GetDeclaringSourceTrait;
 
-    protected $deprecatedMethodName = 'assertNoFieldByName';
-    protected $methodName = 'fieldNotExists';
-    protected $comment = 'Verify the assertion: buttonNotExists() if this is for a button.';
+    protected string $deprecatedMethodName = 'assertNoFieldByName';
+    protected string $methodName = 'fieldNotExists';
+    protected string $comment = 'Verify the assertion: buttonNotExists() if this is for a button.';
 
     public function getRuleDefinition(): RuleDefinition
     {
@@ -33,6 +37,13 @@ CODE_BEFORE
 CODE_AFTER
             )
         ]);
+    }
+
+    public function getNodeTypes(): array
+    {
+        return [
+            Node\Expr\MethodCall::class,
+        ];
     }
 
     public function refactor(Node $node): ?Node
@@ -69,4 +80,9 @@ CODE_AFTER
         return $node;
     }
 
+    protected function createAssertSessionMethodCall(string $method, array $args): Node\Expr\MethodCall
+    {
+        $assertSessionNode = $this->nodeFactory->createLocalMethodCall('assertSession');
+        return $this->nodeFactory->createMethodCall($assertSessionNode, $method, $args);
+    }
 }
