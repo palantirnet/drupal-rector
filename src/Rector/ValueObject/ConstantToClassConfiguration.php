@@ -5,7 +5,7 @@ declare (strict_types=1);
 namespace DrupalRector\Rector\ValueObject;
 
 use Rector\Core\Validation\RectorAssert;
-final class ConstantToClass
+final class ConstantToClassConfiguration
 {
 
     private string $deprecated;
