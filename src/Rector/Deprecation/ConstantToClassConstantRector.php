@@ -2,7 +2,7 @@
 
 namespace DrupalRector\Rector\Deprecation;
 
-use DrupalRector\Rector\ValueObject\ConstantToClass;
+use DrupalRector\Rector\ValueObject\ConstantToClassConfiguration;
 use PhpParser\Node;
 use Rector\Core\Contract\Rector\ConfigurableRectorInterface;
 use Rector\Core\Rector\AbstractRector;
@@ -18,7 +18,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 class ConstantToClassConstantRector extends AbstractRector implements ConfigurableRectorInterface
 {
     /**
-     * @var ConstantToClass[]
+     * @var ConstantToClassConfiguration[]
      */
     private array $constantToClassRenames;
 
@@ -28,10 +28,10 @@ class ConstantToClassConstantRector extends AbstractRector implements Configurab
     public function configure(array $configuration): void
     {
         foreach ($configuration as $value) {
-            if (!($value instanceof ConstantToClass)) {
+            if (!($value instanceof ConstantToClassConfiguration)) {
                 throw new \InvalidArgumentException(sprintf(
                     'Each configuration item must be an instance of "%s"',
-                    ConstantToClass::class
+                    ConstantToClassConfiguration::class
                 ));
             }
         }
@@ -55,7 +55,7 @@ $result = file_unmanaged_copy($source, $destination, \Drupal\MyClass::CONSTANT);
 CODE_AFTER
                 ,
                 [
-                    new ConstantToClass(
+                    new ConstantToClassConfiguration(
                         'DEPRECATED_CONSTANT',
                         'Drupal\MyClass',
                         'CONSTANT'

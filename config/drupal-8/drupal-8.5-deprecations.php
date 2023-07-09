@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 use DrupalRector\Rector\Deprecation\ConstantToClassConstantRector;
 use DrupalRector\Rector\Deprecation\DrupalSetMessageRector;
-use DrupalRector\Rector\ValueObject\ConstantToClass;
+use DrupalRector\Rector\ValueObject\ConstantToClassConfiguration;
 use Rector\Config\RectorConfig;
 
 return static function (RectorConfig $rectorConfig): void {
@@ -18,8 +18,8 @@ return static function (RectorConfig $rectorConfig): void {
      * See https://www.drupal.org/node/2912980 for change record.
      */
     $rectorConfig->ruleWithConfiguration(ConstantToClassConstantRector::class, [
-        new ConstantToClass('DATETIME_DATE_STORAGE_FORMAT', 'Drupal\datetime\Plugin\Field\FieldType\DateTimeItemInterface', 'DATE_STORAGE_FORMAT'),
-        new ConstantToClass('DATETIME_DATETIME_STORAGE_FORMAT', 'Drupal\datetime\Plugin\Field\FieldType\DateTimeItemInterface', 'DATETIME_STORAGE_FORMAT'),
-        new ConstantToClass('DATETIME_STORAGE_TIMEZONE', 'Drupal\datetime\Plugin\Field\FieldType\DateTimeItemInterface', 'STORAGE_TIMEZONE'),
+        new ConstantToClassConfiguration('DATETIME_DATE_STORAGE_FORMAT', 'Drupal\datetime\Plugin\Field\FieldType\DateTimeItemInterface', 'DATE_STORAGE_FORMAT'),
+        new ConstantToClassConfiguration('DATETIME_DATETIME_STORAGE_FORMAT', 'Drupal\datetime\Plugin\Field\FieldType\DateTimeItemInterface', 'DATETIME_STORAGE_FORMAT'),
+        new ConstantToClassConfiguration('DATETIME_STORAGE_TIMEZONE', 'Drupal\datetime\Plugin\Field\FieldType\DateTimeItemInterface', 'STORAGE_TIMEZONE'),
     ]);
 };
