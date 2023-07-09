@@ -2,7 +2,7 @@
 
 namespace DrupalRector\Rector\Deprecation;
 
-use DrupalRector\Rector\ValueObject\EntityLoad;
+use DrupalRector\Rector\ValueObject\EntityLoadConfiguration;
 use DrupalRector\Utility\AddCommentTrait;
 use PhpParser\Node;
 use Rector\Core\Contract\Rector\ConfigurableRectorInterface;
@@ -28,7 +28,7 @@ final class EntityLoadRector extends AbstractRector implements ConfigurableRecto
     use AddCommentTrait;
 
     /**
-     * @var EntityLoad[] $entityTypes
+     * @var EntityLoadConfiguration[] $entityTypes
      */
     protected array $entityTypes;
 
@@ -57,10 +57,10 @@ CODE_AFTER
         $this->configureNoticesAsComments($configuration);
 
         foreach ($configuration as $value) {
-            if (!($value instanceof EntityLoad)) {
+            if (!($value instanceof EntityLoadConfiguration)) {
                 throw new \InvalidArgumentException(sprintf(
                     'Each configuration item must be an instance of "%s"',
-                    EntityLoad::class
+                    EntityLoadConfiguration::class
                 ));
             }
         }

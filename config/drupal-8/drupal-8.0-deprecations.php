@@ -25,7 +25,7 @@ use DrupalRector\Rector\Deprecation\LinkGeneratorTraitLRector;
 use DrupalRector\Rector\Deprecation\NodeLoadRector;
 use DrupalRector\Rector\Deprecation\SafeMarkupFormatRector;
 use DrupalRector\Rector\Deprecation\UserLoadRector;
-use DrupalRector\Rector\ValueObject\EntityLoad;
+use DrupalRector\Rector\ValueObject\EntityLoadConfiguration;
 use Rector\Config\RectorConfig;
 
 return static function (RectorConfig $rectorConfig): void {
@@ -62,10 +62,10 @@ return static function (RectorConfig $rectorConfig): void {
         ]);
 
     $rectorConfig->ruleWithConfiguration(EntityLoadRector::class, [
-        new EntityLoad('entity'),
-        new EntityLoad('file'),
-        new EntityLoad('node'),
-        new EntityLoad('user'),
+        new EntityLoadConfiguration('entity'),
+        new EntityLoadConfiguration('file'),
+        new EntityLoadConfiguration('node'),
+        new EntityLoadConfiguration('user'),
         'drupal_rector_notices_as_comments' => '%drupal_rector_notices_as_comments%',
     ]);
 

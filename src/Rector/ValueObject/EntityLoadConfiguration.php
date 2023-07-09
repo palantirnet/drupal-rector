@@ -6,7 +6,7 @@ namespace DrupalRector\Rector\ValueObject;
 
 use Rector\Core\Validation\RectorAssert;
 
-final class EntityLoad
+final class EntityLoadConfiguration
 {
     private string $entityType;
 
