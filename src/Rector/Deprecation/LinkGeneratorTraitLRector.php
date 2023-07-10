@@ -3,7 +3,7 @@
 namespace DrupalRector\Rector\Deprecation;
 
 use DrupalRector\Utility\AddCommentTrait;
-use DrupalRector\Utility\GetDeclaringSourceTrait;
+use DrupalRector\Utility\FindParentByTypeTrait;
 use DrupalRector\Utility\TraitsByClassHelperTrait;
 use PhpParser\Node;
 use Rector\Core\Contract\Rector\ConfigurableRectorInterface;
@@ -26,7 +26,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 final class LinkGeneratorTraitLRector extends AbstractRector implements ConfigurableRectorInterface
 {
     use AddCommentTrait;
-    use GetDeclaringSourceTrait;
+    use FindParentByTypeTrait;
     use TraitsByClassHelperTrait;
 
     public function configure(array $configuration): void
@@ -69,8 +69,7 @@ CODE_AFTER
     {
         /** @var Node\Expr\MethodCall $node */
           if ($this->getName($node->name) === 'l') {
-              // This method returns both classes and traits, and might not work.
-              $class = $this->getDeclaringSource($node);
+            $class = $this->findParentType($node, Node\Stmt\Class_::class);
 
             // Check if class has LinkGeneratorTrait.
             if ($this->checkClassTypeHasTrait($class, 'Drupal\Core\Routing\LinkGeneratorTrait')) {
