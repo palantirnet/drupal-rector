@@ -3,13 +3,12 @@
 namespace DrupalRector\Rector\Deprecation;
 
 use DrupalRector\Utility\AddCommentTrait;
+use DrupalRector\Utility\GetDeclaringSourceTrait;
 use DrupalRector\Utility\TraitsByClassHelperTrait;
 use PhpParser\Comment;
 use PhpParser\Node;
 use PHPStan\PhpDocParser\Ast\PhpDoc\GenericTagValueNode;
 use PHPStan\PhpDocParser\Ast\PhpDoc\PhpDocTagNode;
-use PHPStan\Type\Generic\GenericClassStringType;
-use PHPStan\Type\StringType;
 use Rector\BetterPhpDocParser\PhpDocInfo\PhpDocInfo;
 use Rector\Core\Contract\Rector\ConfigurableRectorInterface;
 use Rector\NodeTypeResolver\Node\AttributeKey;
@@ -34,8 +33,9 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  */
 final class DrupalSetMessageRector extends AbstractRector implements ConfigurableRectorInterface
 {
-    use TraitsByClassHelperTrait;
     use AddCommentTrait;
+    use GetDeclaringSourceTrait;
+    use TraitsByClassHelperTrait;
 
     public function configure(array $configuration): void
     {
@@ -77,7 +77,8 @@ CODE_AFTER
     {
         /** @var Node\Expr\FuncCall $node */
         if ($this->getName($node->name) === 'drupal_set_message') {
-            $class = $this->betterNodeFinder->findParentType($node, Node\Stmt\Class_::class);
+            // This method returns both classes and traits, and might not work.
+            $class = $this->getDeclaringSource($node);
             if ($this->checkClassTypeHasTrait($class, 'Drupal\Core\Messenger\MessengerTrait')) {
                 $messenger_service = new Node\Expr\MethodCall(
                     new Node\Expr\Variable('this'),
