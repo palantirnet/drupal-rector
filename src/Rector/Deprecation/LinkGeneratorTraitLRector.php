@@ -7,7 +7,6 @@ use DrupalRector\Utility\FindParentByTypeTrait;
 use DrupalRector\Utility\TraitsByClassHelperTrait;
 use PhpParser\Node;
 use Rector\Core\Contract\Rector\ConfigurableRectorInterface;
-use Rector\NodeTypeResolver\Node\AttributeKey;
 use Rector\Core\Rector\AbstractRector;
 use Symplify\PackageBuilder\Parameter\ParameterProvider;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
@@ -26,9 +25,9 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  */
 final class LinkGeneratorTraitLRector extends AbstractRector implements ConfigurableRectorInterface
 {
-    use TraitsByClassHelperTrait;
     use AddCommentTrait;
     use FindParentByTypeTrait;
+    use TraitsByClassHelperTrait;
 
     public function configure(array $configuration): void
     {
