@@ -7,6 +7,7 @@ use DrupalRector\Utility\GetDeclaringSourceTrait;
 use PhpParser\Node;
 use Rector\Core\Contract\Rector\ConfigurableRectorInterface;
 use Rector\Core\Rector\AbstractRector;
+use Rector\NodeTypeResolver\Node\AttributeKey;
 
 abstract class AssertLegacyTraitBase extends AbstractRector implements ConfigurableRectorInterface
 {
@@ -28,7 +29,7 @@ abstract class AssertLegacyTraitBase extends AbstractRector implements Configura
     public function getNodeTypes(): array
     {
         return [
-            Node\Expr\MethodCall::class,
+            Node\Stmt\Expression::class,
         ];
     }
 
@@ -40,7 +41,22 @@ abstract class AssertLegacyTraitBase extends AbstractRector implements Configura
 
     public function refactor(Node $node): ?Node
     {
-        assert($node instanceof Node\Expr\MethodCall);
+        assert($node instanceof Node\Stmt\Expression);
+        if (!$node->expr instanceof Node\Expr\MethodCall) {
+            return null;
+        }
+        $methodCall = $this->doRefactor($node->expr, $node);
+        if (!$methodCall instanceof Node\Expr\MethodCall) {
+            return null;
+        }
+        $newExpr = new Node\Stmt\Expression($methodCall);
+        $comments = $node->getComments();
+        $newExpr->setAttribute(AttributeKey::COMMENTS, $comments);
+        return $newExpr;
+    }
+
+    protected function doRefactor(Node\Expr\MethodCall $node, Node\Stmt\Expression $parentExpr): ?Node
+    {
         if ($this->getName($node->name) !== $this->deprecatedMethodName) {
             return null;
         }
@@ -49,7 +65,7 @@ abstract class AssertLegacyTraitBase extends AbstractRector implements Configura
         }
 
         if ($this->comment !== '') {
-            $this->addDrupalRectorComment($node, $this->comment);
+            $this->addDrupalRectorComment($parentExpr, $this->comment);
         }
 
         $args = $this->processArgs($node->args);
