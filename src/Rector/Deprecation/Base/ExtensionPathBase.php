@@ -23,17 +23,22 @@ abstract class ExtensionPathBase extends AbstractRector implements ConfigurableR
     public function getNodeTypes(): array
     {
         return [
-            Node\Expr\FuncCall::class,
+            Node\Stmt\Expression::class,
         ];
     }
 
     public function refactor(Node $node): ?Node
     {
-        assert($node instanceof Node\Expr\FuncCall);
-        if ($this->getName($node->name) !== $this->functionName) {
+        assert($node instanceof Node\Stmt\Expression);
+        if (!($node->expr instanceof Node\Expr\FuncCall)) {
             return null;
         }
-        $args = $node->getArgs();
+
+        $expr = $node->expr;
+        if ($this->getName($expr->name) !== $this->functionName) {
+            return null;
+        }
+        $args = $expr->getArgs();
         if (count($args) !== 2) {
             $this->addDrupalRectorComment($node, "Invalid call to {$this->functionName}, cannot process.");
             return null;
@@ -64,6 +69,7 @@ abstract class ExtensionPathBase extends AbstractRector implements ConfigurableR
         );
         $methodName = new Node\Identifier($this->methodName);
 
-        return new Node\Expr\MethodCall($service, $methodName, $methodArgs);
+        $node->expr = new Node\Expr\MethodCall($service, $methodName, $methodArgs);
+        return $node;
     }
 }
