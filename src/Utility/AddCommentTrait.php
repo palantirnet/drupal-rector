@@ -4,6 +4,7 @@ namespace DrupalRector\Utility;
 
 use PhpParser\Comment;
 use PhpParser\Node;
+use PhpParser\Node\Stmt\Expression;
 use Rector\NodeTypeResolver\Node\AttributeKey;
 use Symplify\PackageBuilder\Parameter\ParameterProvider;
 
@@ -45,10 +46,10 @@ trait AddCommentTrait
     /**
      * Add a comment to the parent statement.
      *
-     * @param Node $node
+     * @param Expression $node
      * @param string $comment
      */
-    protected function addDrupalRectorComment(Node $node, $comment) {
+    protected function addDrupalRectorComment(Expression $node, $comment) {
         // Referencing the `parameterProvider` property in this way isn't a
         // great idea since we are assuming the property exists, but it does in
         // `AbstractRector` which all of our rules extend in some form or
