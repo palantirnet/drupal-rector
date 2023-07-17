@@ -16,7 +16,7 @@ class CommentingVisitor extends NodeVisitorAbstract implements ScopeResolverNode
 
     public function leaveNode(Node $node)
     {
-        if(!($node instanceof Stmt)){
+        if(!($node instanceof Stmt\Expression)){
             return null;
         }
 
