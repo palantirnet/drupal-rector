@@ -2,9 +2,9 @@
 
 namespace DrupalRector\Utility;
 
+use DrupalRector\Rector\Visitor\CommentingVisitor;
 use PhpParser\Comment;
 use PhpParser\Node;
-use Rector\NodeTypeResolver\Node\AttributeKey;
 use Symplify\PackageBuilder\Parameter\ParameterProvider;
 
 /**
@@ -63,7 +63,7 @@ trait AddCommentTrait
                 $comments = $statement_node->getComments();
                 $comments[] = new Comment($comment_with_wrapper);
 
-                $statement_node->setAttribute(AttributeKey::COMMENTS, $comments);
+                $statement_node->setAttribute(CommentingVisitor::COMMENT_ATTRIBUTE, $comments);
             }
         }
     }
