@@ -35,7 +35,7 @@ CODE_AFTER
         ]);
     }
 
-    protected function doRefactor(Node\Expr\MethodCall $node, Node\Stmt\Expression $parentExpr): ?Node
+    public function refactor(Node $node): ?Node
     {
         assert($node instanceof Node\Expr\MethodCall);
         if ($this->getName($node->name) !== $this->deprecatedMethodName) {
@@ -52,10 +52,11 @@ CODE_AFTER
 
         $valueArg = $args[1]->value;
         if ($valueArg instanceof Node\Expr\ConstFetch && \strtolower($valueArg->name->toString()) === 'null') {
-            $this->addDrupalRectorComment($parentExpr, $this->comment);
+            $this->addDrupalRectorComment($node, $this->comment);
             return $this->createAssertSessionMethodCall('fieldNotExists', [$args[0]]);
         }
 
         return $this->createAssertSessionMethodCall('fieldValueNotEquals', $args);
     }
+
 }
