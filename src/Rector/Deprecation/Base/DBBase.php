@@ -86,14 +86,9 @@ abstract class DBBase extends AbstractRector implements ConfigurableRectorInterf
 
         assert($node instanceof Node\Stmt\Expression);
 
-        $isAssign = !($node->expr instanceof Node\Expr\Assign);
-        if ($isAssign) {
-            return null;
-        }
-
         $isFuncCall = $node->expr instanceof Node\Expr\FuncCall;
-        $isAssignedFuncCall = $node->expr instanceof Node\Expr\Assign && !($node->expr->expr instanceof Node\Expr\FuncCall);
-        if (!$isFuncCall && $isAssignedFuncCall) {
+        $isAssignedFuncCall = $node->expr instanceof Node\Expr\Assign && $node->expr->expr instanceof Node\Expr\FuncCall;
+        if (!$isFuncCall && !$isAssignedFuncCall) {
             return null;
         }
 
