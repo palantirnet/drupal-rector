@@ -65,32 +65,56 @@ CODE_AFTER
     public function refactor(Node $node): ?Node
     {
         assert($node instanceof Node\Stmt\Expression);
-        if (! $node->expr instanceof Node\Expr\MethodCall) {
+
+        $isMethodCall = $node->expr instanceof Node\Expr\MethodCall;
+        $isAssignedMethodCall = $node->expr instanceof Node\Expr\Assign && $node->expr->expr instanceof Node\Expr\MethodCall;
+        if (!$isMethodCall && !$isAssignedMethodCall) {
             return null;
         }
 
-        $expr = $node->expr;
+        if ($isMethodCall && $this->getName($node->expr->name) !== 'link') {
+            return null;
+        }
 
-        /** @var Node\Expr\MethodCall $node */
-        // TODO: Check the class to see if it implements Drupal\Core\Entity\EntityInterface.
-        if ($this->getName($expr->name) === 'link') {
-            $node_class_name = $this->getName($expr->var);
+        if ($isAssignedMethodCall && $this->getName($node->expr->expr->name) !== 'link') {
+            return null;
+        }
 
-            $this->addDrupalRectorComment($node,
-                "Please confirm that `$$node_class_name` is an instance of `\Drupal\Core\Entity\EntityInterface`. Only the method name and not the class name was checked for this replacement, so this may be a false positive.");
+        if($isMethodCall) {
+            $methodCall = $this->getMethodCall($node->expr, $node);
+            $node->expr = $methodCall;
+            return $node;
+        }
 
-            $toLink_node = $expr;
-
-            $toLink_node->name = new Node\Identifier('toLink');
-
-            // Add ->toString();
-            $node->expr = new Node\Expr\MethodCall($toLink_node,
-                new Node\Identifier('toString'));
-
+        if ($isAssignedMethodCall) {
+            $methodCall = $this->getMethodCall($node->expr->expr, $node);
+            $node->expr->expr = $methodCall;
             return $node;
         }
 
         return null;
+    }
+
+    /**
+     * @param $expr
+     * @param Node\Stmt\Expression $node
+     * @return Node\Expr\MethodCall
+     */
+    public function getMethodCall($expr, Node\Stmt\Expression $node): Node\Expr\MethodCall
+    {
+        $node_class_name = $this->getName($expr->var);
+
+        $this->addDrupalRectorComment($node,
+            "Please confirm that `$$node_class_name` is an instance of `\Drupal\Core\Entity\EntityInterface`. Only the method name and not the class name was checked for this replacement, so this may be a false positive.");
+
+        $toLink_node = $expr;
+
+        $toLink_node->name = new Node\Identifier('toLink');
+
+        // Add ->toString();
+        $new_node = new Node\Expr\MethodCall($toLink_node,
+            new Node\Identifier('toString'));
+        return $new_node;
     }
 
 }
