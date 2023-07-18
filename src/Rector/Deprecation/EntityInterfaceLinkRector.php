@@ -80,7 +80,7 @@ CODE_AFTER
             return null;
         }
 
-        if($isMethodCall) {
+        if ($isMethodCall) {
             $methodCall = $this->getMethodCall($node->expr, $node);
             $node->expr = $methodCall;
             return $node;
