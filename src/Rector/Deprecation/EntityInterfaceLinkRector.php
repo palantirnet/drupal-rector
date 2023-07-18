@@ -55,7 +55,7 @@ CODE_AFTER
     public function getNodeTypes(): array
     {
         return [
-            Node\Expr\MethodCall::class,
+            Node\Stmt\Expression::class,
         ];
     }
 
@@ -64,23 +64,30 @@ CODE_AFTER
      */
     public function refactor(Node $node): ?Node
     {
+        assert($node instanceof Node\Stmt\Expression);
+        if (! $node->expr instanceof Node\Expr\MethodCall) {
+            return null;
+        }
+
+        $expr = $node->expr;
+
         /** @var Node\Expr\MethodCall $node */
         // TODO: Check the class to see if it implements Drupal\Core\Entity\EntityInterface.
-        if ($this->getName($node->name) === 'link') {
-            $node_class_name = $this->getName($node->var);
+        if ($this->getName($expr->name) === 'link') {
+            $node_class_name = $this->getName($expr->var);
 
             $this->addDrupalRectorComment($node,
                 "Please confirm that `$$node_class_name` is an instance of `\Drupal\Core\Entity\EntityInterface`. Only the method name and not the class name was checked for this replacement, so this may be a false positive.");
 
-            $toLink_node = $node;
+            $toLink_node = $expr;
 
             $toLink_node->name = new Node\Identifier('toLink');
 
             // Add ->toString();
-            $new_node = new Node\Expr\MethodCall($toLink_node,
+            $node->expr = new Node\Expr\MethodCall($toLink_node,
                 new Node\Identifier('toString'));
 
-            return $new_node;
+            return $node;
         }
 
         return null;
