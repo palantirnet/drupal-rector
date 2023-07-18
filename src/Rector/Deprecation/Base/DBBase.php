@@ -71,7 +71,7 @@ abstract class DBBase extends AbstractRector implements ConfigurableRectorInterf
     public function getNodeTypes(): array
     {
         return [
-            Node\Expr\FuncCall::class,
+            Node\Stmt\Expression::class,
         ];
     }
 
@@ -80,8 +80,13 @@ abstract class DBBase extends AbstractRector implements ConfigurableRectorInterf
      */
     public function refactor(Node $node): ?Node
     {
-        /** @var Node\Expr\FuncCall $node */
-        if ($this->getName($node->name) === $this->deprecatedMethodName) {
+        if (!($node->expr instanceof Node\Expr\FuncCall)) {
+            return null;
+        }
+        $expr = $node->expr;
+
+        /** @var Node\Expr\FuncCall $expr */
+        if ($this->getName($expr->name) === $this->deprecatedMethodName) {
 
             // TODO: Check if we have are in a class and inject \Drupal\Core\Database\Connection
 
@@ -93,10 +98,10 @@ abstract class DBBase extends AbstractRector implements ConfigurableRectorInterf
             $method_arguments = [];
 
             // The 'target' key in the $options can be used to use a non-default database.
-            if (count($node->args) >= $this->optionsArgumentPosition) {
+            if (count($expr->args) >= $this->optionsArgumentPosition) {
 
                 /* @var Node\Arg $options. */
-                $options = $node->args[$this->optionsArgumentPosition - 1];
+                $options = $expr->args[$this->optionsArgumentPosition - 1];
 
                 if ($options->value->getType() === 'Expr_Array') {
                     foreach ($options->value->items as $item_index => $item) {
@@ -113,7 +118,7 @@ abstract class DBBase extends AbstractRector implements ConfigurableRectorInterf
                             unset($items[$item_index]);
                             $value->items = $items;
                             $options->value = $value;
-                            $node->args[$this->optionsArgumentPosition - 1] = $options;
+                            $expr->args[$this->optionsArgumentPosition - 1] = $options;
                         }
                     }
                 }
@@ -131,7 +136,7 @@ abstract class DBBase extends AbstractRector implements ConfigurableRectorInterf
 
             $method_name = new Node\Identifier($this->getMethodName());
 
-            $node = new Node\Expr\MethodCall($var, $method_name, $node->args);
+            $node->expr = new Node\Expr\MethodCall($var, $method_name, $expr->args);
 
             return $node;
         }
