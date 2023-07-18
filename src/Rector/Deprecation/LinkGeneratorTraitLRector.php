@@ -69,7 +69,7 @@ CODE_AFTER
     {
         assert($node instanceof Node\Stmt\Expression);
 
-        if (!($node instanceof Node\Expr\MethodCall)) {
+        if (!($node->expr instanceof Node\Expr\MethodCall)) {
             return null;
         }
 
@@ -77,6 +77,7 @@ CODE_AFTER
 
         /** @var Node\Expr\MethodCall $expr */
         if ($this->getName($expr->name) === 'l') {
+          // @todo This could be a visitor that adds all parent class traits as an attribute
           $class = $this->findParentType($expr, Node\Stmt\Class_::class);
 
           // Check if class has LinkGeneratorTrait.
