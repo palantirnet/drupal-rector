@@ -83,12 +83,12 @@ abstract class DBBase extends AbstractRector implements ConfigurableRectorInterf
      */
     public function refactor(Node $node): ?Node
     {
-
         assert($node instanceof Node\Stmt\Expression);
 
         $isFuncCall = $node->expr instanceof Node\Expr\FuncCall;
+        $isMethodCall = $node->expr instanceof Node\Expr\MethodCall;
         $isAssignedFuncCall = $node->expr instanceof Node\Expr\Assign && $node->expr->expr instanceof Node\Expr\FuncCall;
-        if (!$isFuncCall && !$isAssignedFuncCall) {
+        if (!$isFuncCall && !$isAssignedFuncCall && !$isMethodCall) {
             return null;
         }
 
@@ -100,7 +100,7 @@ abstract class DBBase extends AbstractRector implements ConfigurableRectorInterf
             return null;
         }
 
-        if($isFuncCall) {
+        if ($isFuncCall) {
             $methodCall = $this->getMethodCall($node->expr, $node);
             $node->expr = $methodCall;
             return $node;
@@ -112,6 +112,54 @@ abstract class DBBase extends AbstractRector implements ConfigurableRectorInterf
             return $node;
         }
 
+        if ($isMethodCall) {
+            $funcCall = $this->findRootFuncCallForMethodCall($node->expr);
+            if ($funcCall === null || $this->getName($funcCall->name) !== $this->deprecatedMethodName) {
+                return null;
+            }
+
+            $methodCall = $this->getMethodCall($funcCall, $node);
+            $node->expr = $this->replaceFuncCallForMethodCall($node->expr, $methodCall);
+
+            return $node;
+        }
+
+        return null;
+    }
+
+    /**
+     * Find the root function call for the method call. This helps us target db_delete when chained.
+     *
+     * @param MethodCall $methodCall
+     * @return Expr\FuncCall|null
+     */
+    public function findRootFuncCallForMethodCall(MethodCall $methodCall): ?Expr\FuncCall {
+        $node = $methodCall;
+        while(isset($node->var) && !($node->var instanceof Expr\FuncCall)){
+            $node = $node->var;
+        }
+        if ($node->var instanceof Expr\FuncCall) {
+            return $node->var;
+        }
+        return null;
+    }
+
+    /**
+     * Replaces the root function call with a method call and returns the Expression.
+     *
+     * @param MethodCall $expr
+     * @param MethodCall $methodCall
+     * @return MethodCall|null
+     */
+    public function replaceFuncCallForMethodCall(MethodCall $expr, MethodCall $methodCall): ?MethodCall {
+        $node = $expr;
+        while(isset($node->var) && !($node->var instanceof Expr\FuncCall)){
+            $node = $node->var;
+        }
+        if ($node->var instanceof Expr\FuncCall) {
+            $node->var = $methodCall;
+            return $expr;
+        }
         return null;
     }
 
