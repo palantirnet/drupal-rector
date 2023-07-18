@@ -4,6 +4,9 @@ namespace DrupalRector\Rector\Deprecation\Base;
 
 use DrupalRector\Utility\AddCommentTrait;
 use PhpParser\Node;
+use PhpParser\Node\Expr;
+use PhpParser\Node\Expr\MethodCall;
+use PhpParser\Node\Stmt\Expression;
 use Rector\Core\Contract\Rector\ConfigurableRectorInterface;
 use Rector\Core\Rector\AbstractRector;
 use Symplify\PackageBuilder\Parameter\ParameterProvider;
@@ -80,67 +83,97 @@ abstract class DBBase extends AbstractRector implements ConfigurableRectorInterf
      */
     public function refactor(Node $node): ?Node
     {
-        if (!($node->expr instanceof Node\Expr\FuncCall)) {
+
+        assert($node instanceof Node\Stmt\Expression);
+
+        $isAssign = !($node->expr instanceof Node\Expr\Assign);
+        if ($isAssign) {
             return null;
         }
-        $expr = $node->expr;
 
-        /** @var Node\Expr\FuncCall $expr */
-        if ($this->getName($expr->name) === $this->deprecatedMethodName) {
+        $isFuncCall = $node->expr instanceof Node\Expr\FuncCall;
+        $isAssignedFuncCall = $node->expr instanceof Node\Expr\Assign && !($node->expr->expr instanceof Node\Expr\FuncCall);
+        if (!$isFuncCall && $isAssignedFuncCall) {
+            return null;
+        }
 
-            // TODO: Check if we have are in a class and inject \Drupal\Core\Database\Connection
+        if ($isFuncCall && $this->getName($node->expr->name) !== $this->deprecatedMethodName) {
+            return null;
+        }
 
-            // TODO: Check if we have are in a class and don't have access to the container, use `\Drupal\core\Database\Database::getConnection()`.
+        if ($isAssignedFuncCall && $this->getName($node->expr->expr->name) !== $this->deprecatedMethodName) {
+            return null;
+        }
 
-            $name = new Node\Name\FullyQualified('Drupal');
-            $call = new Node\Identifier('database');
+        if($isFuncCall) {
+            $methodCall = $this->getMethodCall($node->expr, $node);
+            $node->expr = $methodCall;
+            return $node;
+        }
 
-            $method_arguments = [];
-
-            // The 'target' key in the $options can be used to use a non-default database.
-            if (count($expr->args) >= $this->optionsArgumentPosition) {
-
-                /* @var Node\Arg $options. */
-                $options = $expr->args[$this->optionsArgumentPosition - 1];
-
-                if ($options->value->getType() === 'Expr_Array') {
-                    foreach ($options->value->items as $item_index => $item) {
-                        if ($item->key->value === 'target') {
-                          // Assume we need to get a different connection than the default.
-                          $name = new Node\Name\FullyQualified('Drupal\core\Database\Database');
-                          $call = new Node\Identifier('getConnection');
-
-                          $method_arguments[] = new Node\Arg(new Node\Scalar\String_($item->value->value));
-
-                            // Update the options.
-                            $value = $options->value;
-                            $items = $value->items;
-                            unset($items[$item_index]);
-                            $value->items = $items;
-                            $options->value = $value;
-                            $expr->args[$this->optionsArgumentPosition - 1] = $options;
-                        }
-                    }
-                }
-
-                if ($options->value->getType() === 'Expr_Variable') {
-                    // TODO: Handle variable evaluation.
-                    $this->addDrupalRectorComment($node, 'If your `options` argument contains a `target` key, you will need to use `\Drupal\core\Database\Database::getConnection(\'my_database\'). Drupal Rector could not yet evaluate the `options` argument since it was a variable.');
-                }
-            }
-            else {
-                $this->addDrupalRectorComment($node, 'You will need to use `\Drupal\core\Database\Database::getConnection()` if you do not yet have access to the container here.');
-            }
-
-            $var = new Node\Expr\StaticCall($name, $call, $method_arguments);
-
-            $method_name = new Node\Identifier($this->getMethodName());
-
-            $node->expr = new Node\Expr\MethodCall($var, $method_name, $expr->args);
-
+        if ($isAssignedFuncCall) {
+            $methodCall = $this->getMethodCall($node->expr->expr, $node);
+            $node->expr->expr = $methodCall;
             return $node;
         }
 
         return null;
+    }
+
+    /**
+     * @param Expr $expr
+     * @param Expression $statement
+     * @return MethodCall
+     */
+    public function getMethodCall(Node\Expr $expr, Node\Stmt\Expression $statement): Node\Expr\MethodCall
+    {
+        // TODO: Check if we have are in a class and inject \Drupal\Core\Database\Connection
+        // TODO: Check if we have are in a class and don't have access to the container, use `\Drupal\core\Database\Database::getConnection()`.
+        $name = new Node\Name\FullyQualified('Drupal');
+        $call = new Node\Identifier('database');
+
+        $method_arguments = [];
+
+        // The 'target' key in the $options can be used to use a non-default database.
+        if (count($expr->args) >= $this->optionsArgumentPosition) {
+
+            /* @var Node\Arg $options . */
+            $options = $expr->args[$this->optionsArgumentPosition - 1];
+
+            if ($options->value->getType() === 'Expr_Array') {
+                foreach ($options->value->items as $item_index => $item) {
+                    if ($item->key->value === 'target') {
+                        // Assume we need to get a different connection than the default.
+                        $name = new Node\Name\FullyQualified('Drupal\core\Database\Database');
+                        $call = new Node\Identifier('getConnection');
+
+                        $method_arguments[] = new Node\Arg(new Node\Scalar\String_($item->value->value));
+
+                        // Update the options.
+                        $value = $options->value;
+                        $items = $value->items;
+                        unset($items[$item_index]);
+                        $value->items = $items;
+                        $options->value = $value;
+                        $expr->args[$this->optionsArgumentPosition - 1] = $options;
+                    }
+                }
+            }
+
+            if ($options->value->getType() === 'Expr_Variable') {
+                // TODO: Handle variable evaluation.
+                $this->addDrupalRectorComment($statement, 'If your `options` argument contains a `target` key, you will need to use `\Drupal\core\Database\Database::getConnection(\'my_database\'). Drupal Rector could not yet evaluate the `options` argument since it was a variable.');
+            }
+        } else {
+            $this->addDrupalRectorComment($statement, 'You will need to use `\Drupal\core\Database\Database::getConnection()` if you do not yet have access to the container here.');
+        }
+
+        $var = new Node\Expr\StaticCall($name, $call, $method_arguments);
+
+        $method_name = new Node\Identifier($this->getMethodName());
+
+        $methodCall = new Node\Expr\MethodCall($var, $method_name, $expr->args);
+
+        return $methodCall;
     }
 }
