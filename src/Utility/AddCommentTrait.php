@@ -57,6 +57,10 @@ trait AddCommentTrait
             $comment_with_wrapper = "// TODO: Drupal Rector Notice: Please delete the following comment after you've made any necessary changes." . PHP_EOL
                 . "// $comment";
 
+
+            $comments = $node->getComments();
+            $comments[] = new Comment($comment_with_wrapper);
+
             $node->setAttribute(AttributeKey::COMMENTS, $comments);
         }
     }
