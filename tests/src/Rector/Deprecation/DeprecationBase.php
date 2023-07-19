@@ -2,7 +2,6 @@
 
 namespace DrupalRector\Tests\Rector\Deprecation;
 
-use DrupalRector\Rector\Visitor\CommentingVisitor;
 use Rector\Config\RectorConfig;
 use Rector\NodeTypeResolver\PHPStan\Scope\Contract\NodeVisitor\ScopeResolverNodeVisitorInterface;
 
@@ -26,7 +25,6 @@ class DeprecationBase {
             $rectorConfig->ruleWithConfiguration($rectorClass, [
                 'drupal_rector_notices_as_comments' => '%drupal_rector_notices_as_comments%',
             ]);
-            $rectorConfig->services()->set(CommentingVisitor::class)->tag(ScopeResolverNodeVisitorInterface::class);
         }
         else {
             $rectorConfig->rule($rectorClass);

@@ -2,9 +2,9 @@
 
 namespace DrupalRector\Utility;
 
-use DrupalRector\Rector\Visitor\CommentingVisitor;
 use PhpParser\Comment;
 use PhpParser\Node;
+use Rector\NodeTypeResolver\Node\AttributeKey;
 use Symplify\PackageBuilder\Parameter\ParameterProvider;
 
 /**
@@ -45,10 +45,10 @@ trait AddCommentTrait
     /**
      * Add a comment to the parent statement.
      *
-     * @param Node $node
+     * @param Node\Stmt\Expression $node
      * @param string $comment
      */
-    protected function addDrupalRectorComment(Node $node, $comment) {
+    protected function addDrupalRectorComment(Node\Stmt\Expression $node, $comment) {
         // Referencing the `parameterProvider` property in this way isn't a
         // great idea since we are assuming the property exists, but it does in
         // `AbstractRector` which all of our rules extend in some form or
@@ -57,14 +57,7 @@ trait AddCommentTrait
             $comment_with_wrapper = "// TODO: Drupal Rector Notice: Please delete the following comment after you've made any necessary changes." . PHP_EOL
                 . "// $comment";
 
-            $statement_node = $this->getClosestStatementNode($node);
-
-            if (!is_null($statement_node)) {
-                $comments = $statement_node->getComments();
-                $comments[] = new Comment($comment_with_wrapper);
-
-                $statement_node->setAttribute(CommentingVisitor::COMMENT_ATTRIBUTE, $comments);
-            }
+            $node->setAttribute(AttributeKey::COMMENTS, $comments);
         }
     }
 

@@ -3,7 +3,6 @@
 declare(strict_types=1);
 
 use DrupalFinder\DrupalFinder;
-use DrupalRector\Rector\Visitor\CommentingVisitor;
 use DrupalRector\Set\Drupal8SetList;
 use DrupalRector\Set\Drupal9SetList;
 use Rector\Config\RectorConfig;
@@ -35,5 +34,4 @@ return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->importShortClasses(false);
 
     $parameters->set('drupal_rector_notices_as_comments', true);
-    $rectorConfig->services()->set(CommentingVisitor::class)->tag(ScopeResolverNodeVisitorInterface::class);
 };
