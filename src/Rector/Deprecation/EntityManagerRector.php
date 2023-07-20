@@ -140,7 +140,6 @@ CODE_AFTER
 
         // Should the expression be the class we are looking for and the name is the one we are looking for, we can return early.
         if ($node instanceof $class && $this->getName($node->name) === $name) {
-            echo "early return";
             return $node;
         }
 
