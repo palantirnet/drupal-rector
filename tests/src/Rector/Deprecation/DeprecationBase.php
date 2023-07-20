@@ -3,7 +3,6 @@
 namespace DrupalRector\Tests\Rector\Deprecation;
 
 use Rector\Config\RectorConfig;
-use Rector\NodeTypeResolver\PHPStan\Scope\Contract\NodeVisitor\ScopeResolverNodeVisitorInterface;
 
 /**
  * Implements a common test pattern for consistency.
