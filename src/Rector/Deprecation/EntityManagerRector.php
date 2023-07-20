@@ -171,7 +171,8 @@ CODE_AFTER
         $node = $assign->expr;
 
         if ($node instanceof $class && $this->getName($node->name) === $name) {
-            return $node;
+            $assign->expr = $replacement;
+            return $assign;
         }
 
         while(isset($node->var) && !($node->var instanceof $class && $this->getName($node->var->name) === $name)){
