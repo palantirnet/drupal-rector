@@ -6,7 +6,6 @@ use DrupalFinder\DrupalFinder;
 use DrupalRector\Set\Drupal8SetList;
 use DrupalRector\Set\Drupal9SetList;
 use Rector\Config\RectorConfig;
-use Rector\NodeTypeResolver\PHPStan\Scope\Contract\NodeVisitor\ScopeResolverNodeVisitorInterface;
 
 return static function (RectorConfig $rectorConfig): void {
     // Adjust the set lists to be more granular to your Drupal requirements.
