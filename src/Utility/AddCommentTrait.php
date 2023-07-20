@@ -21,28 +21,6 @@ trait AddCommentTrait
     }
 
     /**
-     * Get the closest statement for the node.
-     *
-     * @param Node $node
-     *
-     * @return Node|NULL
-     */
-    protected function getClosestStatementNode(Node $node): ?Node {
-        $statement_node = NULL;
-
-        if ($node instanceof Node\Stmt) {
-            $statement_node = $node;
-        }
-        // Attribute::PARENT_NODE was deprecated but PhpParser uses 'parent' still.
-        elseif ($node->hasAttribute('parent')) {
-            $parent_node = $node->getAttribute('parent');
-            $statement_node = $this->getClosestStatementNode($parent_node);
-        }
-
-        return $statement_node;
-    }
-
-    /**
      * Add a comment to the parent statement.
      *
      * @param Node\Stmt\Expression $node
