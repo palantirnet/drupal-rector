@@ -6,6 +6,7 @@ use DrupalRector\Rector\ValueObject\AssertLegacyTraitConfiguration;
 use DrupalRector\Utility\AddCommentTrait;
 use DrupalRector\Utility\GetDeclaringSourceTrait;
 use PhpParser\Node;
+use PhpParser\NodeDumper;
 use Rector\Core\Contract\Rector\ConfigurableRectorInterface;
 use Rector\Core\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\ConfiguredCodeSample;
@@ -56,18 +57,24 @@ class AssertLegacyTraitRector extends AbstractRector implements ConfigurableRect
     {
         assert($node instanceof Node\Stmt\Expression);
 
-        if (!($node->expr instanceof Node\Expr\MethodCall)) {
+        $isMethodCall = $node->expr instanceof Node\Expr\MethodCall;
+        $isAssignedMethodCall = $node->expr instanceof Node\Expr\Assign && $node->expr->expr instanceof Node\Expr\MethodCall;
+        if (!$isMethodCall && !$isAssignedMethodCall) {
             return null;
         }
 
         $expr = $node->expr;
+        if ($isAssignedMethodCall) {
+            $expr = $node->expr->expr;
+        }
+        $newExpr = null;
 
         foreach ($this->assertLegacyTraitMethods as $configuration) {
             if ($this->getName($expr->name) !== $configuration->getDeprecatedMethodName()) {
-                return null;
+                continue;
             }
             if ($this->getDeclaringSource($expr) !== $configuration->getDeclaringSource()) {
-                return null;
+                continue;
             }
 
             if ($configuration->getComment() !== '') {
@@ -80,16 +87,22 @@ class AssertLegacyTraitRector extends AbstractRector implements ConfigurableRect
             }
 
             if ($configuration->getPrependArgument() !== NULL) {
-                $args = array_unshift($args, $this->nodeFactory->createArg('X-Drupal-Cache-Tags'));
+                array_unshift($args, $this->nodeFactory->createArg('X-Drupal-Cache-Tags'));
             }
 
             if ($configuration->isAssertSessionMethod()) {
-                $node->expr = $this->createAssertSessionMethodCall($configuration->getMethodName(), $args);
-                return $node;
+                $newExpr = $this->createAssertSessionMethodCall($configuration->getMethodName(), $args);
+            } else {
+                $newExpr = $this->nodeFactory->createLocalMethodCall($configuration->getMethodName(), $args);
             }
-            $node->expr = $this->nodeFactory->createLocalMethodCall($configuration->getMethodName(), $args);
 
+            if ($isMethodCall) {
+                $node->expr = $newExpr;
+            } else {
+                $node->expr->expr = $newExpr;
+            }
             return $node;
+
         }
         return null;
     }
