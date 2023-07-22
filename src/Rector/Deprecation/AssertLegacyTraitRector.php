@@ -255,7 +255,7 @@ $this->assertSession()->responseNotContains('bartik/logo.svg');
 CODE_AFTER
                 ,
                 [
-                    new AssertLegacyTraitConfiguration(deprecatedMethodName: 'assertNoRaw', methodName: 'responseNotContains', processFirstArgumentOnly: true),
+                    new AssertLegacyTraitConfiguration('assertNoRaw', 'responseNotContains', true),
                 ]
             ),
             new ConfiguredCodeSample(
