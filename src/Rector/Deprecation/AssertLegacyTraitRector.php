@@ -70,7 +70,7 @@ class AssertLegacyTraitRector extends AbstractRector implements ConfigurableRect
                 return null;
             }
 
-            if ($this->comment !== '') {
+            if ($configuration->getComment() !== '') {
                 $this->addDrupalRectorComment($node, $configuration->getComment());
             }
 
