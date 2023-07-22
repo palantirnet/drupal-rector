@@ -42,7 +42,7 @@ class AssertLegacyTraitRector extends AbstractRector implements ConfigurableRect
     public function getNodeTypes(): array
     {
         return [
-            Node\Expr\MethodCall::class,
+            Node\Stmt\Expression::class,
         ];
     }
 
@@ -54,13 +54,19 @@ class AssertLegacyTraitRector extends AbstractRector implements ConfigurableRect
 
     public function refactor(Node $node): ?Node
     {
-        assert($node instanceof Node\Expr\MethodCall);
+        assert($node instanceof Node\Stmt\Expression);
+
+        if (!($node->expr instanceof Node\Expr\MethodCall)) {
+            return null;
+        }
+
+        $expr = $node->expr;
 
         foreach ($this->assertLegacyTraitMethods as $configuration) {
-            if ($this->getName($node->name) !== $configuration->getDeprecatedMethodName()) {
+            if ($this->getName($expr->name) !== $configuration->getDeprecatedMethodName()) {
                 return null;
             }
-            if ($this->getDeclaringSource($node) !== $configuration->getDeclaringSource()) {
+            if ($this->getDeclaringSource($expr) !== $configuration->getDeclaringSource()) {
                 return null;
             }
 
@@ -68,9 +74,9 @@ class AssertLegacyTraitRector extends AbstractRector implements ConfigurableRect
                 $this->addDrupalRectorComment($node, $configuration->getComment());
             }
 
-            $args = $node->args;
+            $args = $expr->args;
             if ($configuration->isProcessFirstArgumentOnly()) {
-                $args = [$node->args[0]];
+                $args = [$expr->args[0]];
             }
 
             if ($configuration->getPrependArgument() !== NULL) {
@@ -78,9 +84,12 @@ class AssertLegacyTraitRector extends AbstractRector implements ConfigurableRect
             }
 
             if ($configuration->isAssertSessionMethod()) {
-                return $this->createAssertSessionMethodCall($configuration->getMethodName(), $args);
+                $node->expr = $this->createAssertSessionMethodCall($configuration->getMethodName(), $args);
+                return $node;
             }
-            return $this->nodeFactory->createLocalMethodCall($configuration->getMethodName(), $args);
+            $node->expr = $this->nodeFactory->createLocalMethodCall($configuration->getMethodName(), $args);
+
+            return $node;
         }
         return null;
     }
