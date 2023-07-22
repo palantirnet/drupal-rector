@@ -1,12 +1,12 @@
 <?php declare(strict_types=1);
 
-namespace DrupalRector\Tests\Rector\Deprecation\AssertUniqueTextRector;
+namespace DrupalRector\Tests\Rector\Deprecation\AssertNoUniqueTextRector;
 
 use Iterator;
 use Rector\Testing\PHPUnit\AbstractRectorTestCase;
 use Symplify\SmartFileSystem\SmartFileInfo;
 
-class AssertUniqueTextRector extends AbstractRectorTestCase {
+class AssertNoUniqueTextRector extends AbstractRectorTestCase {
 
     /**
      * @covers ::refactor
