@@ -5,11 +5,12 @@ namespace DrupalRector\Rector\Deprecation;
 use DrupalRector\Utility\AddCommentTrait;
 use DrupalRector\Utility\GetDeclaringSourceTrait;
 use PhpParser\Node;
+use Rector\Core\Contract\Rector\ConfigurableRectorInterface;
 use Rector\Core\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
-final class AssertNoFieldByNameRector extends AbstractRector
+final class AssertNoFieldByNameRector extends AbstractRector implements ConfigurableRectorInterface
 {
     use AddCommentTrait;
     use GetDeclaringSourceTrait;
@@ -39,10 +40,14 @@ CODE_AFTER
         ]);
     }
 
+    public function configure(array $configuration): void {
+        $this->configureNoticesAsComments($configuration);
+    }
+
     public function getNodeTypes(): array
     {
         return [
-            Node\Expr\MethodCall::class,
+            Node\Stmt\Expression::class,
         ];
     }
 
