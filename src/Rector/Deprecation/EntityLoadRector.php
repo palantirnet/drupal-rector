@@ -74,7 +74,7 @@ CODE_AFTER
     public function getNodeTypes(): array
     {
         return [
-            Node\Expr\FuncCall::class,
+            Node\Stmt\Expression::class,
         ];
     }
 
@@ -83,6 +83,8 @@ CODE_AFTER
      */
     public function refactor(Node $node): ?Node
     {
+        assert($node instanceof Node\Stmt\Expression);
+
         foreach ($this->entityTypes as $entityTypeConfig) {
             $entityType = $entityTypeConfig->getEntityType();
 
@@ -95,15 +97,23 @@ CODE_AFTER
                 $method_name = $entityType . '_load';
             }
 
+            if(!$node->expr instanceof Node\Expr\Assign){
+                return null;
+            }
+            if(!$node->expr->expr instanceof Node\Expr\FuncCall){
+                return null;
+            }
+            $expr = $node->expr->expr;
+
             /** @var Node\Expr\FuncCall $node */
-            if ($this->getName($node->name) === $method_name) {
+            if ($this->getName($expr->name) === $method_name) {
                 // We are doing this here, because we know we have access to arguments since we have already checked the method name.
                 if ($is_rector_rule_entity_load) {
                     // Since we have one more argument, all the array keys are one greater.
                     $argument_offset = 1;
 
                     /* @var Node\Arg $entity_type . */
-                    $entity_type = $node->args[0];
+                    $entity_type = $expr->args[0];
                 } // If we do not set entityType, we are using entity_load().
                 else {
                     $argument_offset = 0;
@@ -113,7 +123,7 @@ CODE_AFTER
                 }
 
                 /* @var Node\Arg $entity_id . */
-                $entity_id = $node->args[0 + $argument_offset];
+                $entity_id = $expr->args[0 + $argument_offset];
 
                 $name = new Node\Name\FullyQualified('Drupal');
 
@@ -140,12 +150,12 @@ CODE_AFTER
 
                 // We need to account for the `reset` option which adds a method to the chain.
                 // We will replace the original method with a ternary to evaluate and provide both options.
-                if (count($node->args) == (2 + $argument_offset)) {
+                if (count($expr->args) == (2 + $argument_offset)) {
                     $this->addDrupalRectorComment($node,
                         'A ternary operator is used here to keep the conditional contained within this part of the expression. Consider wrapping this statement in an `if / else` statement.');
 
                     /* @var Node\Arg $reset_flag . */
-                    $reset_flag = $node->args[1 + $argument_offset];
+                    $reset_flag = $expr->args[1 + $argument_offset];
 
                     $resetCache_method_name = new Node\Identifier('resetCache');
 
@@ -165,7 +175,8 @@ CODE_AFTER
                         $entity_load_reset_node, $new_node);
                 }
 
-                return $new_node;
+                $node->expr->expr = $new_node;
+                return $node;
             }
         }
 
