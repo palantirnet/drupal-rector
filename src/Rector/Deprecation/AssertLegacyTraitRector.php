@@ -107,11 +107,6 @@ class AssertLegacyTraitRector extends AbstractRector implements ConfigurableRect
         return null;
     }
 
-    protected function processArgs(array $args): array
-    {
-        return $args;
-    }
-
     public function getRuleDefinition(): RuleDefinition
     {
         return new RuleDefinition('Fixes deprecated AssertLegacyTrait::METHOD() calls', [
@@ -255,7 +250,7 @@ $this->assertSession()->responseNotContains('bartik/logo.svg');
 CODE_AFTER
                 ,
                 [
-                    new AssertLegacyTraitConfiguration('assertNoRaw', 'responseNotContains', true),
+                    new AssertLegacyTraitConfiguration('assertNoRaw', 'responseNotContains', '', true, true),
                 ]
             ),
             new ConfiguredCodeSample(
@@ -268,7 +263,7 @@ $this->assertSession()->responseContains('bartik/logo.svg');
 CODE_AFTER
                 ,
                 [
-                    new AssertLegacyTraitConfiguration(deprecatedMethodName: 'assertRaw', methodName: 'responseContains', processFirstArgumentOnly: true),
+                    new AssertLegacyTraitConfiguration('assertRaw', 'responseNotContains', '', true, true),
                 ]
             ),
         ]);
