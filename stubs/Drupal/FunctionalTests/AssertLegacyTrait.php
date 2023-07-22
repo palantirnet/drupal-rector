@@ -99,4 +99,8 @@ trait AssertLegacyTrait {
         $this->assertTrue(TRUE, $message);
     }
 
+    protected function assertUniqueText($text, $message = '') {
+        $this->assertTrue(TRUE, $message);
+    }
+
 }
