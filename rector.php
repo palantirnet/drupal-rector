@@ -31,6 +31,5 @@ return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->fileExtensions(['php', 'module', 'theme', 'install', 'profile', 'inc', 'engine']);
     $rectorConfig->importNames(true, false);
     $rectorConfig->importShortClasses(false);
-
     $parameters->set('drupal_rector_notices_as_comments', true);
 };
