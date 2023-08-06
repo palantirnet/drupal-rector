@@ -7,14 +7,11 @@ namespace DrupalRector\Rector;
 use Drupal\Core\Utility\DeprecationHelper;
 use DrupalRector\Contract\DrupalCoreRectorInterface;
 use PhpParser\Node;
-use PhpParser\NodeDumper;
 use Rector\Core\Rector\AbstractRector;
-use Rector\NodeTypeResolver\Node\AttributeKey;
 use Rector\Php72\NodeFactory\AnonymousFunctionFactory;
 
 abstract class AbstractDrupalCoreRector extends AbstractRector implements DrupalCoreRectorInterface
 {
-
     public function __construct(
         private readonly AnonymousFunctionFactory $anonymousFunctionFactory
     ) {
@@ -33,8 +30,7 @@ abstract class AbstractDrupalCoreRector extends AbstractRector implements Drupal
         }
 
         if($node instanceof Node\Expr\CallLike && $result instanceof Node\Expr\CallLike) {
-            $bcCall = $this->addBackwardsCompatibleCall($node, $result);
-            return $bcCall;
+            return $this->createBcCallOnCallLike($node, $result);
         }
 
         return $result;
@@ -46,7 +42,7 @@ abstract class AbstractDrupalCoreRector extends AbstractRector implements Drupal
      */
     abstract protected function doRefactor(Node $node);
 
-    private function addBackwardsCompatibleCall(Node\Expr\CallLike $node, Node\Expr\CallLike $result): Node\Expr\StaticCall
+    private function createBcCallOnCallLike(Node\Expr\CallLike $node, Node\Expr\CallLike $result): Node\Expr\StaticCall
     {
         $clonedNode = clone $node;
         return $this->nodeFactory->createStaticCall(DeprecationHelper::class, 'backwardsCompatibleCall', [
