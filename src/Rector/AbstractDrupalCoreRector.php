@@ -12,9 +12,10 @@ use Rector\Php72\NodeFactory\AnonymousFunctionFactory;
 
 abstract class AbstractDrupalCoreRector extends AbstractRector implements DrupalCoreRectorInterface
 {
-    public function __construct(
-        private readonly AnonymousFunctionFactory $anonymousFunctionFactory
-    ) {
+    private AnonymousFunctionFactory $anonymousFunctionFactory;
+
+    public function __construct(AnonymousFunctionFactory $anonymousFunctionFactory) {
+        $this->anonymousFunctionFactory = $anonymousFunctionFactory;
     }
 
     public function refactor(Node $node)
