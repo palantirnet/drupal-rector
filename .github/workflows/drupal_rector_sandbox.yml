@@ -26,7 +26,7 @@ jobs:
                     mv ../drupal-rector .
                     mkdir ../drupal-rector
                     mkdir ../drupal-rector/drupal-rector-sandbox
-            -   uses: jonaseberle/github-action-setup-ddev@v1
+            -   uses: ddev/github-action-setup-ddev@v1
                 with:
                     ddevDir: '/home/runner/work/drupal-rector/drupal-rector-sandbox'
             -   name: Set PHP version for DDEV

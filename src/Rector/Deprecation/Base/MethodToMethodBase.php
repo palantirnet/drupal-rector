@@ -55,7 +55,7 @@ abstract class MethodToMethodBase extends AbstractRector implements Configurable
     public function getNodeTypes(): array
     {
         return [
-            Node\Expr\MethodCall::class,
+            Node\Stmt\Expression::class,
         ];
     }
 
@@ -64,10 +64,43 @@ abstract class MethodToMethodBase extends AbstractRector implements Configurable
      */
     public function refactor(Node $node): ?Node
     {
-        assert($node instanceof Node\Expr\MethodCall);
-        if ($this->getName($node->name) !== $this->deprecatedMethodName) {
+        assert($node instanceof Node\Stmt\Expression);
+
+        $isMethodCall = $node->expr instanceof Node\Expr\MethodCall;
+        $isAssignedMethodCall = $node->expr instanceof Node\Expr\Assign && $node->expr->expr instanceof Node\Expr\MethodCall;
+
+        if(!$isMethodCall && !$isAssignedMethodCall){
             return null;
         }
+
+        if ($isMethodCall && $this->getName($node->expr->name) !== $this->deprecatedMethodName) {
+            return null;
+        }
+
+        if ($isAssignedMethodCall && $this->getName($node->expr->expr->name) !== $this->deprecatedMethodName) {
+            return null;
+        }
+
+        if ($isMethodCall) {
+            $methodNode = $this->refactorNode($node->expr, $node);
+            if (is_null($methodNode)){
+                return null;
+            }
+            $node->expr = $methodNode;
+
+        } elseif ($isAssignedMethodCall) {
+            $methodNode = $this->refactorNode($node->expr->expr, $node);
+            if (is_null($methodNode)){
+                return null;
+            }
+            $node->expr->expr = $methodNode;
+        }
+
+        return $node;
+    }
+
+    public function refactorNode(Node\Expr\MethodCall $node, Node\Stmt\Expression $statement): ?Node\Expr\MethodCall
+    {
         $callerType = $this->nodeTypeResolver->getType($node->var);
         $expectedType = new ObjectType($this->className);
 
@@ -87,13 +120,13 @@ abstract class MethodToMethodBase extends AbstractRector implements Configurable
                 $node_var = "$node_var()";
             }
             $this->addDrupalRectorComment(
-                $node,
+                $statement,
                 "Please confirm that `$node_var` is an instance of `$this->className`. Only the method name and not the class name was checked for this replacement, so this may be a false positive."
             );
             $node->name = new Node\Identifier($this->methodName);
+
             return $node;
         }
-
         return null;
     }
 }

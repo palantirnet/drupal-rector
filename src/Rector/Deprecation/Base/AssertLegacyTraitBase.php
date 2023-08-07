@@ -7,7 +7,6 @@ use DrupalRector\Utility\GetDeclaringSourceTrait;
 use PhpParser\Node;
 use Rector\Core\Contract\Rector\ConfigurableRectorInterface;
 use Rector\Core\Rector\AbstractRector;
-use Rector\NodeTypeResolver\Node\AttributeKey;
 
 abstract class AssertLegacyTraitBase extends AbstractRector implements ConfigurableRectorInterface
 {
@@ -42,37 +41,32 @@ abstract class AssertLegacyTraitBase extends AbstractRector implements Configura
     public function refactor(Node $node): ?Node
     {
         assert($node instanceof Node\Stmt\Expression);
-        if (!$node->expr instanceof Node\Expr\MethodCall) {
-            return null;
-        }
-        $methodCall = $this->doRefactor($node->expr, $node);
-        if (!$methodCall instanceof Node\Expr\MethodCall) {
-            return null;
-        }
-        $newExpr = new Node\Stmt\Expression($methodCall);
-        $comments = $node->getComments();
-        $newExpr->setAttribute(AttributeKey::COMMENTS, $comments);
-        return $newExpr;
-    }
 
-    protected function doRefactor(Node\Expr\MethodCall $node, Node\Stmt\Expression $parentExpr): ?Node
-    {
-        if ($this->getName($node->name) !== $this->deprecatedMethodName) {
+        if (!($node->expr instanceof Node\Expr\MethodCall)) {
             return null;
         }
-        if ($this->getDeclaringSource($node) !== $this->declaringSource) {
+
+        $expr = $node->expr;
+
+        if ($this->getName($expr->name) !== $this->deprecatedMethodName) {
+            return null;
+        }
+        if ($this->getDeclaringSource($expr) !== $this->declaringSource) {
             return null;
         }
 
         if ($this->comment !== '') {
-            $this->addDrupalRectorComment($parentExpr, $this->comment);
+            $this->addDrupalRectorComment($node, $this->comment);
         }
 
-        $args = $this->processArgs($node->args);
+        $args = $this->processArgs($expr->args);
         if ($this->isAssertSessionMethod) {
-            return $this->createAssertSessionMethodCall($this->methodName, $args);
+            $node->expr = $this->createAssertSessionMethodCall($this->methodName, $args);
+            return $node;
         }
-        return $this->nodeFactory->createLocalMethodCall($this->methodName, $args);
+        $node->expr = $this->nodeFactory->createLocalMethodCall($this->methodName, $args);
+
+        return $node;
     }
 
     protected function processArgs(array $args): array

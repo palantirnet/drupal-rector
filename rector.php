@@ -15,7 +15,6 @@ return static function (RectorConfig $rectorConfig): void {
         Drupal8SetList::DRUPAL_8,
         Drupal9SetList::DRUPAL_9,
     ]);
-
     $parameters = $rectorConfig->parameters();
 
     $drupalFinder = new DrupalFinder();
