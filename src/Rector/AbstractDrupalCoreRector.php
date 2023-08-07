@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace DrupalRector\Rector;
 
-use Drupal\Core\Utility\DeprecationHelper;
+use Drupal\Core\Component\DeprecationHelper;
 use DrupalRector\Contract\DrupalCoreRectorInterface;
 use PhpParser\Node;
 use Rector\Core\Rector\AbstractRector;

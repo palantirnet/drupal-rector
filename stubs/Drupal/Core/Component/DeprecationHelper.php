@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Drupal\Core\Utility;
+namespace Drupal\Component\Utility;
 
-if (class_exists('Drupal\Core\Utility\DeprecationHelper')) {
+if (class_exists('Drupal\Core\Component\DeprecationHelper')) {
     return;
 }
 
