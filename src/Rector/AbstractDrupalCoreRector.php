@@ -4,20 +4,14 @@ declare(strict_types=1);
 
 namespace DrupalRector\Rector;
 
-use Drupal\Core\Component\DeprecationHelper;
+use Drupal\Component\Utility\DeprecationHelper;
 use DrupalRector\Contract\DrupalCoreRectorInterface;
 use PhpParser\Node;
+use PhpParser\Node\Expr\ArrowFunction;
 use Rector\Core\Rector\AbstractRector;
-use Rector\Php72\NodeFactory\AnonymousFunctionFactory;
 
 abstract class AbstractDrupalCoreRector extends AbstractRector implements DrupalCoreRectorInterface
 {
-    private AnonymousFunctionFactory $anonymousFunctionFactory;
-
-    public function __construct(AnonymousFunctionFactory $anonymousFunctionFactory) {
-        $this->anonymousFunctionFactory = $anonymousFunctionFactory;
-    }
-
     public function refactor(Node $node)
     {
         if (version_compare(\Drupal::VERSION, $this->getVersion(), '<')) {
@@ -49,8 +43,8 @@ abstract class AbstractDrupalCoreRector extends AbstractRector implements Drupal
         return $this->nodeFactory->createStaticCall(DeprecationHelper::class, 'backwardsCompatibleCall', [
             $this->nodeFactory->createClassConstFetch(\Drupal::class, 'VERSION'),
             $this->getVersion(),
-            $this->anonymousFunctionFactory->create([], [new Node\Stmt\Return_($clonedNode)], null),
-            $this->anonymousFunctionFactory->create([], [new Node\Stmt\Return_($result)], null),
+            new ArrowFunction(['expr' => $clonedNode]),
+            new ArrowFunction(['expr' => $result]),
         ]);
     }
 
