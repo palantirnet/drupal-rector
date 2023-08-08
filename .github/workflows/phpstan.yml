@@ -20,7 +20,5 @@ jobs:
             # -   name: Debugging with tmate
             #     uses: mxschmitt/action-tmate@v2
             # END: SHARED SETUP
-
-            - run: composer require rector/rector-src
             - run: composer install
             - run: php vendor/bin/phpstan
