@@ -22,6 +22,7 @@ jobs:
             # END: SHARED SETUP
 
             # We cannot have rector/rector in require and rector/rector-src in require-dev, they conflict.
+            - run: composer install rector/rector-src --no-update
             - run: composer remove rector/rector --no-update
             - run: composer install
             - run: php vendor/bin/phpstan
