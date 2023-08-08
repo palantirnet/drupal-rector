@@ -236,16 +236,14 @@ The index file is used in part to provide automated updates to https://dev.acqui
 
 ## Pinning dev dependencies
 
-If there are conflicts with Rector, the package version can be conflicted with `conflict` on `rector/rector`.
+If there are conflicts with Rector, the package version can be conflicted with `conflict` on `rector/rector` and `phpstan/phpstan`.
 
-For development, the `require-dev` is on `rector/rector-src` which is `dev-main` and that includes the `dev-main` of all
-its packages.
-
-To properly pin a development release of `rector-src`:
-
-* Set `rector/rector-src` to `dev-main#COMMIT` where `COMMIT` is the tag commit in `rector-src`
 * View the tree for the commit on GitHub and it's `composer/installed.json` file (example https://github.com/rectorphp/rector/blob/0.12.18/vendor/composer/installed.json)
-* Use the references to pin `require-dev` dependencies.
+* Use the reference to pin `phpstan/phpstan` dependencies.
+
+You can also use `php pin-rector.php show` to list differences between installed versions and rector versions of packages.
+
+Use `php pin-rector.php [RECTOR-VERSION] [RECTOR-PIN-STRING]` to pin the versions of rector and PHPStan. So for example: `php set-rector-src-dependencies.php set 0.15.25 ">=0.16.0"`
 
 ## Credits
 
