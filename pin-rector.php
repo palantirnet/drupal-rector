@@ -33,15 +33,6 @@ if ($rectorVersion === 'dev-main') {
     exit(1);
 }
 
-// These packages we need to pin to the same version as Rector
-$packagedToPin = [
-    "rector/rector-doctrine",
-    "rector/rector-downgrade-php",
-    "rector/rector-phpunit",
-    "rector/rector-symfony",
-    "nikic/php-parser",
-];
-
 // Get packages installed by Rector in this version
 $rectorSourceJson = file_get_contents("https://raw.githubusercontent.com/rectorphp/rector/$rectorVersion/vendor/composer/installed.json");
 $rectorSourcePackages = json_decode($rectorSourceJson, true);
