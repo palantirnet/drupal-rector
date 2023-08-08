@@ -14,7 +14,8 @@
         "webflo/drupal-finder": "^1.2"
     },
     "conflict": {
-        "rector/rector": ">= 0.16.0"
+        "rector/rector": ">=0.16.0",
+        "phpstan/phpstan": ">1.10.14"
     },
     "license": "MIT",
     "authors": [
