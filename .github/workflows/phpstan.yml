@@ -23,5 +23,5 @@ jobs:
 
             # We cannot have rector/rector in require and rector/rector-src in require-dev, they conflict.
             - run: composer remove rector/rector --no-update
-            - run: composer install
+            - run: composer require rector/rector-src
             - run: php vendor/bin/phpstan
