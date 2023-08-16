@@ -37,26 +37,36 @@ CODE_AFTER
 
     public function refactor(Node $node): ?Node
     {
-        assert($node instanceof Node\Expr\MethodCall);
-        if ($this->getName($node->name) !== $this->deprecatedMethodName) {
+        assert($node instanceof Node\Stmt\Expression);
+
+        if (!($node->expr instanceof Node\Expr\MethodCall)) {
             return null;
         }
 
-        $args = $node->args;
+        $expr = $node->expr;
+
+        if ($this->getName($expr->name) !== $this->deprecatedMethodName) {
+            return null;
+        }
+
+        $args = $expr->args;
         // If there was only one argument, we have to apply the default empty
         // string for the $value parameter.
         if (count($args) === 1) {
             $args[] = $this->nodeFactory->createArg('');
-            return $this->createAssertSessionMethodCall('fieldValueNotEquals', $args);
+            $node->expr = $this->createAssertSessionMethodCall('fieldValueNotEquals', $args);
+            return $node;
         }
 
         $valueArg = $args[1]->value;
         if ($valueArg instanceof Node\Expr\ConstFetch && \strtolower($valueArg->name->toString()) === 'null') {
             $this->addDrupalRectorComment($node, $this->comment);
-            return $this->createAssertSessionMethodCall('fieldNotExists', [$args[0]]);
+            $node->expr = $this->createAssertSessionMethodCall('fieldNotExists', [$args[0]]);
+            return $node;
         }
 
-        return $this->createAssertSessionMethodCall('fieldValueNotEquals', $args);
+        $node->expr = $this->createAssertSessionMethodCall('fieldValueNotEquals', $args);
+        return $node;
     }
 
 }
