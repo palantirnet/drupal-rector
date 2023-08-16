@@ -4,6 +4,8 @@ parameters:
 		- config
 		- src
 		- rector.php
+	bootstrapFiles:
+	    - vendor/rector/rector/vendor/autoload.php
 # See https://phpstan.org/blog/preprocessing-ast-for-custom-rules
 # Changing this in phpstan 1.6 means refactoring calls to getAttribute('parent')
 conditionalTags:
