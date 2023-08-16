@@ -8,7 +8,7 @@ use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigura
 
 return static function (\Rector\Config\RectorConfig $rectorConfig): void {
     $rectorConfig->sets([
-        PHPUnitSetList::PHPUNIT_91
+        PHPUnitSetList::PHPUNIT_90
     ]);
     // Change record: https://www.drupal.org/node/3187914
     $rectorConfig->ruleWithConfiguration(ClearCsrfTokenSeed::class, [
