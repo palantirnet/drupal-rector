@@ -4,3 +4,5 @@ parameters:
 		- config
 		- src
 		- rector.php
+	bootstrapFiles:
+	    - vendor/rector/rector/vendor/autoload.php

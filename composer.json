@@ -13,6 +13,10 @@
         "rector/rector": "~0.15.2",
         "webflo/drupal-finder": "^1.2"
     },
+    "conflict": {
+        "rector/rector": ">=0.16.0",
+        "phpstan/phpstan": ">1.10.14"
+    },
     "license": "MIT",
     "authors": [
         {
@@ -72,7 +76,6 @@
         "phpstan/phpstan": "^1.0",
         "phpstan/phpstan-deprecation-rules": "^1.0",
         "phpunit/phpunit": "^10.0",
-        "rector/rector-src": "dev-main",
         "symplify/vendor-patches": "^11.0",
         "symfony/yaml": "^5 || ^6"
     }
