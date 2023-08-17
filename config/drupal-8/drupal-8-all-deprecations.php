@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 use DrupalRector\Set\Drupal8SetList;
 use Rector\Config\RectorConfig;
-use Rector\PHPUnit\Rector\ClassMethod\AddDoesNotPerformAssertionToNonAssertingTestRector;
+use Rector\PHPUnit\PHPUnit60\Rector\ClassMethod\AddDoesNotPerformAssertionToNonAssertingTestRector;
 use Rector\PHPUnit\Set\PHPUnitSetList;
 
 return static function (RectorConfig $rectorConfig): void {

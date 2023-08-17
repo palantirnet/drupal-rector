@@ -28,7 +28,7 @@ abstract class AssertLegacyTraitBase extends AbstractRector implements Configura
     public function getNodeTypes(): array
     {
         return [
-            Node\Expr\MethodCall::class,
+            Node\Stmt\Expression::class,
         ];
     }
 
@@ -40,11 +40,18 @@ abstract class AssertLegacyTraitBase extends AbstractRector implements Configura
 
     public function refactor(Node $node): ?Node
     {
-        assert($node instanceof Node\Expr\MethodCall);
-        if ($this->getName($node->name) !== $this->deprecatedMethodName) {
+        assert($node instanceof Node\Stmt\Expression);
+
+        if (!($node->expr instanceof Node\Expr\MethodCall)) {
             return null;
         }
-        if ($this->getDeclaringSource($node) !== $this->declaringSource) {
+
+        $expr = $node->expr;
+
+        if ($this->getName($expr->name) !== $this->deprecatedMethodName) {
+            return null;
+        }
+        if ($this->getDeclaringSource($expr) !== $this->declaringSource) {
             return null;
         }
 
@@ -52,11 +59,14 @@ abstract class AssertLegacyTraitBase extends AbstractRector implements Configura
             $this->addDrupalRectorComment($node, $this->comment);
         }
 
-        $args = $this->processArgs($node->args);
+        $args = $this->processArgs($expr->args);
         if ($this->isAssertSessionMethod) {
-            return $this->createAssertSessionMethodCall($this->methodName, $args);
+            $node->expr = $this->createAssertSessionMethodCall($this->methodName, $args);
+            return $node;
         }
-        return $this->nodeFactory->createLocalMethodCall($this->methodName, $args);
+        $node->expr = $this->nodeFactory->createLocalMethodCall($this->methodName, $args);
+
+        return $node;
     }
 
     protected function processArgs(array $args): array

@@ -3,10 +3,10 @@
 namespace DrupalRector\Rector\Deprecation;
 
 use DrupalRector\Utility\AddCommentTrait;
+use DrupalRector\Utility\FindParentByTypeTrait;
 use DrupalRector\Utility\TraitsByClassHelperTrait;
 use PhpParser\Node;
 use Rector\Core\Contract\Rector\ConfigurableRectorInterface;
-use Rector\NodeTypeResolver\Node\AttributeKey;
 use Rector\Core\Rector\AbstractRector;
 use Symplify\PackageBuilder\Parameter\ParameterProvider;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
@@ -25,8 +25,9 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  */
 final class LinkGeneratorTraitLRector extends AbstractRector implements ConfigurableRectorInterface
 {
-    use TraitsByClassHelperTrait;
     use AddCommentTrait;
+    use FindParentByTypeTrait;
+    use TraitsByClassHelperTrait;
 
     public function configure(array $configuration): void
     {
@@ -57,7 +58,7 @@ CODE_AFTER
     public function getNodeTypes(): array
     {
         return [
-            Node\Expr\MethodCall::class,
+            Node\Stmt\Expression::class,
         ];
     }
 
@@ -66,22 +67,31 @@ CODE_AFTER
      */
     public function refactor(Node $node): ?Node
     {
-        /** @var Node\Expr\MethodCall $node */
-          if ($this->getName($node->name) === 'l') {
-              $class = $this->betterNodeFinder->findParentType($node, Node\Stmt\Class_::class);
+        assert($node instanceof Node\Stmt\Expression);
 
-            // Check if class has LinkGeneratorTrait.
-            if ($this->checkClassTypeHasTrait($class, 'Drupal\Core\Routing\LinkGeneratorTrait')) {
-              $this->addDrupalRectorComment($node, 'Please manually remove the `use LinkGeneratorTrait;` statement from this class.');
+        if (!($node->expr instanceof Node\Expr\MethodCall)) {
+            return null;
+        }
 
-              // Replace with a static call to Link::fromTextAndUrl().
-              $name = new Node\Name\FullyQualified('Drupal\Core\Link');
-              $call = new Node\Identifier('fromTextAndUrl');
+        $expr = $node->expr;
 
-              $node = new Node\Expr\StaticCall($name, $call, $node->args);
+        /** @var Node\Expr\MethodCall $expr */
+        if ($this->getName($expr->name) === 'l') {
+          // @todo This could be a visitor that adds all parent class traits as an attribute
+          $class = $this->findParentType($expr, Node\Stmt\Class_::class);
 
-              return $node;
-            }
+          // Check if class has LinkGeneratorTrait.
+          if ($this->checkClassTypeHasTrait($class, 'Drupal\Core\Routing\LinkGeneratorTrait')) {
+            $this->addDrupalRectorComment($node, 'Please manually remove the `use LinkGeneratorTrait;` statement from this class.');
+
+            // Replace with a static call to Link::fromTextAndUrl().
+            $name = new Node\Name\FullyQualified('Drupal\Core\Link');
+            $call = new Node\Identifier('fromTextAndUrl');
+
+            $node->expr = new Node\Expr\StaticCall($name, $call, $expr->args);
+
+            return $node;
+          }
         }
 
         return null;
