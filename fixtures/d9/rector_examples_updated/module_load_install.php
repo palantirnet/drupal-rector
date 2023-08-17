@@ -1,11 +1,12 @@
 <?php
 
+use Drupal\Core\Extension\ModuleHandler;
 /**
  * A simple example using the minimum number of arguments.
  */
 function simple_example() {
-    \Drupal\Core\Extension\ModuleHandler::loadInclude('example', 'install');
+    ModuleHandler::loadInclude('example', 'install');
 
     $module = 'simple';
-    \Drupal\Core\Extension\ModuleHandler::loadInclude($module, 'install');
+    ModuleHandler::loadInclude($module, 'install');
 }
