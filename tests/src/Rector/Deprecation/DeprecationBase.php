@@ -18,14 +18,16 @@ class DeprecationBase {
      *   The Rector Config handler.
      * @param bool $add_config
      *   Indicates that config should be added to the test.
+     * @param array $configuration
+     *   Configuration for the configured rule.
      */
-    public static function addClass(string $rectorClass, RectorConfig $rectorConfig, bool $add_config = TRUE) {
-        if ($add_config) {
-            $rectorConfig->ruleWithConfiguration($rectorClass, [
-                'drupal_rector_notices_as_comments' => '%drupal_rector_notices_as_comments%',
-            ]);
-        }
-        else {
+    public static function addClass(string $rectorClass, RectorConfig $rectorConfig, bool $add_notice_config = TRUE, array $configuration = []) {
+        if ($add_notice_config) {
+            $configuration['drupal_rector_notices_as_comments'] = '%drupal_rector_notices_as_comments%';
+            $rectorConfig->ruleWithConfiguration($rectorClass, $configuration);
+        } else if (count($configuration) > 0) {
+            $rectorConfig->ruleWithConfiguration($rectorClass, $configuration);
+        } else {
             $rectorConfig->rule($rectorClass);
         }
 
