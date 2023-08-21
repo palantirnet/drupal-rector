@@ -2,47 +2,13 @@
 
 declare(strict_types=1);
 
-use DrupalRector\Rector\Deprecation\AssertCacheTagRector;
-use DrupalRector\Rector\Deprecation\AssertElementNotPresentRector;
-use DrupalRector\Rector\Deprecation\AssertElementPresentRector;
-use DrupalRector\Rector\Deprecation\AssertEqualRector;
-use DrupalRector\Rector\Deprecation\AssertEscapedRector;
+
 use DrupalRector\Rector\Deprecation\AssertFieldByIdRector;
 use DrupalRector\Rector\Deprecation\AssertFieldByNameRector;
-use DrupalRector\Rector\Deprecation\AssertFieldCheckedRector;
-use DrupalRector\Rector\Deprecation\AssertFieldRector;
-use DrupalRector\Rector\Deprecation\AssertHeaderRector;
-use DrupalRector\Rector\Deprecation\AssertIdenticalObjectRector;
-use DrupalRector\Rector\Deprecation\AssertIdenticalRector;
-use DrupalRector\Rector\Deprecation\AssertLinkByHrefRector;
-use DrupalRector\Rector\Deprecation\AssertLinkRector;
-use DrupalRector\Rector\Deprecation\AssertNoCacheTagRector;
-use DrupalRector\Rector\Deprecation\AssertNoEscapedRector;
 use DrupalRector\Rector\Deprecation\AssertNoFieldByIdRector;
 use DrupalRector\Rector\Deprecation\AssertNoFieldByNameRector;
-use DrupalRector\Rector\Deprecation\AssertNoFieldCheckedRector;
-use DrupalRector\Rector\Deprecation\AssertNoFieldRector;
-use DrupalRector\Rector\Deprecation\AssertNoLinkByHrefRector;
-use DrupalRector\Rector\Deprecation\AssertNoLinkRector;
-use DrupalRector\Rector\Deprecation\AssertNoOptionRector;
-use DrupalRector\Rector\Deprecation\AssertNoPatternRector;
-use DrupalRector\Rector\Deprecation\AssertNoRawRector;
-use DrupalRector\Rector\Deprecation\AssertNotEqualRector;
-use DrupalRector\Rector\Deprecation\AssertNoTextRector;
-use DrupalRector\Rector\Deprecation\AssertNotIdenticalRector;
 use DrupalRector\Rector\Deprecation\AssertNoUniqueTextRector;
-use DrupalRector\Rector\Deprecation\AssertOptionByTextRector;
-use DrupalRector\Rector\Deprecation\AssertOptionRector;
 use DrupalRector\Rector\Deprecation\AssertOptionSelectedRector;
-use DrupalRector\Rector\Deprecation\AssertPatternRector;
-use DrupalRector\Rector\Deprecation\AssertRawRector;
-use DrupalRector\Rector\Deprecation\AssertRector;
-use DrupalRector\Rector\Deprecation\AssertResponseRector;
-use DrupalRector\Rector\Deprecation\AssertTextRector;
-use DrupalRector\Rector\Deprecation\AssertTitleRector;
-use DrupalRector\Rector\Deprecation\AssertUniqueTextRector;
-use DrupalRector\Rector\Deprecation\AssertUrlRector;
-use DrupalRector\Rector\Deprecation\BuildXPathQueryRector;
 use DrupalRector\Rector\Deprecation\ConstructFieldXpathRector;
 use DrupalRector\Rector\Deprecation\GetAllOptionsRector;
 use DrupalRector\Rector\Deprecation\GetRawContentRector;
@@ -51,7 +17,6 @@ use DrupalRector\Rector\Deprecation\UiHelperTraitDrupalPostFormRector;
 use DrupalRector\Rector\Deprecation\UserPasswordRector;
 use DrupalRector\Rector\ValueObject\AssertLegacyTraitConfiguration;
 use Rector\PHPUnit\Set\PHPUnitSetList;
-use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 
 return static function (\Rector\Config\RectorConfig $rectorConfig): void {
     $rectorConfig->sets([

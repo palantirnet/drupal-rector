@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 use DrupalRector\Rector\Deprecation\ClearCsrfTokenSeed;
 use Rector\PHPUnit\Set\PHPUnitSetList;
-use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 
 return static function (\Rector\Config\RectorConfig $rectorConfig): void {
     $rectorConfig->sets([

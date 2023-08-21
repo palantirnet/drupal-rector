@@ -7,12 +7,7 @@ use DrupalRector\Rector\Deprecation\DrupalGetPathRector;
 use DrupalRector\Rector\Deprecation\FileBuildUriRector;
 use DrupalRector\Rector\Deprecation\FileUrlGenerator;
 use DrupalRector\Rector\Deprecation\FunctionToServiceRector;
-use DrupalRector\Rector\Deprecation\RenderRector;
-use DrupalRector\Rector\Deprecation\FileCopyRector;
-use DrupalRector\Rector\Deprecation\FileMoveRector;
-use DrupalRector\Rector\Deprecation\FileSaveDataRector;
 use DrupalRector\Rector\ValueObject\FunctionToServiceConfiguration;
-use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 
 return static function (\Rector\Config\RectorConfig $rectorConfig): void {
     // Change record: https://www.drupal.org/node/2940438.
