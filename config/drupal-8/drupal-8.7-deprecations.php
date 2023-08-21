@@ -3,12 +3,17 @@
 declare(strict_types=1);
 
 use DrupalRector\Rector\Deprecation\ConstantToClassConstantRector;
-use DrupalRector\Rector\Deprecation\FilePrepareDirectoryRector;
-use DrupalRector\Rector\Deprecation\FileUnmanagedSaveDataRector;
+use DrupalRector\Rector\Deprecation\FunctionToServiceRector;
 use DrupalRector\Rector\ValueObject\ConstantToClassConfiguration;
+use DrupalRector\Rector\ValueObject\FunctionToServiceConfiguration;
 
 return static function (\Rector\Config\RectorConfig $rectorConfig): void {
-    $rectorConfig->rule(FilePrepareDirectoryRector::class);
+    $rectorConfig->ruleWithConfiguration(FunctionToServiceRector::class, [
+        // https://www.drupal.org/node/3006851
+        new FunctionToServiceConfiguration('file_prepare_directory', 'file_system', 'prepareDirectory'),
+        // https://www.drupal.org/node/3006851
+        new FunctionToServiceConfiguration('file_unmanaged_save_data', 'file_system', 'saveData'),
+    ]);
 
 
     /**
@@ -39,6 +44,4 @@ return static function (\Rector\Config\RectorConfig $rectorConfig): void {
         $constantToClassFileExistsRename,
         $constantToClassFileModifyPermissions,
     ]);
-
-    $rectorConfig->rule(FileUnmanagedSaveDataRector::class);
 };

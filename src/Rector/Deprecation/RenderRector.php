@@ -2,11 +2,13 @@
 
 namespace DrupalRector\Rector\Deprecation;
 
-use DrupalRector\Rector\Deprecation\Base\FunctionToServiceBase;
+use DrupalRector\Rector\Deprecation\FunctionToServiceRector;
+use DrupalRector\Rector\ValueObject\FunctionToServiceConfiguration;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
+use Symplify\RuleDocGenerator\ValueObject\CodeSample\ConfiguredCodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
-final class RenderRector extends FunctionToServiceBase
+final class RenderRector extends FunctionToServiceRector
 {
 
     protected $deprecatedFunctionName = 'render';
@@ -18,7 +20,7 @@ final class RenderRector extends FunctionToServiceBase
     public function getRuleDefinition(): RuleDefinition
     {
         return new RuleDefinition('Fixes deprecated render() calls', [
-            new CodeSample(
+            new ConfiguredCodeSample(
                 <<<'CODE_BEFORE'
 $output = render($build);
 CODE_BEFORE
@@ -26,6 +28,10 @@ CODE_BEFORE
                 <<<'CODE_AFTER'
 $output = \Drupal::service('renderer')->render($build);
 CODE_AFTER
+                ,
+                [
+                    new FunctionToServiceConfiguration('render', 'renderer', 'render'),
+                ]
             ),
         ]);
     }
