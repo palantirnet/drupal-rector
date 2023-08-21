@@ -29,29 +29,6 @@ class StaticArgumentRenameRector extends AbstractRector implements ConfigurableR
         $this->staticArgumentRenameConfigs = $configuration;
     }
 
-    public function getRuleDefinition(): RuleDefinition {
-        return new RuleDefinition('Renames the IDs in Drupal::service() calls', [
-            new ConfiguredCodeSample(
-                <<<'CODE_BEFORE'
-\Drupal::service('old')->foo();
-CODE_BEFORE
-                ,
-                <<<'CODE_AFTER'
-\Drupal::service('bar')->foo();
-CODE_AFTER
-                ,
-                [
-                    new StaticArgumentRenameConfiguration(
-                        'old',
-                        'bar',
-                        'Drupal',
-                        'service',
-                    )
-                ]
-            ),
-        ]);
-    }
-
     public function getNodeTypes(): array {
         return [
             Node\Expr\StaticCall::class,
@@ -77,6 +54,29 @@ CODE_AFTER
         }
 
         return NULL;
+    }
+
+    public function getRuleDefinition(): RuleDefinition {
+        return new RuleDefinition('Renames the IDs in Drupal::service() calls', [
+            new ConfiguredCodeSample(
+                <<<'CODE_BEFORE'
+\Drupal::service('old')->foo();
+CODE_BEFORE
+                ,
+                <<<'CODE_AFTER'
+\Drupal::service('bar')->foo();
+CODE_AFTER
+                ,
+                [
+                    new StaticArgumentRenameConfiguration(
+                        'old',
+                        'bar',
+                        'Drupal',
+                        'service',
+                    )
+                ]
+            ),
+        ]);
     }
 
 }
