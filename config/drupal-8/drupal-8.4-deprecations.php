@@ -2,13 +2,15 @@
 
 declare(strict_types=1);
 
-use DrupalRector\Rector\Deprecation\BrowserTestBaseGetMockRector;
-use DrupalRector\Rector\Deprecation\KernelTestBaseGetMockRector;
-use DrupalRector\Rector\Deprecation\UnitTestCaseGetMockRector;
+use DrupalRector\Rector\Deprecation\GetMockRector;
+use DrupalRector\Rector\ValueObject\GetMockConfiguration;
 use Rector\Config\RectorConfig;
 
 return static function (RectorConfig $rectorConfig): void {
-    $rectorConfig->rule(BrowserTestBaseGetMockRector::class);
-    $rectorConfig->rule(KernelTestBaseGetMockRector::class);
-    $rectorConfig->rule(UnitTestCaseGetMockRector::class);
+    // https://www.drupal.org/node/2907725
+    $rectorConfig->ruleWithConfiguration(GetMockRector::class, [
+        new GetMockConfiguration('Drupal\Tests\BrowserTestBase'),
+        new GetMockConfiguration('Drupal\KernelTests\KernelTestBase'),
+        new GetMockConfiguration('Drupal\Tests\UnitTestCase'),
+    ]);
 };
