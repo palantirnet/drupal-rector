@@ -58,7 +58,6 @@ class FunctionToServiceRector extends AbstractRector implements ConfigurableRect
             /** @var Node\Expr\FuncCall $node */
             if ($this->getName($node->name) === $configuration->getDeprecatedFunctionName()) {
                 // This creates a service call like `\Drupal::service('file_system').
-                // TODO use dependency injection.
                 $service = new Node\Expr\StaticCall(new Node\Name\FullyQualified('Drupal'), 'service', [new Node\Arg(new Node\Scalar\String_($configuration->getServiceName()))]);
 
                 $method_name = new Node\Identifier($configuration->getServiceMethodName());
