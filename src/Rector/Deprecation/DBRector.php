@@ -1,7 +1,8 @@
 <?php
 
-namespace DrupalRector\Rector\Deprecation\Base;
+namespace DrupalRector\Rector\Deprecation;
 
+use DrupalRector\Rector\ValueObject\DBConfiguration;
 use DrupalRector\Utility\AddCommentTrait;
 use PhpParser\Node;
 use PhpParser\Node\Expr;
@@ -10,6 +11,8 @@ use PhpParser\Node\Stmt\Expression;
 use Rector\Core\Contract\Rector\ConfigurableRectorInterface;
 use Rector\Core\Rector\AbstractRector;
 use Symplify\PackageBuilder\Parameter\ParameterProvider;
+use Symplify\RuleDocGenerator\ValueObject\CodeSample\ConfiguredCodeSample;
+use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 /**
  * Base class for replacing deprecated db_*() calls.
@@ -34,7 +37,7 @@ use Symplify\PackageBuilder\Parameter\ParameterProvider;
  * - Inject the database connection
  * - Use calls to Database::getConnection() if the container is not yet available
  */
-abstract class DBBase extends AbstractRector implements ConfigurableRectorInterface
+class DBRector extends AbstractRector implements ConfigurableRectorInterface
 {
     use AddCommentTrait;
 
@@ -54,18 +57,25 @@ abstract class DBBase extends AbstractRector implements ConfigurableRectorInterf
      */
     protected $optionsArgumentPosition;
 
+    /**
+     * @var DBConfiguration[]
+     */
+    private array $configuration;
+
     public function configure(array $configuration): void
     {
         $this->configureNoticesAsComments($configuration);
-    }
 
-    /**
-     * Return the name of the new method.
-     *
-     * Example: `db_query` will return `query`.
-     */
-    protected function getMethodName() {
-      return substr($this->deprecatedMethodName, 3);
+        foreach ($configuration as $value) {
+            if (!($value instanceof DBConfiguration)) {
+                throw new \InvalidArgumentException(sprintf(
+                    'Each configuration item must be an instance of "%s"',
+                    DBConfiguration::class
+                ));
+            }
+        }
+
+        $this->configuration = $configuration;
     }
 
     /**
@@ -92,36 +102,38 @@ abstract class DBBase extends AbstractRector implements ConfigurableRectorInterf
             return null;
         }
 
-        if ($isFuncCall && $this->getName($node->expr->name) !== $this->deprecatedMethodName) {
-            return null;
-        }
-
-        if ($isAssignedFuncCall && $this->getName($node->expr->expr->name) !== $this->deprecatedMethodName) {
-            return null;
-        }
-
-        if ($isFuncCall) {
-            $methodCall = $this->getMethodCall($node->expr, $node);
-            $node->expr = $methodCall;
-            return $node;
-        }
-
-        if ($isAssignedFuncCall) {
-            $methodCall = $this->getMethodCall($node->expr->expr, $node);
-            $node->expr->expr = $methodCall;
-            return $node;
-        }
-
-        if ($isMethodCall) {
-            $funcCall = $this->findRootFuncCallForMethodCall($node->expr);
-            if ($funcCall === null || $this->getName($funcCall->name) !== $this->deprecatedMethodName) {
-                return null;
+        foreach ($this->configuration as $configuration) {
+            if ($isFuncCall && $this->getName($node->expr->name) !== $configuration->getDeprecatedMethodName()) {
+                continue;
             }
 
-            $methodCall = $this->getMethodCall($funcCall, $node);
-            $node->expr = $this->replaceFuncCallForMethodCall($node->expr, $methodCall);
+            if ($isAssignedFuncCall && $this->getName($node->expr->expr->name) !== $configuration->getDeprecatedMethodName()) {
+                continue;
+            }
 
-            return $node;
+            if ($isFuncCall) {
+                $methodCall = $this->getMethodCall($node->expr, $node, $configuration);
+                $node->expr = $methodCall;
+                return $node;
+            }
+
+            if ($isAssignedFuncCall) {
+                $methodCall = $this->getMethodCall($node->expr->expr, $node, $configuration);
+                $node->expr->expr = $methodCall;
+                return $node;
+            }
+
+            if ($isMethodCall) {
+                $funcCall = $this->findRootFuncCallForMethodCall($node->expr);
+                if ($funcCall === NULL || $this->getName($funcCall->name) !== $configuration->getDeprecatedMethodName()) {
+                    continue;
+                }
+
+                $methodCall = $this->getMethodCall($funcCall, $node, $configuration);
+                $node->expr = $this->replaceFuncCallForMethodCall($node->expr, $methodCall);
+
+                return $node;
+            }
         }
 
         return null;
@@ -168,7 +180,7 @@ abstract class DBBase extends AbstractRector implements ConfigurableRectorInterf
      * @param Expression $statement
      * @return MethodCall
      */
-    public function getMethodCall(Node\Expr $expr, Node\Stmt\Expression $statement): Node\Expr\MethodCall
+    public function getMethodCall(Node\Expr $expr, Node\Stmt\Expression $statement, DBConfiguration $configuration): Node\Expr\MethodCall
     {
         // TODO: Check if we have are in a class and inject \Drupal\Core\Database\Connection
         // TODO: Check if we have are in a class and don't have access to the container, use `\Drupal\core\Database\Database::getConnection()`.
@@ -178,10 +190,10 @@ abstract class DBBase extends AbstractRector implements ConfigurableRectorInterf
         $method_arguments = [];
 
         // The 'target' key in the $options can be used to use a non-default database.
-        if (count($expr->args) >= $this->optionsArgumentPosition) {
+        if (count($expr->args) >= $configuration->getOptionsArgumentPosition()) {
 
             /* @var Node\Arg $options . */
-            $options = $expr->args[$this->optionsArgumentPosition - 1];
+            $options = $expr->args[$configuration->getOptionsArgumentPosition() - 1];
 
             if ($options->value->getType() === 'Expr_Array') {
                 foreach ($options->value->items as $item_index => $item) {
@@ -198,7 +210,7 @@ abstract class DBBase extends AbstractRector implements ConfigurableRectorInterf
                         unset($items[$item_index]);
                         $value->items = $items;
                         $options->value = $value;
-                        $expr->args[$this->optionsArgumentPosition - 1] = $options;
+                        $expr->args[$configuration->getOptionsArgumentPosition() - 1] = $options;
                     }
                 }
             }
@@ -213,10 +225,81 @@ abstract class DBBase extends AbstractRector implements ConfigurableRectorInterf
 
         $var = new Node\Expr\StaticCall($name, $call, $method_arguments);
 
-        $method_name = new Node\Identifier($this->getMethodName());
+        $method_name = new Node\Identifier(substr($configuration->getDeprecatedMethodName(), 3));
 
         $methodCall = new Node\Expr\MethodCall($var, $method_name, $expr->args);
 
         return $methodCall;
     }
+
+    public function getRuleDefinition(): RuleDefinition {
+        return new RuleDefinition('Fixes deprecated db_delete() calls',[
+            new ConfiguredCodeSample(
+                <<<'CODE_BEFORE'
+db_delete($table, $options);
+CODE_BEFORE
+                ,
+                <<<'CODE_AFTER'
+\Drupal::database()->delete($table, $options);
+CODE_AFTER
+                ,
+                [
+                    new DBConfiguration('db_delete', 2),
+                ]
+            ),
+            new ConfiguredCodeSample(
+                <<<'CODE_BEFORE'
+db_insert($table, $options);
+CODE_BEFORE
+                ,
+                <<<'CODE_AFTER'
+\Drupal::database()->insert($table, $options);
+CODE_AFTER
+                ,
+                [
+                    new DBConfiguration('db_insert', 2),
+                ]
+            ),
+            new ConfiguredCodeSample(
+                <<<'CODE_BEFORE'
+db_query($query, $args, $options);
+CODE_BEFORE
+                ,
+                <<<'CODE_AFTER'
+\Drupal::database()->query($query, $args, $options);
+CODE_AFTER
+                ,
+                [
+                    new DBConfiguration('db_query', 3),
+                ]
+            ),
+            new ConfiguredCodeSample(
+                <<<'CODE_BEFORE'
+db_select($table, $alias, $options);
+CODE_BEFORE
+                ,
+                <<<'CODE_AFTER'
+\Drupal::database()->select($table, $alias, $options);
+CODE_AFTER
+                ,
+                [
+                    new DBConfiguration('db_select', 3),
+                ]
+            ),
+            new ConfiguredCodeSample(
+                <<<'CODE_BEFORE'
+db_update($table, $options);
+CODE_BEFORE
+                ,
+                <<<'CODE_AFTER'
+\Drupal::database()->update($table, $options);
+CODE_AFTER
+                ,
+                [
+                    new DBConfiguration('db_update', 2),
+                ]
+            )
+        ]);
+    }
+
 }
