@@ -8,9 +8,6 @@ use DrupalRector\Rector\Deprecation\DBQueryRector;
 use DrupalRector\Rector\Deprecation\DBSelectRector;
 use DrupalRector\Rector\Deprecation\DBUpdateRector;
 use DrupalRector\Rector\Deprecation\DrupalLRector;
-use DrupalRector\Rector\Deprecation\DrupalRealpathRector;
-use DrupalRector\Rector\Deprecation\DrupalRenderRector;
-use DrupalRector\Rector\Deprecation\DrupalRenderRootRector;
 use DrupalRector\Rector\Deprecation\DrupalURLRector;
 use DrupalRector\Rector\Deprecation\EntityCreateRector;
 use DrupalRector\Rector\Deprecation\EntityDeleteMultipleRector;
@@ -19,13 +16,11 @@ use DrupalRector\Rector\Deprecation\EntityInterfaceUrlInfoRector;
 use DrupalRector\Rector\Deprecation\EntityLoadRector;
 use DrupalRector\Rector\Deprecation\EntityManagerRector;
 use DrupalRector\Rector\Deprecation\EntityViewRector;
-use DrupalRector\Rector\Deprecation\FileLoadRector;
-use DrupalRector\Rector\Deprecation\FormatDateRector;
+use DrupalRector\Rector\Deprecation\FunctionToServiceRector;
 use DrupalRector\Rector\Deprecation\LinkGeneratorTraitLRector;
-use DrupalRector\Rector\Deprecation\NodeLoadRector;
 use DrupalRector\Rector\Deprecation\SafeMarkupFormatRector;
-use DrupalRector\Rector\Deprecation\UserLoadRector;
 use DrupalRector\Rector\ValueObject\EntityLoadConfiguration;
+use DrupalRector\Rector\ValueObject\FunctionToServiceConfiguration;
 use Rector\Config\RectorConfig;
 
 return static function (RectorConfig $rectorConfig): void {
@@ -45,13 +40,23 @@ return static function (RectorConfig $rectorConfig): void {
         'drupal_rector_notices_as_comments' => '%drupal_rector_notices_as_comments%',
     ]);
 
-    $rectorConfig->rule(DrupalRenderRector::class);
-    $rectorConfig->rule(DrupalRenderRootRector::class);
     $rectorConfig->rule(DrupalURLRector::class);
     $rectorConfig->rule(DrupalLRector::class);
-    $rectorConfig->rule(DrupalRealpathRector::class);
     $rectorConfig->rule(EntityCreateRector::class);
     $rectorConfig->rule(EntityDeleteMultipleRector::class);
+
+
+    $rectorConfig->ruleWithConfiguration(FunctionToServiceRector::class, [
+        // https://www.drupal.org/node/2418133
+        new FunctionToServiceConfiguration('drupal_realpath', 'file_system', 'realpath'),
+        // https://www.drupal.org/node/2912696
+        new FunctionToServiceConfiguration('drupal_render', 'renderer', 'render'),
+        // https://www.drupal.org/node/2912696
+        new FunctionToServiceConfiguration('drupal_render_root', 'renderer', 'renderRoot'),
+        // https://www.drupal.org/node/1876852
+        new FunctionToServiceConfiguration('format_date', 'date.formatter', 'format'),
+
+    ]);
 
     $rectorConfig->ruleWithConfiguration(EntityInterfaceLinkRector::class, [
             'drupal_rector_notices_as_comments' => '%drupal_rector_notices_as_comments%',
@@ -74,8 +79,6 @@ return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->ruleWithConfiguration(EntityManagerRector::class, [
             'drupal_rector_notices_as_comments' => '%drupal_rector_notices_as_comments%',
         ]);
-
-    $rectorConfig->rule(FormatDateRector::class);
 
     $rectorConfig->ruleWithConfiguration(LinkGeneratorTraitLRector::class, [
             'drupal_rector_notices_as_comments' => '%drupal_rector_notices_as_comments%',

@@ -1,12 +1,12 @@
 <?php declare(strict_types=1);
 
-namespace DrupalRector\Tests\Rector\Deprecation\RenderRector;
+namespace DrupalRector\Tests\Rector\Deprecation\FunctionToServiceRector;
 
 use Iterator;
 use Rector\Testing\PHPUnit\AbstractRectorTestCase;
 use Symplify\SmartFileSystem\SmartFileInfo;
 
-class RenderRectorTest extends AbstractRectorTestCase {
+class FunctionToServiceRectorTest extends AbstractRectorTestCase {
 
     /**
      * @covers ::refactor
