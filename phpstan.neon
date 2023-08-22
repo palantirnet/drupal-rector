@@ -6,3 +6,5 @@ parameters:
 		- rector.php
 	bootstrapFiles:
 	    - vendor/rector/rector/vendor/autoload.php
+includes:
+	- phpstan-baseline.neon
