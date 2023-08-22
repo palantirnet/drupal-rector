@@ -7,10 +7,6 @@ class DBConfiguration {
 
     private int $optionsArgumentPosition;
 
-    /**
-     * @param string $deprecatedMethodName
-     * @param int $optionsArgumentPosition
-     */
     public function __construct(string $deprecatedMethodName, int $optionsArgumentPosition) {
         $this->deprecatedMethodName = $deprecatedMethodName;
         $this->optionsArgumentPosition = $optionsArgumentPosition;
