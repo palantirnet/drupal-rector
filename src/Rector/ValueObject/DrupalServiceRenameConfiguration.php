@@ -3,20 +3,20 @@
 namespace DrupalRector\Rector\ValueObject;
 
 class DrupalServiceRenameConfiguration {
-    protected string $newArgument;
+    protected string $newService;
 
-    protected string $oldArgument;
+    protected string $deprecatedService;
 
-    public function __construct(string $oldArgument, string $newArgument) {
-        $this->oldArgument = $oldArgument;
-        $this->newArgument = $newArgument;
+    public function __construct(string $deprecatedService, string $newService) {
+        $this->deprecatedService = $deprecatedService;
+        $this->newService = $newService;
     }
-    public function getNewArgument(): string {
-        return $this->newArgument;
+    public function getNewService(): string {
+        return $this->newService;
     }
 
-    public function getOldArgument(): string {
-        return $this->oldArgument;
+    public function getDeprecatedService(): string {
+        return $this->deprecatedService;
     }
 
 }

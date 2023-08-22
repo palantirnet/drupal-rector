@@ -43,8 +43,8 @@ class DrupalServiceRenameRector extends AbstractRector implements ConfigurableRe
                         /* @var Node\Arg $argument */
                         $argument = $node->args[0];
 
-                        if ($argument->value instanceof Node\Scalar\String_ && $argument->value->value === $configuration->getOldArgument()) {
-                            $node->args[0] = new Node\Arg(new Node\Scalar\String_($configuration->getNewArgument()));
+                        if ($argument->value instanceof Node\Scalar\String_ && $argument->value->value === $configuration->getDeprecatedService()) {
+                            $node->args[0] = new Node\Arg(new Node\Scalar\String_($configuration->getNewService()));
 
                             return $node;
                         }
