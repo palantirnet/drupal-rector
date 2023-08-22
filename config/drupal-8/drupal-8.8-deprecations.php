@@ -4,23 +4,18 @@ declare(strict_types=1);
 
 use DrupalRector\Rector\Deprecation\EntityTypeGetLowercaseLabelRector;
 use DrupalRector\Rector\Deprecation\FileDefaultSchemeRector;
-use DrupalRector\Rector\Deprecation\StaticArgumentRenameRector;
-use DrupalRector\Rector\ValueObject\StaticArgumentRenameConfiguration;
+use DrupalRector\Rector\Deprecation\DrupalServiceRenameRector;
 use DrupalRector\Rector\Deprecation\FunctionToServiceRector;
-use DrupalRector\Rector\Deprecation\PathAliasManagerServiceNameRector;
-use DrupalRector\Rector\Deprecation\PathAliasRepositoryRector;
-use DrupalRector\Rector\Deprecation\PathAliasWhitelistServiceNameRector;
-use DrupalRector\Rector\Deprecation\PathProcessorAliasServiceNameRector;
-use DrupalRector\Rector\Deprecation\PathSubscriberServiceNameRector;
+use DrupalRector\Rector\ValueObject\DrupalServiceRenameConfiguration;
 use DrupalRector\Rector\ValueObject\FunctionToServiceConfiguration;
 
 return static function (\Rector\Config\RectorConfig $rectorConfig): void {
-    $rectorConfig->ruleWithConfiguration(StaticArgumentRenameRector::class, [
-        new StaticArgumentRenameConfiguration('path.alias_repository', 'path_alias.repository'),
-        new StaticArgumentRenameConfiguration('path.alias_whitelist', 'path_alias.whitelist'),
-        new StaticArgumentRenameConfiguration('path_processor_alias', 'path_alias.path_processor'),
-        new StaticArgumentRenameConfiguration('path_subscriber', 'path_alias.subscriber'),
-        new StaticArgumentRenameConfiguration('path.alias_manager', 'path_alias.manager'),
+    $rectorConfig->ruleWithConfiguration(DrupalServiceRenameRector::class, [
+        new DrupalServiceRenameConfiguration('path.alias_repository', 'path_alias.repository'),
+        new DrupalServiceRenameConfiguration('path.alias_whitelist', 'path_alias.whitelist'),
+        new DrupalServiceRenameConfiguration('path_processor_alias', 'path_alias.path_processor'),
+        new DrupalServiceRenameConfiguration('path_subscriber', 'path_alias.subscriber'),
+        new DrupalServiceRenameConfiguration('path.alias_manager', 'path_alias.manager'),
     ]);
 
     $rectorConfig->rule(FileDefaultSchemeRector::class);

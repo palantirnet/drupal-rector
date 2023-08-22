@@ -2,26 +2,26 @@
 
 namespace DrupalRector\Rector\Deprecation;
 
-use DrupalRector\Rector\ValueObject\StaticArgumentRenameConfiguration;
+use DrupalRector\Rector\ValueObject\DrupalServiceRenameConfiguration;
 use PhpParser\Node;
 use Rector\Core\Contract\Rector\ConfigurableRectorInterface;
 use Rector\Core\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\ConfiguredCodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
-class StaticArgumentRenameRector extends AbstractRector implements ConfigurableRectorInterface {
+class DrupalServiceRenameRector extends AbstractRector implements ConfigurableRectorInterface {
 
     /**
-     * @var StaticArgumentRenameConfiguration[] $staticArgumentRenameConfigs
+     * @var DrupalServiceRenameConfiguration[] $staticArgumentRenameConfigs
      */
     protected array $staticArgumentRenameConfigs = [];
 
     public function configure(array $configuration): void {
         foreach ($configuration as $value) {
-            if (!($value instanceof StaticArgumentRenameConfiguration)) {
+            if (!($value instanceof DrupalServiceRenameConfiguration)) {
                 throw new \InvalidArgumentException(sprintf(
                     'Each configuration item must be an instance of "%s"',
-                    StaticArgumentRenameConfiguration::class
+                    DrupalServiceRenameConfiguration::class
                 ));
             }
         }
@@ -38,7 +38,7 @@ class StaticArgumentRenameRector extends AbstractRector implements ConfigurableR
     public function refactor(Node $node) {
         if ($node instanceof Node\Expr\StaticCall) {
             foreach ($this->staticArgumentRenameConfigs as $configuration) {
-                if ($this->getName($node->name) === $configuration->getMethodName() && (string) $node->class === $configuration->getFullyQualifiedClassName()) {
+                if ($this->getName($node->name) === 'service' && (string) $node->class === 'Drupal') {
                     if (count($node->args) === 1) {
                         /* @var Node\Arg $argument */
                         $argument = $node->args[0];
@@ -68,11 +68,9 @@ CODE_BEFORE
 CODE_AFTER
                 ,
                 [
-                    new StaticArgumentRenameConfiguration(
+                    new DrupalServiceRenameConfiguration(
                         'old',
                         'bar',
-                        'Drupal',
-                        'service',
                     )
                 ]
             ),
