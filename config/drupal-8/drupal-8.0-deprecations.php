@@ -13,6 +13,7 @@ use DrupalRector\Rector\Deprecation\EntityManagerRector;
 use DrupalRector\Rector\Deprecation\EntityViewRector;
 use DrupalRector\Rector\Deprecation\FunctionToServiceRector;
 use DrupalRector\Rector\Deprecation\LinkGeneratorTraitLRector;
+use DrupalRector\Rector\Deprecation\MethodToMethodWithCheckRector;
 use DrupalRector\Rector\Deprecation\SafeMarkupFormatRector;
 use DrupalRector\Rector\ValueObject\DBConfiguration;
 use DrupalRector\Rector\ValueObject\EntityLoadConfiguration;
@@ -53,7 +54,7 @@ return static function (RectorConfig $rectorConfig): void {
         'drupal_rector_notices_as_comments' => '%drupal_rector_notices_as_comments%',
     ]);
 
-    $rectorConfig->ruleWithConfiguration(\DrupalRector\Rector\Deprecation\MethodToMethodWithCheckRector::class, [
+    $rectorConfig->ruleWithConfiguration(MethodToMethodWithCheckRector::class, [
         'drupal_rector_notices_as_comments' => '%drupal_rector_notices_as_comments%',
         // https://www.drupal.org/node/2614344
         new MethodToMethodWithCheckConfiguration('Drupal\Core\Entity\EntityInterface', 'urlInfo', 'toUrl'),
