@@ -13,8 +13,13 @@ use Symplify\PackageBuilder\Parameter\ParameterProvider;
 trait AddCommentTrait
 {
 
-    protected $noticesAsComments = false;
+    protected bool $noticesAsComments = false;
 
+    /**
+     * @param array<string,bool>|array<class-string,object> $configuration
+     *
+     * @return void
+     */
     protected function configureNoticesAsComments(array &$configuration): void
     {
         $this->noticesAsComments = $configuration['drupal_rector_notices_as_comments'] ?? false;
@@ -26,8 +31,10 @@ trait AddCommentTrait
      *
      * @param Node\Stmt\Expression $node
      * @param string $comment
+     *
+     * @return void
      */
-    protected function addDrupalRectorComment(Node\Stmt\Expression $node, $comment) {
+    protected function addDrupalRectorComment(Node\Stmt\Expression $node, string $comment) {
         // Referencing the `parameterProvider` property in this way isn't a
         // great idea since we are assuming the property exists, but it does in
         // `AbstractRector` which all of our rules extend in some form or
