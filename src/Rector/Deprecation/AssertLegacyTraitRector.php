@@ -6,6 +6,8 @@ use DrupalRector\Rector\ValueObject\AssertLegacyTraitConfiguration;
 use DrupalRector\Utility\AddCommentTrait;
 use DrupalRector\Utility\GetDeclaringSourceTrait;
 use PhpParser\Node;
+use PhpParser\Node\Arg;
+use PhpParser\Node\VariadicPlaceholder;
 use PhpParser\NodeDumper;
 use Rector\Core\Contract\Rector\ConfigurableRectorInterface;
 use Rector\Core\Rector\AbstractRector;
@@ -47,6 +49,12 @@ class AssertLegacyTraitRector extends AbstractRector implements ConfigurableRect
         ];
     }
 
+    /**
+     * @param string $method
+     * @param array<Arg|VariadicPlaceholder> $args
+     *
+     * @return \PhpParser\Node\Expr\MethodCall
+     */
     protected function createAssertSessionMethodCall(string $method, array $args): Node\Expr\MethodCall
     {
         $assertSessionNode = $this->nodeFactory->createLocalMethodCall('assertSession');
@@ -57,17 +65,16 @@ class AssertLegacyTraitRector extends AbstractRector implements ConfigurableRect
     {
         assert($node instanceof Node\Stmt\Expression);
 
-        $isMethodCall = $node->expr instanceof Node\Expr\MethodCall;
-        $isAssignedMethodCall = $node->expr instanceof Node\Expr\Assign && $node->expr->expr instanceof Node\Expr\MethodCall;
-        if (!$isMethodCall && !$isAssignedMethodCall) {
+        $isMethodCall = $isAssignedMethodCall = false;
+        if ($node->expr instanceof Node\Expr\Assign && $node->expr->expr instanceof Node\Expr\MethodCall) {
+            $isAssignedMethodCall = true;
+            $expr = $node->expr->expr;
+        } elseif ($node->expr instanceof Node\Expr\MethodCall) {
+            $isMethodCall = true;
+            $expr = $node->expr;
+        } else {
             return null;
         }
-
-        $expr = $node->expr;
-        if ($isAssignedMethodCall) {
-            $expr = $node->expr->expr;
-        }
-        $newExpr = null;
 
         foreach ($this->assertLegacyTraitMethods as $configuration) {
             if ($this->getName($expr->name) !== $configuration->getDeprecatedMethodName()) {
