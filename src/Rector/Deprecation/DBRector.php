@@ -112,13 +112,13 @@ class DBRector extends AbstractRector implements ConfigurableRectorInterface
             }
 
             if ($isFuncCall) {
-                $methodCall = $this->getMethodCall($node->expr, $node, $configuration->getOptionsArgumentPosition());
+                $methodCall = $this->getMethodCall($node->expr, $node, $configuration);
                 $node->expr = $methodCall;
                 return $node;
             }
 
             if ($isAssignedFuncCall) {
-                $methodCall = $this->getMethodCall($node->expr->expr, $node, $configuration->getOptionsArgumentPosition());
+                $methodCall = $this->getMethodCall($node->expr->expr, $node, $configuration);
                 $node->expr->expr = $methodCall;
                 return $node;
             }
@@ -129,7 +129,7 @@ class DBRector extends AbstractRector implements ConfigurableRectorInterface
                     continue;
                 }
 
-                $methodCall = $this->getMethodCall($funcCall, $node, $configuration->getOptionsArgumentPosition());
+                $methodCall = $this->getMethodCall($funcCall, $node, $configuration);
                 $node->expr = $this->replaceFuncCallForMethodCall($node->expr, $methodCall);
 
                 return $node;
