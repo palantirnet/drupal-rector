@@ -2,11 +2,7 @@
 
 declare(strict_types=1);
 
-use DrupalRector\Rector\Deprecation\DBDeleteRector;
-use DrupalRector\Rector\Deprecation\DBInsertRector;
-use DrupalRector\Rector\Deprecation\DBQueryRector;
-use DrupalRector\Rector\Deprecation\DBSelectRector;
-use DrupalRector\Rector\Deprecation\DBUpdateRector;
+use DrupalRector\Rector\Deprecation\DBRector;
 use DrupalRector\Rector\Deprecation\DrupalLRector;
 use DrupalRector\Rector\Deprecation\DrupalURLRector;
 use DrupalRector\Rector\Deprecation\EntityCreateRector;
@@ -19,25 +15,21 @@ use DrupalRector\Rector\Deprecation\EntityViewRector;
 use DrupalRector\Rector\Deprecation\FunctionToServiceRector;
 use DrupalRector\Rector\Deprecation\LinkGeneratorTraitLRector;
 use DrupalRector\Rector\Deprecation\SafeMarkupFormatRector;
+use DrupalRector\Rector\ValueObject\DBConfiguration;
 use DrupalRector\Rector\ValueObject\EntityLoadConfiguration;
 use DrupalRector\Rector\ValueObject\FunctionToServiceConfiguration;
 use Rector\Config\RectorConfig;
 
 return static function (RectorConfig $rectorConfig): void {
-    $rectorConfig->ruleWithConfiguration(DBInsertRector::class, [
+    $rectorConfig->ruleWithConfiguration(DBRector::class, [
         'drupal_rector_notices_as_comments' => '%drupal_rector_notices_as_comments%',
-    ]);
-    $rectorConfig->ruleWithConfiguration(DBSelectRector::class, [
-        'drupal_rector_notices_as_comments' => '%drupal_rector_notices_as_comments%',
-    ]);
-    $rectorConfig->ruleWithConfiguration(DBQueryRector::class, [
-        'drupal_rector_notices_as_comments' => '%drupal_rector_notices_as_comments%',
-    ]);
-    $rectorConfig->ruleWithConfiguration(DBDeleteRector::class, [
-        'drupal_rector_notices_as_comments' => '%drupal_rector_notices_as_comments%',
-    ]);
-    $rectorConfig->ruleWithConfiguration(DBUpdateRector::class, [
-        'drupal_rector_notices_as_comments' => '%drupal_rector_notices_as_comments%',
+        // https://www.drupal.org/node/2993033
+        new DBConfiguration('db_delete', 2),
+        new DBConfiguration('db_insert', 2),
+        new DBConfiguration('db_query', 3),
+        new DBConfiguration('db_select', 3),
+        new DBConfiguration('db_update', 2),
+
     ]);
 
     $rectorConfig->rule(DrupalURLRector::class);
