@@ -29,7 +29,6 @@ return static function (RectorConfig $rectorConfig): void {
         new DBConfiguration('db_query', 3),
         new DBConfiguration('db_select', 3),
         new DBConfiguration('db_update', 2),
-
     ]);
 
     $rectorConfig->rule(DrupalURLRector::class);
