@@ -53,7 +53,7 @@ return static function (RectorConfig $rectorConfig): void {
         'drupal_rector_notices_as_comments' => '%drupal_rector_notices_as_comments%',
     ]);
 
-    $rectorConfig->ruleWithConfiguration(\DrupalRector\Rector\Deprecation\Base\MethodToMethodWithCheckRector::class, [
+    $rectorConfig->ruleWithConfiguration(\DrupalRector\Rector\Deprecation\MethodToMethodWithCheckRector::class, [
         'drupal_rector_notices_as_comments' => '%drupal_rector_notices_as_comments%',
         // https://www.drupal.org/node/2614344
         new MethodToMethodWithCheckConfiguration('Drupal\Core\Entity\EntityInterface', 'urlInfo', 'toUrl'),

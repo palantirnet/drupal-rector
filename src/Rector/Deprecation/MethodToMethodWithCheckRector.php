@@ -1,6 +1,6 @@
 <?php
 
-namespace DrupalRector\Rector\Deprecation\Base;
+namespace DrupalRector\Rector\Deprecation;
 
 use DrupalRector\Rector\ValueObject\MethodToMethodWithCheckConfiguration;
 use DrupalRector\Utility\AddCommentTrait;
@@ -116,9 +116,10 @@ class MethodToMethodWithCheckRector extends AbstractRector implements Configurab
             if ($node->var instanceof Node\Expr\MethodCall) {
                 $node_var = "$node_var()";
             }
+            $className = $configuration->getClassName();
             $this->addDrupalRectorComment(
                 $statement,
-                "Please confirm that `$node_var` is an instance of `{$configuration->getClassName()}`. Only the method name and not the class name was checked for this replacement, so this may be a false positive."
+                "Please confirm that `$node_var` is an instance of `$className`. Only the method name and not the class name was checked for this replacement, so this may be a false positive."
             );
             $node->name = new Node\Identifier($configuration->getMethodName());
 

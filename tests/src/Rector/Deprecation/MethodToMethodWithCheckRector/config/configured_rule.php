@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-use DrupalRector\Rector\Deprecation\Base\MethodToMethodWithCheckRector;
+use DrupalRector\Rector\Deprecation\MethodToMethodWithCheckRector;
 use DrupalRector\Rector\ValueObject\MethodToMethodWithCheckConfiguration;
 use DrupalRector\Tests\Rector\Deprecation\DeprecationBase;
 use Rector\Config\RectorConfig;

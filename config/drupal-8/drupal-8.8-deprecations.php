@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use DrupalRector\Rector\Deprecation\Base\MethodToMethodWithCheckRector;
+use DrupalRector\Rector\Deprecation\MethodToMethodWithCheckRector;
 use DrupalRector\Rector\Deprecation\FileDefaultSchemeRector;
 use DrupalRector\Rector\Deprecation\DrupalServiceRenameRector;
 use DrupalRector\Rector\Deprecation\FunctionToServiceRector;
