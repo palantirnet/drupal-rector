@@ -86,31 +86,6 @@ parameters:
 			path: src/Rector/Deprecation/DrupalSetMessageRector.php
 
 		-
-			message: "#^Access to an undefined property PhpParser\\\\Node\\\\Expr\\:\\:\\$expr\\.$#"
-			count: 3
-			path: src/Rector/Deprecation/EntityInterfaceLinkRector.php
-
-		-
-			message: "#^Access to an undefined property PhpParser\\\\Node\\\\Expr\\:\\:\\$name\\.$#"
-			count: 1
-			path: src/Rector/Deprecation/EntityInterfaceLinkRector.php
-
-		-
-			message: "#^If condition is always true\\.$#"
-			count: 1
-			path: src/Rector/Deprecation/EntityInterfaceLinkRector.php
-
-		-
-			message: "#^Method DrupalRector\\\\Rector\\\\Deprecation\\\\EntityInterfaceLinkRector\\:\\:getMethodCall\\(\\) has parameter \\$expr with no type specified\\.$#"
-			count: 1
-			path: src/Rector/Deprecation/EntityInterfaceLinkRector.php
-
-		-
-			message: "#^Unreachable statement \\- code above always terminates\\.$#"
-			count: 1
-			path: src/Rector/Deprecation/EntityInterfaceLinkRector.php
-
-		-
 			message: "#^Access to an undefined property PhpParser\\\\Node\\\\Expr\\\\FuncCall\\:\\:\\$expr\\.$#"
 			count: 1
 			path: src/Rector/Deprecation/EntityLoadRector.php
