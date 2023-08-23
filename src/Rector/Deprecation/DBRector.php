@@ -103,27 +103,27 @@ class DBRector extends AbstractRector implements ConfigurableRectorInterface
         }
 
         foreach ($this->configuration as $configuration) {
-            if ($isFuncCall && $this->getName($node->expr->name) !== $configuration->getDeprecatedMethodName()) {
+            if ($node->expr instanceof Node\Expr\FuncCall && $this->getName($node->expr->name) !== $configuration->getDeprecatedMethodName()) {
                 continue;
             }
 
-            if ($isAssignedFuncCall && $this->getName($node->expr->expr->name) !== $configuration->getDeprecatedMethodName()) {
+            if ($node->expr instanceof Node\Expr\Assign && $node->expr->expr instanceof Node\Expr\FuncCall && $this->getName($node->expr->expr->name) !== $configuration->getDeprecatedMethodName()) {
                 continue;
             }
 
-            if ($isFuncCall) {
+            if ($node->expr instanceof Node\Expr\FuncCall) {
                 $methodCall = $this->getMethodCall($node->expr, $node, $configuration);
                 $node->expr = $methodCall;
                 return $node;
             }
 
-            if ($isAssignedFuncCall) {
+            if ($node->expr instanceof Node\Expr\Assign && $node->expr->expr instanceof Node\Expr\FuncCall) {
                 $methodCall = $this->getMethodCall($node->expr->expr, $node, $configuration);
                 $node->expr->expr = $methodCall;
                 return $node;
             }
 
-            if ($isMethodCall) {
+            if ($node->expr instanceof Node\Expr\MethodCall) {
                 $funcCall = $this->findRootFuncCallForMethodCall($node->expr);
                 if ($funcCall === NULL || $this->getName($funcCall->name) !== $configuration->getDeprecatedMethodName()) {
                     continue;
@@ -175,12 +175,7 @@ class DBRector extends AbstractRector implements ConfigurableRectorInterface
         return null;
     }
 
-    /**
-     * @param Expr $expr
-     * @param Expression $statement
-     * @return MethodCall
-     */
-    public function getMethodCall(Node\Expr $expr, Node\Stmt\Expression $statement, DBConfiguration $configuration): Node\Expr\MethodCall
+    public function getMethodCall(Node\Expr\FuncCall $expr, Node\Stmt\Expression $statement, DBConfiguration $configuration): Node\Expr\MethodCall
     {
         // TODO: Check if we have are in a class and inject \Drupal\Core\Database\Connection
         // TODO: Check if we have are in a class and don't have access to the container, use `\Drupal\core\Database\Database::getConnection()`.
@@ -190,12 +185,12 @@ class DBRector extends AbstractRector implements ConfigurableRectorInterface
         $method_arguments = [];
 
         // The 'target' key in the $options can be used to use a non-default database.
-        if (count($expr->args) >= $configuration->getOptionsArgumentPosition()) {
+        if (count($expr->getArgs()) >= $configuration->getOptionsArgumentPosition()) {
 
             /* @var Node\Arg $options . */
-            $options = $expr->args[$configuration->getOptionsArgumentPosition() - 1];
+            $options = $expr->getArgs()[$configuration->getOptionsArgumentPosition() - 1];
 
-            if ($options->value->getType() === 'Expr_Array') {
+            if ($options->value instanceof Expr\Array_) {
                 foreach ($options->value->items as $item_index => $item) {
                     if ($item->key->value === 'target') {
                         // Assume we need to get a different connection than the default.
