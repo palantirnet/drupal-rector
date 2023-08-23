@@ -46,21 +46,6 @@ parameters:
 			path: src/Rector/Deprecation/AssertNoFieldByNameRector.php
 
 		-
-			message: "#^Access to an undefined property PhpParser\\\\Node\\:\\:\\$args\\.$#"
-			count: 1
-			path: src/Rector/Deprecation/Base/GetMockBase.php
-
-		-
-			message: "#^Access to an undefined property PhpParser\\\\Node\\:\\:\\$name\\.$#"
-			count: 1
-			path: src/Rector/Deprecation/Base/GetMockBase.php
-
-		-
-			message: "#^Access to an undefined property PhpParser\\\\Node\\:\\:\\$var\\.$#"
-			count: 1
-			path: src/Rector/Deprecation/Base/GetMockBase.php
-
-		-
 			message: "#^Access to an undefined property PhpParser\\\\Node\\\\Expr\\:\\:\\$expr\\.$#"
 			count: 3
 			path: src/Rector/Deprecation/Base/MethodToMethodBase.php
@@ -209,3 +194,18 @@ parameters:
 			message: "#^Call to an undefined method PHPStan\\\\Type\\\\Type\\:\\:getValue\\(\\)\\.$#"
 			count: 1
 			path: src/Rector/Deprecation/ExtensionPathRector.php
+
+		-
+			message: "#^Access to an undefined property PhpParser\\\\Node\\:\\:\\$args\\.$#"
+			count: 1
+			path: src/Rector/Deprecation/GetMockRector.php
+
+		-
+			message: "#^Access to an undefined property PhpParser\\\\Node\\:\\:\\$name\\.$#"
+			count: 1
+			path: src/Rector/Deprecation/GetMockRector.php
+
+		-
+			message: "#^Access to an undefined property PhpParser\\\\Node\\:\\:\\$var\\.$#"
+			count: 1
+			path: src/Rector/Deprecation/GetMockRector.php
