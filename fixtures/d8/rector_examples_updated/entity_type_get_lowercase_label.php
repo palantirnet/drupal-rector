@@ -10,7 +10,8 @@
 function simple_example() {
   /* @var \Drupal\node\Entity\Node $node */
   $node = \Drupal::entityTypeManager()->getStorage('node')->load(123);
-  $entity_type = $node->getEntityType();$entity_type->getSingularLabel();
+  $entity_type = $node->getEntityType();
+  $entity_type->getSingularLabel();
 }
 
 /**
