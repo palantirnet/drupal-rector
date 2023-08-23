@@ -1,13 +1,14 @@
 <?php declare(strict_types=1);
 
-use DrupalRector\Rector\Deprecation\BrowserTestBaseGetMockRector;
-use DrupalRector\Rector\Deprecation\KernelTestBaseGetMockRector;
-use DrupalRector\Rector\Deprecation\UnitTestCaseGetMockRector;
+use DrupalRector\Rector\Deprecation\GetMockRector;
+use DrupalRector\Rector\ValueObject\GetMockConfiguration;
 use DrupalRector\Tests\Rector\Deprecation\DeprecationBase;
 use Rector\Config\RectorConfig;
 
 return static function (RectorConfig $rectorConfig): void {
-    DeprecationBase::addClass(BrowserTestBaseGetMockRector::class, $rectorConfig, FALSE);
-    DeprecationBase::addClass(KernelTestBaseGetMockRector::class, $rectorConfig, FALSE);
-    DeprecationBase::addClass(UnitTestCaseGetMockRector::class, $rectorConfig, FALSE);
+    DeprecationBase::addClass(GetMockRector::class, $rectorConfig, FALSE, [
+        new GetMockConfiguration('Drupal\Tests\BrowserTestBase'),
+        new GetMockConfiguration('Drupal\KernelTests\KernelTestBase'),
+        new GetMockConfiguration('Drupal\Tests\UnitTestCase'),
+    ]);
 };
