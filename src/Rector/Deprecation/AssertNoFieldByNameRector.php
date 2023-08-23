@@ -5,6 +5,8 @@ namespace DrupalRector\Rector\Deprecation;
 use DrupalRector\Utility\AddCommentTrait;
 use DrupalRector\Utility\GetDeclaringSourceTrait;
 use PhpParser\Node;
+use PhpParser\Node\Arg;
+use PhpParser\Node\VariadicPlaceholder;
 use Rector\Core\Contract\Rector\ConfigurableRectorInterface;
 use Rector\Core\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
@@ -85,6 +87,12 @@ CODE_AFTER
         return $node;
     }
 
+    /**
+     * @param string $method
+     * @param array<Arg|VariadicPlaceholder> $args
+     *
+     * @return \PhpParser\Node\Expr\MethodCall
+     */
     protected function createAssertSessionMethodCall(string $method, array $args): Node\Expr\MethodCall
     {
         $assertSessionNode = $this->nodeFactory->createLocalMethodCall('assertSession');
