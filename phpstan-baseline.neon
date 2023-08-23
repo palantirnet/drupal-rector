@@ -51,21 +51,6 @@ parameters:
 			path: src/Rector/Deprecation/Base/MethodToMethodBase.php
 
 		-
-			message: "#^Access to an undefined property PhpParser\\\\Node\\:\\:\\$name\\.$#"
-			count: 1
-			path: src/Rector/Deprecation/ConstantToClassConstantRector.php
-
-		-
-			message: "#^Method DrupalRector\\\\Rector\\\\Deprecation\\\\ConstantToClassConstantRector\\:\\:configure\\(\\) has parameter \\$configuration with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: src/Rector/Deprecation/ConstantToClassConstantRector.php
-
-		-
-			message: "#^Variable \\$node in PHPDoc tag @var does not match any variable in the foreach loop\\: \\$constantToClassRename$#"
-			count: 1
-			path: src/Rector/Deprecation/ConstantToClassConstantRector.php
-
-		-
 			message: "#^Access to an undefined property PhpParser\\\\Node\\\\Expr\\:\\:\\$args\\.$#"
 			count: 4
 			path: src/Rector/Deprecation/DBRector.php
