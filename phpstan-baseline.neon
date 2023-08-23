@@ -194,18 +194,3 @@ parameters:
 			message: "#^Call to an undefined method PHPStan\\\\Type\\\\Type\\:\\:getValue\\(\\)\\.$#"
 			count: 1
 			path: src/Rector/Deprecation/ExtensionPathRector.php
-
-		-
-			message: "#^Access to an undefined property PhpParser\\\\Node\\:\\:\\$args\\.$#"
-			count: 1
-			path: src/Rector/Deprecation/GetMockRector.php
-
-		-
-			message: "#^Access to an undefined property PhpParser\\\\Node\\:\\:\\$name\\.$#"
-			count: 1
-			path: src/Rector/Deprecation/GetMockRector.php
-
-		-
-			message: "#^Access to an undefined property PhpParser\\\\Node\\:\\:\\$var\\.$#"
-			count: 1
-			path: src/Rector/Deprecation/GetMockRector.php
