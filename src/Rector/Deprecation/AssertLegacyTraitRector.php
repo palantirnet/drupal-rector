@@ -65,12 +65,9 @@ class AssertLegacyTraitRector extends AbstractRector implements ConfigurableRect
     {
         assert($node instanceof Node\Stmt\Expression);
 
-        $isMethodCall = $isAssignedMethodCall = false;
         if ($node->expr instanceof Node\Expr\Assign && $node->expr->expr instanceof Node\Expr\MethodCall) {
-            $isAssignedMethodCall = true;
             $expr = $node->expr->expr;
         } elseif ($node->expr instanceof Node\Expr\MethodCall) {
-            $isMethodCall = true;
             $expr = $node->expr;
         } else {
             return null;
@@ -103,9 +100,9 @@ class AssertLegacyTraitRector extends AbstractRector implements ConfigurableRect
                 $newExpr = $this->nodeFactory->createLocalMethodCall($configuration->getMethodName(), $args);
             }
 
-            if ($isMethodCall) {
+            if ($node->expr instanceof Node\Expr\MethodCall) {
                 $node->expr = $newExpr;
-            } else {
+            } elseif ($node->expr instanceof Node\Expr\Assign && $node->expr->expr instanceof Node\Expr\MethodCall) {
                 $node->expr->expr = $newExpr;
             }
             return $node;

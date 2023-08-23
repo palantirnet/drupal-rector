@@ -36,11 +36,6 @@ parameters:
 			path: config/drupal-phpunit-bootstrap-file.php
 
 		-
-			message: "#^Access to an undefined property PhpParser\\\\Node\\\\Expr\\:\\:\\$expr\\.$#"
-			count: 1
-			path: src/Rector/Deprecation/AssertLegacyTraitRector.php
-
-		-
 			message: "#^Method DrupalRector\\\\Rector\\\\Deprecation\\\\AssertNoFieldByNameRector\\:\\:createAssertSessionMethodCall\\(\\) has parameter \\$args with no value type specified in iterable type array\\.$#"
 			count: 1
 			path: src/Rector/Deprecation/AssertNoFieldByNameRector.php
