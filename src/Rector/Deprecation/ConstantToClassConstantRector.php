@@ -22,9 +22,6 @@ class ConstantToClassConstantRector extends AbstractRector implements Configurab
      */
     private array $constantToClassRenames;
 
-    /**
-     * @param array $configuration
-     */
     public function configure(array $configuration): void
     {
         foreach ($configuration as $value) {
@@ -80,7 +77,8 @@ CODE_AFTER
      */
     public function refactor(Node $node): ?Node
     {
-        /** @var Node\Expr\ConstFetch $node */
+        assert($node instanceof Node\Expr\ConstFetch);
+
         foreach ($this->constantToClassRenames as $constantToClassRename) {
             if ($this->getName($node->name) === $constantToClassRename->getDeprecated()) {
                 // We add a fully qualified class name and the parameters in `rector.php` adds the use statement.

@@ -1,8 +1,10 @@
 parameters:
-	level: 1
+	level: 6
 	paths:
 		- config
 		- src
 		- rector.php
 	bootstrapFiles:
 	    - vendor/rector/rector/vendor/autoload.php
+includes:
+	- phpstan-baseline.neon

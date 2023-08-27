@@ -48,10 +48,7 @@ trait GetDeclaringSourceTrait
             return $declaringTrait->getName();
         }
         $declaringClass = $exprReflection->getDeclaringClass();
-        if ($declaringClass !== null) {
-            return $declaringClass->getName();
-        }
-        return null;
+        return $declaringClass->getName();
     }
 
 }

@@ -7,10 +7,10 @@ use PhpParser\Node;
 trait FindParentByTypeTrait
 {
     /**
+     * @template T of Node
      * @param Node $node
      * @param class-string<T> $type
-     * @return Node|null
-     * @template T of Node
+     * @return T|null
      */
     public function findParentType(Node $node, string $type): ?Node
     {
