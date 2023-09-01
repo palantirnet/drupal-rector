@@ -7,6 +7,7 @@ use DrupalRector\Utility\FindParentByTypeTrait;
 use DrupalRector\Utility\TraitsByClassHelperTrait;
 use PhpParser\Comment;
 use PhpParser\Node;
+use PhpParser\NodeDumper;
 use PHPStan\PhpDocParser\Ast\PhpDoc\GenericTagValueNode;
 use PHPStan\PhpDocParser\Ast\PhpDoc\PhpDocTagNode;
 use Rector\BetterPhpDocParser\PhpDocInfo\PhpDocInfo;
@@ -68,7 +69,7 @@ CODE_AFTER
     public function getNodeTypes(): array
     {
         return [
-            Node\Expr\FuncCall::class,
+            Node\Stmt\Expression::class
         ];
     }
 
@@ -77,10 +78,19 @@ CODE_AFTER
      */
     public function refactor(Node $node): ?Node
     {
-        /** @var Node\Expr\FuncCall $node */
-        if ($this->getName($node->name) === 'drupal_set_message') {
-            $class = $this->findParentType($node, Node\Stmt\Class_::class);
-            if ($this->checkClassTypeHasTrait($class, 'Drupal\Core\Messenger\MessengerTrait')) {
+
+        assert($node instanceof Node\Stmt\Expression);
+        if (!($node->expr instanceof Node\Expr\FuncCall)) {
+            return null;
+        }
+
+        $expression = $node->expr;
+        assert($expression instanceof Node\Expr\FuncCall);
+
+        if ($this->getName($expression->name) === 'drupal_set_message') {
+            $scope = $node->getAttribute(AttributeKey::SCOPE);
+            $classReflection = $scope->getClassReflection();
+            if (!is_null($classReflection) && $classReflection->hasTraitUse('Drupal\Core\Messenger\MessengerTrait')) {
                 $messenger_service = new Node\Expr\MethodCall(
                     new Node\Expr\Variable('this'),
                     new Node\Identifier('messenger')
@@ -93,21 +103,21 @@ CODE_AFTER
 
             $method_name = 'addStatus';
 
-            $message = $node->args[0];
+            $message = $expression->args[0];
 
             $method_arguments = [
                 $message,
             ];
 
             // Message's type parameter is optional. Use it if present.
-            if (array_key_exists(1, $node->args)) {
-                $messageTypeArgType = $this->nodeTypeResolver->getType($node->args[1]->value);
+            if (array_key_exists(1, $expression->args)) {
+                $messageTypeArgType = $this->nodeTypeResolver->getType($expression->args[1]->value);
                 $messageType = '';
 
                 if ($messageTypeArgType->getConstantStrings()) {
                     $messageType = $messageTypeArgType->getValue();
-                } elseif ($node->args[1]->value instanceof Node\Scalar\String_) {
-                    $messageType = $node->args[1]->value->value;
+                } elseif ($expression->args[1]->value instanceof Node\Scalar\String_) {
+                    $messageType = $expression->args[1]->value->value;
                 }
 
                 if ($messageType !== '') {
@@ -115,7 +125,7 @@ CODE_AFTER
                         $method_name = 'add' . ucfirst($messageType);
                     } else {
                         $method_name = 'addMessage';
-                        $method_arguments[] = $node->args[1];
+                        $method_arguments[] = $expression->args[1];
                     }
                 } else {
                     /*
@@ -147,6 +157,7 @@ CODE_AFTER
                         $node,
                         'This needs to be replaced, but Rector was not yet able to replace this because the type of message was set with a variable. If you need to continue to use a variable, you might consider using a switch statement.'
                     );
+
                     // Since we did not rename the function, Rector will process
                     // this node multiple times. So we need to flag it with the
                     // @noRector tag.
@@ -165,18 +176,19 @@ CODE_AFTER
                     assert($phpDocInfo instanceof PhpDocInfo);
                     $phpDocInfo->addPhpDocTagNode(new PhpDocTagNode('@noRector', new GenericTagValueNode('')));
 
+
                     return $node;
                 }
             }
 
             // Add the third argument if present.
-            if (array_key_exists(2, $node->args)) {
-                $method_arguments[] = $node->args[2];
+            if (array_key_exists(2, $expression->args)) {
+                $method_arguments[] = $expression->args[2];
             }
 
             $method = new Node\Identifier($method_name);
 
-            $node = new Node\Expr\MethodCall($messenger_service, $method, $method_arguments);
+            $node->expr = new Node\Expr\MethodCall($messenger_service, $method, $method_arguments);
 
             return $node;
         }
