@@ -26,7 +26,7 @@ return static function (RectorConfig $rectorConfig): void {
     // Drupal performs assertions in the ::setUp methods of its test suites,
     // the following rule adds unneeded annotations.
     $rectorConfig->skip([
-        AddDoesNotPerformAssertionToNonAssertingTestRector::class,
+        AddDoesNotPerformAssertionToNonAssertingTestRector::class => ['*'],
     ]);
 
     $rectorConfig->bootstrapFiles([
