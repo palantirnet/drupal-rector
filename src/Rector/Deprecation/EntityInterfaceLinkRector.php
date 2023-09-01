@@ -2,13 +2,12 @@
 
 namespace DrupalRector\Rector\Deprecation;
 
-use DrupalRector\Utility\AddCommentTrait;
-use Rector\Core\Contract\Rector\ConfigurableRectorInterface;
+use DrupalRector\Utility\AddCommentService;
+use PhpParser\Node;
+use Rector\Core\Rector\AbstractRector;
 use Symplify\PackageBuilder\Parameter\ParameterProvider;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
-use PhpParser\Node;
-use Rector\Core\Rector\AbstractRector;
 
 /**
  * Replaces deprecated function call to EntityInterface::link.
@@ -21,15 +20,17 @@ use Rector\Core\Rector\AbstractRector;
  * Improvement opportunities:
  * - Checks the variable has a certain class.
  */
-final class EntityInterfaceLinkRector extends AbstractRector implements ConfigurableRectorInterface
+final class EntityInterfaceLinkRector extends AbstractRector
 {
+    /**
+     * @var \DrupalRector\Utility\AddCommentService
+     */
+    private AddCommentService $commentService;
 
-    use AddCommentTrait;
-
-    public function configure(array $configuration): void
-    {
-        $this->configureNoticesAsComments($configuration);
+    public function __construct(AddCommentService $commentService) {
+        $this->commentService = $commentService;
     }
+
 
     /**
      * @inheritdoc
@@ -92,12 +93,12 @@ CODE_AFTER
 
         return null;
     }
-    
+
     public function getMethodCall(Node\Expr\MethodCall $expr, Node\Stmt\Expression $node): Node\Expr\MethodCall
     {
         $node_class_name = $this->getName($expr->var);
 
-        $this->addDrupalRectorComment($node,
+        $this->commentService->addDrupalRectorComment($node,
             "Please confirm that `$$node_class_name` is an instance of `\Drupal\Core\Entity\EntityInterface`. Only the method name and not the class name was checked for this replacement, so this may be a false positive.");
 
         $toLink_node = $expr;

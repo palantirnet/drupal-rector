@@ -5,6 +5,7 @@ declare(strict_types=1);
 use DrupalFinder\DrupalFinder;
 use DrupalRector\Set\Drupal8SetList;
 use DrupalRector\Set\Drupal9SetList;
+use DrupalRector\Utility\AddCommentService;
 use Rector\Config\RectorConfig;
 
 return static function (RectorConfig $rectorConfig): void {
@@ -28,9 +29,14 @@ return static function (RectorConfig $rectorConfig): void {
         $drupalRoot . '/themes'
     ]);
 
+    $rectorConfig->
+
     $rectorConfig->skip(['*/upgrade_status/tests/modules/*']);
     $rectorConfig->fileExtensions(['php', 'module', 'theme', 'install', 'profile', 'inc', 'engine']);
     $rectorConfig->importNames(true, false);
     $rectorConfig->importShortClasses(false);
-    $parameters->set('drupal_rector_notices_as_comments', true);
+    
+    $rectorConfig->singleton(AddCommentService::class, function() {
+        return new AddCommentService(true);
+    });
 };

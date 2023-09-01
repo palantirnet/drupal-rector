@@ -3,9 +3,8 @@
 namespace DrupalRector\Rector\Deprecation;
 
 use DrupalRector\Rector\ValueObject\EntityLoadConfiguration;
-use DrupalRector\Utility\AddCommentTrait;
+use DrupalRector\Utility\AddCommentService;
 use PhpParser\Node;
-use Rector\Core\Contract\Rector\ConfigurableRectorInterface;
 use Rector\Core\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
@@ -22,15 +21,22 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  * Improvement opportunities
  * - Dependency injection
  */
-final class EntityLoadRector extends AbstractRector implements ConfigurableRectorInterface
+final class EntityLoadRector extends AbstractRector
 {
-
-    use AddCommentTrait;
 
     /**
      * @var EntityLoadConfiguration[] $entityTypes
      */
     protected array $entityTypes;
+
+    /**
+     * @var \DrupalRector\Utility\AddCommentService
+     */
+    private AddCommentService $commentService;
+
+    public function __construct(AddCommentService $commentService) {
+        $this->commentService = $commentService;
+    }
 
     /**
      * @inheritdoc
@@ -54,8 +60,6 @@ CODE_AFTER
 
     public function configure(array $configuration): void
     {
-        $this->configureNoticesAsComments($configuration);
-
         foreach ($configuration as $value) {
             if (!($value instanceof EntityLoadConfiguration)) {
                 throw new \InvalidArgumentException(sprintf(
@@ -151,7 +155,7 @@ CODE_AFTER
                 // We need to account for the `reset` option which adds a method to the chain.
                 // We will replace the original method with a ternary to evaluate and provide both options.
                 if (count($expr->args) == (2 + $argument_offset)) {
-                    $this->addDrupalRectorComment($node,
+                    $this->commentService->addDrupalRectorComment($node,
                         'A ternary operator is used here to keep the conditional contained within this part of the expression. Consider wrapping this statement in an `if / else` statement.');
 
                     /* @var Node\Arg $reset_flag . */

@@ -2,6 +2,7 @@
 
 namespace DrupalRector\Tests\Rector\Deprecation;
 
+use DrupalRector\Utility\AddCommentService;
 use Rector\Config\RectorConfig;
 
 /**
@@ -23,26 +24,15 @@ class DeprecationBase {
      */
     public static function addClass(string $rectorClass, RectorConfig $rectorConfig, bool $add_notice_config = TRUE, array $configuration = []) {
         if ($add_notice_config) {
-            $configuration['drupal_rector_notices_as_comments'] = '%drupal_rector_notices_as_comments%';
-            $rectorConfig->ruleWithConfiguration($rectorClass, $configuration);
-        } else if (count($configuration) > 0) {
+            $rectorConfig->singleton(AddCommentService::class, function() {
+                return new AddCommentService(TRUE);
+            });
+        }
+
+        if (count($configuration) > 0) {
             $rectorConfig->ruleWithConfiguration($rectorClass, $configuration);
         } else {
             $rectorConfig->rule($rectorClass);
         }
-
-        self::addParameters($rectorConfig);
     }
-
-    /**
-     * Ensures configuration options are present.
-     *
-     * @param \Rector\Config\RectorConfig $rectorConfig
-     *   The Rector Config handler.
-     */
-    public static function addParameters(RectorConfig $rectorConfig) {
-        $parameters = $rectorConfig->parameters();
-        $parameters->set('drupal_rector_notices_as_comments', true);
-    }
-
 }

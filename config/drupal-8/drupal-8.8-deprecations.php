@@ -34,8 +34,5 @@ return static function (\Rector\Config\RectorConfig $rectorConfig): void {
         new FunctionToServiceConfiguration('file_uri_target', 'stream_wrapper_manager', 'getTarget'),
     ]);
 
-    $rectorConfig->ruleWithConfiguration(
-        EntityTypeGetLowercaseLabelRector::class, [
-        'drupal_rector_notices_as_comments' => '%drupal_rector_notices_as_comments%',
-    ]);
+    $rectorConfig->rule(EntityTypeGetLowercaseLabelRector::class);
 };

@@ -2,11 +2,10 @@
 
 namespace DrupalRector\Rector\Deprecation;
 
-use DrupalRector\Utility\AddCommentTrait;
+use DrupalRector\Utility\AddCommentService;
 use DrupalRector\Utility\FindParentByTypeTrait;
 use DrupalRector\Utility\TraitsByClassHelperTrait;
 use PhpParser\Node;
-use Rector\Core\Contract\Rector\ConfigurableRectorInterface;
 use Rector\Core\Rector\AbstractRector;
 use Symplify\PackageBuilder\Parameter\ParameterProvider;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
@@ -23,15 +22,18 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  * Improvement opportunities
  * - Remove link generator trait.
  */
-final class LinkGeneratorTraitLRector extends AbstractRector implements ConfigurableRectorInterface
+final class LinkGeneratorTraitLRector extends AbstractRector
 {
-    use AddCommentTrait;
     use FindParentByTypeTrait;
     use TraitsByClassHelperTrait;
 
-    public function configure(array $configuration): void
-    {
-        $this->configureNoticesAsComments($configuration);
+    /**
+     * @var \DrupalRector\Utility\AddCommentService
+     */
+    private AddCommentService $commentService;
+
+    public function __construct(AddCommentService $commentService) {
+        $this->commentService = $commentService;
     }
 
     /**
@@ -82,7 +84,7 @@ CODE_AFTER
 
           // Check if class has LinkGeneratorTrait.
           if ($this->checkClassTypeHasTrait($class, 'Drupal\Core\Routing\LinkGeneratorTrait')) {
-            $this->addDrupalRectorComment($node, 'Please manually remove the `use LinkGeneratorTrait;` statement from this class.');
+            $this->commentService->addDrupalRectorComment($node, 'Please manually remove the `use LinkGeneratorTrait;` statement from this class.');
 
             // Replace with a static call to Link::fromTextAndUrl().
             $name = new Node\Name\FullyQualified('Drupal\Core\Link');

@@ -10,7 +10,5 @@ return static function (\Rector\Config\RectorConfig $rectorConfig): void {
         PHPUnitSetList::PHPUNIT_90
     ]);
     // Change record: https://www.drupal.org/node/3187914
-    $rectorConfig->ruleWithConfiguration(ClearCsrfTokenSeed::class, [
-            'drupal_rector_notices_as_comments' => '%drupal_rector_notices_as_comments%',
-        ]);
+    $rectorConfig->rule(ClearCsrfTokenSeed::class);
 };

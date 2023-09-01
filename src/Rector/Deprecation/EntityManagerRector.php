@@ -2,11 +2,9 @@
 
 namespace DrupalRector\Rector\Deprecation;
 
-use DrupalRector\Utility\AddCommentTrait;
+use DrupalRector\Utility\AddCommentService;
 use PhpParser\Node;
-use PhpParser\Node\Expr\MethodCall;
 use PHPStan\Analyser\Scope;
-use Rector\Core\Contract\Rector\ConfigurableRectorInterface;
 use Rector\Core\Exception\ShouldNotHappenException;
 use Rector\Core\Rector\AbstractRector;
 use Rector\NodeCollector\ScopeResolver\ParentClassScopeResolver;
@@ -34,25 +32,24 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  * - Complex use case handling when a different service is needed and the
  * method does not directly call the service
  */
-final class EntityManagerRector extends AbstractRector implements ConfigurableRectorInterface
+final class EntityManagerRector extends AbstractRector
 {
-
-    use AddCommentTrait;
-
     /**
      * @var ParentClassScopeResolver
      */
     protected $parentClassScopeResolver;
 
+    /**
+     * @var \DrupalRector\Utility\AddCommentService
+     */
+    private AddCommentService $commentService;
+
     public function __construct(
-        ParentClassScopeResolver $parentClassScopeResolver
+        ParentClassScopeResolver $parentClassScopeResolver,
+        AddCommentService $commentService
     ) {
         $this->parentClassScopeResolver = $parentClassScopeResolver;
-    }
-
-    public function configure(array $configuration): void
-    {
-        $this->configureNoticesAsComments($configuration);
+        $this->commentService = $commentService;
     }
 
     /**
@@ -199,7 +196,7 @@ CODE_AFTER
 
             $service = $this->getServiceByMethodName($this->getName($next_node));
         } else {
-            $this->addDrupalRectorComment($statement,
+            $this->commentService->addDrupalRectorComment($statement,
                 'We are assuming that we want to use the `entity_type.manager` service since no method was called here directly. Please confirm this is the case. See https://www.drupal.org/node/2549139 for more information.');
         }
 
@@ -230,7 +227,7 @@ CODE_AFTER
                 [new Node\Arg(new Node\Scalar\String_($service))]);
         } else {
             // If we are making a direct call to ->entityManager(), we can assume the new class will also have entityTypeManager.
-            $this->addDrupalRectorComment($statement,
+            $this->commentService->addDrupalRectorComment($statement,
                 'We are assuming that we want to use the `$this->entityTypeManager` injected service since no method was called here directly. Please confirm this is the case. If another service is needed, you may need to inject that yourself. See https://www.drupal.org/node/2549139 for more information.');
 
             $expr = new Node\Expr\MethodCall(new Node\Expr\Variable('this'),

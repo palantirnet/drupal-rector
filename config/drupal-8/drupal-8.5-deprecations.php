@@ -8,9 +8,7 @@ use DrupalRector\Rector\ValueObject\ConstantToClassConfiguration;
 use Rector\Config\RectorConfig;
 
 return static function (RectorConfig $rectorConfig): void {
-    $rectorConfig->ruleWithConfiguration(DrupalSetMessageRector::class, [
-        'drupal_rector_notices_as_comments' => '%drupal_rector_notices_as_comments%',
-    ]);
+    $rectorConfig->rule(DrupalSetMessageRector::class);
 
     /**
      * Replaces deprecated DATETIME_DATE_STORAGE_FORMAT, DATETIME_DATETIME_STORAGE_FORMAT, DATETIME_STORAGE_TIMEZONE constant use.

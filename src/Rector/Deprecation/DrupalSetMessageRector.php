@@ -2,7 +2,7 @@
 
 namespace DrupalRector\Rector\Deprecation;
 
-use DrupalRector\Utility\AddCommentTrait;
+use DrupalRector\Utility\AddCommentService;
 use DrupalRector\Utility\FindParentByTypeTrait;
 use DrupalRector\Utility\TraitsByClassHelperTrait;
 use PhpParser\Comment;
@@ -10,9 +10,8 @@ use PhpParser\Node;
 use PHPStan\PhpDocParser\Ast\PhpDoc\GenericTagValueNode;
 use PHPStan\PhpDocParser\Ast\PhpDoc\PhpDocTagNode;
 use Rector\BetterPhpDocParser\PhpDocInfo\PhpDocInfo;
-use Rector\Core\Contract\Rector\ConfigurableRectorInterface;
-use Rector\NodeTypeResolver\Node\AttributeKey;
 use Rector\Core\Rector\AbstractRector;
+use Rector\NodeTypeResolver\Node\AttributeKey;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
@@ -31,15 +30,18 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  * - Add trait for classes
  *   - `use MessengerTrait;`
  */
-final class DrupalSetMessageRector extends AbstractRector implements ConfigurableRectorInterface
+final class DrupalSetMessageRector extends AbstractRector
 {
-    use AddCommentTrait;
     use FindParentByTypeTrait;
     use TraitsByClassHelperTrait;
 
-    public function configure(array $configuration): void
-    {
-        $this->configureNoticesAsComments($configuration);
+    /**
+     * @var \DrupalRector\Utility\AddCommentService
+     */
+    private AddCommentService $commentService;
+
+    public function __construct(AddCommentService $commentService) {
+        $this->commentService = $commentService;
     }
 
     /**
@@ -141,7 +143,7 @@ CODE_AFTER
                      * https://git.drupalcode.org/project/devel/blob/8.x-2.0/devel.module#L151
                      * https://git.drupalcode.org/project/devel/blob/8.x-2.0/devel.module#L265
                      */
-                    $this->addDrupalRectorComment(
+                    $this->commentService->addDrupalRectorComment(
                         $node,
                         'This needs to be replaced, but Rector was not yet able to replace this because the type of message was set with a variable. If you need to continue to use a variable, you might consider using a switch statement.'
                     );

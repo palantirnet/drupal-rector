@@ -2,10 +2,9 @@
 
 namespace DrupalRector\Rector\Deprecation\Base;
 
-use DrupalRector\Utility\AddCommentTrait;
+use DrupalRector\Utility\AddCommentService;
 use PhpParser\Node;
 use PHPStan\Type\ObjectType;
-use Rector\Core\Contract\Rector\ConfigurableRectorInterface;
 use Rector\Core\Rector\AbstractRector;
 use Symplify\PackageBuilder\Parameter\ParameterProvider;
 
@@ -19,10 +18,8 @@ use Symplify\PackageBuilder\Parameter\ParameterProvider;
  * - Checks the variable has a certain class.
  *
  */
-abstract class MethodToMethodBase extends AbstractRector implements ConfigurableRectorInterface
+abstract class MethodToMethodBase extends AbstractRector
 {
-    use AddCommentTrait;
-
     /**
      * Deprecated method name.
      *
@@ -44,10 +41,15 @@ abstract class MethodToMethodBase extends AbstractRector implements Configurable
      */
     protected $className;
 
-    public function configure(array $configuration): void
-    {
-        $this->configureNoticesAsComments($configuration);
+    /**
+     * @var \DrupalRector\Utility\AddCommentService
+     */
+    private AddCommentService $commentService;
+
+    public function __construct(AddCommentService $commentService) {
+        $this->commentService = $commentService;
     }
+
 
     /**
      * @inheritdoc
@@ -119,7 +121,7 @@ abstract class MethodToMethodBase extends AbstractRector implements Configurable
             if ($node->var instanceof Node\Expr\MethodCall) {
                 $node_var = "$node_var()";
             }
-            $this->addDrupalRectorComment(
+            $this->commentService->addDrupalRectorComment(
                 $statement,
                 "Please confirm that `$node_var` is an instance of `$this->className`. Only the method name and not the class name was checked for this replacement, so this may be a false positive."
             );

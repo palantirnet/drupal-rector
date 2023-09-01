@@ -32,14 +32,11 @@ return static function (\Rector\Config\RectorConfig $rectorConfig): void {
 
     $rectorConfig->rule(AssertNoUniqueTextRector::class);
     $rectorConfig->rule(AssertFieldByNameRector::class);
-    $rectorConfig->ruleWithConfiguration(AssertNoFieldByNameRector::class, [
-            'drupal_rector_notices_as_comments' => '%drupal_rector_notices_as_comments%',
-        ]);
+    $rectorConfig->rule(AssertNoFieldByNameRector::class);
     $rectorConfig->rule(AssertFieldByIdRector::class);
 
 
     $rectorConfig->ruleWithConfiguration(\DrupalRector\Rector\Deprecation\AssertLegacyTraitRector::class, [
-        'drupal_rector_notices_as_comments' => '%drupal_rector_notices_as_comments%',
         new AssertLegacyTraitConfiguration('assertLinkByHref', 'linkByHrefExists'),
         new AssertLegacyTraitConfiguration('assertLink', 'linkExists'),
         new AssertLegacyTraitConfiguration('assertNoEscaped', 'assertNoEscaped'),

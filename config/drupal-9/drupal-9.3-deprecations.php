@@ -11,7 +11,6 @@ use DrupalRector\Rector\ValueObject\ExtensionPathConfiguration;
 return static function (\Rector\Config\RectorConfig $rectorConfig): void {
     // Change record: https://www.drupal.org/node/2940438.
     $rectorConfig->ruleWithConfiguration(\DrupalRector\Rector\Deprecation\ExtensionPathRector::class, [
-        'drupal_rector_notices_as_comments' => '%drupal_rector_notices_as_comments%',
         new ExtensionPathConfiguration('drupal_get_filename', 'getPathname'),
         new ExtensionPathConfiguration('drupal_get_path', 'getPath'),
     ]);
