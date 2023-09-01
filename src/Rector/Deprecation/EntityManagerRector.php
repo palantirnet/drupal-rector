@@ -134,16 +134,20 @@ CODE_AFTER
      */
     public function findInstanceByNameInAssign(Node\Expr\Assign $assign, string $class, string $name): ?Node {
         $node = $assign->expr;
+        $depth = 0;
 
         // Should the expression be the class we are looking for and the name is the one we are looking for, we can return early.
         if ($node instanceof $class && $this->getName($node->name) === $name) {
+            $node->setAttribute(self::class, $depth);
             return $node;
         }
 
         // Find the relevant class with name in the chain.
-        while(isset($node->var) && !($node->var instanceof $class && $this->getName($node->var->name) !== $name)) {
+        while (isset($node->var) && !($node->var instanceof $class && $this->getName($node->var->name) !== $name)) {
             $node = $node->var;
+            $depth++;
             if($node instanceof $class && $this->getName($node->name)) {
+                $node->setAttribute(self::class, $depth);
                 return $node;
             }
         }
@@ -189,9 +193,8 @@ CODE_AFTER
     public function refactorStaticCall(Node\Expr\StaticCall $node, Node\Stmt\Expression $statement): Node\Expr\StaticCall
     {
         $service = 'entity_type.manager';
-
         // If we call a method on `entityManager`, we need to check that method and we can call the correct service that the method uses.
-        if ($statement->expr->expr instanceof Node\Expr\MethodCall && $this->getServiceByMethodName($this->getName($statement->expr->expr->name)) === 'entity_type.manager') {
+        if ($statement->expr->expr instanceof Node\Expr\MethodCall) {
             $service = $this->getServiceByMethodName($this->getName($statement->expr->expr->name));
         } else {
             $this->commentService->addDrupalRectorComment($statement,
@@ -213,10 +216,8 @@ CODE_AFTER
     public function refactorMethodCall(Node\Expr\MethodCall $expr, Node\Stmt\Expression $statement): Node\Expr\CallLike
     {
         // If we call a method on `entityManager`, we need to check that method and we can call the correct service that the method uses.
-        $next_node = $expr->getAttribute('next');
-
-        if (!is_null($next_node)) {
-            $service = $this->getServiceByMethodName($this->getName($next_node));
+        if ($expr->getAttribute(self::class) > 0) {
+            $service = $this->getServiceByMethodName($this->getName($statement->expr->expr->name));
 
             // This creates a service call like `\Drupal::service('entity_type.manager').
             // This doesn't use dependency injection, but it should work.
@@ -341,6 +342,7 @@ CODE_AFTER
         $scope = $expr->getAttribute(AttributeKey::SCOPE);
         if ($scope instanceof Scope) {
             $parentClassName = $this->parentClassScopeResolver->resolveParentClassName($scope);
+
             if ($expr instanceof Node\Expr\MethodCall && $parentClassName === 'Drupal\Core\Controller\ControllerBase') {
                 $expr = $this->refactorMethodCall($expr, $statement);
 
