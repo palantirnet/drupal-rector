@@ -16,9 +16,10 @@ use DrupalRector\Rector\Deprecation\PassRector;
 use DrupalRector\Rector\Deprecation\UiHelperTraitDrupalPostFormRector;
 use DrupalRector\Rector\Deprecation\UserPasswordRector;
 use DrupalRector\Rector\ValueObject\AssertLegacyTraitConfiguration;
+use Rector\Config\RectorConfig;
 use Rector\PHPUnit\Set\PHPUnitSetList;
 
-return static function (\Rector\Config\RectorConfig $rectorConfig): void {
+return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->sets([
         PHPUnitSetList::PHPUNIT_90,
     ]);

@@ -3,9 +3,10 @@
 declare(strict_types=1);
 
 use DrupalRector\Rector\Deprecation\ClearCsrfTokenSeed;
+use Rector\Config\RectorConfig;
 use Rector\PHPUnit\Set\PHPUnitSetList;
 
-return static function (\Rector\Config\RectorConfig $rectorConfig): void {
+return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->sets([
         PHPUnitSetList::PHPUNIT_90
     ]);

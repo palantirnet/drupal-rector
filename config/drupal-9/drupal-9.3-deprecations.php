@@ -2,15 +2,17 @@
 
 declare(strict_types=1);
 
+use DrupalRector\Rector\Deprecation\ExtensionPathRector;
 use DrupalRector\Rector\Deprecation\FileBuildUriRector;
 use DrupalRector\Rector\Deprecation\FileUrlGenerator;
 use DrupalRector\Rector\Deprecation\FunctionToServiceRector;
 use DrupalRector\Rector\ValueObject\FunctionToServiceConfiguration;
 use DrupalRector\Rector\ValueObject\ExtensionPathConfiguration;
+use Rector\Config\RectorConfig;
 
-return static function (\Rector\Config\RectorConfig $rectorConfig): void {
+return static function (RectorConfig $rectorConfig): void {
     // Change record: https://www.drupal.org/node/2940438.
-    $rectorConfig->ruleWithConfiguration(\DrupalRector\Rector\Deprecation\ExtensionPathRector::class, [
+    $rectorConfig->ruleWithConfiguration(ExtensionPathRector::class, [
         new ExtensionPathConfiguration('drupal_get_filename', 'getPathname'),
         new ExtensionPathConfiguration('drupal_get_path', 'getPath'),
     ]);

@@ -6,8 +6,9 @@ use DrupalRector\Rector\Deprecation\ConstantToClassConstantRector;
 use DrupalRector\Rector\Deprecation\FunctionToServiceRector;
 use DrupalRector\Rector\ValueObject\ConstantToClassConfiguration;
 use DrupalRector\Rector\ValueObject\FunctionToServiceConfiguration;
+use Rector\Config\RectorConfig;
 
-return static function (\Rector\Config\RectorConfig $rectorConfig): void {
+return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->ruleWithConfiguration(FunctionToServiceRector::class, [
         // https://www.drupal.org/node/3006851
         new FunctionToServiceConfiguration('file_prepare_directory', 'file_system', 'prepareDirectory'),
