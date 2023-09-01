@@ -110,7 +110,6 @@ CODE_AFTER
             }
             $expr = $node->expr->expr;
 
-            /** @var Node\Expr\FuncCall $node */
             if ($this->getName($expr->name) === $method_name) {
                 // We are doing this here, because we know we have access to arguments since we have already checked the method name.
                 if ($is_rector_rule_entity_load) {
