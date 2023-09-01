@@ -6,7 +6,6 @@ use DrupalRector\Utility\AddCommentService;
 use PhpParser\Node;
 use PHPStan\Type\ObjectType;
 use Rector\Core\Rector\AbstractRector;
-use Symplify\PackageBuilder\Parameter\ParameterProvider;
 
 /**
  * Replaces deprecated method calls with a new method.

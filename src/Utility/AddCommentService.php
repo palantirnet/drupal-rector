@@ -5,7 +5,6 @@ namespace DrupalRector\Utility;
 use PhpParser\Comment;
 use PhpParser\Node;
 use Rector\NodeTypeResolver\Node\AttributeKey;
-use Symplify\PackageBuilder\Parameter\ParameterProvider;
 
 /**
  * Provides an easy way to add a comment to a statement.

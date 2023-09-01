@@ -7,7 +7,6 @@ use DrupalRector\Utility\FindParentByTypeTrait;
 use DrupalRector\Utility\TraitsByClassHelperTrait;
 use PhpParser\Node;
 use Rector\Core\Rector\AbstractRector;
-use Symplify\PackageBuilder\Parameter\ParameterProvider;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 

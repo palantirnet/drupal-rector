@@ -5,7 +5,6 @@ namespace DrupalRector\Rector\Deprecation;
 use DrupalRector\Utility\AddCommentService;
 use PhpParser\Node;
 use Rector\Core\Rector\AbstractRector;
-use Symplify\PackageBuilder\Parameter\ParameterProvider;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
