@@ -5,6 +5,7 @@ namespace DrupalRector\Rector\Deprecation;
 use DrupalRector\Rector\ValueObject\EntityLoadConfiguration;
 use DrupalRector\Utility\AddCommentService;
 use PhpParser\Node;
+use Rector\Core\Contract\Rector\ConfigurableRectorInterface;
 use Rector\Core\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
@@ -21,7 +22,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  * Improvement opportunities
  * - Dependency injection
  */
-final class EntityLoadRector extends AbstractRector
+final class EntityLoadRector extends AbstractRector implements ConfigurableRectorInterface
 {
 
     /**
