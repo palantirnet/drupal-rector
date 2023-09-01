@@ -61,17 +61,12 @@ parameters:
 			path: src/Rector/Deprecation/DrupalSetMessageRector.php
 
 		-
-			message: "#^Parameter \\#1 \\$node of method DrupalRector\\\\Rector\\\\Deprecation\\\\DrupalSetMessageRector\\:\\:addDrupalRectorComment\\(\\) expects PhpParser\\\\Node\\\\Stmt\\\\Expression, PhpParser\\\\Node\\\\Expr\\\\FuncCall given\\.$#"
+			message: "#^Parameter \\#1 \\$node of method DrupalRector\\\\Utility\\\\AddCommentService\\:\\:addDrupalRectorComment\\(\\) expects PhpParser\\\\Node\\\\Stmt\\\\Expression, PhpParser\\\\Node\\\\Expr\\\\FuncCall given\\.$#"
 			count: 1
 			path: src/Rector/Deprecation/DrupalSetMessageRector.php
 
 		-
-			message: "#^Access to an undefined property PhpParser\\\\Node\\\\Expr\\\\FuncCall\\:\\:\\$expr\\.$#"
-			count: 1
-			path: src/Rector/Deprecation/EntityLoadRector.php
-
-		-
-			message: "#^Parameter \\#1 \\$node of method DrupalRector\\\\Rector\\\\Deprecation\\\\EntityLoadRector\\:\\:addDrupalRectorComment\\(\\) expects PhpParser\\\\Node\\\\Stmt\\\\Expression, PhpParser\\\\Node\\\\Expr\\\\FuncCall given\\.$#"
+			message: "#^Access to an undefined property PhpParser\\\\Node\\\\Expr\\:\\:\\$expr\\.$#"
 			count: 1
 			path: src/Rector/Deprecation/EntityLoadRector.php
 
