@@ -4,9 +4,9 @@ namespace DrupalRector\Rector\Deprecation;
 
 use DrupalRector\Utility\AddCommentService;
 use DrupalRector\Utility\FindParentByTypeTrait;
-use DrupalRector\Utility\TraitsByClassHelperTrait;
 use PhpParser\Node;
 use Rector\Core\Rector\AbstractRector;
+use Rector\NodeTypeResolver\Node\AttributeKey;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
@@ -24,7 +24,6 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 final class LinkGeneratorTraitLRector extends AbstractRector
 {
     use FindParentByTypeTrait;
-    use TraitsByClassHelperTrait;
 
     /**
      * @var \DrupalRector\Utility\AddCommentService
@@ -78,11 +77,9 @@ CODE_AFTER
 
         /** @var Node\Expr\MethodCall $expr */
         if ($this->getName($expr->name) === 'l') {
-          // @todo This could be a visitor that adds all parent class traits as an attribute
-          $class = $this->findParentType($expr, Node\Stmt\Class_::class);
-
-          // Check if class has LinkGeneratorTrait.
-          if ($this->checkClassTypeHasTrait($class, 'Drupal\Core\Routing\LinkGeneratorTrait')) {
+          $scope = $node->getAttribute(AttributeKey::SCOPE);
+          $classReflection = $scope->getClassReflection();
+          if (!is_null($classReflection) && $classReflection->hasTraitUse('Drupal\Core\Routing\LinkGeneratorTrait')) {
             $this->commentService->addDrupalRectorComment($node, 'Please manually remove the `use LinkGeneratorTrait;` statement from this class.');
 
             // Replace with a static call to Link::fromTextAndUrl().
