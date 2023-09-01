@@ -4,10 +4,8 @@ namespace DrupalRector\Rector\Deprecation;
 
 use DrupalRector\Utility\AddCommentService;
 use DrupalRector\Utility\FindParentByTypeTrait;
-use DrupalRector\Utility\TraitsByClassHelperTrait;
 use PhpParser\Comment;
 use PhpParser\Node;
-use PhpParser\NodeDumper;
 use PHPStan\PhpDocParser\Ast\PhpDoc\GenericTagValueNode;
 use PHPStan\PhpDocParser\Ast\PhpDoc\PhpDocTagNode;
 use Rector\BetterPhpDocParser\PhpDocInfo\PhpDocInfo;
@@ -34,7 +32,6 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 final class DrupalSetMessageRector extends AbstractRector
 {
     use FindParentByTypeTrait;
-    use TraitsByClassHelperTrait;
 
     /**
      * @var \DrupalRector\Utility\AddCommentService
