@@ -4,6 +4,7 @@ namespace DrupalRector\Rector\Deprecation;
 
 use DrupalRector\Utility\AddCommentService;
 use PhpParser\Node;
+use PhpParser\NodeDumper;
 use PHPStan\Analyser\Scope;
 use Rector\Core\Exception\ShouldNotHappenException;
 use Rector\Core\Rector\AbstractRector;
@@ -190,10 +191,8 @@ CODE_AFTER
         $service = 'entity_type.manager';
 
         // If we call a method on `entityManager`, we need to check that method and we can call the correct service that the method uses.
-        if ($node->hasAttribute('next')) {
-            $next_node = $node->getAttribute('next');
-
-            $service = $this->getServiceByMethodName($this->getName($next_node));
+        if ($statement->expr->expr instanceof Node\Expr\MethodCall && $this->getServiceByMethodName($this->getName($statement->expr->expr->name)) === 'entity_type.manager') {
+            $service = $this->getServiceByMethodName($this->getName($statement->expr->expr->name));
         } else {
             $this->commentService->addDrupalRectorComment($statement,
                 'We are assuming that we want to use the `entity_type.manager` service since no method was called here directly. Please confirm this is the case. See https://www.drupal.org/node/2549139 for more information.');
