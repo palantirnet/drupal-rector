@@ -27,8 +27,6 @@ return static function (RectorConfig $rectorConfig): void {
         $drupalRoot . '/themes'
     ]);
 
-    $rectorConfig->
-
     $rectorConfig->skip(['*/upgrade_status/tests/modules/*']);
     $rectorConfig->fileExtensions(['php', 'module', 'theme', 'install', 'profile', 'inc', 'engine']);
     $rectorConfig->importNames(true, false);
