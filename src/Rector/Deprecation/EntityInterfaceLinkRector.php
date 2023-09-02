@@ -2,7 +2,7 @@
 
 namespace DrupalRector\Rector\Deprecation;
 
-use DrupalRector\Utility\AddCommentService;
+use DrupalRector\Services\AddCommentService;
 use PhpParser\Node;
 use Rector\Core\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
@@ -22,7 +22,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 final class EntityInterfaceLinkRector extends AbstractRector
 {
     /**
-     * @var \DrupalRector\Utility\AddCommentService
+     * @var \DrupalRector\Services\AddCommentService
      */
     private AddCommentService $commentService;
 

@@ -5,7 +5,7 @@ declare(strict_types=1);
 use DrupalFinder\DrupalFinder;
 use DrupalRector\Set\Drupal8SetList;
 use DrupalRector\Set\Drupal9SetList;
-use DrupalRector\Utility\AddCommentService;
+use DrupalRector\Services\AddCommentService;
 use Rector\Config\RectorConfig;
 
 return static function (RectorConfig $rectorConfig): void {

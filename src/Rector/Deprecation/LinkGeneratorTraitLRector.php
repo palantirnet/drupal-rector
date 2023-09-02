@@ -2,7 +2,7 @@
 
 namespace DrupalRector\Rector\Deprecation;
 
-use DrupalRector\Utility\AddCommentService;
+use DrupalRector\Services\AddCommentService;
 use DrupalRector\Utility\FindParentByTypeTrait;
 use PhpParser\Node;
 use Rector\Core\Rector\AbstractRector;
@@ -26,7 +26,7 @@ final class LinkGeneratorTraitLRector extends AbstractRector
     use FindParentByTypeTrait;
 
     /**
-     * @var \DrupalRector\Utility\AddCommentService
+     * @var \DrupalRector\Services\AddCommentService
      */
     private AddCommentService $commentService;
 

@@ -3,7 +3,7 @@
 namespace DrupalRector\Rector\Deprecation;
 
 use DrupalRector\Rector\ValueObject\ExtensionPathConfiguration;
-use DrupalRector\Utility\AddCommentService;
+use DrupalRector\Services\AddCommentService;
 use PhpParser\Node;
 use Rector\Core\Contract\Rector\ConfigurableRectorInterface;
 use Rector\Core\Rector\AbstractRector;
@@ -18,7 +18,7 @@ class ExtensionPathRector extends AbstractRector implements ConfigurableRectorIn
     private array $configuration;
 
     /**
-     * @var \DrupalRector\Utility\AddCommentService
+     * @var \DrupalRector\Services\AddCommentService
      */
     private AddCommentService $commentService;
 

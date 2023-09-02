@@ -3,7 +3,7 @@
 namespace DrupalRector\Rector\Deprecation;
 
 use DrupalRector\Rector\ValueObject\AssertLegacyTraitConfiguration;
-use DrupalRector\Utility\AddCommentService;
+use DrupalRector\Services\AddCommentService;
 use DrupalRector\Utility\GetDeclaringSourceTrait;
 use PhpParser\Node;
 use PhpParser\Node\Arg;
@@ -24,7 +24,7 @@ class AssertLegacyTraitRector extends AbstractRector implements ConfigurableRect
     private array $assertLegacyTraitMethods;
 
     /**
-     * @var \DrupalRector\Utility\AddCommentService
+     * @var \DrupalRector\Services\AddCommentService
      */
     private AddCommentService $commentService;
 
@@ -45,8 +45,8 @@ class AssertLegacyTraitRector extends AbstractRector implements ConfigurableRect
 
         $this->assertLegacyTraitMethods = $configuration;
     }
-    
-    
+
+
 
     public function getNodeTypes(): array
     {

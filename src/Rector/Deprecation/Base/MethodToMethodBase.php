@@ -2,7 +2,7 @@
 
 namespace DrupalRector\Rector\Deprecation\Base;
 
-use DrupalRector\Utility\AddCommentService;
+use DrupalRector\Services\AddCommentService;
 use PhpParser\Node;
 use PHPStan\Type\ObjectType;
 use Rector\Core\Rector\AbstractRector;
@@ -41,7 +41,7 @@ abstract class MethodToMethodBase extends AbstractRector
     protected $className;
 
     /**
-     * @var \DrupalRector\Utility\AddCommentService
+     * @var \DrupalRector\Services\AddCommentService
      */
     private AddCommentService $commentService;
 

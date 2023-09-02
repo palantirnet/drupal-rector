@@ -3,7 +3,7 @@
 namespace DrupalRector\Rector\Deprecation;
 
 use DrupalRector\Rector\ValueObject\DBConfiguration;
-use DrupalRector\Utility\AddCommentService;
+use DrupalRector\Services\AddCommentService;
 use PhpParser\Node;
 use PhpParser\Node\Expr;
 use PhpParser\Node\Expr\MethodCall;
@@ -59,7 +59,7 @@ class DBRector extends AbstractRector implements ConfigurableRectorInterface
     private array $configuration;
 
     /**
-     * @var \DrupalRector\Utility\AddCommentService
+     * @var \DrupalRector\Services\AddCommentService
      */
     private AddCommentService $commentService;
 

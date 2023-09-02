@@ -2,7 +2,7 @@
 
 namespace DrupalRector\Rector\Deprecation;
 
-use DrupalRector\Utility\AddCommentService;
+use DrupalRector\Services\AddCommentService;
 use DrupalRector\Utility\GetDeclaringSourceTrait;
 use PhpParser\Node;
 use PhpParser\Node\Arg;
@@ -20,7 +20,7 @@ final class AssertNoFieldByNameRector extends AbstractRector
     protected string $comment = 'Verify the assertion: buttonNotExists() if this is for a button.';
 
     /**
-     * @var \DrupalRector\Utility\AddCommentService
+     * @var \DrupalRector\Services\AddCommentService
      */
     private AddCommentService $commentService;
 

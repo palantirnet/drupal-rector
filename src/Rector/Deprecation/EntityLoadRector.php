@@ -3,7 +3,7 @@
 namespace DrupalRector\Rector\Deprecation;
 
 use DrupalRector\Rector\ValueObject\EntityLoadConfiguration;
-use DrupalRector\Utility\AddCommentService;
+use DrupalRector\Services\AddCommentService;
 use PhpParser\Node;
 use Rector\Core\Contract\Rector\ConfigurableRectorInterface;
 use Rector\Core\Rector\AbstractRector;
@@ -31,7 +31,7 @@ final class EntityLoadRector extends AbstractRector implements ConfigurableRecto
     protected array $entityTypes;
 
     /**
-     * @var \DrupalRector\Utility\AddCommentService
+     * @var \DrupalRector\Services\AddCommentService
      */
     private AddCommentService $commentService;
 

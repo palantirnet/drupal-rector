@@ -2,7 +2,7 @@
 
 namespace DrupalRector\Rector\Deprecation;
 
-use DrupalRector\Utility\AddCommentService;
+use DrupalRector\Services\AddCommentService;
 use PhpParser\Node;
 use PhpParser\NodeDumper;
 use PHPStan\Analyser\Scope;
@@ -40,7 +40,7 @@ final class EntityManagerRector extends AbstractRector
     protected $parentClassScopeResolver;
 
     /**
-     * @var \DrupalRector\Utility\AddCommentService
+     * @var \DrupalRector\Services\AddCommentService
      */
     private AddCommentService $commentService;
 

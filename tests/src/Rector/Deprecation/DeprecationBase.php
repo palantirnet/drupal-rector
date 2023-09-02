@@ -2,7 +2,7 @@
 
 namespace DrupalRector\Tests\Rector\Deprecation;
 
-use DrupalRector\Utility\AddCommentService;
+use DrupalRector\Services\AddCommentService;
 use Rector\Config\RectorConfig;
 
 /**

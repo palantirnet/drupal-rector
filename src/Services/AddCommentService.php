@@ -1,6 +1,6 @@
 <?php
 
-namespace DrupalRector\Utility;
+namespace DrupalRector\Services;
 
 use PhpParser\Comment;
 use PhpParser\Node;
