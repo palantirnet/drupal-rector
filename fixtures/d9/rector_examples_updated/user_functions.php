@@ -1,5 +1,6 @@
 <?php
 
+use Drupal\Component\Utility\DeprecationHelper;
 function user_functions() {
     // user_password().
     $password = DeprecationHelper::backwardsCompatibleCall(\Drupal::VERSION, '9.1.0', fn() => user_password(), fn() => \Drupal::service('password_generator')->generate());
