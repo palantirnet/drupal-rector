@@ -5,7 +5,7 @@ namespace DrupalRector\Tests\Rector\Deprecation\UserPasswordRector;
 use Iterator;
 use Rector\Testing\PHPUnit\AbstractRectorTestCase;
 
-class UserPasswordRectorTest extends AbstractRectorTestCase {
+class RemoveDeprecationHelperRectorTest extends AbstractRectorTestCase {
 
     /**
      * @covers ::refactor
