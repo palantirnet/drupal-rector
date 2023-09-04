@@ -75,14 +75,18 @@ CODE_AFTER
             return null;
         }
 
+
+        $args = $node->getArgs();
         foreach ($this->configuration as $configuration) {
-            $introducedVersion = (string) $node->getArgs()[1]->value->value;
+            assert($args[1]->value instanceof Node\Scalar\String_);
+
+            $introducedVersion = (string) $args[1]->value->value;
             $introducedVersionParts = explode('.', $introducedVersion);
             if ((int) array_shift($introducedVersionParts) + 1 !== $configuration->getMajorVersion()) {
                 continue;
             }
 
-            $newCall = $node->getArgs()[3]->value;
+            $newCall = $args[3]->value;
             if ($newCall instanceof Node\Expr\ArrowFunction) {
                 return $newCall->expr;
             }
