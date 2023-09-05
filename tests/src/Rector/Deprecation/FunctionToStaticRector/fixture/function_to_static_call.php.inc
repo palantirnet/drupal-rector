@@ -16,10 +16,11 @@ function simple_example_os_temp() {
 -----
 <?php
 
+use Drupal\Core\Site\SettingsEditor;
 function simple_example() {
     $settings = [];
     $filename = 'simple_filename.yaml';
-    \Drupal\Core\Site\SettingsEditor::rewrite($filename, $settings);
+    SettingsEditor::rewrite($filename, $settings);
 }
 
 /**
