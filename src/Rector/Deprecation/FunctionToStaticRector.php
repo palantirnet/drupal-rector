@@ -52,7 +52,7 @@ class FunctionToStaticRector extends AbstractRector implements ConfigurableRecto
     public function refactor(Node $node): ?Node {
         foreach ($this->configuration as $configuration) {
             if ($this->getName($node) === $configuration->getDeprecatedFunctionName()) {
-                return new Node\Expr\StaticCall(new Node\Name\FullyQualified($configuration->getClassName()), $configuration->getDeprecatedFunctionName());
+                return new Node\Expr\StaticCall(new Node\Name\FullyQualified($configuration->getClassName()), $configuration->getMethodName());
             }
         }
         return NULL;
