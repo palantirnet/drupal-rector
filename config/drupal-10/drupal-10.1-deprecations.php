@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 use DrupalRector\Rector\Deprecation\FunctionToStaticRector;
 use DrupalRector\Rector\ValueObject\FunctionToStaticConfiguration;
-use DrupalRector\Set\Drupal10SetList;
 use Rector\Config\RectorConfig;
 use Rector\PHPUnit\Set\PHPUnitLevelSetList;
 use Rector\Symfony\Set\SymfonyLevelSetList;
