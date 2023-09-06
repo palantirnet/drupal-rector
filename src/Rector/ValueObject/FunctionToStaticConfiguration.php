@@ -4,11 +4,11 @@ namespace DrupalRector\Rector\ValueObject;
 
 class FunctionToStaticConfiguration {
 
-    protected string $deprecatedFunctionName = 'file_directory_os_temp';
+    protected string $deprecatedFunctionName;
 
-    protected string $className = 'Drupal\Component\FileSystem\FileSystem';
+    protected string $className;
 
-    protected string $methodName = 'getOsTemporaryDirectory';
+    protected string $methodName;
 
     /**
      * @param string $deprecatedFunctionName Deprecated function name
