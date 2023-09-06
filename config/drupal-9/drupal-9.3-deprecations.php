@@ -5,6 +5,7 @@ declare(strict_types=1);
 use DrupalRector\Rector\Deprecation\FileBuildUriRector;
 use DrupalRector\Rector\Deprecation\FileUrlGenerator;
 use DrupalRector\Rector\Deprecation\FunctionToServiceRector;
+use DrupalRector\Rector\Deprecation\SystemSortByInfoNameRector;
 use DrupalRector\Rector\ValueObject\FunctionToServiceConfiguration;
 use DrupalRector\Rector\ValueObject\ExtensionPathConfiguration;
 
@@ -32,4 +33,7 @@ return static function (\Rector\Config\RectorConfig $rectorConfig): void {
 
     // Change record: https://www.drupal.org/node/3223091.
     $rectorConfig->rule(FileBuildUriRector::class);
+
+    // Change record: https://www.drupal.org/node/3225999
+    $rectorConfig->rule(SystemSortByInfoNameRector::class);
 };
