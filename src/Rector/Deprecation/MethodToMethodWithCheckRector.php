@@ -7,6 +7,7 @@ use DrupalRector\Utility\AddCommentTrait;
 use PhpParser\Node;
 use PHPStan\Type\ObjectType;
 use Rector\Core\Contract\Rector\ConfigurableRectorInterface;
+use Rector\Core\Exception\ShouldNotHappenException;
 use Rector\Core\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\ConfiguredCodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
@@ -60,30 +61,27 @@ class MethodToMethodWithCheckRector extends AbstractRector implements Configurab
     public function refactor(Node $node): ?Node {
         assert($node instanceof Node\Stmt\Expression);
 
-        $isMethodCall = $node->expr instanceof Node\Expr\MethodCall;
-        $isAssignedMethodCall = $node->expr instanceof Node\Expr\Assign && $node->expr->expr instanceof Node\Expr\MethodCall;
-
-        if (!$isMethodCall && !$isAssignedMethodCall) {
+        if (!$node->expr instanceof Node\Expr\MethodCall && !($node->expr instanceof Node\Expr\Assign && $node->expr->expr instanceof Node\Expr\MethodCall)) {
             return NULL;
         }
 
         foreach ($this->configuration as $configuration) {
-            if ($isMethodCall && $this->getName($node->expr->name) !== $configuration->getDeprecatedMethodName()) {
+            if ($node->expr instanceof Node\Expr\MethodCall && $this->getName($node->expr->name) !== $configuration->getDeprecatedMethodName()) {
                 continue;
             }
 
-            if ($isAssignedMethodCall && $this->getName($node->expr->expr->name) !== $configuration->getDeprecatedMethodName()) {
+            if ($node->expr instanceof Node\Expr\Assign && $node->expr->expr instanceof Node\Expr\MethodCall && $this->getName($node->expr->expr->name) !== $configuration->getDeprecatedMethodName()) {
                 continue;
             }
 
-            if ($isMethodCall) {
+            if ($node->expr instanceof Node\Expr\MethodCall) {
                 $methodNode = $this->refactorNode($node->expr, $node, $configuration);
                 if (is_null($methodNode)) {
                     continue;
                 }
                 $node->expr = $methodNode;
             }
-            elseif ($isAssignedMethodCall) {
+            elseif ($node->expr instanceof Node\Expr\Assign && $node->expr->expr instanceof Node\Expr\MethodCall) {
                 $methodNode = $this->refactorNode($node->expr->expr, $node, $configuration);
                 if (is_null($methodNode)) {
                     continue;
@@ -98,6 +96,8 @@ class MethodToMethodWithCheckRector extends AbstractRector implements Configurab
     }
 
     public function refactorNode(Node\Expr\MethodCall $node, Node\Stmt\Expression $statement, MethodToMethodWithCheckConfiguration $configuration): ?Node\Expr\MethodCall {
+        assert($node instanceof Node\Expr\MethodCall);
+
         $callerType = $this->nodeTypeResolver->getType($node->var);
         $expectedType = new ObjectType($configuration->getClassName());
 
@@ -108,13 +108,15 @@ class MethodToMethodWithCheckRector extends AbstractRector implements Configurab
         }
 
         if ($isSuperOf->maybe()) {
-            $node_var = $node->var->name;
 
             if ($node->var instanceof Node\Expr\Variable) {
+                $node_var = $node->var->name;
                 $node_var = "$$node_var";
-            }
-            if ($node->var instanceof Node\Expr\MethodCall) {
+            } else if ($node->var instanceof Node\Expr\MethodCall) {
+                $node_var = $node->var->name;
                 $node_var = "$node_var()";
+            } else {
+                throw new ShouldNotHappenException("Unexpected node type: " . get_class($node->var));
             }
             $className = $configuration->getClassName();
             $this->addDrupalRectorComment(
