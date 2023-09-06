@@ -18,9 +18,14 @@ use DrupalRector\Rector\Deprecation\SafeMarkupFormatRector;
 use DrupalRector\Rector\ValueObject\DBConfiguration;
 use DrupalRector\Rector\ValueObject\EntityLoadConfiguration;
 use DrupalRector\Rector\ValueObject\FunctionToServiceConfiguration;
+use DrupalRector\Services\AddCommentService;
 use Rector\Config\RectorConfig;
 
 return static function (RectorConfig $rectorConfig): void {
+    $rectorConfig->singleton(AddCommentService::class, function() {
+        return new AddCommentService();
+    });
+
     $rectorConfig->ruleWithConfiguration(DBRector::class, [
         // https://www.drupal.org/node/2993033
         new DBConfiguration('db_delete', 2),

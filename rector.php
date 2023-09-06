@@ -5,7 +5,6 @@ declare(strict_types=1);
 use DrupalFinder\DrupalFinder;
 use DrupalRector\Set\Drupal8SetList;
 use DrupalRector\Set\Drupal9SetList;
-use DrupalRector\Services\AddCommentService;
 use Rector\Config\RectorConfig;
 
 return static function (RectorConfig $rectorConfig): void {
@@ -31,8 +30,4 @@ return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->fileExtensions(['php', 'module', 'theme', 'install', 'profile', 'inc', 'engine']);
     $rectorConfig->importNames(true, false);
     $rectorConfig->importShortClasses(false);
-
-    $rectorConfig->singleton(AddCommentService::class, function() {
-        return new AddCommentService(true);
-    });
 };

@@ -9,9 +9,13 @@ use DrupalRector\Rector\Deprecation\FunctionToServiceRector;
 use DrupalRector\Rector\Deprecation\SystemSortByInfoNameRector;
 use DrupalRector\Rector\ValueObject\FunctionToServiceConfiguration;
 use DrupalRector\Rector\ValueObject\ExtensionPathConfiguration;
+use DrupalRector\Services\AddCommentService;
 use Rector\Config\RectorConfig;
 
 return static function (RectorConfig $rectorConfig): void {
+    $rectorConfig->singleton(AddCommentService::class, function() {
+        return new AddCommentService();
+    });
     // Change record: https://www.drupal.org/node/2940438.
     $rectorConfig->ruleWithConfiguration(ExtensionPathRector::class, [
         new ExtensionPathConfiguration('drupal_get_filename', 'getPathname'),

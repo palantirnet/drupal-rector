@@ -8,9 +8,13 @@ use DrupalRector\Rector\Deprecation\DrupalServiceRenameRector;
 use DrupalRector\Rector\Deprecation\FunctionToServiceRector;
 use DrupalRector\Rector\ValueObject\DrupalServiceRenameConfiguration;
 use DrupalRector\Rector\ValueObject\FunctionToServiceConfiguration;
+use DrupalRector\Services\AddCommentService;
 use Rector\Config\RectorConfig;
 
 return static function (RectorConfig $rectorConfig): void {
+    $rectorConfig->singleton(AddCommentService::class, function() {
+        return new AddCommentService();
+    });
     $rectorConfig->ruleWithConfiguration(DrupalServiceRenameRector::class, [
         new DrupalServiceRenameConfiguration('path.alias_repository', 'path_alias.repository'),
         new DrupalServiceRenameConfiguration('path.alias_whitelist', 'path_alias.whitelist'),
