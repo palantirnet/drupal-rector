@@ -11,7 +11,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 class RequestTimeConstRector extends AbstractRector
 {
-    protected $deprecatedConstant = 'REQUEST_TIME';
+    protected string $deprecatedConstant = 'REQUEST_TIME';
 
     /**
      * @inheritDoc
@@ -26,7 +26,9 @@ class RequestTimeConstRector extends AbstractRector
      */
     public function refactor(Node $node): ?Node
     {
-        if (! $this->isName($node->name, $this->deprecatedConstant)) {
+        assert($node instanceof Node\Expr\ConstFetch);
+
+        if (!$this->isName($node->name, $this->deprecatedConstant)) {
             return null;
         }
 

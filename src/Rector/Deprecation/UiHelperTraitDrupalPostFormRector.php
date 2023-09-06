@@ -79,7 +79,7 @@ CODE_AFTER
 
         if ($this->getName($node->expr->name) === 'drupalPostForm') {
             /** @var Node\Stmt[] $nodes */
-
+            $nodes = [];
             [$path, $edit, $button, $options, $htmlId] = $this->safeArgDestructure($node->expr);
 
             if ($htmlId === null) {

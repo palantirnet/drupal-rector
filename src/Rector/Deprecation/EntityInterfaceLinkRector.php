@@ -66,27 +66,25 @@ CODE_AFTER
     {
         assert($node instanceof Node\Stmt\Expression);
 
-        $isMethodCall = $node->expr instanceof Node\Expr\MethodCall;
-        $isAssignedMethodCall = $node->expr instanceof Node\Expr\Assign && $node->expr->expr instanceof Node\Expr\MethodCall;
-        if (!$isMethodCall && !$isAssignedMethodCall) {
+        if (!($node->expr instanceof Node\Expr\MethodCall) && !($node->expr instanceof Node\Expr\Assign && $node->expr->expr instanceof Node\Expr\MethodCall)) {
             return null;
         }
 
-        if ($isMethodCall && $this->getName($node->expr->name) !== 'link') {
+        if ($node->expr instanceof Node\Expr\MethodCall && $this->getName($node->expr->name) !== 'link') {
             return null;
         }
 
-        if ($isAssignedMethodCall && $this->getName($node->expr->expr->name) !== 'link') {
+        if (($node->expr instanceof Node\Expr\Assign && $node->expr->expr instanceof Node\Expr\MethodCall) && $this->getName($node->expr->expr->name) !== 'link') {
             return null;
         }
 
-        if ($isMethodCall) {
+        if ($node->expr instanceof Node\Expr\MethodCall) {
             $methodCall = $this->getMethodCall($node->expr, $node);
             $node->expr = $methodCall;
             return $node;
         }
 
-        if ($isAssignedMethodCall) {
+        if (($node->expr instanceof Node\Expr\Assign && $node->expr->expr instanceof Node\Expr\MethodCall)) {
             $methodCall = $this->getMethodCall($node->expr->expr, $node);
             $node->expr->expr = $methodCall;
             return $node;
@@ -94,13 +92,8 @@ CODE_AFTER
 
         return null;
     }
-
-    /**
-     * @param $expr
-     * @param Node\Stmt\Expression $node
-     * @return Node\Expr\MethodCall
-     */
-    public function getMethodCall($expr, Node\Stmt\Expression $node): Node\Expr\MethodCall
+    
+    public function getMethodCall(Node\Expr\MethodCall $expr, Node\Stmt\Expression $node): Node\Expr\MethodCall
     {
         $node_class_name = $this->getName($expr->var);
 

@@ -63,13 +63,14 @@ class GetMockRector extends AbstractRector implements ConfigurableRectorInterfac
      * @inheritdoc
      */
     public function refactor(Node $node): ?Node {
+        assert($node instanceof Node\Expr\MethodCall);
+
         $scope = $node->getAttribute(AttributeKey::SCOPE);
         if (!$scope instanceof Scope) {
             return NULL;
         }
 
         $parentClassName = $this->parentClassScopeResolver->resolveParentClassName($scope);
-        /* @var Node\Expr\MethodCall $node */
         // This checks for a method call with the method name of `getMock` and that
         // the variable calling `getMock` is `$this`, not some other variable call,
         // such as `$myOtherService->getMock` and have unintended consequences.
