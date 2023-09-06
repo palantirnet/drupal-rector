@@ -36,21 +36,6 @@ parameters:
 			path: config/drupal-phpunit-bootstrap-file.php
 
 		-
-			message: "#^Access to an undefined property PhpParser\\\\Node\\\\Expr\\:\\:\\$expr\\.$#"
-			count: 3
-			path: src/Rector/Deprecation/Base/MethodToMethodBase.php
-
-		-
-			message: "#^Access to an undefined property PhpParser\\\\Node\\\\Expr\\:\\:\\$name\\.$#"
-			count: 2
-			path: src/Rector/Deprecation/Base/MethodToMethodBase.php
-
-		-
-			message: "#^Parameter \\#1 \\$node of method DrupalRector\\\\Rector\\\\Deprecation\\\\Base\\\\MethodToMethodBase\\:\\:refactorNode\\(\\) expects PhpParser\\\\Node\\\\Expr\\\\MethodCall, PhpParser\\\\Node\\\\Expr given\\.$#"
-			count: 1
-			path: src/Rector/Deprecation/Base/MethodToMethodBase.php
-
-		-
 			message: "#^Access to an undefined property PhpParser\\\\Node\\\\Expr\\:\\:\\$value\\.$#"
 			count: 2
 			path: src/Rector/Deprecation/DBRector.php
