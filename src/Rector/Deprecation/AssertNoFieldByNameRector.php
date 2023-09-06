@@ -2,17 +2,24 @@
 
 namespace DrupalRector\Rector\Deprecation;
 
-use DrupalRector\Rector\Deprecation\Base\AssertLegacyTraitBase;
+use DrupalRector\Utility\AddCommentTrait;
+use DrupalRector\Utility\GetDeclaringSourceTrait;
 use PhpParser\Node;
+use PhpParser\Node\Arg;
+use PhpParser\Node\VariadicPlaceholder;
+use Rector\Core\Contract\Rector\ConfigurableRectorInterface;
+use Rector\Core\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
-final class AssertNoFieldByNameRector extends AssertLegacyTraitBase
+final class AssertNoFieldByNameRector extends AbstractRector implements ConfigurableRectorInterface
 {
+    use AddCommentTrait;
+    use GetDeclaringSourceTrait;
 
-    protected $deprecatedMethodName = 'assertNoFieldByName';
-    protected $methodName = 'fieldNotExists';
-    protected $comment = 'Verify the assertion: buttonNotExists() if this is for a button.';
+    protected string $deprecatedMethodName = 'assertNoFieldByName';
+    protected string $methodName = 'fieldNotExists';
+    protected string $comment = 'Verify the assertion: buttonNotExists() if this is for a button.';
 
     public function getRuleDefinition(): RuleDefinition
     {
@@ -35,28 +42,60 @@ CODE_AFTER
         ]);
     }
 
+    public function configure(array $configuration): void {
+        $this->configureNoticesAsComments($configuration);
+    }
+
+    public function getNodeTypes(): array
+    {
+        return [
+            Node\Stmt\Expression::class,
+        ];
+    }
+
     public function refactor(Node $node): ?Node
     {
-        assert($node instanceof Node\Expr\MethodCall);
-        if ($this->getName($node->name) !== $this->deprecatedMethodName) {
+        assert($node instanceof Node\Stmt\Expression);
+
+        if (!($node->expr instanceof Node\Expr\MethodCall)) {
             return null;
         }
 
-        $args = $node->args;
+        $expr = $node->expr;
+
+        if ($this->getName($expr->name) !== $this->deprecatedMethodName) {
+            return null;
+        }
+
+        $args = $expr->args;
         // If there was only one argument, we have to apply the default empty
         // string for the $value parameter.
         if (count($args) === 1) {
             $args[] = $this->nodeFactory->createArg('');
-            return $this->createAssertSessionMethodCall('fieldValueNotEquals', $args);
+            $node->expr = $this->createAssertSessionMethodCall('fieldValueNotEquals', $args);
+            return $node;
         }
 
         $valueArg = $args[1]->value;
         if ($valueArg instanceof Node\Expr\ConstFetch && \strtolower($valueArg->name->toString()) === 'null') {
             $this->addDrupalRectorComment($node, $this->comment);
-            return $this->createAssertSessionMethodCall('fieldNotExists', [$args[0]]);
+            $node->expr = $this->createAssertSessionMethodCall('fieldNotExists', [$args[0]]);
+            return $node;
         }
 
-        return $this->createAssertSessionMethodCall('fieldValueNotEquals', $args);
+        $node->expr = $this->createAssertSessionMethodCall('fieldValueNotEquals', $args);
+        return $node;
     }
 
+    /**
+     * @param string $method
+     * @param array<Arg|VariadicPlaceholder> $args
+     *
+     * @return \PhpParser\Node\Expr\MethodCall
+     */
+    protected function createAssertSessionMethodCall(string $method, array $args): Node\Expr\MethodCall
+    {
+        $assertSessionNode = $this->nodeFactory->createLocalMethodCall('assertSession');
+        return $this->nodeFactory->createMethodCall($assertSessionNode, $method, $args);
+    }
 }

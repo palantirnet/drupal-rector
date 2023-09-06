@@ -48,11 +48,7 @@ CODE_AFTER
         }
 
         if ($this->getDeclaringSource($node->expr) === 'Drupal\KernelTests\AssertLegacyTrait') {
-            if (method_exists($this, 'removeNode')) {
-                $this->removeNode($node);
-            } else {
-                return NodeTraverser::REMOVE_NODE;
-            }
+            return NodeTraverser::REMOVE_NODE;
         }
 
         return $node;

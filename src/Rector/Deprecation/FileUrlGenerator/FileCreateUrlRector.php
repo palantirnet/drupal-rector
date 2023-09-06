@@ -4,7 +4,6 @@ namespace DrupalRector\Rector\Deprecation\FileUrlGenerator;
 
 use PhpParser\Node;
 use Rector\Core\Rector\AbstractRector;
-use Rector\NodeTypeResolver\Node\AttributeKey;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
@@ -39,9 +38,11 @@ CODE_AFTER
         if ($this->getName($node->name) !== 'file_create_url') {
             return null;
         }
-        $parent = $node->getAttribute(AttributeKey::PARENT_NODE);
-        if ($parent instanceof Node\Arg) {
-            return null;
+        if ($node->hasAttribute('parent')) {
+            $parent = $node->getAttribute('parent');
+            if ($parent instanceof Node\Arg) {
+                return null;
+            }
         }
 
         $service = new Node\Expr\StaticCall(

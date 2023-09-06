@@ -3,13 +3,12 @@
 namespace DrupalRector\Rector\Deprecation;
 
 use DrupalRector\Utility\AddCommentTrait;
+use DrupalRector\Utility\FindParentByTypeTrait;
 use DrupalRector\Utility\TraitsByClassHelperTrait;
 use PhpParser\Comment;
 use PhpParser\Node;
 use PHPStan\PhpDocParser\Ast\PhpDoc\GenericTagValueNode;
 use PHPStan\PhpDocParser\Ast\PhpDoc\PhpDocTagNode;
-use PHPStan\Type\Generic\GenericClassStringType;
-use PHPStan\Type\StringType;
 use Rector\BetterPhpDocParser\PhpDocInfo\PhpDocInfo;
 use Rector\Core\Contract\Rector\ConfigurableRectorInterface;
 use Rector\NodeTypeResolver\Node\AttributeKey;
@@ -34,8 +33,9 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  */
 final class DrupalSetMessageRector extends AbstractRector implements ConfigurableRectorInterface
 {
-    use TraitsByClassHelperTrait;
     use AddCommentTrait;
+    use FindParentByTypeTrait;
+    use TraitsByClassHelperTrait;
 
     public function configure(array $configuration): void
     {
@@ -77,7 +77,7 @@ CODE_AFTER
     {
         /** @var Node\Expr\FuncCall $node */
         if ($this->getName($node->name) === 'drupal_set_message') {
-            $class = $this->betterNodeFinder->findParentType($node, Node\Stmt\Class_::class);
+            $class = $this->findParentType($node, Node\Stmt\Class_::class);
             if ($this->checkClassTypeHasTrait($class, 'Drupal\Core\Messenger\MessengerTrait')) {
                 $messenger_service = new Node\Expr\MethodCall(
                     new Node\Expr\Variable('this'),
@@ -148,12 +148,13 @@ CODE_AFTER
                     // Since we did not rename the function, Rector will process
                     // this node multiple times. So we need to flag it with the
                     // @noRector tag.
-                    $parent_node = $node->getAttribute(AttributeKey::PARENT_NODE);
-                    assert($parent_node instanceof Node);
-                    $comments = $parent_node->getAttribute(AttributeKey::COMMENTS);
-                    $comments[] = new Comment('// @noRector');
-                    $parent_node->setAttribute(AttributeKey::COMMENTS, $comments);
-
+                    if ($node->hasAttribute('parent')) {
+                        $parent_node = $node->getAttribute('parent');
+                        assert($parent_node instanceof Node);
+                        $comments = $parent_node->getAttribute(AttributeKey::COMMENTS);
+                        $comments[] = new Comment('// @noRector');
+                        $parent_node->setAttribute(AttributeKey::COMMENTS, $comments);
+                    }
                     // The comments for this node have already been processed
                     // and stored in an object hash. We need to manually add the
                     // tag ourselves to the phpDoc object to prevent further

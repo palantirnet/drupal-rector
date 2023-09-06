@@ -15,7 +15,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  */
 final class ProtectedStaticModulesPropertyRector extends AbstractRector
 {
-    private $visibilityManipulator;
+    private VisibilityManipulator $visibilityManipulator;
 
     public function __construct(VisibilityManipulator $visibilityManipulator)
     {
