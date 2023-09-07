@@ -1,6 +1,5 @@
 <?php
 
-use Drupal\Core\Extension\ModuleHandler;
 /**
  * A simple example using the minimum number of arguments.
  */
