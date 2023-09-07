@@ -31,7 +31,7 @@ class ModuleLoadInstallRector extends AbstractRector
         if ($this->getName($node->name) === 'module_load_install') {
             $args = $node->getArgs();
             $args[] = new Node\Arg(new Node\Scalar\String_('install'));
-            return new Node\Expr\StaticCall(new Node\Name\FullyQualified('Drupal\Core\Extension\ModuleHandler'), 'loadInclude', $args);
+            return $this->nodeFactory->createMethodCall($this->nodeFactory->createStaticCall('Drupal', 'moduleHandler'), 'loadInclude', $args);
         }
 
         return null;

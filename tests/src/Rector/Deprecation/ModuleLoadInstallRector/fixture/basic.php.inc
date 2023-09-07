@@ -17,9 +17,9 @@ function simple_example() {
  * A simple example using the minimum number of arguments.
  */
 function simple_example() {
-    \Drupal\Core\Extension\ModuleHandler::loadInclude('example', 'install');
+    \Drupal::moduleHandler()->loadInclude('example', 'install');
 
     $module = 'simple';
-    \Drupal\Core\Extension\ModuleHandler::loadInclude($module, 'install');
+    \Drupal::moduleHandler()->loadInclude($module, 'install');
 }
 ?>
