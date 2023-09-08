@@ -10,4 +10,6 @@ return static function (RectorConfig $rectorConfig): void {
         new FunctionToEntityTypeStorageConfiguration('taxonomy_terms_static_reset', 'taxonomy_term', 'resetCache'),
         new FunctionToEntityTypeStorageConfiguration('taxonomy_vocabulary_static_reset', 'taxonomy_vocabulary', 'resetCache'),
     ]);
+
+    DeprecationBase::addClass(\DrupalRector\Rector\Deprecation\TaxonomyVocabularyGetNamesRector::class, $rectorConfig, FALSE);
 };

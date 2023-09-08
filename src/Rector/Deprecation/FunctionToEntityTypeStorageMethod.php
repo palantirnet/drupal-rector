@@ -39,16 +39,20 @@ class FunctionToEntityTypeStorageMethod extends AbstractRector implements Config
             [
                 new ConfiguredCodeSample(
                     <<<'CODE_BEFORE'
-        $path = drupal_realpath($path);
+        taxonomy_terms_static_reset();
+
+        taxonomy_vocabulary_static_reset($vids);
         CODE_BEFORE
                     ,
                     <<<'CODE_AFTER'
-        $path = \Drupal::service('file_system')
-            ->realpath($path);
+        \Drupal::entityTypeManager()->getStorage('taxonomy_term')->resetCache();
+
+        \Drupal::entityTypeManager()->getStorage('taxonomy_vocabulary')->resetCache($vids);
         CODE_AFTER
                     ,
                     [
-                        new FunctionToServiceConfiguration('todo', 'todo', 'todo'),
+                        new FunctionToEntityTypeStorageConfiguration('taxonomy_terms_static_reset', 'taxonomy_term', 'resetCache'),
+                        new FunctionToEntityTypeStorageConfiguration('taxonomy_vocabulary_static_reset', 'taxonomy_vocabulary', 'resetCache'),
                     ]
                 ),
             ]
