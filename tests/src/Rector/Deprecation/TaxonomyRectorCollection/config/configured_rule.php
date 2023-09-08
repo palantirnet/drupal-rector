@@ -1,6 +1,7 @@
 <?php declare(strict_types=1);
 
 use DrupalRector\Rector\Deprecation\FunctionToEntityTypeStorageMethod;
+use DrupalRector\Rector\Deprecation\TaxonomyImplodeTagsRector;
 use DrupalRector\Rector\Deprecation\TaxonomyTermLoadMultipleByNameRector;
 use DrupalRector\Rector\Deprecation\TaxonomyVocabularyGetNamesDrupalStaticResetRector;
 use DrupalRector\Rector\Deprecation\TaxonomyVocabularyGetNamesRector;
@@ -17,4 +18,6 @@ return static function (RectorConfig $rectorConfig): void {
     DeprecationBase::addClass(TaxonomyVocabularyGetNamesRector::class, $rectorConfig, FALSE);
     DeprecationBase::addClass(TaxonomyTermLoadMultipleByNameRector::class, $rectorConfig, FALSE);
     DeprecationBase::addClass(TaxonomyVocabularyGetNamesDrupalStaticResetRector::class, $rectorConfig, FALSE);
+
+    DeprecationBase::addClass(TaxonomyImplodeTagsRector::class, $rectorConfig, FALSE);
 };
