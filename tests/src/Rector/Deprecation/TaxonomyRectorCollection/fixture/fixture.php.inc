@@ -28,12 +28,7 @@ function full_example() {
 function full_example() {
     $vids = \Drupal::entityQuery('taxonomy_vocabulary')->execute();
 
-    $storage = \Drupal::entityTypeManager()
-        ->getStorage('taxonomy_term');
-    $terms = $storage->loadByProperties([
-        'name' => 'Foo',
-        'vid' => 'topics',
-    ]);?
+    $terms = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->loadByProperties(['name' => 'Foo', 'vid' => 'topics']);
 
     $url = taxonomy_term_uri($term);?
 
