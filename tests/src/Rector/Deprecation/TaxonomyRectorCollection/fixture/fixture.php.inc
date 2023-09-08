@@ -40,7 +40,7 @@ function full_example() {
 
     $name = $term->label();?
 
-    \Drupal::entityTypeManager()->getStorage('taxonomy_vocabulary')->resetCache();?
+    \Drupal::entityTypeManager()->getStorage('taxonomy_vocabulary')->resetCache();
 }
 
 ?>
