@@ -14,7 +14,7 @@ abstract class AbstractDrupalCoreRector extends AbstractRector implements Drupal
 {
     public function refactor(Node $node)
     {
-        $drupalVersion = substr(\Drupal::VERSION, -4) === '-dev' ? str_replace(['.x-dev', '-dev'], '.0', \Drupal::VERSION) : \Drupal::VERSION;
+        $drupalVersion = str_replace(['.x-dev', '-dev'], '.0', \Drupal::VERSION);
         if (version_compare($drupalVersion, $this->getVersion(), '<')) {
             return null;
         }
