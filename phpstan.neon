@@ -6,5 +6,7 @@ parameters:
 		- rector.php
 	bootstrapFiles:
 	    - vendor/rector/rector/vendor/autoload.php
+	dynamicConstantNames:
+		- Drupal::VERSION
 includes:
 	- phpstan-baseline.neon
