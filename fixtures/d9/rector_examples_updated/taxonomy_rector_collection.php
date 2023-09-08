@@ -1,5 +1,6 @@
 <?php
 
+use \Drupal\Core\Entity\Element\EntityAutocomplete;
 function full_example() {
     $vids = \Drupal::entityQuery('taxonomy_vocabulary')->execute();
 
@@ -11,7 +12,7 @@ function full_example() {
 
     \Drupal::entityTypeManager()->getStorage('taxonomy_vocabulary')->resetCache($vids);
 
-    \Drupal\Core\Entity\Element\EntityAutocomplete::getEntityLabels();
+    EntityAutocomplete::getEntityLabels();
 
     $name = $term->label();
 
