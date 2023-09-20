@@ -56,10 +56,7 @@ return static function (RectorConfig $rectorConfig): void {
 
     $rectorConfig->rule(EntityInterfaceLinkRector::class);
 
-    $rectorConfig->rule(EntityInterfaceUrlInfoRector::class);
-
     $rectorConfig->ruleWithConfiguration(MethodToMethodWithCheckRector::class, [
-        'drupal_rector_notices_as_comments' => '%drupal_rector_notices_as_comments%',
         // https://www.drupal.org/node/2614344
         new MethodToMethodWithCheckConfiguration('Drupal\Core\Entity\EntityInterface', 'urlInfo', 'toUrl'),
     ]);

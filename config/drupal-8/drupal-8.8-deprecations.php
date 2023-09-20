@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-use DrupalRector\Rector\Deprecation\EntityTypeGetLowercaseLabelRector;
 use DrupalRector\Rector\Deprecation\MethodToMethodWithCheckRector;
 use DrupalRector\Rector\Deprecation\FileDefaultSchemeRector;
 use DrupalRector\Rector\Deprecation\DrupalServiceRenameRector;
@@ -42,10 +41,7 @@ return static function (RectorConfig $rectorConfig): void {
     ]);
 
     $rectorConfig->ruleWithConfiguration(MethodToMethodWithCheckRector::class, [
-        'drupal_rector_notices_as_comments' => '%drupal_rector_notices_as_comments%',
         // https://www.drupal.org/node/3075567
         new MethodToMethodWithCheckConfiguration('Drupal\Core\Entity\EntityTypeInterface', 'getLowercaseLabel', 'getSingularLabel'),
     ]);
-
-    $rectorConfig->rule(EntityTypeGetLowercaseLabelRector::class);
 };

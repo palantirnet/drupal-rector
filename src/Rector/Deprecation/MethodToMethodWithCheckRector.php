@@ -3,7 +3,7 @@
 namespace DrupalRector\Rector\Deprecation;
 
 use DrupalRector\Rector\ValueObject\MethodToMethodWithCheckConfiguration;
-use DrupalRector\Utility\AddCommentTrait;
+use DrupalRector\Services\AddCommentService;
 use PhpParser\Node;
 use PHPStan\Type\ObjectType;
 use Rector\Core\Contract\Rector\ConfigurableRectorInterface;
@@ -24,16 +24,21 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  */
 class MethodToMethodWithCheckRector extends AbstractRector implements ConfigurableRectorInterface {
 
-    use AddCommentTrait;
-
     /**
      * @var MethodToMethodWithCheckConfiguration[]
      */
     private array $configuration;
 
-    public function configure(array $configuration): void {
-        $this->configureNoticesAsComments($configuration);
+    /**
+     * @var \DrupalRector\Services\AddCommentService
+     */
+    private AddCommentService $commentService;
 
+    public function __construct(AddCommentService $commentService) {
+        $this->commentService = $commentService;
+    }
+
+    public function configure(array $configuration): void {
         foreach ($configuration as $value) {
             if (!($value instanceof MethodToMethodWithCheckConfiguration)) {
                 throw new \InvalidArgumentException(sprintf(
@@ -119,7 +124,7 @@ class MethodToMethodWithCheckRector extends AbstractRector implements Configurab
                 throw new ShouldNotHappenException("Unexpected node type: " . get_class($node->var));
             }
             $className = $configuration->getClassName();
-            $this->addDrupalRectorComment(
+            $this->commentService->addDrupalRectorComment(
                 $statement,
                 "Please confirm that `$node_var` is an instance of `$className`. Only the method name and not the class name was checked for this replacement, so this may be a false positive."
             );
