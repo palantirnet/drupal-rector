@@ -7,7 +7,6 @@ use Rector\Config\RectorConfig;
 
 return static function (RectorConfig $rectorConfig): void {
     DeprecationBase::addClass(AssertLegacyTraitRector::class, $rectorConfig, TRUE, [
-        'drupal_rector_notices_as_comments' => '%drupal_rector_notices_as_comments%',
         new AssertLegacyTraitConfiguration('assertLinkByHref', 'linkByHrefExists'),
         new AssertLegacyTraitConfiguration('assertLink', 'linkExists'),
         new AssertLegacyTraitConfiguration('assertNoEscaped', 'assertNoEscaped'),

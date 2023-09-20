@@ -6,8 +6,13 @@ use DrupalRector\Rector\Deprecation\ConstantToClassConstantRector;
 use DrupalRector\Rector\Deprecation\FunctionToServiceRector;
 use DrupalRector\Rector\ValueObject\ConstantToClassConfiguration;
 use DrupalRector\Rector\ValueObject\FunctionToServiceConfiguration;
+use DrupalRector\Services\AddCommentService;
+use Rector\Config\RectorConfig;
 
-return static function (\Rector\Config\RectorConfig $rectorConfig): void {
+return static function (RectorConfig $rectorConfig): void {
+    $rectorConfig->singleton(AddCommentService::class, function() {
+        return new AddCommentService();
+    });
     $rectorConfig->ruleWithConfiguration(FunctionToServiceRector::class, [
         // https://www.drupal.org/node/3006851
         new FunctionToServiceConfiguration('file_prepare_directory', 'file_system', 'prepareDirectory'),
