@@ -8,16 +8,17 @@ use DrupalRector\Rector\Deprecation\DrupalURLRector;
 use DrupalRector\Rector\Deprecation\EntityCreateRector;
 use DrupalRector\Rector\Deprecation\EntityDeleteMultipleRector;
 use DrupalRector\Rector\Deprecation\EntityInterfaceLinkRector;
-use DrupalRector\Rector\Deprecation\EntityInterfaceUrlInfoRector;
 use DrupalRector\Rector\Deprecation\EntityLoadRector;
 use DrupalRector\Rector\Deprecation\EntityManagerRector;
 use DrupalRector\Rector\Deprecation\EntityViewRector;
 use DrupalRector\Rector\Deprecation\FunctionToServiceRector;
 use DrupalRector\Rector\Deprecation\LinkGeneratorTraitLRector;
+use DrupalRector\Rector\Deprecation\MethodToMethodWithCheckRector;
 use DrupalRector\Rector\Deprecation\SafeMarkupFormatRector;
 use DrupalRector\Rector\ValueObject\DBConfiguration;
 use DrupalRector\Rector\ValueObject\EntityLoadConfiguration;
 use DrupalRector\Rector\ValueObject\FunctionToServiceConfiguration;
+use DrupalRector\Rector\ValueObject\MethodToMethodWithCheckConfiguration;
 use DrupalRector\Services\AddCommentService;
 use Rector\Config\RectorConfig;
 
@@ -56,6 +57,12 @@ return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->rule(EntityInterfaceLinkRector::class);
 
     $rectorConfig->rule(EntityInterfaceUrlInfoRector::class);
+
+    $rectorConfig->ruleWithConfiguration(MethodToMethodWithCheckRector::class, [
+        'drupal_rector_notices_as_comments' => '%drupal_rector_notices_as_comments%',
+        // https://www.drupal.org/node/2614344
+        new MethodToMethodWithCheckConfiguration('Drupal\Core\Entity\EntityInterface', 'urlInfo', 'toUrl'),
+    ]);
 
     $rectorConfig->ruleWithConfiguration(EntityLoadRector::class, [
         new EntityLoadConfiguration('entity'),
