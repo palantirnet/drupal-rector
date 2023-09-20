@@ -1,29 +1,24 @@
 <?php
 
-namespace DrupalRector\Utility;
+namespace DrupalRector\Services;
 
 use PhpParser\Comment;
 use PhpParser\Node;
 use Rector\NodeTypeResolver\Node\AttributeKey;
-use Symplify\PackageBuilder\Parameter\ParameterProvider;
 
 /**
  * Provides an easy way to add a comment to a statement.
  */
-trait AddCommentTrait
+class AddCommentService
 {
 
     protected bool $noticesAsComments = false;
 
     /**
-     * @param array<string,bool>|array<class-string,object> $configuration
-     *
-     * @return void
+     * @param bool $noticesAsComments
      */
-    protected function configureNoticesAsComments(array &$configuration): void
-    {
-        $this->noticesAsComments = $configuration['drupal_rector_notices_as_comments'] ?? false;
-        unset($configuration['drupal_rector_notices_as_comments']);
+    public function __construct(bool $noticesAsComments = true) {
+        $this->noticesAsComments = $noticesAsComments;
     }
 
     /**
@@ -34,7 +29,7 @@ trait AddCommentTrait
      *
      * @return void
      */
-    protected function addDrupalRectorComment(Node\Stmt\Expression $node, string $comment) {
+    public function addDrupalRectorComment(Node\Stmt\Expression $node, string $comment) {
         // Referencing the `parameterProvider` property in this way isn't a
         // great idea since we are assuming the property exists, but it does in
         // `AbstractRector` which all of our rules extend in some form or

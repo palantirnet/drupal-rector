@@ -2,24 +2,31 @@
 
 namespace DrupalRector\Rector\Deprecation;
 
-use DrupalRector\Utility\AddCommentTrait;
+use DrupalRector\Services\AddCommentService;
 use DrupalRector\Utility\GetDeclaringSourceTrait;
 use PhpParser\Node;
 use PhpParser\Node\Arg;
 use PhpParser\Node\VariadicPlaceholder;
-use Rector\Core\Contract\Rector\ConfigurableRectorInterface;
 use Rector\Core\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
-final class AssertNoFieldByNameRector extends AbstractRector implements ConfigurableRectorInterface
+final class AssertNoFieldByNameRector extends AbstractRector
 {
-    use AddCommentTrait;
     use GetDeclaringSourceTrait;
 
     protected string $deprecatedMethodName = 'assertNoFieldByName';
     protected string $methodName = 'fieldNotExists';
     protected string $comment = 'Verify the assertion: buttonNotExists() if this is for a button.';
+
+    /**
+     * @var \DrupalRector\Services\AddCommentService
+     */
+    private AddCommentService $commentService;
+
+    public function __construct(AddCommentService $commentService) {
+        $this->commentService = $commentService;
+    }
 
     public function getRuleDefinition(): RuleDefinition
     {
@@ -40,10 +47,6 @@ CODE_BEFORE
 CODE_AFTER
             )
         ]);
-    }
-
-    public function configure(array $configuration): void {
-        $this->configureNoticesAsComments($configuration);
     }
 
     public function getNodeTypes(): array
@@ -78,7 +81,7 @@ CODE_AFTER
 
         $valueArg = $args[1]->value;
         if ($valueArg instanceof Node\Expr\ConstFetch && \strtolower($valueArg->name->toString()) === 'null') {
-            $this->addDrupalRectorComment($node, $this->comment);
+            $this->commentService->addDrupalRectorComment($node, $this->comment);
             $node->expr = $this->createAssertSessionMethodCall('fieldNotExists', [$args[0]]);
             return $node;
         }

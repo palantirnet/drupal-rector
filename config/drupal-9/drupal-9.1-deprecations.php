@@ -16,9 +16,15 @@ use DrupalRector\Rector\Deprecation\PassRector;
 use DrupalRector\Rector\Deprecation\UiHelperTraitDrupalPostFormRector;
 use DrupalRector\Rector\Deprecation\UserPasswordRector;
 use DrupalRector\Rector\ValueObject\AssertLegacyTraitConfiguration;
+use Rector\Config\RectorConfig;
 use Rector\PHPUnit\Set\PHPUnitSetList;
+use DrupalRector\Services\AddCommentService;
 
-return static function (\Rector\Config\RectorConfig $rectorConfig): void {
+return static function (RectorConfig $rectorConfig): void {
+    $rectorConfig->singleton(AddCommentService::class, function() {
+        return new AddCommentService();
+    });
+
     $rectorConfig->sets([
         PHPUnitSetList::PHPUNIT_90,
     ]);
@@ -32,14 +38,11 @@ return static function (\Rector\Config\RectorConfig $rectorConfig): void {
 
     $rectorConfig->rule(AssertNoUniqueTextRector::class);
     $rectorConfig->rule(AssertFieldByNameRector::class);
-    $rectorConfig->ruleWithConfiguration(AssertNoFieldByNameRector::class, [
-            'drupal_rector_notices_as_comments' => '%drupal_rector_notices_as_comments%',
-        ]);
+    $rectorConfig->rule(AssertNoFieldByNameRector::class);
     $rectorConfig->rule(AssertFieldByIdRector::class);
 
 
     $rectorConfig->ruleWithConfiguration(\DrupalRector\Rector\Deprecation\AssertLegacyTraitRector::class, [
-        'drupal_rector_notices_as_comments' => '%drupal_rector_notices_as_comments%',
         new AssertLegacyTraitConfiguration('assertLinkByHref', 'linkByHrefExists'),
         new AssertLegacyTraitConfiguration('assertLink', 'linkExists'),
         new AssertLegacyTraitConfiguration('assertNoEscaped', 'assertNoEscaped'),

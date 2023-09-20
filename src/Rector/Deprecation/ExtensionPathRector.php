@@ -3,7 +3,7 @@
 namespace DrupalRector\Rector\Deprecation;
 
 use DrupalRector\Rector\ValueObject\ExtensionPathConfiguration;
-use DrupalRector\Utility\AddCommentTrait;
+use DrupalRector\Services\AddCommentService;
 use PhpParser\Node;
 use Rector\Core\Contract\Rector\ConfigurableRectorInterface;
 use Rector\Core\Rector\AbstractRector;
@@ -12,17 +12,21 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 class ExtensionPathRector extends AbstractRector implements ConfigurableRectorInterface
 {
-    use AddCommentTrait;
-
     /**
      * @var ExtensionPathConfiguration[]
      */
     private array $configuration;
 
+    /**
+     * @var \DrupalRector\Services\AddCommentService
+     */
+    private AddCommentService $commentService;
+
+    public function __construct(AddCommentService $commentService) {
+        $this->commentService = $commentService;
+    }
     public function configure(array $configuration): void
     {
-        $this->configureNoticesAsComments($configuration);
-
         foreach ($configuration as $value) {
             if (!($value instanceof ExtensionPathConfiguration)) {
                 throw new \InvalidArgumentException(sprintf(
@@ -56,7 +60,7 @@ class ExtensionPathRector extends AbstractRector implements ConfigurableRectorIn
             }
             $args = $expr->getArgs();
             if (count($args) !== 2) {
-                $this->addDrupalRectorComment($node, "Invalid call to {$configuration->getFunctionName()}, cannot process.");
+                $this->commentService->addDrupalRectorComment($node, "Invalid call to {$configuration->getFunctionName()}, cannot process.");
                 return $node;
             }
             [$extensionType, $extensionName] = $args;
@@ -76,7 +80,7 @@ class ExtensionPathRector extends AbstractRector implements ConfigurableRectorIn
                 $methodArgs = [$extensionName];
             }
             else {
-                $this->addDrupalRectorComment(
+                $this->commentService->addDrupalRectorComment(
                     $node,
                     'Unsupported extension type encountered, using extension.path.resolver instead of extension.list'
                 );

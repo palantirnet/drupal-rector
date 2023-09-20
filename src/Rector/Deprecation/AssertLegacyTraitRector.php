@@ -3,12 +3,11 @@
 namespace DrupalRector\Rector\Deprecation;
 
 use DrupalRector\Rector\ValueObject\AssertLegacyTraitConfiguration;
-use DrupalRector\Utility\AddCommentTrait;
+use DrupalRector\Services\AddCommentService;
 use DrupalRector\Utility\GetDeclaringSourceTrait;
 use PhpParser\Node;
 use PhpParser\Node\Arg;
 use PhpParser\Node\VariadicPlaceholder;
-use PhpParser\NodeDumper;
 use Rector\Core\Contract\Rector\ConfigurableRectorInterface;
 use Rector\Core\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\ConfiguredCodeSample;
@@ -17,7 +16,6 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 class AssertLegacyTraitRector extends AbstractRector implements ConfigurableRectorInterface
 {
 
-    use AddCommentTrait;
     use GetDeclaringSourceTrait;
 
     /**
@@ -25,10 +23,17 @@ class AssertLegacyTraitRector extends AbstractRector implements ConfigurableRect
      */
     private array $assertLegacyTraitMethods;
 
+    /**
+     * @var \DrupalRector\Services\AddCommentService
+     */
+    private AddCommentService $commentService;
+
+    public function __construct(AddCommentService $commentService) {
+        $this->commentService = $commentService;
+    }
+
     public function configure(array $configuration): void
     {
-        $this->configureNoticesAsComments($configuration);
-
         foreach ($configuration as $value) {
             if (!($value instanceof AssertLegacyTraitConfiguration)) {
                 throw new \InvalidArgumentException(sprintf(
@@ -40,6 +45,8 @@ class AssertLegacyTraitRector extends AbstractRector implements ConfigurableRect
 
         $this->assertLegacyTraitMethods = $configuration;
     }
+
+
 
     public function getNodeTypes(): array
     {
@@ -81,7 +88,7 @@ class AssertLegacyTraitRector extends AbstractRector implements ConfigurableRect
             }
 
             if ($configuration->getComment() !== '') {
-                $this->addDrupalRectorComment($node, $configuration->getComment());
+                $this->commentService->addDrupalRectorComment($node, $configuration->getComment());
             }
 
             $args = $expr->args;

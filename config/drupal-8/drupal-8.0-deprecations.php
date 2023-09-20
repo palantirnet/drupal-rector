@@ -19,11 +19,15 @@ use DrupalRector\Rector\ValueObject\DBConfiguration;
 use DrupalRector\Rector\ValueObject\EntityLoadConfiguration;
 use DrupalRector\Rector\ValueObject\FunctionToServiceConfiguration;
 use DrupalRector\Rector\ValueObject\MethodToMethodWithCheckConfiguration;
+use DrupalRector\Services\AddCommentService;
 use Rector\Config\RectorConfig;
 
 return static function (RectorConfig $rectorConfig): void {
+    $rectorConfig->singleton(AddCommentService::class, function() {
+        return new AddCommentService();
+    });
+
     $rectorConfig->ruleWithConfiguration(DBRector::class, [
-        'drupal_rector_notices_as_comments' => '%drupal_rector_notices_as_comments%',
         // https://www.drupal.org/node/2993033
         new DBConfiguration('db_delete', 2),
         new DBConfiguration('db_insert', 2),
@@ -50,12 +54,9 @@ return static function (RectorConfig $rectorConfig): void {
 
     ]);
 
-    $rectorConfig->ruleWithConfiguration(EntityInterfaceLinkRector::class, [
-        'drupal_rector_notices_as_comments' => '%drupal_rector_notices_as_comments%',
-    ]);
+    $rectorConfig->rule(EntityInterfaceLinkRector::class);
 
     $rectorConfig->ruleWithConfiguration(MethodToMethodWithCheckRector::class, [
-        'drupal_rector_notices_as_comments' => '%drupal_rector_notices_as_comments%',
         // https://www.drupal.org/node/2614344
         new MethodToMethodWithCheckConfiguration('Drupal\Core\Entity\EntityInterface', 'urlInfo', 'toUrl'),
     ]);
@@ -65,18 +66,11 @@ return static function (RectorConfig $rectorConfig): void {
         new EntityLoadConfiguration('file'),
         new EntityLoadConfiguration('node'),
         new EntityLoadConfiguration('user'),
-        'drupal_rector_notices_as_comments' => '%drupal_rector_notices_as_comments%',
     ]);
 
     $rectorConfig->rule(EntityViewRector::class);
-
-    $rectorConfig->ruleWithConfiguration(EntityManagerRector::class, [
-            'drupal_rector_notices_as_comments' => '%drupal_rector_notices_as_comments%',
-        ]);
-
-    $rectorConfig->ruleWithConfiguration(LinkGeneratorTraitLRector::class, [
-            'drupal_rector_notices_as_comments' => '%drupal_rector_notices_as_comments%',
-        ]);
+    $rectorConfig->rule(EntityManagerRector::class);
+    $rectorConfig->rule(LinkGeneratorTraitLRector::class);
 
     $rectorConfig->rule(SafeMarkupFormatRector::class);
 };
