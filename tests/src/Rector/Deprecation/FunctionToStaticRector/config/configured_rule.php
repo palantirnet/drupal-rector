@@ -1,0 +1,13 @@
+<?php declare(strict_types=1);
+
+use DrupalRector\Rector\Deprecation\FunctionToStaticRector;
+use DrupalRector\Rector\ValueObject\FunctionToStaticConfiguration;
+use DrupalRector\Tests\Rector\Deprecation\DeprecationBase;
+use Rector\Config\RectorConfig;
+
+return static function (RectorConfig $rectorConfig): void {
+    DeprecationBase::addClass(FunctionToStaticRector::class, $rectorConfig, FALSE, [
+        new FunctionToStaticConfiguration('file_directory_os_temp', 'Drupal\Component\FileSystem\FileSystem', 'getOsTemporaryDirectory'),
+        new FunctionToStaticConfiguration('drupal_rewrite_settings', 'Drupal\Core\Site\SettingsEditor', 'rewrite', [0 => 1, 1 => 0]),
+    ]);
+};
