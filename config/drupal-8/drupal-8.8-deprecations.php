@@ -2,12 +2,13 @@
 
 declare(strict_types=1);
 
-use DrupalRector\Rector\Deprecation\EntityTypeGetLowercaseLabelRector;
+use DrupalRector\Rector\Deprecation\MethodToMethodWithCheckRector;
 use DrupalRector\Rector\Deprecation\FileDefaultSchemeRector;
 use DrupalRector\Rector\Deprecation\DrupalServiceRenameRector;
 use DrupalRector\Rector\Deprecation\FunctionToServiceRector;
 use DrupalRector\Rector\ValueObject\DrupalServiceRenameConfiguration;
 use DrupalRector\Rector\ValueObject\FunctionToServiceConfiguration;
+use DrupalRector\Rector\ValueObject\MethodToMethodWithCheckConfiguration;
 
 return static function (\Rector\Config\RectorConfig $rectorConfig): void {
     $rectorConfig->ruleWithConfiguration(DrupalServiceRenameRector::class, [
@@ -34,8 +35,9 @@ return static function (\Rector\Config\RectorConfig $rectorConfig): void {
         new FunctionToServiceConfiguration('file_uri_target', 'stream_wrapper_manager', 'getTarget'),
     ]);
 
-    $rectorConfig->ruleWithConfiguration(
-        EntityTypeGetLowercaseLabelRector::class, [
+    $rectorConfig->ruleWithConfiguration(MethodToMethodWithCheckRector::class, [
         'drupal_rector_notices_as_comments' => '%drupal_rector_notices_as_comments%',
+        // https://www.drupal.org/node/3075567
+        new MethodToMethodWithCheckConfiguration('Drupal\Core\Entity\EntityTypeInterface', 'getLowercaseLabel', 'getSingularLabel'),
     ]);
 };
