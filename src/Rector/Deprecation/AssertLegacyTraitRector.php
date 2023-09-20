@@ -29,7 +29,6 @@ class AssertLegacyTraitRector extends AbstractRector implements ConfigurableRect
     {
         $this->configureNoticesAsComments($configuration);
 
-
         foreach ($configuration as $value) {
             if (!($value instanceof AssertLegacyTraitConfiguration)) {
                 throw new \InvalidArgumentException(sprintf(
