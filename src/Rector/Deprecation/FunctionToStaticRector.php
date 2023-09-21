@@ -2,6 +2,7 @@
 
 namespace DrupalRector\Rector\Deprecation;
 
+use DrupalRector\Rector\AbstractDrupalCoreRector;
 use DrupalRector\Rector\ValueObject\FunctionToStaticConfiguration;
 use PhpParser\Node;
 use Rector\Core\Contract\Rector\ConfigurableRectorInterface;
@@ -17,12 +18,14 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  * What is covered:
  * - Static replacement
  */
-class FunctionToStaticRector extends AbstractRector implements ConfigurableRectorInterface
+class FunctionToStaticRector extends AbstractDrupalCoreRector implements ConfigurableRectorInterface
 {
     /**
      * @var array|FunctionToStaticConfiguration[]
      */
     private array $configuration;
+
+    protected string $version;
 
     /**
      * @inheritdoc
@@ -31,6 +34,14 @@ class FunctionToStaticRector extends AbstractRector implements ConfigurableRecto
         return [
             Node\Expr\FuncCall::class
         ];
+    }
+
+    public function getVersion(): string {
+        return $this->version;
+    }
+
+    public function setVersion(string $version): void {
+        $this->version = $version;
     }
 
     public function configure(array $configuration): void {
@@ -49,11 +60,13 @@ class FunctionToStaticRector extends AbstractRector implements ConfigurableRecto
     /**
      * @inheritdoc
      */
-    public function refactor(Node $node): ?Node {
+    public function doRefactor(Node $node): ?Node {
         assert($node instanceof Node\Expr\FuncCall);
 
         foreach ($this->configuration as $configuration) {
             if ($this->getName($node) === $configuration->getDeprecatedFunctionName()) {
+                $this->setVersion($configuration->getIntroducedVersion());
+
                 $args = $node->getArgs();
                 if (count($configuration->getArgumentReorder()) > 0) {
                     $origArgs = $node->getArgs();
@@ -85,7 +98,7 @@ $dir = \Drupal\Component\FileSystem\FileSystem::getOsTemporaryDirectory();
 CODE_AFTER
                 ,
                 [
-                    new FunctionToStaticConfiguration('file_directory_os_temp', 'Drupal\Component\FileSystem\FileSystem', 'getOsTemporaryDirectory'),
+                    new FunctionToStaticConfiguration('8.1.0', 'file_directory_os_temp', 'Drupal\Component\FileSystem\FileSystem', 'getOsTemporaryDirectory'),
                 ]
             )
         ]);
