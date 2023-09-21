@@ -6,7 +6,7 @@ use Iterator;
 use Rector\Testing\PHPUnit\AbstractRectorTestCase;
 use Symplify\SmartFileSystem\SmartFileInfo;
 
-class FunctionToStaticRector extends AbstractRectorTestCase {
+class FunctionToStaticRectorTest extends AbstractRectorTestCase {
 
     /**
      * @covers ::refactor

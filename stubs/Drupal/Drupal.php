@@ -5,5 +5,5 @@ if (class_exists(\Drupal::class)) {
 }
 
 class Drupal {
-    const VERSION = '9.1.0-dev';
+    const VERSION = '10.1.x-dev';
 }
