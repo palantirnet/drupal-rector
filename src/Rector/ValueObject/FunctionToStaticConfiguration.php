@@ -20,6 +20,7 @@ class FunctionToStaticConfiguration implements VersionedConfigurationInterface {
     private string $introducedVersion;
 
     /**
+     * @param string $introducedVersion Introduced version of this change
      * @param string $deprecatedFunctionName Deprecated function name
      * @param string $className Class to call static method on
      * @param string $methodName Method to call statically
