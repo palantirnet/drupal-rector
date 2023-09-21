@@ -2,7 +2,7 @@
 
 namespace DrupalRector\Rector;
 
-interface DrupalVersionedConfigurationInterface {
+interface VersionedConfigurationInterface {
 
     public function getIntroducedVersion(): string;
 

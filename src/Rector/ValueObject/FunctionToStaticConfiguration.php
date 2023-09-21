@@ -2,9 +2,9 @@
 
 namespace DrupalRector\Rector\ValueObject;
 
-use DrupalRector\Rector\DrupalVersionedConfigurationInterface;
+use DrupalRector\Rector\VersionedConfigurationInterface;
 
-class FunctionToStaticConfiguration implements DrupalVersionedConfigurationInterface {
+class FunctionToStaticConfiguration implements VersionedConfigurationInterface {
 
     protected string $deprecatedFunctionName;
 
