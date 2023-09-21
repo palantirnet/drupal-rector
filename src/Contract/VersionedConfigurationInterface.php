@@ -1,6 +1,6 @@
 <?php
 
-namespace DrupalRector\Rector;
+namespace DrupalRector\Contract;
 
 interface VersionedConfigurationInterface {
 

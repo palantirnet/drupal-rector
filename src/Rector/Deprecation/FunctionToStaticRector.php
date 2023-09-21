@@ -2,11 +2,11 @@
 
 namespace DrupalRector\Rector\Deprecation;
 
+use DrupalRector\Contract\VersionedConfigurationInterface;
 use DrupalRector\Rector\AbstractDrupalCoreRector;
 use DrupalRector\Rector\ValueObject\FunctionToStaticConfiguration;
 use PhpParser\Node;
 use Rector\Core\Contract\Rector\ConfigurableRectorInterface;
-use Rector\Core\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\ConfiguredCodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
@@ -18,14 +18,12 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  * What is covered:
  * - Static replacement
  */
-class FunctionToStaticRector extends AbstractDrupalCoreRector implements ConfigurableRectorInterface
+class FunctionToStaticRector extends AbstractDrupalCoreRector
 {
     /**
      * @var array|FunctionToStaticConfiguration[]
      */
-    private array $configuration;
-
-    protected string $version;
+    protected array $configuration;
 
     /**
      * @inheritdoc
@@ -34,14 +32,6 @@ class FunctionToStaticRector extends AbstractDrupalCoreRector implements Configu
         return [
             Node\Expr\FuncCall::class
         ];
-    }
-
-    public function getVersion(): string {
-        return $this->version;
-    }
-
-    public function setVersion(string $version): void {
-        $this->version = $version;
     }
 
     public function configure(array $configuration): void {
@@ -54,30 +44,26 @@ class FunctionToStaticRector extends AbstractDrupalCoreRector implements Configu
             }
         }
 
-        $this->configuration = $configuration;
+        parent::configure($configuration);
     }
 
-    /**
-     * @inheritdoc
-     */
-    public function doRefactor(Node $node): ?Node {
+    public function refactorWithConfiguration(Node $node, VersionedConfigurationInterface $configuration): ?Node {
         assert($node instanceof Node\Expr\FuncCall);
+        assert($configuration instanceof FunctionToStaticConfiguration);
 
-        foreach ($this->configuration as $configuration) {
-            if ($this->getName($node) === $configuration->getDeprecatedFunctionName()) {
-                $this->setVersion($configuration->getIntroducedVersion());
-
-                $args = $node->getArgs();
-                if (count($configuration->getArgumentReorder()) > 0) {
-                    $origArgs = $node->getArgs();
-                    foreach ($configuration->getArgumentReorder() as $oldPosition => $newPosition) {
-                        $args[$newPosition] = $origArgs[$oldPosition];
-                    }
+        if ($this->getName($node) === $configuration->getDeprecatedFunctionName()) {
+            $args = $node->getArgs();
+            if (count($configuration->getArgumentReorder()) > 0) {
+                $origArgs = $node->getArgs();
+                foreach ($configuration->getArgumentReorder() as $oldPosition => $newPosition) {
+                    $args[$newPosition] = $origArgs[$oldPosition];
                 }
-
-                return new Node\Expr\StaticCall(new Node\Name\FullyQualified($configuration->getClassName()), $configuration->getMethodName(), $args);
             }
+
+            $fullyQualified = new Node\Name\FullyQualified($configuration->getClassName());
+            return new Node\Expr\StaticCall($fullyQualified, $configuration->getMethodName(), $args);
         }
+
         return NULL;
     }
 
@@ -100,7 +86,41 @@ CODE_AFTER
                 [
                     new FunctionToStaticConfiguration('8.1.0', 'file_directory_os_temp', 'Drupal\Component\FileSystem\FileSystem', 'getOsTemporaryDirectory'),
                 ]
-            )
+            ),
+            new ConfiguredCodeSample(
+                <<<'CODE_BEFORE'
+$settings = [];
+$filename = 'simple_filename.yaml';
+drupal_rewrite_settings($settings, $filename);
+CODE_BEFORE
+                ,
+                <<<'CODE_AFTER'
+$settings = [];
+$filename = 'simple_filename.yaml';
+SettingsEditor::rewrite($filename, $settings);
+CODE_AFTER
+                ,
+                [
+                    new FunctionToStaticConfiguration('10.1.0', 'drupal_rewrite_settings', 'Drupal\Core\Site\SettingsEditor', 'rewrite', [0 => 1, 1 => 0]),
+                ]
+            ),
+            new ConfiguredCodeSample(
+                <<<'CODE_BEFORE'
+$settings = [];
+$filename = 'simple_filename.yaml';
+drupal_rewrite_settings($settings, $filename);
+CODE_BEFORE
+                ,
+                <<<'CODE_AFTER'
+$settings = [];
+$filename = 'simple_filename.yaml';
+SettingsEditor::rewrite($filename, $settings);
+CODE_AFTER
+                ,
+                [
+                    new FunctionToStaticConfiguration('10.1.0', 'drupal_rewrite_settings', 'Drupal\Core\Site\SettingsEditor', 'rewrite', [0 => 1, 1 => 0]),
+                ]
+            ),
         ]);
     }
 

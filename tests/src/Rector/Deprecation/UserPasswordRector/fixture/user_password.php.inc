@@ -12,8 +12,8 @@ function simple_example()
 -----
 <?php
 
-
-function simple_example() {
+function simple_example()
+{
     $password = \Drupal::service('password_generator')->generate();
     $other_password = \Drupal::service('password_generator')->generate(8);
     $password_length = 12;

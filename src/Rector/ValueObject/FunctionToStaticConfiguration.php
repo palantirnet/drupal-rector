@@ -2,7 +2,7 @@
 
 namespace DrupalRector\Rector\ValueObject;
 
-use DrupalRector\Rector\VersionedConfigurationInterface;
+use DrupalRector\Contract\VersionedConfigurationInterface;
 
 class FunctionToStaticConfiguration implements VersionedConfigurationInterface {
 
