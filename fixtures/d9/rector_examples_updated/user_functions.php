@@ -1,6 +1,5 @@
 <?php
 
-use Drupal\Component\Utility\DeprecationHelper;
 function user_functions() {
     // user_password().
     $password = \Drupal::service('password_generator')->generate();
