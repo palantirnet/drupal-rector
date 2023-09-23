@@ -1,6 +1,6 @@
 <?php
 
-use \Drupal\Core\Entity\Element\EntityAutocomplete;
+use Drupal\Core\Entity\Element\EntityAutocomplete;
 function full_example() {
     $vids = \Drupal::entityQuery('taxonomy_vocabulary')->execute();
 
