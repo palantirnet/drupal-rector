@@ -3,14 +3,12 @@
 namespace DrupalRector\Rector\Deprecation;
 
 use DrupalRector\Rector\ValueObject\DBConfiguration;
-use DrupalRector\Utility\AddCommentTrait;
+use DrupalRector\Services\AddCommentService;
 use PhpParser\Node;
 use PhpParser\Node\Expr;
 use PhpParser\Node\Expr\MethodCall;
-use PhpParser\Node\Stmt\Expression;
 use Rector\Core\Contract\Rector\ConfigurableRectorInterface;
 use Rector\Core\Rector\AbstractRector;
-use Symplify\PackageBuilder\Parameter\ParameterProvider;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\ConfiguredCodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
@@ -39,8 +37,6 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  */
 class DBRector extends AbstractRector implements ConfigurableRectorInterface
 {
-    use AddCommentTrait;
-
     /**
      * The method name, such as `db_query`.
      *
@@ -62,10 +58,17 @@ class DBRector extends AbstractRector implements ConfigurableRectorInterface
      */
     private array $configuration;
 
+    /**
+     * @var \DrupalRector\Services\AddCommentService
+     */
+    private AddCommentService $commentService;
+
+    public function __construct(AddCommentService $commentService) {
+        $this->commentService = $commentService;
+    }
+
     public function configure(array $configuration): void
     {
-        $this->configureNoticesAsComments($configuration);
-
         foreach ($configuration as $value) {
             if (!($value instanceof DBConfiguration)) {
                 throw new \InvalidArgumentException(sprintf(
@@ -212,10 +215,10 @@ class DBRector extends AbstractRector implements ConfigurableRectorInterface
 
             if ($options->value->getType() === 'Expr_Variable') {
                 // TODO: Handle variable evaluation.
-                $this->addDrupalRectorComment($statement, 'If your `options` argument contains a `target` key, you will need to use `\Drupal\core\Database\Database::getConnection(\'my_database\'). Drupal Rector could not yet evaluate the `options` argument since it was a variable.');
+                $this->commentService->addDrupalRectorComment($statement, 'If your `options` argument contains a `target` key, you will need to use `\Drupal\core\Database\Database::getConnection(\'my_database\'). Drupal Rector could not yet evaluate the `options` argument since it was a variable.');
             }
         } else {
-            $this->addDrupalRectorComment($statement, 'You will need to use `\Drupal\core\Database\Database::getConnection()` if you do not yet have access to the container here.');
+            $this->commentService->addDrupalRectorComment($statement, 'You will need to use `\Drupal\core\Database\Database::getConnection()` if you do not yet have access to the container here.');
         }
 
         $var = new Node\Expr\StaticCall($name, $call, $method_arguments);

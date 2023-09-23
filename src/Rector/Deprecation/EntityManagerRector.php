@@ -2,16 +2,14 @@
 
 namespace DrupalRector\Rector\Deprecation;
 
-use DrupalRector\Utility\AddCommentTrait;
+use DrupalRector\Services\AddCommentService;
 use PhpParser\Node;
-use PhpParser\Node\Expr\MethodCall;
+use PhpParser\NodeDumper;
 use PHPStan\Analyser\Scope;
-use Rector\Core\Contract\Rector\ConfigurableRectorInterface;
 use Rector\Core\Exception\ShouldNotHappenException;
 use Rector\Core\Rector\AbstractRector;
 use Rector\NodeCollector\ScopeResolver\ParentClassScopeResolver;
 use Rector\NodeTypeResolver\Node\AttributeKey;
-use Symplify\PackageBuilder\Parameter\ParameterProvider;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
@@ -34,25 +32,24 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  * - Complex use case handling when a different service is needed and the
  * method does not directly call the service
  */
-final class EntityManagerRector extends AbstractRector implements ConfigurableRectorInterface
+final class EntityManagerRector extends AbstractRector
 {
-
-    use AddCommentTrait;
-
     /**
      * @var ParentClassScopeResolver
      */
     protected $parentClassScopeResolver;
 
+    /**
+     * @var \DrupalRector\Services\AddCommentService
+     */
+    private AddCommentService $commentService;
+
     public function __construct(
-        ParentClassScopeResolver $parentClassScopeResolver
+        ParentClassScopeResolver $parentClassScopeResolver,
+        AddCommentService $commentService
     ) {
         $this->parentClassScopeResolver = $parentClassScopeResolver;
-    }
-
-    public function configure(array $configuration): void
-    {
-        $this->configureNoticesAsComments($configuration);
+        $this->commentService = $commentService;
     }
 
     /**
@@ -137,16 +134,20 @@ CODE_AFTER
      */
     public function findInstanceByNameInAssign(Node\Expr\Assign $assign, string $class, string $name): ?Node {
         $node = $assign->expr;
+        $depth = 0;
 
         // Should the expression be the class we are looking for and the name is the one we are looking for, we can return early.
         if ($node instanceof $class && $this->getName($node->name) === $name) {
+            $node->setAttribute(self::class, $depth);
             return $node;
         }
 
         // Find the relevant class with name in the chain.
-        while(isset($node->var) && !($node->var instanceof $class && $this->getName($node->var->name) !== $name)) {
+        while (isset($node->var) && !($node->var instanceof $class && $this->getName($node->var->name) !== $name)) {
             $node = $node->var;
+            $depth++;
             if($node instanceof $class && $this->getName($node->name)) {
+                $node->setAttribute(self::class, $depth);
                 return $node;
             }
         }
@@ -192,14 +193,11 @@ CODE_AFTER
     public function refactorStaticCall(Node\Expr\StaticCall $node, Node\Stmt\Expression $statement): Node\Expr\StaticCall
     {
         $service = 'entity_type.manager';
-
         // If we call a method on `entityManager`, we need to check that method and we can call the correct service that the method uses.
-        if ($node->hasAttribute('next')) {
-            $next_node = $node->getAttribute('next');
-
-            $service = $this->getServiceByMethodName($this->getName($next_node));
+        if ($statement->expr->expr instanceof Node\Expr\MethodCall) {
+            $service = $this->getServiceByMethodName($this->getName($statement->expr->expr->name));
         } else {
-            $this->addDrupalRectorComment($statement,
+            $this->commentService->addDrupalRectorComment($statement,
                 'We are assuming that we want to use the `entity_type.manager` service since no method was called here directly. Please confirm this is the case. See https://www.drupal.org/node/2549139 for more information.');
         }
 
@@ -218,10 +216,8 @@ CODE_AFTER
     public function refactorMethodCall(Node\Expr\MethodCall $expr, Node\Stmt\Expression $statement): Node\Expr\CallLike
     {
         // If we call a method on `entityManager`, we need to check that method and we can call the correct service that the method uses.
-        $next_node = $expr->getAttribute('next');
-
-        if (!is_null($next_node)) {
-            $service = $this->getServiceByMethodName($this->getName($next_node));
+        if ($expr->getAttribute(self::class) > 0) {
+            $service = $this->getServiceByMethodName($this->getName($statement->expr->expr->name));
 
             // This creates a service call like `\Drupal::service('entity_type.manager').
             // This doesn't use dependency injection, but it should work.
@@ -230,7 +226,7 @@ CODE_AFTER
                 [new Node\Arg(new Node\Scalar\String_($service))]);
         } else {
             // If we are making a direct call to ->entityManager(), we can assume the new class will also have entityTypeManager.
-            $this->addDrupalRectorComment($statement,
+            $this->commentService->addDrupalRectorComment($statement,
                 'We are assuming that we want to use the `$this->entityTypeManager` injected service since no method was called here directly. Please confirm this is the case. If another service is needed, you may need to inject that yourself. See https://www.drupal.org/node/2549139 for more information.');
 
             $expr = new Node\Expr\MethodCall(new Node\Expr\Variable('this'),
@@ -346,6 +342,7 @@ CODE_AFTER
         $scope = $expr->getAttribute(AttributeKey::SCOPE);
         if ($scope instanceof Scope) {
             $parentClassName = $this->parentClassScopeResolver->resolveParentClassName($scope);
+
             if ($expr instanceof Node\Expr\MethodCall && $parentClassName === 'Drupal\Core\Controller\ControllerBase') {
                 $expr = $this->refactorMethodCall($expr, $statement);
 
