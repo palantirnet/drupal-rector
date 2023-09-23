@@ -20,6 +20,5 @@ function full_example() {
     $name = taxonomy_term_title($term);
 
     drupal_static_reset('taxonomy_vocabulary_get_names');
-}
 
-?>
+}

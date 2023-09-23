@@ -18,6 +18,5 @@ function full_example() {
     $name = $term->label();
 
     \Drupal::entityTypeManager()->getStorage('taxonomy_vocabulary')->resetCache();
-}
 
-?>
+}
