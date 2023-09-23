@@ -27,13 +27,15 @@ final class RemoveDeprecationHelperRector extends AbstractRector implements Conf
         return new RuleDefinition('Fixes deprecated user_password() calls',[
             new CodeSample(
                 <<<'CODE_BEFORE'
-$pass = user_password();
-$shorter_pass = user_password(8);
+$settings = [];
+$filename = 'simple_filename.yaml';
+drupal_rewrite_settings($settings, $filename);
 CODE_BEFORE
                 ,
                 <<<'CODE_AFTER'
-$pass = \Drupal::service('password_generator')->generate();
-$shorter_pass = \Drupal::service('password_generator')->generate(8);
+$settings = [];
+$filename = 'simple_filename.yaml';
+DeprecationHelper::backwardsCompatibleCall(\Drupal::VERSION, '10.1.0', fn() => drupal_rewrite_settings($settings, $filename), fn() => SettingsEditor::rewrite($filename, $settings));
 CODE_AFTER
             )
         ]);
