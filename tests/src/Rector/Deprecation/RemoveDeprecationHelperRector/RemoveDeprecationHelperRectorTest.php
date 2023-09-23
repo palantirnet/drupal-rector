@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace DrupalRector\Tests\Rector\Deprecation\UserPasswordRector;
+namespace DrupalRector\Tests\Rector\Deprecation\RemoveDeprecationHelperRector;
 
 use Iterator;
 use Rector\Testing\PHPUnit\AbstractRectorTestCase;
