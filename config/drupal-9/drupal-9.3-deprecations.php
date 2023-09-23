@@ -5,6 +5,7 @@ declare(strict_types=1);
 use DrupalRector\Rector\Deprecation\FileBuildUriRector;
 use DrupalRector\Rector\Deprecation\FileUrlGenerator;
 use DrupalRector\Rector\Deprecation\FunctionToEntityTypeStorageMethod;
+use DrupalRector\Rector\Deprecation\FunctionToFirstArgMethodRector;
 use DrupalRector\Rector\Deprecation\FunctionToServiceRector;
 use DrupalRector\Rector\Deprecation\SystemSortByInfoNameRector;
 use DrupalRector\Rector\Deprecation\TaxonomyImplodeTagsRector;
@@ -12,6 +13,7 @@ use DrupalRector\Rector\Deprecation\TaxonomyTermLoadMultipleByNameRector;
 use DrupalRector\Rector\Deprecation\TaxonomyVocabularyGetNamesDrupalStaticResetRector;
 use DrupalRector\Rector\Deprecation\TaxonomyVocabularyGetNamesRector;
 use DrupalRector\Rector\ValueObject\FunctionToEntityTypeStorageConfiguration;
+use DrupalRector\Rector\ValueObject\FunctionToFirstArgMethodConfiguration;
 use DrupalRector\Rector\ValueObject\FunctionToServiceConfiguration;
 use DrupalRector\Rector\ValueObject\ExtensionPathConfiguration;
 
@@ -53,4 +55,8 @@ return static function (\Rector\Config\RectorConfig $rectorConfig): void {
     $rectorConfig->rule(TaxonomyTermLoadMultipleByNameRector::class);
     $rectorConfig->rule(TaxonomyVocabularyGetNamesDrupalStaticResetRector::class);
     $rectorConfig->rule(TaxonomyImplodeTagsRector::class);
+    $rectorConfig->ruleWithConfiguration(FunctionToFirstArgMethodRector::class, [
+        new FunctionToFirstArgMethodConfiguration('taxonomy_term_uri', 'toUrl'),
+        new FunctionToFirstArgMethodConfiguration('taxonomy_term_title', 'label'),
+    ]);
 };

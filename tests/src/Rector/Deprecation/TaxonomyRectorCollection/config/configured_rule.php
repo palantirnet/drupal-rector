@@ -3,9 +3,11 @@
 use DrupalRector\Rector\Deprecation\FunctionToEntityTypeStorageMethod;
 use DrupalRector\Rector\Deprecation\TaxonomyImplodeTagsRector;
 use DrupalRector\Rector\Deprecation\TaxonomyTermLoadMultipleByNameRector;
+use DrupalRector\Rector\Deprecation\FunctionToFirstArgMethodRector;
 use DrupalRector\Rector\Deprecation\TaxonomyVocabularyGetNamesDrupalStaticResetRector;
 use DrupalRector\Rector\Deprecation\TaxonomyVocabularyGetNamesRector;
 use DrupalRector\Rector\ValueObject\FunctionToEntityTypeStorageConfiguration;
+use DrupalRector\Rector\ValueObject\FunctionToFirstArgMethodConfiguration;
 use DrupalRector\Tests\Rector\Deprecation\DeprecationBase;
 use Rector\Config\RectorConfig;
 
@@ -20,4 +22,9 @@ return static function (RectorConfig $rectorConfig): void {
     DeprecationBase::addClass(TaxonomyVocabularyGetNamesDrupalStaticResetRector::class, $rectorConfig, FALSE);
 
     DeprecationBase::addClass(TaxonomyImplodeTagsRector::class, $rectorConfig, FALSE);
+
+    DeprecationBase::addClass(FunctionToFirstArgMethodRector::class, $rectorConfig, FALSE, [
+        new FunctionToFirstArgMethodConfiguration('taxonomy_term_uri', 'toUrl'),
+        new FunctionToFirstArgMethodConfiguration('taxonomy_term_title', 'label'),
+    ]);
 };
