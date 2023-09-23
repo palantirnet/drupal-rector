@@ -8,7 +8,8 @@ function full_example() {
         'topics'
     );
 
-    $url = $term->toUrl();
+    $term = reset($terms);
+    $url = taxonomy_term_uri($term);
 
     taxonomy_terms_static_reset();
 

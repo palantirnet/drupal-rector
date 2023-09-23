@@ -6,7 +6,8 @@ function full_example() {
 
     $terms = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->loadByProperties(['name' => 'Foo', 'vid' => 'topics']);
 
-    $url = taxonomy_term_uri($term);
+    $term = reset($terms);
+    $url = $term->toUrl();
 
     \Drupal::entityTypeManager()->getStorage('taxonomy_term')->resetCache();
 
