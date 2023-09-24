@@ -49,8 +49,13 @@ abstract class AbstractDrupalCoreRector extends AbstractRector implements Config
                 continue;
             }
 
-            // Check if Drupal version and the introduced version support backward compatible calls.
-            if (version_compare($drupalVersion, '10.1.0', '<') || version_compare($configuration->getIntroducedVersion(), '10.1.0', '<')) {
+            // Check if Drupal version and the introduced version support backward
+            // compatible calls. Although it was introduced in Drupal 10.1 we
+            // also supply these patches for changes introduced in Drupal 10.0.
+            // The reason for this is that will start supplying patches for
+            // Drupal 10 when 10.0 is already out of support. This means that
+            // we will not support running drupal-rector on Drupal 10.0.x.
+            if (version_compare($drupalVersion, '10.1.0', '<') || version_compare($configuration->getIntroducedVersion(), '10.0.0', '<')) {
                 return $result;
             }
 

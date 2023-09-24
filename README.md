@@ -12,6 +12,11 @@ Automate fixing deprecated Drupal code.
 
 ### Release notes
 
+* The 0.18.0 and higher releases of drupal-rector will include Rector 0.18+. The upgrade path should be as simple as re-copying the configuration file. `cp vendor/palantirnet/drupal-rector/rector.php`.
+
+> [!WARNING]
+> Drupal rector does not support Drupal 10.0 specifically because this will break support for backwards compatible fixes for which the helpers were introduced in Drupal 10.1. Older and newer versions of Drupal are supported.
+
 * The 0.13.0 and higher releases of drupal-rector will include Rector 0.13.8+. The upgrade path should be as simple as re-copying the configuration file. `cp vendor/palantirnet/drupal-rector/rector.php`
 
 *Note that GitHub does not let us have different default homepage and merge branches. If you checked out the project using packagist/composer, read the docs for your version.*
