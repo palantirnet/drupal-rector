@@ -1,11 +1,11 @@
 <?php declare(strict_types=1);
 
-namespace DrupalRector\Tests\Rector\Deprecation\RemoveDeprecationHelperRector;
+namespace DrupalRector\Tests\Rector\Deprecation\DeprecationHelperRemoveRector;
 
 use Iterator;
 use Rector\Testing\PHPUnit\AbstractRectorTestCase;
 
-class RemoveDeprecationHelperRectorTest extends AbstractRectorTestCase {
+class DeprecationHelperRemoveRectorTest extends AbstractRectorTestCase {
 
     /**
      * @covers ::refactor
