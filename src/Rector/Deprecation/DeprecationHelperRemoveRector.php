@@ -31,7 +31,7 @@ final class DeprecationHelperRemoveRector extends AbstractRector implements Conf
 $settings = [];
 $filename = 'simple_filename.yaml';
 DeprecationHelper::backwardsCompatibleCall(\Drupal::VERSION, '9.1.0', fn() => old_function(), fn() => new_function());
-DeprecationHelper::backwardsCompatibleCall(\Drupal::VERSION, '10.1.0', fn() => drupal_rewrite_settings($settings, $filename), fn() => SettingsEditor::rewrite($filename, $settings));
+DeprecationHelper::backwardsCompatibleCall(\Drupal::VERSION, '10.5.0', fn() => drupal_rewrite_settings($settings, $filename), fn() => SettingsEditor::rewrite($filename, $settings));
 DeprecationHelper::backwardsCompatibleCall(\Drupal::VERSION, '11.1.0', fn() => old_function(), fn() => new_function());
 CODE_BEFORE
                 ,
@@ -43,7 +43,7 @@ DeprecationHelper::backwardsCompatibleCall(\Drupal::VERSION, '11.1.0', fn() => o
 CODE_AFTER
                 ,
                 [
-                    new DeprecationHelperRemoveConfiguration('10.1.0')
+                    new DeprecationHelperRemoveConfiguration('10.5.0')
                 ]
             )
         ]);
