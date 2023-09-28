@@ -16,11 +16,10 @@ function simple_example_os_temp() {
 -----
 <?php
 
-use Drupal\Core\Site\SettingsEditor;
 function simple_example() {
     $settings = [];
     $filename = 'simple_filename.yaml';
-    SettingsEditor::rewrite($filename, $settings);
+    \Drupal\Component\Utility\DeprecationHelper::backwardsCompatibleCall(\Drupal::VERSION, '10.1.0', fn() => drupal_rewrite_settings($settings, $filename), fn() => \Drupal\Core\Site\SettingsEditor::rewrite($filename, $settings));
 }
 
 /**

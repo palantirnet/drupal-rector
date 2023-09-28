@@ -1,12 +1,11 @@
 <?php declare(strict_types=1);
 
-namespace DrupalRector\Tests\Rector\Deprecation\FunctionToStaticRector;
+namespace DrupalRector\Tests\Rector\Deprecation\DeprecationHelperRemoveRector;
 
 use Iterator;
 use Rector\Testing\PHPUnit\AbstractRectorTestCase;
-use Symplify\SmartFileSystem\SmartFileInfo;
 
-class FunctionToStaticRector extends AbstractRectorTestCase {
+class DeprecationHelperRemoveRectorTest extends AbstractRectorTestCase {
 
     /**
      * @covers ::refactor
