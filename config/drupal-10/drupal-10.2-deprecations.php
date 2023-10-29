@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use DrupalRector\Rector\Deprecation\ActionAnnotationToAttributeRector;
 use DrupalRector\Rector\Deprecation\FunctionToStaticRector;
 use DrupalRector\Rector\Deprecation\MethodToMethodWithCheckRector;
 use DrupalRector\Rector\ValueObject\FunctionToStaticConfiguration;
@@ -24,4 +25,7 @@ return static function (RectorConfig $rectorConfig): void {
         new MethodToMethodWithCheckConfiguration('Drupal\system\Plugin\ImageToolkit\GDToolkit', 'getResource', 'getImage'),
         new MethodToMethodWithCheckConfiguration('Drupal\system\Plugin\ImageToolkit\GDToolkit', 'setResource', 'setImage'),
     ]);
+
+    // @see https://www.drupal.org/node/3395575
+    $rectorConfig->rule(\DrupalRector\Rector\Deprecation\ActionAnnotationToAttributeRector::class);
 };
