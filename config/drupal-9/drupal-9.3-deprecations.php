@@ -61,7 +61,7 @@ return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->rule(TaxonomyTermLoadMultipleByNameRector::class);
     $rectorConfig->rule(TaxonomyVocabularyGetNamesDrupalStaticResetRector::class);
     $rectorConfig->ruleWithConfiguration(FunctionToStaticRector::class, [
-        new FunctionToStaticConfiguration('taxonomy_implode_tags', 'Drupal\Core\Entity\Element\EntityAutocomplete', 'getEntityLabels'),
+        new FunctionToStaticConfiguration('9.3.0', 'taxonomy_implode_tags', 'Drupal\Core\Entity\Element\EntityAutocomplete', 'getEntityLabels'),
     ]);
     $rectorConfig->ruleWithConfiguration(FunctionToFirstArgMethodRector::class, [
         new FunctionToFirstArgMethodConfiguration('taxonomy_term_uri', 'toUrl'),
