@@ -16,6 +16,6 @@ return static function (RectorConfig $rectorConfig): void {
 
     // https://www.drupal.org/node/3244583
     $rectorConfig->ruleWithConfiguration(FunctionToStaticRector::class, [
-        new FunctionToStaticConfiguration('drupal_rewrite_settings', 'Drupal\Core\Site\SettingsEditor', 'rewrite', [0 => 1, 1 => 0]),
+        new FunctionToStaticConfiguration('10.1.0', 'drupal_rewrite_settings', 'Drupal\Core\Site\SettingsEditor', 'rewrite', [0 => 1, 1 => 0]),
     ]);
 };

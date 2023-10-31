@@ -1,11 +1,11 @@
 <?php declare(strict_types=1);
 
-namespace DrupalRector\Tests\Rector\Deprecation\UserPasswordRector;
+namespace DrupalRector\Tests\Rector\Deprecation\DeprecationHelperRemoveRector;
 
 use Iterator;
 use Rector\Testing\PHPUnit\AbstractRectorTestCase;
 
-class UserPasswordRectorTest extends AbstractRectorTestCase {
+class DeprecationHelperRemoveRectorTest extends AbstractRectorTestCase {
 
     /**
      * @covers ::refactor
