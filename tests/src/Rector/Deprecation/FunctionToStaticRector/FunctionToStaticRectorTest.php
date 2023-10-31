@@ -1,11 +1,12 @@
 <?php declare(strict_types=1);
 
-namespace DrupalRector\Tests\Rector\Deprecation\UserPasswordRector;
+namespace DrupalRector\Tests\Rector\Deprecation\FunctionToStaticRector;
 
 use Iterator;
 use Rector\Testing\PHPUnit\AbstractRectorTestCase;
+use Symplify\SmartFileSystem\SmartFileInfo;
 
-class UserPasswordRectorTest extends AbstractRectorTestCase {
+class FunctionToStaticRectorTest extends AbstractRectorTestCase {
 
     /**
      * @covers ::refactor
