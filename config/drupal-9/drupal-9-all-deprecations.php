@@ -15,6 +15,7 @@ return static function (RectorConfig $rectorConfig): void {
         Drupal9SetList::DRUPAL_91,
         Drupal9SetList::DRUPAL_92,
         Drupal9SetList::DRUPAL_93,
+        Drupal9SetList::DRUPAL_94,
     ]);
 
     $rectorConfig->bootstrapFiles([
