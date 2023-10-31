@@ -4,7 +4,9 @@ Automate fixing deprecated Drupal code.
 
 ## Status
 
-![Functional test: Rector examples](https://github.com/palantirnet/drupal-rector/workflows/functional_test__rector_examples/badge.svg)
+
+
+![Packagist Version](https://img.shields.io/packagist/v/palantirnet/drupal-rector) ![Functional test: Rector examples](https://img.shields.io/github/actions/workflow/status/palantirnet/drupal-rector/functional_test__rector_examples.yml?logo=github&label=Functional%20tests) ![Unit tests](https://img.shields.io/github/actions/workflow/status/palantirnet/drupal-rector/phpunit.yml?logo=github&label=Unit%20tests)  ![PHPStan](https://img.shields.io/github/actions/workflow/status/palantirnet/drupal-rector/phpstan.yml?logo=github&label=PHPStan)
 
 ## Latest release
 
