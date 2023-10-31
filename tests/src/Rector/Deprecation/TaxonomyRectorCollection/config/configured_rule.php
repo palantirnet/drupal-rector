@@ -24,7 +24,7 @@ return static function (RectorConfig $rectorConfig): void {
     DeprecationBase::addClass(TaxonomyVocabularyGetNamesDrupalStaticResetRector::class, $rectorConfig, FALSE);
 
     DeprecationBase::addClass(FunctionToStaticRector::class, $rectorConfig, FALSE, [
-        new FunctionToStaticConfiguration('taxonomy_implode_tags', 'Drupal\Core\Entity\Element\EntityAutocomplete', 'getEntityLabels'),
+        new FunctionToStaticConfiguration('9.3.0', 'taxonomy_implode_tags', 'Drupal\Core\Entity\Element\EntityAutocomplete', 'getEntityLabels'),
     ]);
     DeprecationBase::addClass(FunctionToFirstArgMethodRector::class, $rectorConfig, FALSE, [
         new FunctionToFirstArgMethodConfiguration('taxonomy_term_uri', 'toUrl'),
