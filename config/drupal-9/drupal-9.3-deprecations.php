@@ -5,10 +5,19 @@ declare(strict_types=1);
 use DrupalRector\Rector\Deprecation\ExtensionPathRector;
 use DrupalRector\Rector\Deprecation\FileBuildUriRector;
 use DrupalRector\Rector\Deprecation\FileUrlGenerator;
+use DrupalRector\Rector\Deprecation\FunctionToEntityTypeStorageMethod;
+use DrupalRector\Rector\Deprecation\FunctionToFirstArgMethodRector;
 use DrupalRector\Rector\Deprecation\FunctionToServiceRector;
+use DrupalRector\Rector\Deprecation\FunctionToStaticRector;
 use DrupalRector\Rector\Deprecation\SystemSortByInfoNameRector;
+use DrupalRector\Rector\Deprecation\TaxonomyTermLoadMultipleByNameRector;
+use DrupalRector\Rector\Deprecation\TaxonomyVocabularyGetNamesDrupalStaticResetRector;
+use DrupalRector\Rector\Deprecation\TaxonomyVocabularyGetNamesRector;
+use DrupalRector\Rector\ValueObject\FunctionToEntityTypeStorageConfiguration;
+use DrupalRector\Rector\ValueObject\FunctionToFirstArgMethodConfiguration;
 use DrupalRector\Rector\ValueObject\FunctionToServiceConfiguration;
 use DrupalRector\Rector\ValueObject\ExtensionPathConfiguration;
+use DrupalRector\Rector\ValueObject\FunctionToStaticConfiguration;
 use DrupalRector\Services\AddCommentService;
 use Rector\Config\RectorConfig;
 
@@ -41,4 +50,21 @@ return static function (RectorConfig $rectorConfig): void {
 
     // Change record: https://www.drupal.org/node/3225999
     $rectorConfig->rule(SystemSortByInfoNameRector::class);
+
+    // Change rector: https://www.drupal.org/node/3039041
+    // Missing: $url = $term->toUrl(); AND $name = taxonomy_term_title($term); AND taxonomy_implode_tags();
+    $rectorConfig->ruleWithConfiguration(FunctionToEntityTypeStorageMethod::class, [
+        new FunctionToEntityTypeStorageConfiguration('taxonomy_terms_static_reset', 'taxonomy_term', 'resetCache'),
+        new FunctionToEntityTypeStorageConfiguration('taxonomy_vocabulary_static_reset', 'taxonomy_vocabulary', 'resetCache'),
+    ]);
+    $rectorConfig->rule(TaxonomyVocabularyGetNamesRector::class);
+    $rectorConfig->rule(TaxonomyTermLoadMultipleByNameRector::class);
+    $rectorConfig->rule(TaxonomyVocabularyGetNamesDrupalStaticResetRector::class);
+    $rectorConfig->ruleWithConfiguration(FunctionToStaticRector::class, [
+        new FunctionToStaticConfiguration('9.3.0', 'taxonomy_implode_tags', 'Drupal\Core\Entity\Element\EntityAutocomplete', 'getEntityLabels'),
+    ]);
+    $rectorConfig->ruleWithConfiguration(FunctionToFirstArgMethodRector::class, [
+        new FunctionToFirstArgMethodConfiguration('taxonomy_term_uri', 'toUrl'),
+        new FunctionToFirstArgMethodConfiguration('taxonomy_term_title', 'label'),
+    ]);
 };
