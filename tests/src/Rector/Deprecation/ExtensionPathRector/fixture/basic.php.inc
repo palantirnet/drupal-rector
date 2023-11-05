@@ -15,7 +15,6 @@ function simple_example() {
     $path2 = drupal_get_path('theme', 'seven');
     $path4 = drupal_get_path('profile', 'standard');
 
-
     drupal_get_path('unknown_type', 'standard');
 }
 ?>
