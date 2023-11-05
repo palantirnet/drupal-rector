@@ -49,12 +49,21 @@ class ExtensionPathRector extends AbstractRector implements ConfigurableRectorIn
     public function refactor(Node $node): ?Node
     {
         assert($node instanceof Node\Stmt\Expression);
-        if (!($node->expr instanceof Node\Expr\FuncCall)) {
+
+        if (!$node->expr instanceof Node\Expr\FuncCall && !($node->expr instanceof Node\Expr\Assign && $node->expr->expr instanceof Node\Expr\FuncCall)) {
             return null;
         }
 
         foreach ($this->configuration as $configuration) {
-            $expr = $node->expr;
+            if($node->expr instanceof Node\Expr\FuncCall) {
+                $expr = $node->expr;
+            } else {
+                assert($node->expr instanceof Node\Expr\Assign);
+                $expr = $node->expr->expr;
+            }
+
+            assert($expr instanceof Node\Expr\FuncCall);
+
             if ($this->getName($expr->name) !== $configuration->getFunctionName()) {
                 continue;
             }
@@ -95,7 +104,15 @@ class ExtensionPathRector extends AbstractRector implements ConfigurableRectorIn
             );
             $methodName = new Node\Identifier($configuration->getMethodName());
 
-            $node->expr = new Node\Expr\MethodCall($service, $methodName, $methodArgs);
+            $newMethodCall = new Node\Expr\MethodCall($service, $methodName, $methodArgs);
+
+            if ($node->expr instanceof Node\Expr\FuncCall) {
+                $node->expr = $newMethodCall;
+            } else {
+                // @phpstan-ignore-next-line
+                $node->expr->expr = $newMethodCall;
+            }
+
             return $node;
         }
 
