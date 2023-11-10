@@ -76,11 +76,11 @@ class MethodToMethodWithCheckRector extends AbstractRector implements Configurab
                 continue;
             }
 
-            if ($node->expr instanceof Node\Expr\MethodCall && $this->getName($node->expr->name) !== $configuration->getDeprecatedMethodName()) {
+            if ($node instanceof Node\Stmt\Expression && $node->expr instanceof Node\Expr\MethodCall && $this->getName($node->expr->name) !== $configuration->getDeprecatedMethodName()) {
                 continue;
             }
 
-            if ($node->expr instanceof Node\Expr\Assign && $node->expr->expr instanceof Node\Expr\MethodCall && $this->getName($node->expr->expr->name) !== $configuration->getDeprecatedMethodName()) {
+            if ($node instanceof Node\Stmt\Expression && $node->expr instanceof Node\Expr\Assign && $node->expr->expr instanceof Node\Expr\MethodCall && $this->getName($node->expr->expr->name) !== $configuration->getDeprecatedMethodName()) {
                 continue;
             }
 
