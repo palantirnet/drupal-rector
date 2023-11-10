@@ -43,19 +43,22 @@ class ExtensionPathRector extends AbstractRector implements ConfigurableRectorIn
     {
         return [
             Node\Stmt\Expression::class,
+            Node\Expr\FuncCall::class,
         ];
     }
 
     public function refactor(Node $node): ?Node
     {
-        assert($node instanceof Node\Stmt\Expression);
+        assert($node instanceof Node\Stmt\Expression || $node instanceof Node\Expr\FuncCall);
 
-        if (!$node->expr instanceof Node\Expr\FuncCall && !($node->expr instanceof Node\Expr\Assign && $node->expr->expr instanceof Node\Expr\FuncCall)) {
+        if (!$node instanceof Node\Expr\FuncCall && !$node->expr instanceof Node\Expr\FuncCall && !($node->expr instanceof Node\Expr\Assign && $node->expr->expr instanceof Node\Expr\FuncCall)) {
             return null;
         }
 
         foreach ($this->configuration as $configuration) {
-            if($node->expr instanceof Node\Expr\FuncCall) {
+            if ($node instanceof Node\Expr\FuncCall) {
+                $expr = $node;
+            } elseif ($node->expr instanceof Node\Expr\FuncCall) {
                 $expr = $node->expr;
             } else {
                 assert($node->expr instanceof Node\Expr\Assign);
@@ -105,6 +108,10 @@ class ExtensionPathRector extends AbstractRector implements ConfigurableRectorIn
             $methodName = new Node\Identifier($configuration->getMethodName());
 
             $newMethodCall = new Node\Expr\MethodCall($service, $methodName, $methodArgs);
+
+            if ($node instanceof Node\Expr\FuncCall) {
+                return $newMethodCall;
+            }
 
             if ($node->expr instanceof Node\Expr\FuncCall) {
                 $node->expr = $newMethodCall;
