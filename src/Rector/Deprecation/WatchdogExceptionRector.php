@@ -43,11 +43,7 @@ class WatchdogExceptionRector extends AbstractDrupalCoreRector
             return NULL;
         }
 
-        assert($node instanceof Node\Expr\FuncCall);
-
-
         $args = $node->getArgs();
-
         if (count($args) < 2) {
             return NULL;
         }
