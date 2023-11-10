@@ -6,18 +6,9 @@ use DrupalRector\Contract\VersionedConfigurationInterface;
 use DrupalRector\Rector\AbstractDrupalCoreRector;
 use DrupalRector\Rector\ValueObject\DrupalIntroducedVersionConfiguration;
 use PhpParser\Node;
-use Rector\Core\Contract\Rector\ConfigurableRectorInterface;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\ConfiguredCodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
-/**
- * Replaces function calls to static method calls.
- *
- * Example: \DrupalRector\Rector\Deprecation\FileDirectoryTempOsRector
- *
- * What is covered:
- * - Static replacement
- */
 class WatchdogExceptionRector extends AbstractDrupalCoreRector
 {
     /**
