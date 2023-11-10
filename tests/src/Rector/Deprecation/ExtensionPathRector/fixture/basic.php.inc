@@ -16,6 +16,19 @@ function simple_example() {
     $path4 = drupal_get_path('profile', 'standard');
 
     drupal_get_path('unknown_type', 'standard');
+
+
+    define('BE_SURE_MODULE_PATH', drupal_get_path('module', 'be_sure'));
+
+    define('BE_SURE_MODULE_PATH', drupal_get_path('unknown', 'be_sure'));
+
+    $test = [
+        'logo' => file_create_url(drupal_get_path('module', 'dalim_es') . '/images/pdf_logo.svg'),
+    ];
+
+    $test = [
+        'logo' => file_create_url(drupal_get_path('unkown', 'dalim_es') . '/images/pdf_logo.svg'),
+    ];
 }
 ?>
 -----
@@ -39,5 +52,18 @@ function simple_example() {
     // TODO: Drupal Rector Notice: Please delete the following comment after you've made any necessary changes.
     // Unsupported extension type encountered, using extension.path.resolver instead of extension.list
     \Drupal::service('extension.path.resolver')->getPath('unknown_type', 'standard');
+
+
+    define('BE_SURE_MODULE_PATH', \Drupal::service('extension.list.module')->getPath('be_sure'));
+
+    define('BE_SURE_MODULE_PATH', \Drupal::service('extension.path.resolver')->getPath('unknown', 'be_sure'));
+
+    $test = [
+        'logo' => file_create_url(\Drupal::service('extension.list.module')->getPath('dalim_es') . '/images/pdf_logo.svg'),
+    ];
+
+    $test = [
+        'logo' => file_create_url(\Drupal::service('extension.path.resolver')->getPath('unkown', 'dalim_es') . '/images/pdf_logo.svg'),
+    ];
 }
 ?>
