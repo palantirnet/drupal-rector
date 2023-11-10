@@ -29,7 +29,7 @@ class AddCommentService
      *
      * @return void
      */
-    public function addDrupalRectorComment(Node\Stmt\Expression $node, string $comment) {
+    public function addDrupalRectorComment(Node $node, string $comment) {
         // Referencing the `parameterProvider` property in this way isn't a
         // great idea since we are assuming the property exists, but it does in
         // `AbstractRector` which all of our rules extend in some form or
