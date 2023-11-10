@@ -1,0 +1,24 @@
+name: php-cs-fixer
+
+# This test will run on every pull request, and on every commit on any branch
+on: [push, pull_request]
+
+jobs:
+    php-cs-fixer:
+      name: Codestyle checks with php-cs-fixer
+      runs-on: ubuntu-latest
+      steps:
+          -   uses: actions/checkout@v3
+          -   uses: shivammathur/setup-php@v2
+              with:
+                  php-version: 8.1
+                  coverage: none # disable xdebug, pcov
+                  tools: composer:v2
+                  extensions: zip
+          # Uncomment to enable SSH access to Github Actions - https://github.com/marketplace/actions/debugging-with-tmate#getting-started
+          # -   name: Debugging with tmate
+          #     uses: mxschmitt/action-tmate@v2
+          # END: SHARED SETUP
+
+          - run: composer install
+          - run: php vendor/bin/php-cs-fixer check

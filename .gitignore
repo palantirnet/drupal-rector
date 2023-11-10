@@ -1,5 +1,6 @@
 # Ignore all hidden files exept these.
 .*
+!/.php-cs-fixer.dist.php
 !/.github
 !/.gitignore
 !/.gitattributes
