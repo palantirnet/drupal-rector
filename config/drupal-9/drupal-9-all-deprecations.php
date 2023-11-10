@@ -19,7 +19,6 @@ return static function (RectorConfig $rectorConfig): void {
         Drupal9SetList::DRUPAL_93,
         Drupal9SetList::DRUPAL_94,
         PHPUnitLevelSetList::UP_TO_PHPUNIT_90,
-        PHPUnitSetList::PHPUNIT_CODE_QUALITY,
     ]);
 
     $rectorConfig->bootstrapFiles([
