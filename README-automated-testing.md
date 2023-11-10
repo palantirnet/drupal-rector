@@ -6,8 +6,6 @@ The Drupal Rector project has PHPUnit tests, extending the testing suite functio
 the project to have confidence in the written Rector rules. To run the unit tests, there are different system requirements
 than if you ran Drupal Rector against your Drupal site.
 
-The developer dependencies require `rector/rector-src` which requires PHP 8.
-
 To run the PHPUnit tests:
 
 * Clone your fork of the repository
@@ -18,7 +16,7 @@ See the `.github/workflows/phpunit.yml` workflow for an example.
 
 ### Writing a PHPUnit test
 
-For now, please see the example in `tests/src/Rector/Deprecation/DatetimeStorageTimezoneRector`
+For now, please see the example in `tests/src/Rector/Deprecation/DatetimeStorageTimezoneRector`.
 
 ## Installation test
 
