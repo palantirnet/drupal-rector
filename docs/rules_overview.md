@@ -837,7 +837,7 @@ Remove DeprecationHelper calls for versions before configured minimum requiremen
 
 ### FunctionToServiceRector
 
-Fixes deprecated function to service calls
+Fixes deprecated function to service calls, used in Drupal 8 and 9 deprecations
 
 :wrench: **configure it!**
 
@@ -960,7 +960,7 @@ Fixes deprecated function to service calls
 
 ### FunctionToStaticRector
 
-Fixes deprecated `file_directory_os_temp()` calls
+Fixes deprecated `file_directory_os_temp()` calls, used in Drupal 8, 9 and 10 deprecations
 
 :wrench: **configure it!**
 
@@ -993,7 +993,7 @@ Fixes deprecated `file_directory_os_temp()` calls
 
 ### MethodToMethodWithCheckRector
 
-Fixes deprecated `MetadataBag::clearCsrfTokenSeed()` calls
+Fixes deprecated `MetadataBag::clearCsrfTokenSeed()` calls, used in Drupal 8 and 9 deprecations
 
 :wrench: **configure it!**
 
