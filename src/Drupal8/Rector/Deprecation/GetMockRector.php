@@ -2,7 +2,7 @@
 
 namespace DrupalRector\Drupal8\Rector\Deprecation;
 
-use DrupalRector\Drupal10\Rector\ValueObject\AssertLegacyTraitConfiguration;
+use DrupalRector\Drupal9\Rector\ValueObject\AssertLegacyTraitConfiguration;
 use DrupalRector\Drupal8\Rector\ValueObject\GetMockConfiguration;
 use PhpParser\Node;
 use PHPStan\Analyser\Scope;

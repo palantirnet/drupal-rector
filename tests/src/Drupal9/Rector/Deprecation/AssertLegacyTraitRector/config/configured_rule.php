@@ -1,7 +1,7 @@
 <?php declare(strict_types=1);
 
 use DrupalRector\Drupal9\Rector\Deprecation\AssertLegacyTraitRector;
-use DrupalRector\Drupal10\Rector\ValueObject\AssertLegacyTraitConfiguration;
+use DrupalRector\Drupal9\Rector\ValueObject\AssertLegacyTraitConfiguration;
 use DrupalRector\Tests\Rector\Deprecation\DeprecationBase;
 use Rector\Config\RectorConfig;
 

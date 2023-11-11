@@ -2,7 +2,7 @@
 
 namespace DrupalRector\Drupal9\Rector\Deprecation;
 
-use DrupalRector\Drupal10\Rector\ValueObject\AssertLegacyTraitConfiguration;
+use DrupalRector\Drupal9\Rector\ValueObject\AssertLegacyTraitConfiguration;
 use DrupalRector\Services\AddCommentService;
 use DrupalRector\Utility\GetDeclaringSourceTrait;
 use PhpParser\Node;

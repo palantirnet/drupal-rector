@@ -1,6 +1,6 @@
 <?php
 
-namespace DrupalRector\Drupal10\Rector\ValueObject;
+namespace DrupalRector\Drupal9\Rector\ValueObject;
 
 class AssertLegacyTraitConfiguration
 {
