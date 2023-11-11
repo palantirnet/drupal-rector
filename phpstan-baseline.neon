@@ -38,69 +38,69 @@ parameters:
 		-
 			message: "#^Access to an undefined property PhpParser\\\\Node\\\\Expr\\:\\:\\$value\\.$#"
 			count: 2
-			path: src/Rector/Deprecation/DBRector.php
+			path: src/Drupal8/Rector/Deprecation/DBRector.php
 
 		-
 			message: "#^Call to an undefined method PHPStan\\\\Type\\\\Type\\:\\:getValue\\(\\)\\.$#"
 			count: 1
-			path: src/Rector/Deprecation/DrupalSetMessageRector.php
+			path: src/Drupal8/Rector/Deprecation/DrupalSetMessageRector.php
 
 		-
 			message: "#^Access to an undefined property PhpParser\\\\Node\\\\Expr\\:\\:\\$expr\\.$#"
 			count: 1
-			path: src/Rector/Deprecation/EntityLoadRector.php
+			path: src/Drupal8/Rector/Deprecation/EntityLoadRector.php
 
 		-
 			message: "#^Access to an undefined property PhpParser\\\\Node\\\\Expr\\:\\:\\$expr\\.$#"
 			count: 2
-			path: src/Rector/Deprecation/EntityManagerRector.php
+			path: src/Drupal8/Rector/Deprecation/EntityManagerRector.php
 
 		-
 			message: "#^Access to an undefined property PhpParser\\\\Node\\\\Expr\\:\\:\\$name\\.$#"
 			count: 3
-			path: src/Rector/Deprecation/EntityManagerRector.php
+			path: src/Drupal8/Rector/Deprecation/EntityManagerRector.php
 
 		-
-			message: "#^Method DrupalRector\\\\Rector\\\\Deprecation\\\\EntityManagerRector\\:\\:getServiceByMethodName\\(\\) has no return type specified\\.$#"
+			message: "#^Method DrupalRector\\\\Drupal8\\\\Rector\\\\Deprecation\\\\EntityManagerRector\\:\\:getServiceByMethodName\\(\\) has no return type specified\\.$#"
 			count: 1
-			path: src/Rector/Deprecation/EntityManagerRector.php
+			path: src/Drupal8/Rector/Deprecation/EntityManagerRector.php
 
 		-
 			message: "#^PHPDoc tag @param references unknown parameter\\: \\$node$#"
 			count: 1
-			path: src/Rector/Deprecation/EntityManagerRector.php
+			path: src/Drupal8/Rector/Deprecation/EntityManagerRector.php
 
 		-
-			message: "#^Parameter \\#1 \\$assign of method DrupalRector\\\\Rector\\\\Deprecation\\\\EntityManagerRector\\:\\:findInstanceByNameInAssign\\(\\) expects PhpParser\\\\Node\\\\Expr\\\\Assign, PhpParser\\\\Node\\\\Expr given\\.$#"
+			message: "#^Parameter \\#1 \\$assign of method DrupalRector\\\\Drupal8\\\\Rector\\\\Deprecation\\\\EntityManagerRector\\:\\:findInstanceByNameInAssign\\(\\) expects PhpParser\\\\Node\\\\Expr\\\\Assign, PhpParser\\\\Node\\\\Expr given\\.$#"
 			count: 1
-			path: src/Rector/Deprecation/EntityManagerRector.php
+			path: src/Drupal8/Rector/Deprecation/EntityManagerRector.php
 
 		-
-			message: "#^Parameter \\#1 \\$assign of method DrupalRector\\\\Rector\\\\Deprecation\\\\EntityManagerRector\\:\\:replaceInstanceByNameInAssign\\(\\) expects PhpParser\\\\Node\\\\Expr\\\\Assign, PhpParser\\\\Node\\\\Expr given\\.$#"
+			message: "#^Parameter \\#1 \\$assign of method DrupalRector\\\\Drupal8\\\\Rector\\\\Deprecation\\\\EntityManagerRector\\:\\:replaceInstanceByNameInAssign\\(\\) expects PhpParser\\\\Node\\\\Expr\\\\Assign, PhpParser\\\\Node\\\\Expr given\\.$#"
 			count: 1
-			path: src/Rector/Deprecation/EntityManagerRector.php
+			path: src/Drupal8/Rector/Deprecation/EntityManagerRector.php
 
 		-
-			message: "#^Parameter \\#1 \\$expr of method DrupalRector\\\\Rector\\\\Deprecation\\\\EntityManagerRector\\:\\:refactorExpression\\(\\) expects PhpParser\\\\Node\\\\Expr\\\\MethodCall\\|PhpParser\\\\Node\\\\Expr\\\\StaticCall, PhpParser\\\\Node given\\.$#"
+			message: "#^Parameter \\#1 \\$expr of method DrupalRector\\\\Drupal8\\\\Rector\\\\Deprecation\\\\EntityManagerRector\\:\\:refactorExpression\\(\\) expects PhpParser\\\\Node\\\\Expr\\\\MethodCall\\|PhpParser\\\\Node\\\\Expr\\\\StaticCall, PhpParser\\\\Node given\\.$#"
 			count: 1
-			path: src/Rector/Deprecation/EntityManagerRector.php
+			path: src/Drupal8/Rector/Deprecation/EntityManagerRector.php
 
 		-
-			message: "#^Parameter \\#1 \\$expr of method DrupalRector\\\\Rector\\\\Deprecation\\\\EntityManagerRector\\:\\:refactorExpression\\(\\) expects PhpParser\\\\Node\\\\Expr\\\\MethodCall\\|PhpParser\\\\Node\\\\Expr\\\\StaticCall, PhpParser\\\\Node\\\\Expr given\\.$#"
+			message: "#^Parameter \\#1 \\$expr of method DrupalRector\\\\Drupal8\\\\Rector\\\\Deprecation\\\\EntityManagerRector\\:\\:refactorExpression\\(\\) expects PhpParser\\\\Node\\\\Expr\\\\MethodCall\\|PhpParser\\\\Node\\\\Expr\\\\StaticCall, PhpParser\\\\Node\\\\Expr given\\.$#"
 			count: 1
-			path: src/Rector/Deprecation/EntityManagerRector.php
+			path: src/Drupal8/Rector/Deprecation/EntityManagerRector.php
 
 		-
 			message: "#^Property PhpParser\\\\Node\\\\Expr\\\\Assign\\:\\:\\$expr \\(PhpParser\\\\Node\\\\Expr\\) does not accept PhpParser\\\\Node\\.$#"
 			count: 1
-			path: src/Rector/Deprecation/EntityManagerRector.php
+			path: src/Drupal8/Rector/Deprecation/EntityManagerRector.php
 
 		-
 			message: "#^Property PhpParser\\\\Node\\\\Stmt\\\\Expression\\:\\:\\$expr \\(PhpParser\\\\Node\\\\Expr\\) does not accept PhpParser\\\\Node\\|null\\.$#"
 			count: 1
-			path: src/Rector/Deprecation/EntityManagerRector.php
+			path: src/Drupal8/Rector/Deprecation/EntityManagerRector.php
 
 		-
 			message: "#^Call to an undefined method PHPStan\\\\Type\\\\Type\\:\\:getValue\\(\\)\\.$#"
 			count: 1
-			path: src/Rector/Deprecation/ExtensionPathRector.php
+			path: src/Drupal9/Rector/Deprecation/ExtensionPathRector.php

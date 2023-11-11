@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
-use DrupalRector\Rector\Deprecation\GetMockRector;
-use DrupalRector\Rector\ValueObject\GetMockConfiguration;
+use DrupalRector\Drupal8\Rector\Deprecation\GetMockRector;
+use DrupalRector\Drupal8\Rector\ValueObject\GetMockConfiguration;
 use DrupalRector\Services\AddCommentService;
 use Rector\Config\RectorConfig;
 

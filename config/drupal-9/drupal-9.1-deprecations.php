@@ -3,19 +3,19 @@
 declare(strict_types=1);
 
 
-use DrupalRector\Rector\Deprecation\AssertFieldByIdRector;
-use DrupalRector\Rector\Deprecation\AssertFieldByNameRector;
-use DrupalRector\Rector\Deprecation\AssertNoFieldByIdRector;
-use DrupalRector\Rector\Deprecation\AssertNoFieldByNameRector;
-use DrupalRector\Rector\Deprecation\AssertNoUniqueTextRector;
-use DrupalRector\Rector\Deprecation\AssertOptionSelectedRector;
-use DrupalRector\Rector\Deprecation\ConstructFieldXpathRector;
-use DrupalRector\Rector\Deprecation\GetAllOptionsRector;
-use DrupalRector\Rector\Deprecation\GetRawContentRector;
-use DrupalRector\Rector\Deprecation\PassRector;
-use DrupalRector\Rector\Deprecation\UiHelperTraitDrupalPostFormRector;
-use DrupalRector\Rector\Deprecation\UserPasswordRector;
-use DrupalRector\Rector\ValueObject\AssertLegacyTraitConfiguration;
+use DrupalRector\Drupal9\Rector\Deprecation\AssertFieldByIdRector;
+use DrupalRector\Drupal9\Rector\Deprecation\AssertFieldByNameRector;
+use DrupalRector\Drupal9\Rector\Deprecation\AssertNoFieldByIdRector;
+use DrupalRector\Drupal9\Rector\Deprecation\AssertNoFieldByNameRector;
+use DrupalRector\Drupal9\Rector\Deprecation\AssertNoUniqueTextRector;
+use DrupalRector\Drupal9\Rector\Deprecation\AssertOptionSelectedRector;
+use DrupalRector\Drupal9\Rector\Deprecation\ConstructFieldXpathRector;
+use DrupalRector\Drupal9\Rector\Deprecation\GetAllOptionsRector;
+use DrupalRector\Drupal9\Rector\Deprecation\GetRawContentRector;
+use DrupalRector\Drupal9\Rector\Deprecation\PassRector;
+use DrupalRector\Drupal9\Rector\Deprecation\UiHelperTraitDrupalPostFormRector;
+use DrupalRector\Drupal9\Rector\Deprecation\UserPasswordRector;
+use DrupalRector\Drupal10\Rector\ValueObject\AssertLegacyTraitConfiguration;
 use Rector\Config\RectorConfig;
 use Rector\PHPUnit\Set\PHPUnitSetList;
 use DrupalRector\Services\AddCommentService;
@@ -42,7 +42,7 @@ return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->rule(AssertFieldByIdRector::class);
 
 
-    $rectorConfig->ruleWithConfiguration(\DrupalRector\Rector\Deprecation\AssertLegacyTraitRector::class, [
+    $rectorConfig->ruleWithConfiguration(\DrupalRector\Drupal9\Rector\Deprecation\AssertLegacyTraitRector::class, [
         new AssertLegacyTraitConfiguration('assertLinkByHref', 'linkByHrefExists'),
         new AssertLegacyTraitConfiguration('assertLink', 'linkExists'),
         new AssertLegacyTraitConfiguration('assertNoEscaped', 'assertNoEscaped'),

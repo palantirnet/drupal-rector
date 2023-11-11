@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use DrupalRector\Rector\Deprecation\RequestTimeConstRector;
+use DrupalRector\Drupal8\Rector\Deprecation\RequestTimeConstRector;
 use DrupalRector\Services\AddCommentService;
 use Rector\Config\RectorConfig;
 

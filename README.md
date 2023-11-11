@@ -125,7 +125,7 @@ Rector itself has conflicts with older versions of PhpStan.
 
 If you are getting errors like
 
-`[ERROR] Class "DrupalRector\Rector\Deprecation\EntityManagerRector" was not found while loading`
+`[ERROR] Class "DrupalRector\Drupal8\Rector\Deprecation\EntityManagerRector" was not found while loading`
 
 You may need to rebuild your autoload file.
 
