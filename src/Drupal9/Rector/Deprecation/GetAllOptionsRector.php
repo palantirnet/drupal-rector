@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace DrupalRector\Drupal9\Rector\Deprecation;
 
@@ -11,7 +13,6 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 final class GetAllOptionsRector extends AbstractRector
 {
-
     use GetDeclaringSourceTrait;
 
     /**
@@ -23,7 +24,6 @@ final class GetAllOptionsRector extends AbstractRector
     {
         $this->parentClassScopeResolver = $parentClassScopeResolver;
     }
-
 
     public function getRuleDefinition(): RuleDefinition
     {
@@ -38,7 +38,7 @@ CODE_BEFORE
     $this->drupalGet('/form-test/select');
     $this->assertCount(6, $this->cssSelect('select[name="opt_groups"]')[0]->findAll('xpath', '//option'));
 CODE_AFTER
-            )
+            ),
         ]);
     }
 
@@ -68,5 +68,4 @@ CODE_AFTER
             $this->nodeFactory->createArgs(['xpath', '//option'])
         );
     }
-
 }

@@ -6,22 +6,22 @@ use DrupalRector\Drupal9\Rector\Deprecation\ExtensionPathRector;
 use DrupalRector\Drupal9\Rector\Deprecation\FileBuildUriRector;
 use DrupalRector\Drupal9\Rector\Deprecation\FunctionToEntityTypeStorageMethod;
 use DrupalRector\Drupal9\Rector\Deprecation\FunctionToFirstArgMethodRector;
-use DrupalRector\Rector\Deprecation\FunctionToServiceRector;
-use DrupalRector\Rector\Deprecation\FunctionToStaticRector;
 use DrupalRector\Drupal9\Rector\Deprecation\SystemSortByInfoNameRector;
 use DrupalRector\Drupal9\Rector\Deprecation\TaxonomyTermLoadMultipleByNameRector;
 use DrupalRector\Drupal9\Rector\Deprecation\TaxonomyVocabularyGetNamesDrupalStaticResetRector;
 use DrupalRector\Drupal9\Rector\Deprecation\TaxonomyVocabularyGetNamesRector;
+use DrupalRector\Drupal9\Rector\ValueObject\ExtensionPathConfiguration;
 use DrupalRector\Drupal9\Rector\ValueObject\FunctionToEntityTypeStorageConfiguration;
 use DrupalRector\Drupal9\Rector\ValueObject\FunctionToFirstArgMethodConfiguration;
+use DrupalRector\Rector\Deprecation\FunctionToServiceRector;
+use DrupalRector\Rector\Deprecation\FunctionToStaticRector;
 use DrupalRector\Rector\ValueObject\FunctionToServiceConfiguration;
-use DrupalRector\Drupal9\Rector\ValueObject\ExtensionPathConfiguration;
 use DrupalRector\Rector\ValueObject\FunctionToStaticConfiguration;
 use DrupalRector\Services\AddCommentService;
 use Rector\Config\RectorConfig;
 
 return static function (RectorConfig $rectorConfig): void {
-    $rectorConfig->singleton(AddCommentService::class, function() {
+    $rectorConfig->singleton(AddCommentService::class, function () {
         return new AddCommentService();
     });
     // Change record: https://www.drupal.org/node/2940438.

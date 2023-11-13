@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace DrupalRector\Drupal9\Rector\Deprecation;
 
 use PhpParser\Node;
@@ -10,27 +12,27 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 final class UserPasswordRector extends AbstractRector
 {
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getRuleDefinition(): RuleDefinition
     {
-        return new RuleDefinition('Fixes deprecated user_password() calls',[
+        return new RuleDefinition('Fixes deprecated user_password() calls', [
             new CodeSample(
-              <<<'CODE_BEFORE'
+                <<<'CODE_BEFORE'
 $pass = user_password();
 $shorter_pass = user_password(8);
 CODE_BEFORE
-              ,
-              <<<'CODE_AFTER'
+                ,
+                <<<'CODE_AFTER'
 $pass = \Drupal::service('password_generator')->generate();
 $shorter_pass = \Drupal::service('password_generator')->generate(8);
 CODE_AFTER
-            )
+            ),
         ]);
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getNodeTypes(): array
     {
@@ -40,7 +42,7 @@ CODE_AFTER
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function refactor(Node $node): ?Node
     {
@@ -55,8 +57,7 @@ CODE_AFTER
             [new Node\Arg(new Node\Scalar\String_('password_generator'))]
         );
         $methodName = new Node\Identifier('generate');
+
         return new Node\Expr\MethodCall($service, $methodName, $node->getArgs());
     }
-
-
 }

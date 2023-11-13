@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace DrupalRector\Drupal9\Rector\Deprecation;
 
@@ -10,9 +12,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 final class ConstructFieldXpathRector extends AbstractRector
 {
-
     use GetDeclaringSourceTrait;
-
 
     public function getRuleDefinition(): RuleDefinition
     {
@@ -25,7 +25,7 @@ CODE_BEFORE
                 <<<'CODE_AFTER'
 $this->getSession()->getPage()->findField('edit-preferred-admin-langcode');
 CODE_AFTER
-            )
+            ),
         ]);
     }
 
@@ -48,7 +48,7 @@ CODE_AFTER
         $args = $node->args;
         $getSessionNode = $this->nodeFactory->createLocalMethodCall('getSession');
         $getPageNode = $this->nodeFactory->createMethodCall($getSessionNode, 'getPage');
+
         return $this->nodeFactory->createMethodCall($getPageNode, 'findField', [$args[1]]);
     }
-
 }

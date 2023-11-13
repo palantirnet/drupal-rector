@@ -1,40 +1,39 @@
 <?php
 
+declare(strict_types=1);
+
 namespace DrupalRector\Drupal9\Rector\Deprecation;
 
 use DrupalRector\Drupal9\Rector\ValueObject\FunctionToEntityTypeStorageConfiguration;
-use DrupalRector\Rector\ValueObject\FunctionToServiceConfiguration;
 use PhpParser\Node;
-use PhpParser\NodeDumper;
 use Rector\Core\Contract\Rector\ConfigurableRectorInterface;
 use Rector\Core\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\ConfiguredCodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
-class FunctionToEntityTypeStorageMethod extends AbstractRector implements ConfigurableRectorInterface {
-
+class FunctionToEntityTypeStorageMethod extends AbstractRector implements ConfigurableRectorInterface
+{
     /**
      * @var array|FunctionToEntityTypeStorageConfiguration[]
      */
     private array $configuration;
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
-    public function configure(array $configuration): void {
+    public function configure(array $configuration): void
+    {
         foreach ($configuration as $value) {
             if (!($value instanceof FunctionToEntityTypeStorageConfiguration)) {
-                throw new \InvalidArgumentException(sprintf(
-                    'Each configuration item must be an instance of "%s"',
-                    FunctionToEntityTypeStorageConfiguration::class
-                ));
+                throw new \InvalidArgumentException(sprintf('Each configuration item must be an instance of "%s"', FunctionToEntityTypeStorageConfiguration::class));
             }
         }
 
         $this->configuration = $configuration;
     }
 
-    public function getRuleDefinition(): RuleDefinition {
+    public function getRuleDefinition(): RuleDefinition
+    {
         return new RuleDefinition('Refactor function call to an entity storage method',
             [
                 new ConfiguredCodeSample(
@@ -60,15 +59,17 @@ class FunctionToEntityTypeStorageMethod extends AbstractRector implements Config
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
-    public function getNodeTypes(): array {
+    public function getNodeTypes(): array
+    {
         return [
             Node\Expr\FuncCall::class,
         ];
     }
 
-    public function refactor(Node $node): ?Node {
+    public function refactor(Node $node): ?Node
+    {
         assert($node instanceof Node\Expr\FuncCall);
 
         foreach ($this->configuration as $configuration) {
@@ -85,5 +86,4 @@ class FunctionToEntityTypeStorageMethod extends AbstractRector implements Config
 
         return null;
     }
-
 }

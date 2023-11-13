@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace DrupalRector\Rector\Deprecation\Base;
 
 use PhpParser\Node;
@@ -28,7 +30,7 @@ abstract class FunctionToFunctionBase extends AbstractRector
     protected $functionName;
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getNodeTypes(): array
     {
@@ -38,18 +40,17 @@ abstract class FunctionToFunctionBase extends AbstractRector
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function refactor(Node $node): ?Node
     {
-      /** @var Node\Expr\FuncCall $node */
-      if ($this->getName($node->name) === $this->deprecatedFunctionName) {
+        /** @var Node\Expr\FuncCall $node */
+        if ($this->getName($node->name) === $this->deprecatedFunctionName) {
+            $method_name = new Node\Name($this->functionName);
 
-          $method_name = new Node\Name($this->functionName);
+            $node = new Node\Expr\FuncCall($method_name, $node->args);
 
-          $node = new Node\Expr\FuncCall($method_name, $node->args);
-
-          return $node;
+            return $node;
         }
 
         return null;

@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace DrupalRector\Drupal9\Rector\Deprecation;
 
@@ -9,7 +11,6 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 final class AssertOptionSelectedRector extends AbstractRector
 {
-
     public function getRuleDefinition(): RuleDefinition
     {
         return new RuleDefinition('Fixes deprecated AssertLegacyTrait::assertOptionSelected() calls', [
@@ -21,7 +22,7 @@ CODE_BEFORE
                 <<<'CODE_AFTER'
     $this->assertTrue($this->assertSession()->optionExists('options', 2)->hasAttribute('selected'));
 CODE_AFTER
-            )
+            ),
         ]);
     }
 
@@ -63,8 +64,7 @@ CODE_AFTER
 
         return $this->nodeFactory->createLocalMethodCall('assertTrue', [
             $this->nodeFactory->createArg($hasAttributeNode),
-            $this->nodeFactory->createArg($message)
+            $this->nodeFactory->createArg($message),
         ]);
     }
-
 }

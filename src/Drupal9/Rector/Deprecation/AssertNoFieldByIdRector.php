@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace DrupalRector\Drupal9\Rector\Deprecation;
 
@@ -9,7 +11,6 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 final class AssertNoFieldByIdRector extends AbstractRector
 {
-
     public function getRuleDefinition(): RuleDefinition
     {
         return new RuleDefinition('Fixes deprecated AssertLegacyTrait::assertNoFieldById() calls', [
@@ -25,7 +26,7 @@ CODE_BEFORE
     $this->assertSession()->fieldValueNotEquals('name', 'not the value');
     $this->assertSession()->fieldNotExists('notexisting');
 CODE_AFTER
-            )
+            ),
         ]);
     }
 

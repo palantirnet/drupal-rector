@@ -1,14 +1,17 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace DrupalRector\Tests\Rector\Deprecation\DeprecationHelperRemoveRector;
 
 use Iterator;
 use Rector\Testing\PHPUnit\AbstractRectorTestCase;
 
-class DeprecationHelperRemoveRectorTest extends AbstractRectorTestCase {
-
+class DeprecationHelperRemoveRectorTest extends AbstractRectorTestCase
+{
     /**
      * @covers ::refactor
+     *
      * @dataProvider provideData
      */
     public function test(string $filePath): void
@@ -19,15 +22,14 @@ class DeprecationHelperRemoveRectorTest extends AbstractRectorTestCase {
     /**
      * @return Iterator<<string>>
      */
-    public static function provideData(): Iterator
+    public static function provideData(): \Iterator
     {
-        return self::yieldFilesFromDirectory(__DIR__ . '/fixture');
+        return self::yieldFilesFromDirectory(__DIR__.'/fixture');
     }
 
     public function provideConfigFilePath(): string
     {
         // must be implemented
-        return __DIR__ . '/config/configured_rule.php';
+        return __DIR__.'/config/configured_rule.php';
     }
-
 }

@@ -1,10 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace DrupalRector\Drupal8\Rector\Deprecation;
 
 use DrupalRector\Services\AddCommentService;
 use PhpParser\Node;
-use PhpParser\NodeDumper;
 use PHPStan\Analyser\Scope;
 use Rector\Core\Exception\ShouldNotHappenException;
 use Rector\Core\Rector\AbstractRector;
@@ -53,7 +54,7 @@ final class EntityManagerRector extends AbstractRector
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getRuleDefinition(): RuleDefinition
     {
@@ -72,17 +73,17 @@ CODE_AFTER
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getNodeTypes(): array
     {
         return [
-            Node\Stmt\Expression::class
+            Node\Stmt\Expression::class,
         ];
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function refactor(Node $node): ?Node
     {
@@ -105,49 +106,58 @@ CODE_AFTER
         // entityManager somewhere up the call.
         if ($isAssignedMethodCall || $isAssignedStaticCall) {
             $expr = $this->findInstanceByNameInAssign($node->expr, Node\Expr\CallLike::class, 'entityManager');
-            if(!is_null($expr)){
+            if (!is_null($expr)) {
                 $expr = $this->refactorExpression($expr, $node);
                 $node->expr = $this->replaceInstanceByNameInAssign($node->expr, $expr, Node\Expr\CallLike::class, 'entityManager');
+
                 return $node;
             }
+
             return null;
         }
 
         $expr = $this->refactorExpression($node->expr, $node);
-        if(is_null($expr)){
+        if (is_null($expr)) {
             return null;
         }
 
         $node->expr = $expr;
+
         return $node;
     }
 
     /**
      * Find an instance of a class by name in an Node\Expr\Assign instance.
+     *
      * @todo Decide if this should be a Trait.
+     *
      * @see DrupalRector\Rector\Deprecation\Base\DBBase
      *
      * @param Node\Expr\Assign $assign
-     * @param string $class
-     * @param string $name
+     * @param string           $class
+     * @param string           $name
+     *
      * @return Node|null
      */
-    public function findInstanceByNameInAssign(Node\Expr\Assign $assign, string $class, string $name): ?Node {
+    public function findInstanceByNameInAssign(Node\Expr\Assign $assign, string $class, string $name): ?Node
+    {
         $node = $assign->expr;
         $depth = 0;
 
         // Should the expression be the class we are looking for and the name is the one we are looking for, we can return early.
         if ($node instanceof $class && $this->getName($node->name) === $name) {
             $node->setAttribute(self::class, $depth);
+
             return $node;
         }
 
         // Find the relevant class with name in the chain.
         while (isset($node->var) && !($node->var instanceof $class && $this->getName($node->var->name) !== $name)) {
             $node = $node->var;
-            $depth++;
-            if($node instanceof $class && $this->getName($node->name)) {
+            ++$depth;
+            if ($node instanceof $class && $this->getName($node->name)) {
                 $node->setAttribute(self::class, $depth);
+
                 return $node;
             }
         }
@@ -157,29 +167,36 @@ CODE_AFTER
 
     /**
      * Replace an instance of a class by name in an Node\Expr\Assign instance.
+     *
      * @todo Decide if this should be a Trait.
+     *
      * @see DrupalRector\Rector\Deprecation\Base\DBBase
      *
      * @param Node\Expr\Assign $assign
-     * @param Node $replacement
-     * @param string $class
-     * @param string $name
-     * @return Node|null
+     * @param Node             $replacement
+     * @param string           $class
+     * @param string           $name
+     *
      * @throws ShouldNotHappenException
+     *
+     * @return Node|null
      */
-    public function replaceInstanceByNameInAssign(Node\Expr\Assign $assign, Node $replacement, string $class, string $name): ?Node {
+    public function replaceInstanceByNameInAssign(Node\Expr\Assign $assign, Node $replacement, string $class, string $name): ?Node
+    {
         $node = $assign->expr;
 
         if ($node instanceof $class && $this->getName($node->name) === $name) {
             $assign->expr = $replacement;
+
             return $assign;
         }
 
-        while(isset($node->var) && !($node->var instanceof $class && $this->getName($node->var->name) === $name)){
+        while (isset($node->var) && !($node->var instanceof $class && $this->getName($node->var->name) === $name)) {
             $node = $node->var;
         }
         if ($node->var instanceof $class) {
             $node->var = $replacement;
+
             return $assign;
         }
 
@@ -188,6 +205,7 @@ CODE_AFTER
 
     /**
      * @param Node\Expr\StaticCall $node
+     *
      * @return Node\Expr\StaticCall
      */
     public function refactorStaticCall(Node\Expr\StaticCall $node, Node\Stmt\Expression $statement): Node\Expr\StaticCall
@@ -206,11 +224,13 @@ CODE_AFTER
         $node = new Node\Expr\StaticCall(new Node\Name\FullyQualified('Drupal'),
             'service',
             [new Node\Arg(new Node\Scalar\String_($service))]);
+
         return $node;
     }
 
     /**
      * @param Node\Expr\MethodCall $node
+     *
      * @return Node\Expr\MethodCall|Node\Expr\StaticCall
      */
     public function refactorMethodCall(Node\Expr\MethodCall $expr, Node\Stmt\Expression $statement): Node\Expr\CallLike
@@ -232,6 +252,7 @@ CODE_AFTER
             $expr = new Node\Expr\MethodCall(new Node\Expr\Variable('this'),
                 new Node\Identifier('entityTypeManager'));
         }
+
         return $expr;
     }
 
@@ -329,6 +350,7 @@ CODE_AFTER
 
     /**
      * @param Node\Expr\MethodCall|Node\Expr\StaticCall $expr
+     *
      * @return Node\Expr\MethodCall|Node\Expr\StaticCall|null
      */
     public function refactorExpression(Node\Expr $expr, Node\Stmt\Expression $statement): ?Node\Expr
@@ -349,7 +371,7 @@ CODE_AFTER
                 return $expr;
             }
         }
+
         return null;
     }
-
 }

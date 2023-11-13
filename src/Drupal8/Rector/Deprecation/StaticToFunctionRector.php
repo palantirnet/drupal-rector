@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace DrupalRector\Drupal8\Rector\Deprecation;
 
 use DrupalRector\Drupal8\Rector\ValueObject\StaticToFunctionConfiguration;
@@ -17,14 +19,13 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  */
 class StaticToFunctionRector extends AbstractRector implements ConfigurableRectorInterface
 {
-
     /**
      * @var StaticToFunctionConfiguration[]
      */
     private array $staticToFunctionConfigurations;
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getNodeTypes(): array
     {
@@ -33,20 +34,19 @@ class StaticToFunctionRector extends AbstractRector implements ConfigurableRecto
         ];
     }
 
-    public function configure(array $configuration): void {
+    public function configure(array $configuration): void
+    {
         foreach ($configuration as $value) {
             if (!($value instanceof StaticToFunctionConfiguration)) {
-                throw new \InvalidArgumentException(sprintf(
-                    'Each configuration item must be an instance of "%s"',
-                    StaticToFunctionConfiguration::class
-                ));
+                throw new \InvalidArgumentException(sprintf('Each configuration item must be an instance of "%s"', StaticToFunctionConfiguration::class));
             }
         }
 
         $this->staticToFunctionConfigurations = $configuration;
     }
+
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function refactor(Node $node): ?Node
     {
@@ -62,10 +62,9 @@ class StaticToFunctionRector extends AbstractRector implements ConfigurableRecto
         return null;
     }
 
-
     public function getRuleDefinition(): RuleDefinition
     {
-        return new RuleDefinition('Fixes deprecated \Drupal\Component\Utility\Unicode::strlen() calls',[
+        return new RuleDefinition('Fixes deprecated \Drupal\Component\Utility\Unicode::strlen() calls', [
             new ConfiguredCodeSample(
                 <<<'CODE_BEFORE'
 $length = \Drupal\Component\Utility\Unicode::strlen('example');
@@ -104,8 +103,7 @@ CODE_AFTER
                 [
                     new StaticToFunctionConfiguration('Drupal\Component\Utility\Unicode', 'substr', 'mb_substr'),
                 ]
-            )
+            ),
         ]);
     }
-
 }

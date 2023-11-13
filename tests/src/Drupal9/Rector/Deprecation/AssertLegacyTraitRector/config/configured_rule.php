@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 use DrupalRector\Drupal9\Rector\Deprecation\AssertLegacyTraitRector;
 use DrupalRector\Drupal9\Rector\ValueObject\AssertLegacyTraitConfiguration;
@@ -6,7 +8,7 @@ use DrupalRector\Tests\Rector\Deprecation\DeprecationBase;
 use Rector\Config\RectorConfig;
 
 return static function (RectorConfig $rectorConfig): void {
-    DeprecationBase::addClass(AssertLegacyTraitRector::class, $rectorConfig, TRUE, [
+    DeprecationBase::addClass(AssertLegacyTraitRector::class, $rectorConfig, true, [
         new AssertLegacyTraitConfiguration('assertLinkByHref', 'linkByHrefExists'),
         new AssertLegacyTraitConfiguration('assertLink', 'linkExists'),
         new AssertLegacyTraitConfiguration('assertNoEscaped', 'assertNoEscaped'),
@@ -36,14 +38,14 @@ return static function (RectorConfig $rectorConfig): void {
         new AssertLegacyTraitConfiguration('assertNoRaw', 'responseNotContains', '', true, true),
         new AssertLegacyTraitConfiguration('assertRaw', 'responseContains', '', true, true),
 
-        new AssertLegacyTraitConfiguration( 'assertNoText',  'pageTextNotContains', 'Verify the assertion: pageTextNotContains() for HTML responses, responseNotContains() for non-HTML responses.' . PHP_EOL . '// The passed text should be HTML decoded, exactly as a human sees it in the browser.', true, true),
-        new AssertLegacyTraitConfiguration('assertText', 'pageTextContains', 'Verify the assertion: pageTextContains() for HTML responses, responseContains() for non-HTML responses.' . PHP_EOL . '// The passed text should be HTML decoded, exactly as a human sees it in the browser.', true, true),
+        new AssertLegacyTraitConfiguration('assertNoText', 'pageTextNotContains', 'Verify the assertion: pageTextNotContains() for HTML responses, responseNotContains() for non-HTML responses.'.PHP_EOL.'// The passed text should be HTML decoded, exactly as a human sees it in the browser.', true, true),
+        new AssertLegacyTraitConfiguration('assertText', 'pageTextContains', 'Verify the assertion: pageTextContains() for HTML responses, responseContains() for non-HTML responses.'.PHP_EOL.'// The passed text should be HTML decoded, exactly as a human sees it in the browser.', true, true),
 
-        new AssertLegacyTraitConfiguration('assertEqual', 'assertEquals', '',  false, false,  'Drupal\KernelTests\AssertLegacyTrait'),
-        new AssertLegacyTraitConfiguration('assertNotEqual', 'assertNotEquals', '',  false, false, 'Drupal\KernelTests\AssertLegacyTrait'),
-        new AssertLegacyTraitConfiguration('assertIdenticalObject', 'assertEquals', '',  false, false, 'Drupal\KernelTests\AssertLegacyTrait'),
-        new AssertLegacyTraitConfiguration('assertIdentical', 'assertSame', '',  false, false, 'Drupal\KernelTests\AssertLegacyTrait'),
-        new AssertLegacyTraitConfiguration('assertNotIdentical', 'assertNotSame', '',  false, false, 'Drupal\KernelTests\AssertLegacyTrait'),
+        new AssertLegacyTraitConfiguration('assertEqual', 'assertEquals', '', false, false, 'Drupal\KernelTests\AssertLegacyTrait'),
+        new AssertLegacyTraitConfiguration('assertNotEqual', 'assertNotEquals', '', false, false, 'Drupal\KernelTests\AssertLegacyTrait'),
+        new AssertLegacyTraitConfiguration('assertIdenticalObject', 'assertEquals', '', false, false, 'Drupal\KernelTests\AssertLegacyTrait'),
+        new AssertLegacyTraitConfiguration('assertIdentical', 'assertSame', '', false, false, 'Drupal\KernelTests\AssertLegacyTrait'),
+        new AssertLegacyTraitConfiguration('assertNotIdentical', 'assertNotSame', '', false, false, 'Drupal\KernelTests\AssertLegacyTrait'),
         new AssertLegacyTraitConfiguration('assert', 'assertTrue', '', false, false, 'Drupal\KernelTests\AssertLegacyTrait'),
 
         new AssertLegacyTraitConfiguration('assertNoCacheTag', 'responseHeaderNotContains', '', true, false, 'Drupal\FunctionalTests\AssertLegacyTrait', 'X-Drupal-Cache-Tags'),

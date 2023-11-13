@@ -1,10 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace DrupalRector\Drupal9\Rector\ValueObject;
 
 class AssertLegacyTraitConfiguration
 {
-
     private string $deprecatedMethodName;
     private string $methodName;
     private string $comment;
@@ -14,14 +15,14 @@ class AssertLegacyTraitConfiguration
     private ?string $prependArgument;
 
     /**
-     * @param string $deprecatedMethodName Deprecated method name.
-     * @param string $methodName Method to call instead.
-     * @param string $comment Comment to add to the method call.
-     * @param bool $isAssertSessionMethod Whether the new method is an assertSession method.
-     * @param bool $processFirstArgumentOnly Toggle to reduce the number of arguments passed to 1.
-     * @param string $declaringSource The class that declares the deprecated method.
+     * @param string $deprecatedMethodName     deprecated method name
+     * @param string $methodName               method to call instead
+     * @param string $comment                  comment to add to the method call
+     * @param bool   $isAssertSessionMethod    whether the new method is an assertSession method
+     * @param bool   $processFirstArgumentOnly toggle to reduce the number of arguments passed to 1
+     * @param string $declaringSource          the class that declares the deprecated method
      */
-    public function __construct(string $deprecatedMethodName, string $methodName, string $comment = '', bool $isAssertSessionMethod = true, bool $processFirstArgumentOnly = false, string $declaringSource = 'Drupal\FunctionalTests\AssertLegacyTrait', ?string $prependArgument = null)
+    public function __construct(string $deprecatedMethodName, string $methodName, string $comment = '', bool $isAssertSessionMethod = true, bool $processFirstArgumentOnly = false, string $declaringSource = 'Drupal\FunctionalTests\AssertLegacyTrait', string $prependArgument = null)
     {
         $this->deprecatedMethodName = $deprecatedMethodName;
         $this->methodName = $methodName;
@@ -66,5 +67,4 @@ class AssertLegacyTraitConfiguration
     {
         return $this->prependArgument;
     }
-
 }

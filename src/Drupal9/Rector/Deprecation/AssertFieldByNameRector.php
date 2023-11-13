@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace DrupalRector\Drupal9\Rector\Deprecation;
 
@@ -9,7 +11,6 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 final class AssertFieldByNameRector extends AbstractRector
 {
-
     public function getRuleDefinition(): RuleDefinition
     {
         return new RuleDefinition('Fixes deprecated AssertLegacyTrait::assertFieldByName() calls', [
@@ -25,7 +26,7 @@ $this->assertSession()->fieldValueEquals('field_name', 'expected_value');
 $this->assertSession()->fieldValueEquals("field_name[0][value][date]", '');
 $this->assertSession()->fieldExists("field_name[0][value][time]");
 CODE_AFTER
-            )
+            ),
         ]);
     }
 

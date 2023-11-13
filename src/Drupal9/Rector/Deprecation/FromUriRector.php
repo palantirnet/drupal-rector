@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace DrupalRector\Drupal9\Rector\Deprecation;
 
@@ -11,7 +13,6 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 final class FromUriRector extends AbstractRector
 {
-
     use GetDeclaringSourceTrait;
 
     public function getRuleDefinition(): RuleDefinition
@@ -25,7 +26,7 @@ CODE_BEFORE
                 <<<'CODE_AFTER'
 \Drupal::service('file_url_generator')->generate($uri);
 CODE_AFTER
-            )
+            ),
         ]);
     }
 
@@ -63,7 +64,7 @@ CODE_AFTER
             'service',
             [new Node\Arg(new Node\Scalar\String_('file_url_generator'))]
         );
+
         return new Node\Expr\MethodCall($service, new Node\Identifier('generate'), $args);
     }
-
 }

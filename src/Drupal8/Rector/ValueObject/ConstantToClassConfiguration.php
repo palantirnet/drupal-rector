@@ -1,13 +1,13 @@
 <?php
 
-declare (strict_types=1);
+declare(strict_types=1);
 
 namespace DrupalRector\Drupal8\Rector\ValueObject;
 
 use Rector\Core\Validation\RectorAssert;
+
 final class ConstantToClassConfiguration
 {
-
     private string $deprecated;
     private string $class;
     private string $constant;
@@ -37,5 +37,4 @@ final class ConstantToClassConfiguration
     {
         return $this->constant;
     }
-
 }

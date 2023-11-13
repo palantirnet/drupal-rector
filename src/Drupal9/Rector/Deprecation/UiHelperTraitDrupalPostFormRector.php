@@ -1,17 +1,17 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace DrupalRector\Drupal9\Rector\Deprecation;
 
 use PhpParser\Node;
 use Rector\Core\Exception\ShouldNotHappenException;
 use Rector\Core\Rector\AbstractRector;
-use Rector\PostRector\Collector\NodesToAddCollector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 final class UiHelperTraitDrupalPostFormRector extends AbstractRector
 {
-
     public function getRuleDefinition(): RuleDefinition
     {
         return new RuleDefinition('Fixes deprecated UiHelperTrait::drupalPostForm() calls', [
@@ -32,7 +32,7 @@ $this->submitForm($edit, 'Create');
 $edit['action'] = 'action_goto_action_1';
 $this->submitForm($edit, 'Edit');
 CODE_AFTER
-            )
+            ),
         ]);
     }
 
@@ -46,19 +46,22 @@ CODE_AFTER
     /**
      * @param \PhpParser\Node\Expr\MethodCall $node
      *
-     * @return array<int, ?\PhpParser\Node\Arg>
      * @throws \Rector\Core\Exception\ShouldNotHappenException
+     *
+     * @return array<int, ?\PhpParser\Node\Arg>
      */
     private function safeArgDestructure(Node\Expr\MethodCall $node): array
     {
         $count = count($node->args);
         if ($count === 3) {
             [$path, $edit, $button] = $node->args;
+
             return [$path, $edit, $button, null, null];
         }
 
         if ($count === 4) {
             [$path, $edit, $button, $options] = $node->args;
+
             return [$path, $edit, $button, $options, null];
         }
 
@@ -101,6 +104,7 @@ CODE_AFTER
 
             return $nodes;
         }
+
         return null;
     }
 }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace DrupalRector\Rector\Deprecation;
 
 use DrupalRector\Rector\ValueObject\MethodToMethodWithCheckConfiguration;
@@ -20,10 +22,9 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  *
  * Improvement opportunities:
  * - Checks the variable has a certain class.
- *
  */
-class MethodToMethodWithCheckRector extends AbstractRector implements ConfigurableRectorInterface {
-
+class MethodToMethodWithCheckRector extends AbstractRector implements ConfigurableRectorInterface
+{
     /**
      * @var MethodToMethodWithCheckConfiguration[]
      */
@@ -34,17 +35,16 @@ class MethodToMethodWithCheckRector extends AbstractRector implements Configurab
      */
     private AddCommentService $commentService;
 
-    public function __construct(AddCommentService $commentService) {
+    public function __construct(AddCommentService $commentService)
+    {
         $this->commentService = $commentService;
     }
 
-    public function configure(array $configuration): void {
+    public function configure(array $configuration): void
+    {
         foreach ($configuration as $value) {
             if (!($value instanceof MethodToMethodWithCheckConfiguration)) {
-                throw new \InvalidArgumentException(sprintf(
-                    'Each configuration item must be an instance of "%s"',
-                    MethodToMethodWithCheckConfiguration::class
-                ));
+                throw new \InvalidArgumentException(sprintf('Each configuration item must be an instance of "%s"', MethodToMethodWithCheckConfiguration::class));
             }
         }
 
@@ -52,9 +52,10 @@ class MethodToMethodWithCheckRector extends AbstractRector implements Configurab
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
-    public function getNodeTypes(): array {
+    public function getNodeTypes(): array
+    {
         return [
             Node\Stmt\Expression::class,
             Node\Expr\MethodCall::class,
@@ -62,13 +63,14 @@ class MethodToMethodWithCheckRector extends AbstractRector implements Configurab
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
-    public function refactor(Node $node): ?Node {
+    public function refactor(Node $node): ?Node
+    {
         assert($node instanceof Node\Stmt\Expression || $node instanceof Node\Expr\MethodCall);
 
         if (!$node instanceof Node\Expr\MethodCall && !$node->expr instanceof Node\Expr\MethodCall && !($node->expr instanceof Node\Expr\Assign && $node->expr->expr instanceof Node\Expr\MethodCall)) {
-            return NULL;
+            return null;
         }
 
         foreach ($this->configuration as $configuration) {
@@ -89,6 +91,7 @@ class MethodToMethodWithCheckRector extends AbstractRector implements Configurab
                 if (is_null($methodNode)) {
                     continue;
                 }
+
                 return $methodNode;
             }
 
@@ -98,8 +101,7 @@ class MethodToMethodWithCheckRector extends AbstractRector implements Configurab
                     continue;
                 }
                 $node->expr = $methodNode;
-            }
-            elseif ($node->expr instanceof Node\Expr\Assign && $node->expr->expr instanceof Node\Expr\MethodCall) {
+            } elseif ($node->expr instanceof Node\Expr\Assign && $node->expr->expr instanceof Node\Expr\MethodCall) {
                 $methodNode = $this->refactorNode($node->expr->expr, $node, $configuration);
                 if (is_null($methodNode)) {
                     continue;
@@ -110,10 +112,11 @@ class MethodToMethodWithCheckRector extends AbstractRector implements Configurab
             return $node;
         }
 
-        return NULL;
+        return null;
     }
 
-    public function refactorNode(Node\Expr\MethodCall $node, ?Node\Stmt\Expression $statement, MethodToMethodWithCheckConfiguration $configuration): ?Node\Expr\MethodCall {
+    public function refactorNode(Node\Expr\MethodCall $node, ?Node\Stmt\Expression $statement, MethodToMethodWithCheckConfiguration $configuration): ?Node\Expr\MethodCall
+    {
         assert($node instanceof Node\Expr\MethodCall);
 
         $callerType = $this->nodeTypeResolver->getType($node->var);
@@ -122,19 +125,19 @@ class MethodToMethodWithCheckRector extends AbstractRector implements Configurab
         $isSuperOf = $expectedType->isSuperTypeOf($callerType);
         if ($isSuperOf->yes()) {
             $node->name = new Node\Identifier($configuration->getMethodName());
+
             return $node;
         }
 
         if ($isSuperOf->maybe()) {
-
             if ($node->var instanceof Node\Expr\Variable) {
                 $node_var = $node->var->name;
                 $node_var = "$$node_var";
-            } else if ($node->var instanceof Node\Expr\MethodCall) {
+            } elseif ($node->var instanceof Node\Expr\MethodCall) {
                 $node_var = $node->var->name;
                 $node_var = "$node_var()";
             } else {
-                throw new ShouldNotHappenException("Unexpected node type: " . get_class($node->var));
+                throw new ShouldNotHappenException('Unexpected node type: '.get_class($node->var));
             }
             $className = $configuration->getClassName();
 
@@ -148,10 +151,12 @@ class MethodToMethodWithCheckRector extends AbstractRector implements Configurab
 
             return $node;
         }
-        return NULL;
+
+        return null;
     }
 
-    public function getRuleDefinition(): RuleDefinition {
+    public function getRuleDefinition(): RuleDefinition
+    {
         return new RuleDefinition('Fixes deprecated MetadataBag::clearCsrfTokenSeed() calls, used in Drupal 8 and 9 deprecations', [
             new ConfiguredCodeSample(
                 <<<'CODE_BEFORE'
@@ -206,5 +211,4 @@ CODE_AFTER
             ),
         ]);
     }
-
 }

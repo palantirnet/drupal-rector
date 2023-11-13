@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-
 use DrupalRector\Drupal9\Rector\Deprecation\AssertFieldByIdRector;
 use DrupalRector\Drupal9\Rector\Deprecation\AssertFieldByNameRector;
 use DrupalRector\Drupal9\Rector\Deprecation\AssertNoFieldByIdRector;
@@ -16,12 +15,12 @@ use DrupalRector\Drupal9\Rector\Deprecation\PassRector;
 use DrupalRector\Drupal9\Rector\Deprecation\UiHelperTraitDrupalPostFormRector;
 use DrupalRector\Drupal9\Rector\Deprecation\UserPasswordRector;
 use DrupalRector\Drupal9\Rector\ValueObject\AssertLegacyTraitConfiguration;
+use DrupalRector\Services\AddCommentService;
 use Rector\Config\RectorConfig;
 use Rector\PHPUnit\Set\PHPUnitSetList;
-use DrupalRector\Services\AddCommentService;
 
 return static function (RectorConfig $rectorConfig): void {
-    $rectorConfig->singleton(AddCommentService::class, function() {
+    $rectorConfig->singleton(AddCommentService::class, function () {
         return new AddCommentService();
     });
 
@@ -40,7 +39,6 @@ return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->rule(AssertFieldByNameRector::class);
     $rectorConfig->rule(AssertNoFieldByNameRector::class);
     $rectorConfig->rule(AssertFieldByIdRector::class);
-
 
     $rectorConfig->ruleWithConfiguration(\DrupalRector\Drupal9\Rector\Deprecation\AssertLegacyTraitRector::class, [
         new AssertLegacyTraitConfiguration('assertLinkByHref', 'linkByHrefExists'),
@@ -72,14 +70,14 @@ return static function (RectorConfig $rectorConfig): void {
         new AssertLegacyTraitConfiguration('assertNoRaw', 'responseNotContains', '', true, true),
         new AssertLegacyTraitConfiguration('assertRaw', 'responseContains', '', true, true),
 
-        new AssertLegacyTraitConfiguration( 'assertNoText',  'pageTextNotContains', 'Verify the assertion: pageTextNotContains() for HTML responses, responseNotContains() for non-HTML responses.' . PHP_EOL . '// The passed text should be HTML decoded, exactly as a human sees it in the browser.', true, true),
-        new AssertLegacyTraitConfiguration('assertText', 'pageTextContains', 'Verify the assertion: pageTextContains() for HTML responses, responseContains() for non-HTML responses.' . PHP_EOL . '// The passed text should be HTML decoded, exactly as a human sees it in the browser.', true, true),
+        new AssertLegacyTraitConfiguration('assertNoText', 'pageTextNotContains', 'Verify the assertion: pageTextNotContains() for HTML responses, responseNotContains() for non-HTML responses.'.PHP_EOL.'// The passed text should be HTML decoded, exactly as a human sees it in the browser.', true, true),
+        new AssertLegacyTraitConfiguration('assertText', 'pageTextContains', 'Verify the assertion: pageTextContains() for HTML responses, responseContains() for non-HTML responses.'.PHP_EOL.'// The passed text should be HTML decoded, exactly as a human sees it in the browser.', true, true),
 
-        new AssertLegacyTraitConfiguration('assertEqual', 'assertEquals', '',  false, false,  'Drupal\KernelTests\AssertLegacyTrait'),
-        new AssertLegacyTraitConfiguration('assertNotEqual', 'assertNotEquals', '',  false, false, 'Drupal\KernelTests\AssertLegacyTrait'),
-        new AssertLegacyTraitConfiguration('assertIdenticalObject', 'assertEquals', '',  false, false, 'Drupal\KernelTests\AssertLegacyTrait'),
-        new AssertLegacyTraitConfiguration('assertIdentical', 'assertSame', '',  false, false, 'Drupal\KernelTests\AssertLegacyTrait'),
-        new AssertLegacyTraitConfiguration('assertNotIdentical', 'assertNotSame', '',  false, false, 'Drupal\KernelTests\AssertLegacyTrait'),
+        new AssertLegacyTraitConfiguration('assertEqual', 'assertEquals', '', false, false, 'Drupal\KernelTests\AssertLegacyTrait'),
+        new AssertLegacyTraitConfiguration('assertNotEqual', 'assertNotEquals', '', false, false, 'Drupal\KernelTests\AssertLegacyTrait'),
+        new AssertLegacyTraitConfiguration('assertIdenticalObject', 'assertEquals', '', false, false, 'Drupal\KernelTests\AssertLegacyTrait'),
+        new AssertLegacyTraitConfiguration('assertIdentical', 'assertSame', '', false, false, 'Drupal\KernelTests\AssertLegacyTrait'),
+        new AssertLegacyTraitConfiguration('assertNotIdentical', 'assertNotSame', '', false, false, 'Drupal\KernelTests\AssertLegacyTrait'),
         new AssertLegacyTraitConfiguration('assert', 'assertTrue', '', false, false, 'Drupal\KernelTests\AssertLegacyTrait'),
 
         new AssertLegacyTraitConfiguration('assertNoCacheTag', 'responseHeaderNotContains', '', true, false, 'Drupal\FunctionalTests\AssertLegacyTrait', 'X-Drupal-Cache-Tags'),
@@ -88,7 +86,6 @@ return static function (RectorConfig $rectorConfig): void {
 
     $rectorConfig->rule(AssertNoFieldByIdRector::class);
     $rectorConfig->rule(AssertOptionSelectedRector::class);
-
 
     // @todo AssertFieldByXPathRector
     // @todo AssertNoFieldByXPathRector

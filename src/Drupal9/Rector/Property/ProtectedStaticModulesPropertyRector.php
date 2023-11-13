@@ -38,8 +38,7 @@ class SomeClassTest {
   protected static $modules = [];
 }
 CODE_SAMPLE
-
-            )
+            ),
         ]);
     }
 

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace DrupalRector\Drupal9\Rector\Deprecation;
 
 use DrupalRector\Drupal9\Rector\ValueObject\FunctionToFirstArgMethodConfiguration;
@@ -17,21 +19,20 @@ final class FunctionToFirstArgMethodRector extends AbstractRector implements Con
     private array $configuration;
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
-    public function getNodeTypes(): array {
+    public function getNodeTypes(): array
+    {
         return [
-            Node\Expr\FuncCall::class
+            Node\Expr\FuncCall::class,
         ];
     }
 
-    public function configure(array $configuration): void {
+    public function configure(array $configuration): void
+    {
         foreach ($configuration as $value) {
             if (!($value instanceof FunctionToFirstArgMethodConfiguration)) {
-                throw new \InvalidArgumentException(sprintf(
-                    'Each configuration item must be an instance of "%s"',
-                    FunctionToFirstArgMethodConfiguration::class
-                ));
+                throw new \InvalidArgumentException(sprintf('Each configuration item must be an instance of "%s"', FunctionToFirstArgMethodConfiguration::class));
             }
         }
 
@@ -39,9 +40,10 @@ final class FunctionToFirstArgMethodRector extends AbstractRector implements Con
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
-    public function refactor(Node $node): ?Node {
+    public function refactor(Node $node): ?Node
+    {
         assert($node instanceof Node\Expr\FuncCall);
 
         foreach ($this->configuration as $configuration) {
@@ -49,23 +51,22 @@ final class FunctionToFirstArgMethodRector extends AbstractRector implements Con
                 continue;
             }
             $args = $node->getArgs();
-            if(count($args) !== 1) {
+            if (count($args) !== 1) {
                 continue;
             }
 
             return $this->nodeFactory->createMethodCall($args[0]->value, $configuration->getMethodName());
         }
 
-        return NULL;
+        return null;
     }
 
-
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getRuleDefinition(): RuleDefinition
     {
-        return new RuleDefinition('Fixes deprecated taxonomy_implode_tags() calls',[
+        return new RuleDefinition('Fixes deprecated taxonomy_implode_tags() calls', [
             new ConfiguredCodeSample(
                 <<<'CODE_BEFORE'
 $url = taxonomy_term_uri($term);
@@ -81,7 +82,7 @@ CODE_AFTER
                     new FunctionToFirstArgMethodConfiguration('taxonomy_term_uri', 'toUrl'),
                     new FunctionToFirstArgMethodConfiguration('taxonomy_term_title', 'label'),
                 ]
-            )
+            ),
         ]);
     }
 }

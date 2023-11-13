@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace DrupalRector\Drupal9\Rector\Deprecation;
 
@@ -22,17 +24,16 @@ class ExtensionPathRector extends AbstractRector implements ConfigurableRectorIn
      */
     private AddCommentService $commentService;
 
-    public function __construct(AddCommentService $commentService) {
+    public function __construct(AddCommentService $commentService)
+    {
         $this->commentService = $commentService;
     }
+
     public function configure(array $configuration): void
     {
         foreach ($configuration as $value) {
             if (!($value instanceof ExtensionPathConfiguration)) {
-                throw new \InvalidArgumentException(sprintf(
-                    'Each configuration item must be an instance of "%s"',
-                    ExtensionPathConfiguration::class
-                ));
+                throw new \InvalidArgumentException(sprintf('Each configuration item must be an instance of "%s"', ExtensionPathConfiguration::class));
             }
         }
 
@@ -73,6 +74,7 @@ class ExtensionPathRector extends AbstractRector implements ConfigurableRectorIn
             $args = $expr->getArgs();
             if (count($args) !== 2) {
                 $this->commentService->addDrupalRectorComment($node, "Invalid call to {$configuration->getFunctionName()}, cannot process.");
+
                 return $node;
             }
             [$extensionType, $extensionName] = $args;
@@ -86,12 +88,11 @@ class ExtensionPathRector extends AbstractRector implements ConfigurableRectorIn
                 'module',
                 'theme',
                 'profile',
-                'theme_engine'
-            ], TRUE)) {
+                'theme_engine',
+            ], true)) {
                 $serviceName = "extension.list.$extensionType";
                 $methodArgs = [$extensionName];
-            }
-            else {
+            } else {
                 $this->commentService->addDrupalRectorComment(
                     $node,
                     'Unsupported extension type encountered, using extension.path.resolver instead of extension.list'
@@ -126,7 +127,8 @@ class ExtensionPathRector extends AbstractRector implements ConfigurableRectorIn
         return null;
     }
 
-    public function getRuleDefinition(): RuleDefinition {
+    public function getRuleDefinition(): RuleDefinition
+    {
         return new RuleDefinition('Fixes deprecated drupal_get_filename() calls', [
             new ConfiguredCodeSample(
                 <<<'CODE_BEFORE'
@@ -161,8 +163,7 @@ CODE_AFTER
                 [
                     new ExtensionPathConfiguration('drupal_get_path', 'getPath'),
                 ]
-            )
+            ),
         ]);
     }
-
 }

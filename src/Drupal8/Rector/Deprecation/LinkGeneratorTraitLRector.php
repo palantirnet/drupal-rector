@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace DrupalRector\Drupal8\Rector\Deprecation;
 
 use DrupalRector\Services\AddCommentService;
@@ -30,16 +32,17 @@ final class LinkGeneratorTraitLRector extends AbstractRector
      */
     private AddCommentService $commentService;
 
-    public function __construct(AddCommentService $commentService) {
+    public function __construct(AddCommentService $commentService)
+    {
         $this->commentService = $commentService;
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getRuleDefinition(): RuleDefinition
     {
-        return new RuleDefinition('Fixes deprecated l() calls',[
+        return new RuleDefinition('Fixes deprecated l() calls', [
             new CodeSample(
                 <<<'CODE_BEFORE'
 $this->l($text, $url);
@@ -48,12 +51,12 @@ CODE_BEFORE
                 <<<'CODE_AFTER'
 \Drupal\Core\Link::fromTextAndUrl($text, $url);
 CODE_AFTER
-            )
+            ),
         ]);
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getNodeTypes(): array
     {
@@ -63,7 +66,7 @@ CODE_AFTER
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function refactor(Node $node): ?Node
     {
@@ -77,19 +80,19 @@ CODE_AFTER
 
         /** @var Node\Expr\MethodCall $expr */
         if ($this->getName($expr->name) === 'l') {
-          $scope = $node->getAttribute(AttributeKey::SCOPE);
-          $classReflection = $scope->getClassReflection();
-          if (!is_null($classReflection) && $classReflection->hasTraitUse('Drupal\Core\Routing\LinkGeneratorTrait')) {
-            $this->commentService->addDrupalRectorComment($node, 'Please manually remove the `use LinkGeneratorTrait;` statement from this class.');
+            $scope = $node->getAttribute(AttributeKey::SCOPE);
+            $classReflection = $scope->getClassReflection();
+            if (!is_null($classReflection) && $classReflection->hasTraitUse('Drupal\Core\Routing\LinkGeneratorTrait')) {
+                $this->commentService->addDrupalRectorComment($node, 'Please manually remove the `use LinkGeneratorTrait;` statement from this class.');
 
-            // Replace with a static call to Link::fromTextAndUrl().
-            $name = new Node\Name\FullyQualified('Drupal\Core\Link');
-            $call = new Node\Identifier('fromTextAndUrl');
+                // Replace with a static call to Link::fromTextAndUrl().
+                $name = new Node\Name\FullyQualified('Drupal\Core\Link');
+                $call = new Node\Identifier('fromTextAndUrl');
 
-            $node->expr = new Node\Expr\StaticCall($name, $call, $expr->args);
+                $node->expr = new Node\Expr\StaticCall($name, $call, $expr->args);
 
-            return $node;
-          }
+                return $node;
+            }
         }
 
         return null;

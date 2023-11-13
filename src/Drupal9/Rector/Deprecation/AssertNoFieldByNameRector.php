@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace DrupalRector\Drupal9\Rector\Deprecation;
 
@@ -24,7 +26,8 @@ final class AssertNoFieldByNameRector extends AbstractRector
      */
     private AddCommentService $commentService;
 
-    public function __construct(AddCommentService $commentService) {
+    public function __construct(AddCommentService $commentService)
+    {
         $this->commentService = $commentService;
     }
 
@@ -45,7 +48,7 @@ CODE_BEFORE
     $this->assertSession()->fieldValueNotEquals('notexisting', '');
     $this->assertSession()->fieldNotExists('notexisting');
 CODE_AFTER
-            )
+            ),
         ]);
     }
 
@@ -76,6 +79,7 @@ CODE_AFTER
         if (count($args) === 1) {
             $args[] = $this->nodeFactory->createArg('');
             $node->expr = $this->createAssertSessionMethodCall('fieldValueNotEquals', $args);
+
             return $node;
         }
 
@@ -83,15 +87,17 @@ CODE_AFTER
         if ($valueArg instanceof Node\Expr\ConstFetch && \strtolower($valueArg->name->toString()) === 'null') {
             $this->commentService->addDrupalRectorComment($node, $this->comment);
             $node->expr = $this->createAssertSessionMethodCall('fieldNotExists', [$args[0]]);
+
             return $node;
         }
 
         $node->expr = $this->createAssertSessionMethodCall('fieldValueNotEquals', $args);
+
         return $node;
     }
 
     /**
-     * @param string $method
+     * @param string                         $method
      * @param array<Arg|VariadicPlaceholder> $args
      *
      * @return \PhpParser\Node\Expr\MethodCall
@@ -99,6 +105,7 @@ CODE_AFTER
     protected function createAssertSessionMethodCall(string $method, array $args): Node\Expr\MethodCall
     {
         $assertSessionNode = $this->nodeFactory->createLocalMethodCall('assertSession');
+
         return $this->nodeFactory->createMethodCall($assertSessionNode, $method, $args);
     }
 }

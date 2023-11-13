@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace DrupalRector\Drupal10\Rector\Deprecation;
 
 use DrupalRector\Contract\VersionedConfigurationInterface;
@@ -17,35 +19,35 @@ class WatchdogExceptionRector extends AbstractDrupalCoreRector
     protected array $configuration;
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
-    public function getNodeTypes(): array {
+    public function getNodeTypes(): array
+    {
         return [
-            Node\Expr\FuncCall::class
+            Node\Expr\FuncCall::class,
         ];
     }
 
-    public function configure(array $configuration): void {
+    public function configure(array $configuration): void
+    {
         foreach ($configuration as $value) {
             if (!($value instanceof DrupalIntroducedVersionConfiguration)) {
-                throw new \InvalidArgumentException(sprintf(
-                    'Each configuration item must be an instance of "%s"',
-                    DrupalIntroducedVersionConfiguration::class
-                ));
+                throw new \InvalidArgumentException(sprintf('Each configuration item must be an instance of "%s"', DrupalIntroducedVersionConfiguration::class));
             }
         }
 
         parent::configure($configuration);
     }
 
-    public function refactorWithConfiguration(Node $node, VersionedConfigurationInterface $configuration) {
+    public function refactorWithConfiguration(Node $node, VersionedConfigurationInterface $configuration)
+    {
         if (!$node instanceof Node\Expr\FuncCall || $this->getName($node) !== 'watchdog_exception') {
-            return NULL;
+            return null;
         }
 
         $args = $node->getArgs();
         if (count($args) < 2) {
-            return NULL;
+            return null;
         }
 
         // arg[5] could be sa link and that will need to be added to arg[3] as 'link' => arg[5]->value
@@ -55,25 +57,24 @@ class WatchdogExceptionRector extends AbstractDrupalCoreRector
             unset($args[5]);
         }
 
-        $loggerNode = $this->nodeFactory->createStaticCall('Drupal', 'logger' , [$args[0]]);
+        $loggerNode = $this->nodeFactory->createStaticCall('Drupal', 'logger', [$args[0]]);
         $newArgs = [
             $loggerNode,
             $args[1],
         ];
-        for ($i=2; $i < count($args); $i++) {
+        for ($i = 2; $i < count($args); ++$i) {
             $newArgs[] = $args[$i];
         }
 
-        return $this->nodeFactory->createStaticCall('Drupal\Core\Utility\Error', 'logException' , $newArgs);
+        return $this->nodeFactory->createStaticCall('Drupal\Core\Utility\Error', 'logException', $newArgs);
     }
 
-
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getRuleDefinition(): RuleDefinition
     {
-        return new RuleDefinition('Fixes deprecated watchdog_exception(\'update\', $exception) calls',[
+        return new RuleDefinition('Fixes deprecated watchdog_exception(\'update\', $exception) calls', [
             new ConfiguredCodeSample(
                 <<<'CODE_BEFORE'
 watchdog_exception('update', $exception);
@@ -91,5 +92,4 @@ CODE_AFTER
             ),
         ]);
     }
-
 }

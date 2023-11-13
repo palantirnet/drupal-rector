@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace DrupalRector\Drupal8\Rector\Deprecation;
 
 use DrupalRector\Services\AddCommentService;
@@ -38,16 +40,17 @@ final class DrupalSetMessageRector extends AbstractRector
      */
     private AddCommentService $commentService;
 
-    public function __construct(AddCommentService $commentService) {
+    public function __construct(AddCommentService $commentService)
+    {
         $this->commentService = $commentService;
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getRuleDefinition(): RuleDefinition
     {
-        return new RuleDefinition('Fixes deprecated drupal_set_message() calls',[
+        return new RuleDefinition('Fixes deprecated drupal_set_message() calls', [
             new CodeSample(
                 <<<'CODE_BEFORE'
 drupal_set_message('example status', 'status');
@@ -56,26 +59,25 @@ CODE_BEFORE
                 <<<'CODE_AFTER'
 \Drupal::messenger()->addStatus('example status');
 CODE_AFTER
-            )
+            ),
         ]);
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getNodeTypes(): array
     {
         return [
-            Node\Stmt\Expression::class
+            Node\Stmt\Expression::class,
         ];
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function refactor(Node $node): ?Node
     {
-
         assert($node instanceof Node\Stmt\Expression);
         if (!($node->expr instanceof Node\Expr\FuncCall)) {
             return null;
@@ -119,7 +121,7 @@ CODE_AFTER
 
                 if ($messageType !== '') {
                     if (in_array($messageType, ['error', 'status', 'warning'], true)) {
-                        $method_name = 'add' . ucfirst($messageType);
+                        $method_name = 'add'.ucfirst($messageType);
                     } else {
                         $method_name = 'addMessage';
                         $method_arguments[] = $expression->args[1];
@@ -172,7 +174,6 @@ CODE_AFTER
                     $phpDocInfo = $node->getAttribute(AttributeKey::PHP_DOC_INFO);
                     assert($phpDocInfo instanceof PhpDocInfo);
                     $phpDocInfo->addPhpDocTagNode(new PhpDocTagNode('@noRector', new GenericTagValueNode('')));
-
 
                     return $node;
                 }

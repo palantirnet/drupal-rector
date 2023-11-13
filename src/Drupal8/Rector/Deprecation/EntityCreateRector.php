@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace DrupalRector\Drupal8\Rector\Deprecation;
 
 use PhpParser\Node;
@@ -21,13 +23,12 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  */
 final class EntityCreateRector extends AbstractRector
 {
-
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getRuleDefinition(): RuleDefinition
     {
-        return new RuleDefinition('Fixes deprecated entity_create() calls',[
+        return new RuleDefinition('Fixes deprecated entity_create() calls', [
             new CodeSample(
                 <<<'CODE_BEFORE'
 entity_create('node', ['bundle' => 'page', 'title' => 'Hello world']);
@@ -36,12 +37,12 @@ CODE_BEFORE
                 <<<'CODE_AFTER'
 \Drupal::service('entity_type.manager)->getStorage('node')->create(['bundle' => 'page', 'title' => 'Hello world']);
 CODE_AFTER
-            )
+            ),
         ]);
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getNodeTypes(): array
     {
@@ -51,7 +52,7 @@ CODE_AFTER
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function refactor(Node $node): ?Node
     {

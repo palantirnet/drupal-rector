@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace DrupalRector\Drupal8\Rector\Deprecation;
 
 use DrupalRector\Drupal8\Rector\ValueObject\GetMockConfiguration;
@@ -20,8 +22,8 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  * What is covered:
  * - Checks the class being extended.
  */
-class GetMockRector extends AbstractRector implements ConfigurableRectorInterface {
-
+class GetMockRector extends AbstractRector implements ConfigurableRectorInterface
+{
     /**
      * @var ParentClassScopeResolver
      */
@@ -32,26 +34,26 @@ class GetMockRector extends AbstractRector implements ConfigurableRectorInterfac
      */
     private array $configuration;
 
-    public function __construct(ParentClassScopeResolver $parentClassScopeResolver) {
+    public function __construct(ParentClassScopeResolver $parentClassScopeResolver)
+    {
         $this->parentClassScopeResolver = $parentClassScopeResolver;
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
-    public function getNodeTypes(): array {
+    public function getNodeTypes(): array
+    {
         return [
             Node\Expr\MethodCall::class,
         ];
     }
 
-    public function configure(array $configuration): void {
+    public function configure(array $configuration): void
+    {
         foreach ($configuration as $value) {
             if (!($value instanceof GetMockConfiguration)) {
-                throw new \InvalidArgumentException(sprintf(
-                    'Each configuration item must be an instance of "%s"',
-                    GetMockConfiguration::class
-                ));
+                throw new \InvalidArgumentException(sprintf('Each configuration item must be an instance of "%s"', GetMockConfiguration::class));
             }
         }
 
@@ -59,14 +61,15 @@ class GetMockRector extends AbstractRector implements ConfigurableRectorInterfac
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
-    public function refactor(Node $node): ?Node {
+    public function refactor(Node $node): ?Node
+    {
         assert($node instanceof Node\Expr\MethodCall);
 
         $scope = $node->getAttribute(AttributeKey::SCOPE);
         if (!$scope instanceof Scope) {
-            return NULL;
+            return null;
         }
 
         $parentClassName = $this->parentClassScopeResolver->resolveParentClassName($scope);
@@ -77,7 +80,7 @@ class GetMockRector extends AbstractRector implements ConfigurableRectorInterfac
             || !($node->var instanceof Node\Expr\Variable)
             || $this->getName($node->var) !== 'this'
         ) {
-            return NULL;
+            return null;
         }
 
         foreach ($this->configuration as $configuration) {
@@ -94,10 +97,11 @@ class GetMockRector extends AbstractRector implements ConfigurableRectorInterfac
             return new Node\Expr\MethodCall($node->var, $method_name, $method_arguments);
         }
 
-        return NULL;
+        return null;
     }
 
-    public function getRuleDefinition(): RuleDefinition {
+    public function getRuleDefinition(): RuleDefinition
+    {
         return new RuleDefinition('Fixes deprecated getMock() calls', [
             new ConfiguredCodeSample(
                 <<<'CODE_BEFORE'
@@ -116,5 +120,4 @@ CODE_AFTER
             ),
         ]);
     }
-
 }

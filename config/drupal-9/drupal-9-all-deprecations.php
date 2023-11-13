@@ -2,14 +2,13 @@
 
 declare(strict_types=1);
 
-use DrupalRector\Set\Drupal9SetList;
 use DrupalRector\Services\AddCommentService;
+use DrupalRector\Set\Drupal9SetList;
 use Rector\Config\RectorConfig;
 use Rector\PHPUnit\Set\PHPUnitLevelSetList;
-use Rector\PHPUnit\Set\PHPUnitSetList;
 
 return static function (RectorConfig $rectorConfig): void {
-    $rectorConfig->singleton(AddCommentService::class, function() {
+    $rectorConfig->singleton(AddCommentService::class, function () {
         return new AddCommentService();
     });
     $rectorConfig->sets([
@@ -22,6 +21,6 @@ return static function (RectorConfig $rectorConfig): void {
     ]);
 
     $rectorConfig->bootstrapFiles([
-        __DIR__ . '/../drupal-phpunit-bootstrap-file.php'
+        __DIR__.'/../drupal-phpunit-bootstrap-file.php',
     ]);
 };

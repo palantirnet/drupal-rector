@@ -8,7 +8,7 @@ use DrupalRector\Services\AddCommentService;
 use Rector\Config\RectorConfig;
 
 return static function (RectorConfig $rectorConfig): void {
-    $rectorConfig->singleton(AddCommentService::class, function() {
+    $rectorConfig->singleton(AddCommentService::class, function () {
         return new AddCommentService();
     });
     // https://www.drupal.org/node/2907725

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace DrupalRector\Drupal8\Rector\Deprecation;
 
 use DrupalRector\Drupal8\Rector\ValueObject\DBConfiguration;
@@ -63,7 +65,8 @@ class DBRector extends AbstractRector implements ConfigurableRectorInterface
      */
     private AddCommentService $commentService;
 
-    public function __construct(AddCommentService $commentService) {
+    public function __construct(AddCommentService $commentService)
+    {
         $this->commentService = $commentService;
     }
 
@@ -71,10 +74,7 @@ class DBRector extends AbstractRector implements ConfigurableRectorInterface
     {
         foreach ($configuration as $value) {
             if (!($value instanceof DBConfiguration)) {
-                throw new \InvalidArgumentException(sprintf(
-                    'Each configuration item must be an instance of "%s"',
-                    DBConfiguration::class
-                ));
+                throw new \InvalidArgumentException(sprintf('Each configuration item must be an instance of "%s"', DBConfiguration::class));
             }
         }
 
@@ -82,7 +82,7 @@ class DBRector extends AbstractRector implements ConfigurableRectorInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getNodeTypes(): array
     {
@@ -92,7 +92,7 @@ class DBRector extends AbstractRector implements ConfigurableRectorInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function refactor(Node $node): ?Node
     {
@@ -117,18 +117,20 @@ class DBRector extends AbstractRector implements ConfigurableRectorInterface
             if ($node->expr instanceof Node\Expr\FuncCall) {
                 $methodCall = $this->getMethodCall($node->expr, $node, $configuration);
                 $node->expr = $methodCall;
+
                 return $node;
             }
 
             if ($node->expr instanceof Node\Expr\Assign && $node->expr->expr instanceof Node\Expr\FuncCall) {
                 $methodCall = $this->getMethodCall($node->expr->expr, $node, $configuration);
                 $node->expr->expr = $methodCall;
+
                 return $node;
             }
 
             if ($node->expr instanceof Node\Expr\MethodCall) {
                 $funcCall = $this->findRootFuncCallForMethodCall($node->expr);
-                if ($funcCall === NULL || $this->getName($funcCall->name) !== $configuration->getDeprecatedMethodName()) {
+                if ($funcCall === null || $this->getName($funcCall->name) !== $configuration->getDeprecatedMethodName()) {
                     continue;
                 }
 
@@ -146,16 +148,19 @@ class DBRector extends AbstractRector implements ConfigurableRectorInterface
      * Find the root function call for the method call. This helps us target db_delete when chained.
      *
      * @param MethodCall $methodCall
+     *
      * @return Expr\FuncCall|null
      */
-    public function findRootFuncCallForMethodCall(MethodCall $methodCall): ?Expr\FuncCall {
+    public function findRootFuncCallForMethodCall(MethodCall $methodCall): ?Expr\FuncCall
+    {
         $node = $methodCall;
-        while(isset($node->var) && !($node->var instanceof Expr\FuncCall)){
+        while (isset($node->var) && !($node->var instanceof Expr\FuncCall)) {
             $node = $node->var;
         }
         if ($node->var instanceof Expr\FuncCall) {
             return $node->var;
         }
+
         return null;
     }
 
@@ -164,17 +169,21 @@ class DBRector extends AbstractRector implements ConfigurableRectorInterface
      *
      * @param MethodCall $expr
      * @param MethodCall $methodCall
+     *
      * @return MethodCall|null
      */
-    public function replaceFuncCallForMethodCall(MethodCall $expr, MethodCall $methodCall): ?MethodCall {
+    public function replaceFuncCallForMethodCall(MethodCall $expr, MethodCall $methodCall): ?MethodCall
+    {
         $node = $expr;
-        while(isset($node->var) && !($node->var instanceof Expr\FuncCall)){
+        while (isset($node->var) && !($node->var instanceof Expr\FuncCall)) {
             $node = $node->var;
         }
         if ($node->var instanceof Expr\FuncCall) {
             $node->var = $methodCall;
+
             return $expr;
         }
+
         return null;
     }
 
@@ -189,7 +198,6 @@ class DBRector extends AbstractRector implements ConfigurableRectorInterface
 
         // The 'target' key in the $options can be used to use a non-default database.
         if (count($expr->getArgs()) >= $configuration->getOptionsArgumentPosition()) {
-
             /* @var Node\Arg $options . */
             $options = $expr->getArgs()[$configuration->getOptionsArgumentPosition() - 1];
 
@@ -230,8 +238,9 @@ class DBRector extends AbstractRector implements ConfigurableRectorInterface
         return $methodCall;
     }
 
-    public function getRuleDefinition(): RuleDefinition {
-        return new RuleDefinition('Fixes deprecated db_delete() calls',[
+    public function getRuleDefinition(): RuleDefinition
+    {
+        return new RuleDefinition('Fixes deprecated db_delete() calls', [
             new ConfiguredCodeSample(
                 <<<'CODE_BEFORE'
 db_delete($table, $options);
@@ -296,8 +305,7 @@ CODE_AFTER
                 [
                     new DBConfiguration('db_update', 2),
                 ]
-            )
+            ),
         ]);
     }
-
 }

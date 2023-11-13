@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace DrupalRector\Rector\ValueObject;
 
 /**
@@ -9,18 +11,20 @@ namespace DrupalRector\Rector\ValueObject;
  *
  * @see \DrupalRector\Rector\Deprecation\DeprecationHelperRemoveRector
  */
-class DeprecationHelperRemoveConfiguration {
-
+class DeprecationHelperRemoveConfiguration
+{
     protected string $minimumRequirement;
 
     /**
      * @param string $minimumRequirement Minimum supported version
      */
-    public function __construct(string $minimumRequirement) {
+    public function __construct(string $minimumRequirement)
+    {
         $this->minimumRequirement = $minimumRequirement;
     }
 
-    public function getMinimumRequirement(): string {
+    public function getMinimumRequirement(): string
+    {
         return $this->minimumRequirement;
     }
 }

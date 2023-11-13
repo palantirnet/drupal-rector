@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
-use DrupalRector\Rector\Deprecation\FunctionToStaticRector;
 use DrupalRector\Drupal10\Rector\Deprecation\WatchdogExceptionRector;
+use DrupalRector\Rector\Deprecation\FunctionToStaticRector;
 use DrupalRector\Rector\ValueObject\DrupalIntroducedVersionConfiguration;
 use DrupalRector\Rector\ValueObject\FunctionToStaticConfiguration;
 use Rector\Config\RectorConfig;

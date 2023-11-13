@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace DrupalRector\Drupal8\Rector\Deprecation;
 
 use DrupalRector\Drupal8\Rector\ValueObject\EntityLoadConfiguration;
@@ -7,7 +9,6 @@ use DrupalRector\Services\AddCommentService;
 use PhpParser\Node;
 use Rector\Core\Contract\Rector\ConfigurableRectorInterface;
 use Rector\Core\Rector\AbstractRector;
-use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\ConfiguredCodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
@@ -25,9 +26,8 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  */
 final class EntityLoadRector extends AbstractRector implements ConfigurableRectorInterface
 {
-
     /**
-     * @var \DrupalRector\Drupal8\Rector\ValueObject\EntityLoadConfiguration[] $entityTypes
+     * @var \DrupalRector\Drupal8\Rector\ValueObject\EntityLoadConfiguration[]
      */
     protected array $entityTypes;
 
@@ -36,16 +36,17 @@ final class EntityLoadRector extends AbstractRector implements ConfigurableRecto
      */
     private AddCommentService $commentService;
 
-    public function __construct(AddCommentService $commentService) {
+    public function __construct(AddCommentService $commentService)
+    {
         $this->commentService = $commentService;
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getRuleDefinition(): RuleDefinition
     {
-        return new RuleDefinition('Fixes deprecated ENTITY_TYPE_load() or entity_load() use',[
+        return new RuleDefinition('Fixes deprecated ENTITY_TYPE_load() or entity_load() use', [
             new ConfiguredCodeSample(
                 <<<'CODE_BEFORE'
 $entity = ENTITY_TYPE_load(123);
@@ -63,7 +64,7 @@ CODE_AFTER
                     new EntityLoadConfiguration('node'),
                     new EntityLoadConfiguration('user'),
                 ]
-            )
+            ),
         ]);
     }
 
@@ -71,10 +72,7 @@ CODE_AFTER
     {
         foreach ($configuration as $value) {
             if (!($value instanceof EntityLoadConfiguration)) {
-                throw new \InvalidArgumentException(sprintf(
-                    'Each configuration item must be an instance of "%s"',
-                    EntityLoadConfiguration::class
-                ));
+                throw new \InvalidArgumentException(sprintf('Each configuration item must be an instance of "%s"', EntityLoadConfiguration::class));
             }
         }
 
@@ -82,7 +80,7 @@ CODE_AFTER
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getNodeTypes(): array
     {
@@ -92,7 +90,7 @@ CODE_AFTER
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function refactor(Node $node): ?Node
     {
@@ -107,13 +105,13 @@ CODE_AFTER
                 $method_name = 'entity_load';
             } else {
                 // This will work for node_load, etc.
-                $method_name = $entityType . '_load';
+                $method_name = $entityType.'_load';
             }
 
-            if(!$node->expr instanceof Node\Expr\Assign){
+            if (!$node->expr instanceof Node\Expr\Assign) {
                 return null;
             }
-            if(!$node->expr->expr instanceof Node\Expr\FuncCall){
+            if (!$node->expr->expr instanceof Node\Expr\FuncCall) {
                 return null;
             }
             $expr = $node->expr->expr;
@@ -188,11 +186,11 @@ CODE_AFTER
                 }
 
                 $node->expr->expr = $new_node;
+
                 return $node;
             }
         }
 
         return null;
     }
-
 }
