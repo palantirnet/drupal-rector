@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use DrupalRector\Rector\Property\ProtectedStaticModulesPropertyRector;
+use DrupalRector\Drupal9\Rector\Property\ProtectedStaticModulesPropertyRector;
 use Rector\Config\RectorConfig;
 use Rector\PHPUnit\Set\PHPUnitSetList;
 use Rector\Symfony\Set\SymfonySetList;

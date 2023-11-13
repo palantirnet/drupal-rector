@@ -70,7 +70,7 @@ class FunctionToServiceRector extends AbstractRector implements ConfigurableRect
     }
 
     public function getRuleDefinition(): RuleDefinition {
-        return new RuleDefinition('Fixes deprecated function to service calls',[
+        return new RuleDefinition('Fixes deprecated function to service calls, used in Drupal 8 and 9 deprecations',[
             new ConfiguredCodeSample(
                 <<<'CODE_BEFORE'
 $path = drupal_realpath($path);

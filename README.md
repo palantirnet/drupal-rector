@@ -32,6 +32,11 @@ Development guides, individual deprecation overviews, and other resources can be
 
 https://www.palantir.net/rector
 
+List of all rules with examples:
+
+[Rule overview in docs/rules_overview.md](docs%2Frules_overview.md)
+
+
 ## Scope and limitations
 
 The development of this tool is prioritized by the perceived impact of the deprecations and updates. There are many deprecations that often involve several components and for each of these there are several ways to address the deprecation.
@@ -125,7 +130,7 @@ Rector itself has conflicts with older versions of PhpStan.
 
 If you are getting errors like
 
-`[ERROR] Class "DrupalRector\Rector\Deprecation\EntityManagerRector" was not found while loading`
+`[ERROR] Class "DrupalRector\Drupal8\Rector\Deprecation\EntityManagerRector" was not found while loading`
 
 You may need to rebuild your autoload file.
 

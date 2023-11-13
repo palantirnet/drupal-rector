@@ -72,7 +72,13 @@
         "phpstan/phpstan": "^1.0",
         "phpstan/phpstan-deprecation-rules": "^1.0",
         "phpunit/phpunit": "^10.0",
-        "symplify/vendor-patches": "^11.0",
-        "symfony/yaml": "^5 || ^6"
+        "symfony/yaml": "^5 || ^6",
+        "symplify/rule-doc-generator": "^12.0",
+        "symplify/vendor-patches": "^11.0"
+    },
+    "scripts": {
+        "docs": "vendor/bin/rule-doc-generator generate src/ --categorize=3",
+        "test": "vendor/bin/phpunit",
+        "phpstan": "vendor/bin/phpstan analyse --memory-limit=2G"
     }
 }

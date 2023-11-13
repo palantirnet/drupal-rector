@@ -2,21 +2,20 @@
 
 declare(strict_types=1);
 
-use DrupalRector\Rector\Deprecation\ExtensionPathRector;
-use DrupalRector\Rector\Deprecation\FileBuildUriRector;
-use DrupalRector\Rector\Deprecation\FileUrlGenerator;
-use DrupalRector\Rector\Deprecation\FunctionToEntityTypeStorageMethod;
-use DrupalRector\Rector\Deprecation\FunctionToFirstArgMethodRector;
+use DrupalRector\Drupal9\Rector\Deprecation\ExtensionPathRector;
+use DrupalRector\Drupal9\Rector\Deprecation\FileBuildUriRector;
+use DrupalRector\Drupal9\Rector\Deprecation\FunctionToEntityTypeStorageMethod;
+use DrupalRector\Drupal9\Rector\Deprecation\FunctionToFirstArgMethodRector;
 use DrupalRector\Rector\Deprecation\FunctionToServiceRector;
 use DrupalRector\Rector\Deprecation\FunctionToStaticRector;
-use DrupalRector\Rector\Deprecation\SystemSortByInfoNameRector;
-use DrupalRector\Rector\Deprecation\TaxonomyTermLoadMultipleByNameRector;
-use DrupalRector\Rector\Deprecation\TaxonomyVocabularyGetNamesDrupalStaticResetRector;
-use DrupalRector\Rector\Deprecation\TaxonomyVocabularyGetNamesRector;
-use DrupalRector\Rector\ValueObject\FunctionToEntityTypeStorageConfiguration;
-use DrupalRector\Rector\ValueObject\FunctionToFirstArgMethodConfiguration;
+use DrupalRector\Drupal9\Rector\Deprecation\SystemSortByInfoNameRector;
+use DrupalRector\Drupal9\Rector\Deprecation\TaxonomyTermLoadMultipleByNameRector;
+use DrupalRector\Drupal9\Rector\Deprecation\TaxonomyVocabularyGetNamesDrupalStaticResetRector;
+use DrupalRector\Drupal9\Rector\Deprecation\TaxonomyVocabularyGetNamesRector;
+use DrupalRector\Drupal9\Rector\ValueObject\FunctionToEntityTypeStorageConfiguration;
+use DrupalRector\Drupal9\Rector\ValueObject\FunctionToFirstArgMethodConfiguration;
 use DrupalRector\Rector\ValueObject\FunctionToServiceConfiguration;
-use DrupalRector\Rector\ValueObject\ExtensionPathConfiguration;
+use DrupalRector\Drupal9\Rector\ValueObject\ExtensionPathConfiguration;
 use DrupalRector\Rector\ValueObject\FunctionToStaticConfiguration;
 use DrupalRector\Services\AddCommentService;
 use Rector\Config\RectorConfig;
@@ -32,9 +31,9 @@ return static function (RectorConfig $rectorConfig): void {
     ]);
 
     // Change record: https://www.drupal.org/node/2940031
-    $rectorConfig->rule(FileUrlGenerator\FileCreateUrlRector::class);
-    $rectorConfig->rule(FileUrlGenerator\FileUrlTransformRelativeRector::class);
-    $rectorConfig->rule(FileUrlGenerator\FromUriRector::class);
+    $rectorConfig->rule(\DrupalRector\Drupal9\Rector\Deprecation\FileCreateUrlRector::class);
+    $rectorConfig->rule(\DrupalRector\Drupal9\Rector\Deprecation\FileUrlTransformRelativeRector::class);
+    $rectorConfig->rule(\DrupalRector\Drupal9\Rector\Deprecation\FromUriRector::class);
 
     // Change record: https://www.drupal.org/node/3223520
     $rectorConfig->ruleWithConfiguration(FunctionToServiceRector::class, [

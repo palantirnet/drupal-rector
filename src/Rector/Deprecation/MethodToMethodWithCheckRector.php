@@ -152,7 +152,7 @@ class MethodToMethodWithCheckRector extends AbstractRector implements Configurab
     }
 
     public function getRuleDefinition(): RuleDefinition {
-        return new RuleDefinition('Fixes deprecated MetadataBag::clearCsrfTokenSeed() calls', [
+        return new RuleDefinition('Fixes deprecated MetadataBag::clearCsrfTokenSeed() calls, used in Drupal 8 and 9 deprecations', [
             new ConfiguredCodeSample(
                 <<<'CODE_BEFORE'
 $metadata_bag = new \Drupal\Core\Session\MetadataBag(new \Drupal\Core\Site\Settings([]));

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 use DrupalRector\Rector\Deprecation\DrupalGetFilenameRector;
 use DrupalRector\Rector\Deprecation\DrupalGetPathRector;
-use DrupalRector\Rector\Deprecation\FileBuildUriRector;
+use DrupalRector\Drupal9\Rector\Deprecation\FileBuildUriRector;
 use DrupalRector\Rector\Deprecation\FileUrlGenerator;
 use DrupalRector\Rector\Deprecation\RenderRector;
 use DrupalRector\Rector\Deprecation\FileCopyRector;
@@ -14,5 +14,5 @@ use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigura
 
 return static function (\Rector\Config\RectorConfig $rectorConfig): void {
     // Change record https://www.drupal.org/node/3220952
-    $rectorConfig->rule(\DrupalRector\Rector\Deprecation\ModuleLoadInstallRector::class);
+    $rectorConfig->rule(\DrupalRector\Drupal9\Rector\Deprecation\ModuleLoadInstallRector::class);
 };

@@ -73,7 +73,7 @@ class FunctionToStaticRector extends AbstractDrupalCoreRector
      */
     public function getRuleDefinition(): RuleDefinition
     {
-        return new RuleDefinition('Fixes deprecated file_directory_os_temp() calls',[
+        return new RuleDefinition('Fixes deprecated file_directory_os_temp() calls, used in Drupal 8, 9 and 10 deprecations',[
             new ConfiguredCodeSample(
                 <<<'CODE_BEFORE'
 $dir = file_directory_os_temp();

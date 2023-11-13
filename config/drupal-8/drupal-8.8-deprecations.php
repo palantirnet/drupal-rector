@@ -3,10 +3,10 @@
 declare(strict_types=1);
 
 use DrupalRector\Rector\Deprecation\MethodToMethodWithCheckRector;
-use DrupalRector\Rector\Deprecation\FileDefaultSchemeRector;
-use DrupalRector\Rector\Deprecation\DrupalServiceRenameRector;
+use DrupalRector\Drupal8\Rector\Deprecation\FileDefaultSchemeRector;
+use DrupalRector\Drupal8\Rector\Deprecation\DrupalServiceRenameRector;
 use DrupalRector\Rector\Deprecation\FunctionToServiceRector;
-use DrupalRector\Rector\ValueObject\DrupalServiceRenameConfiguration;
+use DrupalRector\Drupal8\Rector\ValueObject\DrupalServiceRenameConfiguration;
 use DrupalRector\Rector\ValueObject\FunctionToServiceConfiguration;
 use DrupalRector\Rector\ValueObject\MethodToMethodWithCheckConfiguration;
 use DrupalRector\Services\AddCommentService;

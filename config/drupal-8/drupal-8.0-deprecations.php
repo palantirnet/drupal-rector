@@ -2,21 +2,21 @@
 
 declare(strict_types=1);
 
-use DrupalRector\Rector\Deprecation\DBRector;
-use DrupalRector\Rector\Deprecation\DrupalLRector;
-use DrupalRector\Rector\Deprecation\DrupalURLRector;
-use DrupalRector\Rector\Deprecation\EntityCreateRector;
-use DrupalRector\Rector\Deprecation\EntityDeleteMultipleRector;
-use DrupalRector\Rector\Deprecation\EntityInterfaceLinkRector;
-use DrupalRector\Rector\Deprecation\EntityLoadRector;
-use DrupalRector\Rector\Deprecation\EntityManagerRector;
-use DrupalRector\Rector\Deprecation\EntityViewRector;
+use DrupalRector\Drupal8\Rector\Deprecation\DBRector;
+use DrupalRector\Drupal8\Rector\Deprecation\DrupalLRector;
+use DrupalRector\Drupal8\Rector\Deprecation\DrupalURLRector;
+use DrupalRector\Drupal8\Rector\Deprecation\EntityCreateRector;
+use DrupalRector\Drupal8\Rector\Deprecation\EntityDeleteMultipleRector;
+use DrupalRector\Drupal8\Rector\Deprecation\EntityInterfaceLinkRector;
+use DrupalRector\Drupal8\Rector\Deprecation\EntityLoadRector;
+use DrupalRector\Drupal8\Rector\Deprecation\EntityManagerRector;
+use DrupalRector\Drupal8\Rector\Deprecation\EntityViewRector;
 use DrupalRector\Rector\Deprecation\FunctionToServiceRector;
-use DrupalRector\Rector\Deprecation\LinkGeneratorTraitLRector;
+use DrupalRector\Drupal8\Rector\Deprecation\LinkGeneratorTraitLRector;
 use DrupalRector\Rector\Deprecation\MethodToMethodWithCheckRector;
-use DrupalRector\Rector\Deprecation\SafeMarkupFormatRector;
-use DrupalRector\Rector\ValueObject\DBConfiguration;
-use DrupalRector\Rector\ValueObject\EntityLoadConfiguration;
+use DrupalRector\Drupal8\Rector\Deprecation\SafeMarkupFormatRector;
+use DrupalRector\Drupal8\Rector\ValueObject\DBConfiguration;
+use DrupalRector\Drupal8\Rector\ValueObject\EntityLoadConfiguration;
 use DrupalRector\Rector\ValueObject\FunctionToServiceConfiguration;
 use DrupalRector\Rector\ValueObject\MethodToMethodWithCheckConfiguration;
 use DrupalRector\Services\AddCommentService;
