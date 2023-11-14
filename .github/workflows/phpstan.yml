@@ -22,4 +22,4 @@ jobs:
             # END: SHARED SETUP
 
             - run: composer install
-            - run: php vendor/bin/phpstan
+            - run: composer phpstan
