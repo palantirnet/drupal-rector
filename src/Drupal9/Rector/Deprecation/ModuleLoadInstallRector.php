@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace DrupalRector\Drupal9\Rector\Deprecation;
 
 use PhpParser\Node;
@@ -13,7 +15,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 class ModuleLoadInstallRector extends AbstractRector
 {
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getNodeTypes(): array
     {
@@ -23,7 +25,7 @@ class ModuleLoadInstallRector extends AbstractRector
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function refactor(Node $node): ?Node\Expr\CallLike
     {
@@ -31,6 +33,7 @@ class ModuleLoadInstallRector extends AbstractRector
         if ($this->getName($node->name) === 'module_load_install') {
             $args = $node->getArgs();
             $args[] = new Node\Arg(new Node\Scalar\String_('install'));
+
             return $this->nodeFactory->createMethodCall($this->nodeFactory->createStaticCall('Drupal', 'moduleHandler'), 'loadInclude', $args);
         }
 
@@ -39,7 +42,7 @@ class ModuleLoadInstallRector extends AbstractRector
 
     public function getRuleDefinition(): RuleDefinition
     {
-        return new RuleDefinition('Fixes deprecated module_load_install() calls',[
+        return new RuleDefinition('Fixes deprecated module_load_install() calls', [
             new CodeSample(
                 <<<'CODE_BEFORE'
 module_load_install('example');
@@ -48,8 +51,7 @@ CODE_BEFORE
                 <<<'CODE_AFTER'
 \Drupal\Core\Extension\ModuleHandler::loadInclude('example', 'install');
 CODE_AFTER
-            )
+            ),
         ]);
     }
-
 }

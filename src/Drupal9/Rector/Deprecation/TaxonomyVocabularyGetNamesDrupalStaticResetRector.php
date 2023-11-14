@@ -1,17 +1,18 @@
 <?php
 
+declare(strict_types=1);
+
 namespace DrupalRector\Drupal9\Rector\Deprecation;
 
 use PhpParser\Node;
-use PhpParser\NodeDumper;
 use Rector\Core\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
-class TaxonomyVocabularyGetNamesDrupalStaticResetRector extends AbstractRector {
-
-
-    public function getRuleDefinition(): RuleDefinition {
+class TaxonomyVocabularyGetNamesDrupalStaticResetRector extends AbstractRector
+{
+    public function getRuleDefinition(): RuleDefinition
+    {
         return new RuleDefinition('Refactor drupal_static_reset(\'taxonomy_vocabulary_get_names\') to entity storage reset cache',
             [
                 new CodeSample(
@@ -28,35 +29,36 @@ class TaxonomyVocabularyGetNamesDrupalStaticResetRector extends AbstractRector {
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
-    public function getNodeTypes(): array {
+    public function getNodeTypes(): array
+    {
         return [
             Node\Expr\FuncCall::class,
         ];
     }
 
-    public function refactor(Node $node): ?Node {
+    public function refactor(Node $node): ?Node
+    {
         assert($node instanceof Node\Expr\FuncCall);
-
 
         if ($this->getName($node->name) !== 'drupal_static_reset') {
             return null;
         }
 
         $args = $node->getArgs();
-        if(count($args) !== 1) {
+        if (count($args) !== 1) {
             return null;
         }
 
         $firstValue = $args[0]->value;
-        if(!($firstValue instanceof Node\Scalar\String_) || $firstValue->value !== 'taxonomy_vocabulary_get_names') {
+        if (!($firstValue instanceof Node\Scalar\String_) || $firstValue->value !== 'taxonomy_vocabulary_get_names') {
             return null;
         }
 
         $entityQuery = $this->nodeFactory->createStaticCall('Drupal', 'entityTypeManager');
         $storage = $this->nodeFactory->createMethodCall($entityQuery, 'getStorage', $this->nodeFactory->createArgs(['taxonomy_vocabulary']));
+
         return $this->nodeFactory->createMethodCall($storage, 'resetCache');
     }
-
 }

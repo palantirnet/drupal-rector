@@ -1,12 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace DrupalRector\Rector\Deprecation;
 
 use DrupalRector\Contract\VersionedConfigurationInterface;
 use DrupalRector\Rector\AbstractDrupalCoreRector;
 use DrupalRector\Rector\ValueObject\FunctionToStaticConfiguration;
 use PhpParser\Node;
-use Rector\Core\Contract\Rector\ConfigurableRectorInterface;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\ConfiguredCodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
@@ -26,28 +27,28 @@ class FunctionToStaticRector extends AbstractDrupalCoreRector
     protected array $configuration;
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
-    public function getNodeTypes(): array {
+    public function getNodeTypes(): array
+    {
         return [
-            Node\Expr\FuncCall::class
+            Node\Expr\FuncCall::class,
         ];
     }
 
-    public function configure(array $configuration): void {
+    public function configure(array $configuration): void
+    {
         foreach ($configuration as $value) {
             if (!($value instanceof FunctionToStaticConfiguration)) {
-                throw new \InvalidArgumentException(sprintf(
-                    'Each configuration item must be an instance of "%s"',
-                    FunctionToStaticConfiguration::class
-                ));
+                throw new \InvalidArgumentException(sprintf('Each configuration item must be an instance of "%s"', FunctionToStaticConfiguration::class));
             }
         }
 
         parent::configure($configuration);
     }
 
-    public function refactorWithConfiguration(Node $node, VersionedConfigurationInterface $configuration): ?Node {
+    public function refactorWithConfiguration(Node $node, VersionedConfigurationInterface $configuration): ?Node
+    {
         assert($node instanceof Node\Expr\FuncCall);
         assert($configuration instanceof FunctionToStaticConfiguration);
 
@@ -61,19 +62,19 @@ class FunctionToStaticRector extends AbstractDrupalCoreRector
             }
 
             $fullyQualified = new Node\Name\FullyQualified($configuration->getClassName());
+
             return new Node\Expr\StaticCall($fullyQualified, $configuration->getMethodName(), $args);
         }
 
-        return NULL;
+        return null;
     }
 
-
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getRuleDefinition(): RuleDefinition
     {
-        return new RuleDefinition('Fixes deprecated file_directory_os_temp() calls, used in Drupal 8, 9 and 10 deprecations',[
+        return new RuleDefinition('Fixes deprecated file_directory_os_temp() calls, used in Drupal 8, 9 and 10 deprecations', [
             new ConfiguredCodeSample(
                 <<<'CODE_BEFORE'
 $dir = file_directory_os_temp();
@@ -123,5 +124,4 @@ CODE_AFTER
             ),
         ]);
     }
-
 }

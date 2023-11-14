@@ -1,27 +1,25 @@
 <?php
 
+declare(strict_types=1);
+
 namespace DrupalRector\Rector\Deprecation;
 
-use DrupalRector\Rector\AbstractDrupalCoreRector;
 use DrupalRector\Rector\ValueObject\DeprecationHelperRemoveConfiguration;
 use PhpParser\Node;
-use PhpParser\NodeDumper;
 use Rector\Core\Contract\Rector\ConfigurableRectorInterface;
 use Rector\Core\Rector\AbstractRector;
-use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\ConfiguredCodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 final class DeprecationHelperRemoveRector extends AbstractRector implements ConfigurableRectorInterface
 {
-
     /**
      * @var array|DeprecationHelperRemoveConfiguration[]
      */
     private array $configuration;
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getRuleDefinition(): RuleDefinition
     {
@@ -43,29 +41,25 @@ DeprecationHelper::backwardsCompatibleCall(\Drupal::VERSION, '11.1.0', fn() => o
 CODE_AFTER
                 ,
                 [
-                    new DeprecationHelperRemoveConfiguration('10.5.0')
+                    new DeprecationHelperRemoveConfiguration('10.5.0'),
                 ]
-            )
+            ),
         ]);
     }
 
-
-    public function configure(array $configuration): void {
+    public function configure(array $configuration): void
+    {
         foreach ($configuration as $value) {
             if (!($value instanceof DeprecationHelperRemoveConfiguration)) {
-                throw new \InvalidArgumentException(sprintf(
-                    'Each configuration item must be an instance of "%s"',
-                    DeprecationHelperRemoveConfiguration::class
-                ));
+                throw new \InvalidArgumentException(sprintf('Each configuration item must be an instance of "%s"', DeprecationHelperRemoveConfiguration::class));
             }
         }
 
         $this->configuration = $configuration;
     }
 
-
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getNodeTypes(): array
     {
@@ -75,16 +69,15 @@ CODE_AFTER
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function refactor(Node $node): ?Node
     {
         assert($node instanceof Node\Expr\StaticCall);
 
-        if($this->getName($node->name) !== 'backwardsCompatibleCall') {
+        if ($this->getName($node->name) !== 'backwardsCompatibleCall') {
             return null;
         }
-
 
         $args = $node->getArgs();
         foreach ($this->configuration as $configuration) {

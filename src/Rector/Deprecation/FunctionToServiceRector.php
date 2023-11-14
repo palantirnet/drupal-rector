@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace DrupalRector\Rector\Deprecation;
 
 use DrupalRector\Rector\ValueObject\FunctionToServiceConfiguration;
@@ -20,19 +22,16 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  */
 class FunctionToServiceRector extends AbstractRector implements ConfigurableRectorInterface
 {
-
     /**
      * @var FunctionToServiceConfiguration[]
      */
     private array $functionToServiceConfigs;
 
-    public function configure(array $configuration): void {
+    public function configure(array $configuration): void
+    {
         foreach ($configuration as $value) {
             if (!($value instanceof FunctionToServiceConfiguration)) {
-                throw new \InvalidArgumentException(sprintf(
-                    'Each configuration item must be an instance of "%s"',
-                    FunctionToServiceConfiguration::class
-                ));
+                throw new \InvalidArgumentException(sprintf('Each configuration item must be an instance of "%s"', FunctionToServiceConfiguration::class));
             }
         }
 
@@ -40,7 +39,7 @@ class FunctionToServiceRector extends AbstractRector implements ConfigurableRect
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getNodeTypes(): array
     {
@@ -50,7 +49,7 @@ class FunctionToServiceRector extends AbstractRector implements ConfigurableRect
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function refactor(Node $node): ?Node
     {
@@ -69,8 +68,9 @@ class FunctionToServiceRector extends AbstractRector implements ConfigurableRect
         return null;
     }
 
-    public function getRuleDefinition(): RuleDefinition {
-        return new RuleDefinition('Fixes deprecated function to service calls, used in Drupal 8 and 9 deprecations',[
+    public function getRuleDefinition(): RuleDefinition
+    {
+        return new RuleDefinition('Fixes deprecated function to service calls, used in Drupal 8 and 9 deprecations', [
             new ConfiguredCodeSample(
                 <<<'CODE_BEFORE'
 $path = drupal_realpath($path);
@@ -95,7 +95,7 @@ $result = \Drupal::service('renderer')->render($elements);
 CODE_AFTER
                 ,
                 [
-                    new FunctionToServiceConfiguration('drupal_render', 'renderer', 'render')
+                    new FunctionToServiceConfiguration('drupal_render', 'renderer', 'render'),
                 ]
             ),
             new ConfiguredCodeSample(
@@ -108,7 +108,7 @@ $result = \Drupal::service('renderer')->renderRoot($elements);
 CODE_AFTER
                 ,
                 [
-                    new FunctionToServiceConfiguration('drupal_render_root', 'renderer', 'renderRoot')
+                    new FunctionToServiceConfiguration('drupal_render_root', 'renderer', 'renderRoot'),
                 ]
             ),
             new ConfiguredCodeSample(
@@ -281,8 +281,7 @@ CODE_AFTER
                 [
                     new FunctionToServiceConfiguration('render', 'renderer', 'render'),
                 ]
-            )
+            ),
         ]);
     }
-
 }

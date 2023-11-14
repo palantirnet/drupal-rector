@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace DrupalRector\Drupal8\Rector\Deprecation;
 
@@ -21,7 +23,7 @@ final class FileDefaultSchemeRector extends AbstractRector
     protected string $configName = 'default_scheme';
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function getNodeTypes(): array
     {
@@ -31,7 +33,7 @@ final class FileDefaultSchemeRector extends AbstractRector
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function refactor(Node $node): ?Node
     {
@@ -46,18 +48,17 @@ final class FileDefaultSchemeRector extends AbstractRector
         $method_name = new Node\Identifier('get');
         $method_args = [new Node\Arg(new Node\Scalar\String_($this->configName))];
 
-
         $node = new Node\Expr\MethodCall($static_function, $method_name, $method_args);
 
         return $node;
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function getRuleDefinition(): RuleDefinition
     {
-        return new RuleDefinition('Fixes deprecated file_default_scheme calls',[
+        return new RuleDefinition('Fixes deprecated file_default_scheme calls', [
             new CodeSample(
                 <<<'CODE_BEFORE'
 $file_default_scheme = file_default_scheme();
@@ -66,9 +67,7 @@ CODE_BEFORE
                 <<<'CODE_AFTER'
 $file_default_scheme = \Drupal::config('system.file')->get('default_scheme');
 CODE_AFTER
-            )
+            ),
         ]);
     }
-
-
 }

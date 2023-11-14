@@ -1,6 +1,6 @@
 <?php
 
-declare (strict_types=1);
+declare(strict_types=1);
 
 namespace DrupalRector\Drupal8\Rector\ValueObject;
 
@@ -21,5 +21,4 @@ final class EntityLoadConfiguration
     {
         return $this->entityType;
     }
-
 }

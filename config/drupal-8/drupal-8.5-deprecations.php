@@ -9,12 +9,12 @@ use DrupalRector\Services\AddCommentService;
 use Rector\Config\RectorConfig;
 
 return static function (RectorConfig $rectorConfig): void {
-    $rectorConfig->singleton(AddCommentService::class, function() {
+    $rectorConfig->singleton(AddCommentService::class, function () {
         return new AddCommentService();
     });
     $rectorConfig->rule(DrupalSetMessageRector::class);
 
-    /**
+    /*
      * Replaces deprecated DATETIME_DATE_STORAGE_FORMAT, DATETIME_DATETIME_STORAGE_FORMAT, DATETIME_STORAGE_TIMEZONE constant use.
      *
      * See https://www.drupal.org/node/2912980 for change record.

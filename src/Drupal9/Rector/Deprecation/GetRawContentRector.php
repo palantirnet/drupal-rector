@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace DrupalRector\Drupal9\Rector\Deprecation;
 
@@ -11,7 +13,6 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 final class GetRawContentRector extends AbstractRector
 {
-
     use GetDeclaringSourceTrait;
 
     /**
@@ -24,7 +25,6 @@ final class GetRawContentRector extends AbstractRector
         $this->parentClassScopeResolver = $parentClassScopeResolver;
     }
 
-
     public function getRuleDefinition(): RuleDefinition
     {
         return new RuleDefinition('Fixes deprecated AssertLegacyTrait::getRawContent() calls', [
@@ -36,7 +36,7 @@ CODE_BEFORE
                 <<<'CODE_AFTER'
 $this->getSession()->getPage()->getContent();
 CODE_AFTER
-            )
+            ),
         ]);
     }
 
@@ -59,7 +59,7 @@ CODE_AFTER
 
         $getSessionNode = $this->nodeFactory->createLocalMethodCall('getSession');
         $getPageNode = $this->nodeFactory->createMethodCall($getSessionNode, 'getPage');
+
         return $this->nodeFactory->createMethodCall($getPageNode, 'getContent');
     }
-
 }

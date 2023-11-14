@@ -8,7 +8,6 @@ use Rector\PHPUnit\PHPUnit60\Rector\ClassMethod\AddDoesNotPerformAssertionToNonA
 use Rector\PHPUnit\Set\PHPUnitSetList;
 
 return static function (RectorConfig $rectorConfig): void {
-
     $rectorConfig->sets([
         PHPUnitSetList::PHPUNIT_60,
         PHPUnitSetList::PHPUNIT_70,
@@ -30,6 +29,6 @@ return static function (RectorConfig $rectorConfig): void {
     ]);
 
     $rectorConfig->bootstrapFiles([
-        __DIR__ . '/../drupal-phpunit-bootstrap-file.php'
+        __DIR__.'/../drupal-phpunit-bootstrap-file.php',
     ]);
 };

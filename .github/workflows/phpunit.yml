@@ -19,4 +19,4 @@ jobs:
                     coverage: none
                     tools: composer:v2
             - run: composer install
-            - run: vendor/bin/phpunit --testdox
+            - run: composer test

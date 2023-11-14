@@ -2,18 +2,18 @@
 
 declare(strict_types=1);
 
-use DrupalRector\Rector\Deprecation\MethodToMethodWithCheckRector;
-use DrupalRector\Drupal8\Rector\Deprecation\FileDefaultSchemeRector;
 use DrupalRector\Drupal8\Rector\Deprecation\DrupalServiceRenameRector;
-use DrupalRector\Rector\Deprecation\FunctionToServiceRector;
+use DrupalRector\Drupal8\Rector\Deprecation\FileDefaultSchemeRector;
 use DrupalRector\Drupal8\Rector\ValueObject\DrupalServiceRenameConfiguration;
+use DrupalRector\Rector\Deprecation\FunctionToServiceRector;
+use DrupalRector\Rector\Deprecation\MethodToMethodWithCheckRector;
 use DrupalRector\Rector\ValueObject\FunctionToServiceConfiguration;
 use DrupalRector\Rector\ValueObject\MethodToMethodWithCheckConfiguration;
 use DrupalRector\Services\AddCommentService;
 use Rector\Config\RectorConfig;
 
 return static function (RectorConfig $rectorConfig): void {
-    $rectorConfig->singleton(AddCommentService::class, function() {
+    $rectorConfig->singleton(AddCommentService::class, function () {
         return new AddCommentService();
     });
     $rectorConfig->ruleWithConfiguration(DrupalServiceRenameRector::class, [
@@ -27,18 +27,18 @@ return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->rule(FileDefaultSchemeRector::class);
 
     $rectorConfig->ruleWithConfiguration(FunctionToServiceRector::class,
-    [
-        // https://www.drupal.org/node/2835616
-        new FunctionToServiceConfiguration('entity_get_display', 'entity_display.repository', 'getViewDisplay'),
-        // https://www.drupal.org/node/2835616
-        new FunctionToServiceConfiguration('entity_get_form_display', 'entity_display.repository', 'getFormDisplay'),
-        // https://www.drupal.org/node/3039255
-        new FunctionToServiceConfiguration('file_directory_temp', 'file_system', 'getTempDirectory'),
-        // https://www.drupal.org/node/3038437
-        new FunctionToServiceConfiguration('file_scan_directory', 'file_system', 'scanDirectory'),
-        // https://www.drupal.org/node/3035273
-        new FunctionToServiceConfiguration('file_uri_target', 'stream_wrapper_manager', 'getTarget'),
-    ]);
+        [
+            // https://www.drupal.org/node/2835616
+            new FunctionToServiceConfiguration('entity_get_display', 'entity_display.repository', 'getViewDisplay'),
+            // https://www.drupal.org/node/2835616
+            new FunctionToServiceConfiguration('entity_get_form_display', 'entity_display.repository', 'getFormDisplay'),
+            // https://www.drupal.org/node/3039255
+            new FunctionToServiceConfiguration('file_directory_temp', 'file_system', 'getTempDirectory'),
+            // https://www.drupal.org/node/3038437
+            new FunctionToServiceConfiguration('file_scan_directory', 'file_system', 'scanDirectory'),
+            // https://www.drupal.org/node/3035273
+            new FunctionToServiceConfiguration('file_uri_target', 'stream_wrapper_manager', 'getTarget'),
+        ]);
 
     $rectorConfig->ruleWithConfiguration(MethodToMethodWithCheckRector::class, [
         // https://www.drupal.org/node/3075567

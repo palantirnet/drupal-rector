@@ -3,14 +3,14 @@
 declare(strict_types=1);
 
 use DrupalRector\Drupal8\Rector\Deprecation\ConstantToClassConstantRector;
-use DrupalRector\Rector\Deprecation\FunctionToServiceRector;
 use DrupalRector\Drupal8\Rector\ValueObject\ConstantToClassConfiguration;
+use DrupalRector\Rector\Deprecation\FunctionToServiceRector;
 use DrupalRector\Rector\ValueObject\FunctionToServiceConfiguration;
 use DrupalRector\Services\AddCommentService;
 use Rector\Config\RectorConfig;
 
 return static function (RectorConfig $rectorConfig): void {
-    $rectorConfig->singleton(AddCommentService::class, function() {
+    $rectorConfig->singleton(AddCommentService::class, function () {
         return new AddCommentService();
     });
     $rectorConfig->ruleWithConfiguration(FunctionToServiceRector::class, [
@@ -19,7 +19,6 @@ return static function (RectorConfig $rectorConfig): void {
         // https://www.drupal.org/node/3006851
         new FunctionToServiceConfiguration('file_unmanaged_save_data', 'file_system', 'saveData'),
     ]);
-
 
     /**
      * Replaces deprecated FILE_CREATE_DIRECTORY constant use.

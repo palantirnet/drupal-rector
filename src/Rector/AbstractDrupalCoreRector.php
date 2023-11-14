@@ -5,9 +5,7 @@ declare(strict_types=1);
 namespace DrupalRector\Rector;
 
 use Drupal\Component\Utility\DeprecationHelper;
-use DrupalRector\Contract\DrupalCoreRectorInterface;
 use DrupalRector\Contract\VersionedConfigurationInterface;
-use DrupalRector\Rector\ValueObject\FunctionToStaticConfiguration;
 use PhpParser\Node;
 use PhpParser\Node\Expr\ArrowFunction;
 use Rector\Core\Contract\Rector\ConfigurableRectorInterface;
@@ -20,13 +18,11 @@ abstract class AbstractDrupalCoreRector extends AbstractRector implements Config
      */
     protected array $configuration = [];
 
-    public function configure(array $configuration): void {
+    public function configure(array $configuration): void
+    {
         foreach ($configuration as $value) {
             if (!($value instanceof VersionedConfigurationInterface)) {
-                throw new \InvalidArgumentException(sprintf(
-                    'Each configuration item must be an instance of "%s"',
-                    VersionedConfigurationInterface::class
-                ));
+                throw new \InvalidArgumentException(sprintf('Each configuration item must be an instance of "%s"', VersionedConfigurationInterface::class));
             }
         }
 
@@ -45,7 +41,7 @@ abstract class AbstractDrupalCoreRector extends AbstractRector implements Config
             $result = $this->refactorWithConfiguration($node, $configuration);
 
             // Skip if no result.
-            if ($result === NULL) {
+            if ($result === null) {
                 continue;
             }
 
@@ -71,7 +67,8 @@ abstract class AbstractDrupalCoreRector extends AbstractRector implements Config
     }
 
     /**
-     * Process Node of matched type
+     * Process Node of matched type.
+     *
      * @return Node|Node[]|null
      */
     abstract protected function refactorWithConfiguration(Node $node, VersionedConfigurationInterface $configuration);
@@ -79,6 +76,7 @@ abstract class AbstractDrupalCoreRector extends AbstractRector implements Config
     private function createBcCallOnCallLike(Node\Expr\CallLike $node, Node\Expr\CallLike $result, string $introducedVersion): Node\Expr\StaticCall
     {
         $clonedNode = clone $node;
+
         return $this->nodeFactory->createStaticCall(DeprecationHelper::class, 'backwardsCompatibleCall', [
             $this->nodeFactory->createClassConstFetch(\Drupal::class, 'VERSION'),
             $introducedVersion,
@@ -86,5 +84,4 @@ abstract class AbstractDrupalCoreRector extends AbstractRector implements Config
             new ArrowFunction(['expr' => $result]),
         ]);
     }
-
 }

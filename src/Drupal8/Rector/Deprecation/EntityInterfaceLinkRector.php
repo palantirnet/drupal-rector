@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace DrupalRector\Drupal8\Rector\Deprecation;
 
 use DrupalRector\Services\AddCommentService;
@@ -26,13 +28,13 @@ final class EntityInterfaceLinkRector extends AbstractRector
      */
     private AddCommentService $commentService;
 
-    public function __construct(AddCommentService $commentService) {
+    public function __construct(AddCommentService $commentService)
+    {
         $this->commentService = $commentService;
     }
 
-
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getRuleDefinition(): RuleDefinition
     {
@@ -50,7 +52,7 @@ CODE_AFTER
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getNodeTypes(): array
     {
@@ -60,7 +62,7 @@ CODE_AFTER
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function refactor(Node $node): ?Node
     {
@@ -81,12 +83,14 @@ CODE_AFTER
         if ($node->expr instanceof Node\Expr\MethodCall) {
             $methodCall = $this->getMethodCall($node->expr, $node);
             $node->expr = $methodCall;
+
             return $node;
         }
 
-        if (($node->expr instanceof Node\Expr\Assign && $node->expr->expr instanceof Node\Expr\MethodCall)) {
+        if ($node->expr instanceof Node\Expr\Assign && $node->expr->expr instanceof Node\Expr\MethodCall) {
             $methodCall = $this->getMethodCall($node->expr->expr, $node);
             $node->expr->expr = $methodCall;
+
             return $node;
         }
 
@@ -107,7 +111,7 @@ CODE_AFTER
         // Add ->toString();
         $new_node = new Node\Expr\MethodCall($toLink_node,
             new Node\Identifier('toString'));
+
         return $new_node;
     }
-
 }

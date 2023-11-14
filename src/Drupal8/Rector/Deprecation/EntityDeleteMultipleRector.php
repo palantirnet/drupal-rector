@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace DrupalRector\Drupal8\Rector\Deprecation;
 
 use PhpParser\Node;
@@ -21,13 +23,12 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  */
 final class EntityDeleteMultipleRector extends AbstractRector
 {
-
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getRuleDefinition(): RuleDefinition
     {
-        return new RuleDefinition('Fixes deprecated entity_delete_multiple() calls',[
+        return new RuleDefinition('Fixes deprecated entity_delete_multiple() calls', [
             new CodeSample(
                 <<<'CODE_BEFORE'
 entity_delete_multiple('node', [1, 2, 42]);
@@ -36,12 +37,12 @@ CODE_BEFORE
                 <<<'CODE_AFTER'
 \Drupal::service('entity_type.manager')->getStorage('node')->delete(\Drupal::service('entity_type.manager')->getStorage('node')->loadMultiple(1, 2, 42));
 CODE_AFTER
-            )
+            ),
         ]);
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getNodeTypes(): array
     {
@@ -51,7 +52,7 @@ CODE_AFTER
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function refactor(Node $node): ?Node
     {
@@ -77,6 +78,7 @@ CODE_AFTER
             }
 
             $node_load_multiple = new Node\Expr\MethodCall($getStorage_node, $create_method_load_multiple, [$entity_values]);
+
             return new Node\Expr\MethodCall($getStorage_node, $create_method_delete, [new Node\Arg($node_load_multiple)]);
         }
 

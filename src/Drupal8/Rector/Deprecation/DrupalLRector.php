@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace DrupalRector\Drupal8\Rector\Deprecation;
 
 use PhpParser\Node;
@@ -20,13 +22,12 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  */
 final class DrupalLRector extends AbstractRector
 {
-
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getRuleDefinition(): RuleDefinition
     {
-        return new RuleDefinition('Fixes deprecated \Drupal::l() calls',[
+        return new RuleDefinition('Fixes deprecated \Drupal::l() calls', [
             new CodeSample(
                 <<<'CODE_BEFORE'
 \Drupal::l('User Login', \Drupal\Core\Url::fromRoute('user.login'));
@@ -35,12 +36,12 @@ CODE_BEFORE
                 <<<'CODE_AFTER'
 \Drupal\Core\Link::fromTextAndUrl('User Login', \Drupal\Core\Url::fromRoute('user.login'));
 CODE_AFTER
-            )
+            ),
         ]);
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getNodeTypes(): array
     {
@@ -50,7 +51,7 @@ CODE_AFTER
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function refactor(Node $node): ?Node
     {
@@ -62,5 +63,5 @@ CODE_AFTER
         }
 
         return null;
-      }
+    }
 }

@@ -1,10 +1,10 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace DrupalRector\Drupal8\Rector\Deprecation;
 
-
 use PhpParser\Node;
-
 use Rector\Core\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
@@ -14,7 +14,7 @@ class RequestTimeConstRector extends AbstractRector
     protected string $deprecatedConstant = 'REQUEST_TIME';
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function getNodeTypes(): array
     {
@@ -22,7 +22,7 @@ class RequestTimeConstRector extends AbstractRector
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function refactor(Node $node): ?Node
     {
@@ -36,15 +36,16 @@ class RequestTimeConstRector extends AbstractRector
         $method_name = new Node\Identifier('getRequestTime');
 
         $node = new Node\Expr\MethodCall($service, $method_name);
+
         return $node;
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getRuleDefinition(): RuleDefinition
     {
-        return new RuleDefinition('Fixes deprecated REQUEST_TIME calls',[
+        return new RuleDefinition('Fixes deprecated REQUEST_TIME calls', [
             new CodeSample(
                 <<<'CODE_BEFORE'
 $request_time = REQUEST_TIME;
@@ -53,8 +54,7 @@ CODE_BEFORE
                 <<<'CODE_AFTER'
 $request_time = \Drupal::time()->getRequestTime();
 CODE_AFTER
-            )
+            ),
         ]);
     }
-
 }

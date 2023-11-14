@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 use DrupalRector\Drupal9\Rector\Deprecation\AssertNoFieldByNameRector;
 use DrupalRector\Tests\Rector\Deprecation\DeprecationBase;

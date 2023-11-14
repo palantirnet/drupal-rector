@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace DrupalRector\Drupal9\Rector\Deprecation;
 
@@ -26,7 +28,7 @@ $page_text = $this->getSession()->getPage()->getText();
 $nr_found = substr_count($page_text, 'Duplicated message');
 $this->assertGreaterThan(1, $nr_found, "'Duplicated message' found more than once on the page");
 CODE_AFTER
-            )
+            ),
         ]);
     }
 
@@ -77,7 +79,7 @@ CODE_AFTER
         if ($assertedText instanceof Node\Scalar\String_) {
             $assertedText = new Node\Scalar\EncapsedStringPart($assertedText->value);
         } elseif (!$assertedText instanceof Node\Expr\Variable) {
-            throw new \RuntimeException(__CLASS__ . ' cannot handle argument of type ' . get_class($assertedText));
+            throw new \RuntimeException(__CLASS__.' cannot handle argument of type '.get_class($assertedText));
         }
 
         $methodCall = $this->nodeFactory->createLocalMethodCall(
@@ -90,7 +92,7 @@ CODE_AFTER
                     new Node\Scalar\EncapsedStringPart("'"),
                     $assertedText,
                     new Node\Scalar\EncapsedStringPart("' found more than once on the page"),
-                ]))
+                ])),
             ]
         );
         $nodes[] = new Node\Stmt\Expression($methodCall);

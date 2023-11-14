@@ -1,9 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace DrupalRector\Drupal9\Rector\ValueObject;
 
-class FunctionToEntityTypeStorageConfiguration {
-
+class FunctionToEntityTypeStorageConfiguration
+{
     private string $entityTypeId;
 
     private string $entityStorageMethod;
@@ -15,22 +17,25 @@ class FunctionToEntityTypeStorageConfiguration {
      * @param string $entityTypeId
      * @param string $entityStorageMethod
      */
-    public function __construct(string $deprecatedFunction, string $entityTypeId, string $entityStorageMethod) {
+    public function __construct(string $deprecatedFunction, string $entityTypeId, string $entityStorageMethod)
+    {
         $this->entityTypeId = $entityTypeId;
         $this->deprecatedFunction = $deprecatedFunction;
         $this->entityStorageMethod = $entityStorageMethod;
     }
 
-    public function getEntityTypeId(): string {
+    public function getEntityTypeId(): string
+    {
         return $this->entityTypeId;
     }
 
-    public function getDeprecatedFunction(): string {
+    public function getDeprecatedFunction(): string
+    {
         return $this->deprecatedFunction;
     }
 
-    public function getEntityStorageMethod(): string {
+    public function getEntityStorageMethod(): string
+    {
         return $this->entityStorageMethod;
     }
-
 }

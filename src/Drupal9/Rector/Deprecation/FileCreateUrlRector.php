@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace DrupalRector\Drupal9\Rector\Deprecation;
 
@@ -9,7 +11,6 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 final class FileCreateUrlRector extends AbstractRector
 {
-
     public function getRuleDefinition(): RuleDefinition
     {
         return new RuleDefinition('Fixes deprecated file_create_url() calls', [
@@ -21,7 +22,7 @@ CODE_BEFORE
                 <<<'CODE_AFTER'
 \Drupal::service('file_url_generator')->generateAbsoluteString($uri);
 CODE_AFTER
-            )
+            ),
         ]);
     }
 
@@ -51,7 +52,7 @@ CODE_AFTER
             [new Node\Arg(new Node\Scalar\String_('file_url_generator'))]
         );
         $methodName = new Node\Identifier('generateAbsoluteString');
+
         return new Node\Expr\MethodCall($service, $methodName, $node->getArgs());
     }
-
 }

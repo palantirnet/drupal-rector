@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace DrupalRector\Drupal9\Rector\Deprecation;
 
@@ -15,7 +17,6 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 class AssertLegacyTraitRector extends AbstractRector implements ConfigurableRectorInterface
 {
-
     use GetDeclaringSourceTrait;
 
     /**
@@ -28,7 +29,8 @@ class AssertLegacyTraitRector extends AbstractRector implements ConfigurableRect
      */
     private AddCommentService $commentService;
 
-    public function __construct(AddCommentService $commentService) {
+    public function __construct(AddCommentService $commentService)
+    {
         $this->commentService = $commentService;
     }
 
@@ -36,17 +38,12 @@ class AssertLegacyTraitRector extends AbstractRector implements ConfigurableRect
     {
         foreach ($configuration as $value) {
             if (!($value instanceof AssertLegacyTraitConfiguration)) {
-                throw new \InvalidArgumentException(sprintf(
-                    'Each configuration item must be an instance of "%s"',
-                    AssertLegacyTraitConfiguration::class
-                ));
+                throw new \InvalidArgumentException(sprintf('Each configuration item must be an instance of "%s"', AssertLegacyTraitConfiguration::class));
             }
         }
 
         $this->assertLegacyTraitMethods = $configuration;
     }
-
-
 
     public function getNodeTypes(): array
     {
@@ -56,7 +53,7 @@ class AssertLegacyTraitRector extends AbstractRector implements ConfigurableRect
     }
 
     /**
-     * @param string $method
+     * @param string                         $method
      * @param array<Arg|VariadicPlaceholder> $args
      *
      * @return \PhpParser\Node\Expr\MethodCall
@@ -64,6 +61,7 @@ class AssertLegacyTraitRector extends AbstractRector implements ConfigurableRect
     protected function createAssertSessionMethodCall(string $method, array $args): Node\Expr\MethodCall
     {
         $assertSessionNode = $this->nodeFactory->createLocalMethodCall('assertSession');
+
         return $this->nodeFactory->createMethodCall($assertSessionNode, $method, $args);
     }
 
@@ -96,7 +94,7 @@ class AssertLegacyTraitRector extends AbstractRector implements ConfigurableRect
                 $args = [$expr->args[0]];
             }
 
-            if ($configuration->getPrependArgument() !== NULL) {
+            if ($configuration->getPrependArgument() !== null) {
                 array_unshift($args, $this->nodeFactory->createArg('X-Drupal-Cache-Tags'));
             }
 
@@ -111,9 +109,10 @@ class AssertLegacyTraitRector extends AbstractRector implements ConfigurableRect
             } elseif ($node->expr instanceof Node\Expr\Assign && $node->expr->expr instanceof Node\Expr\MethodCall) {
                 $node->expr->expr = $newExpr;
             }
-            return $node;
 
+            return $node;
         }
+
         return null;
     }
 
@@ -279,4 +278,3 @@ CODE_AFTER
         ]);
     }
 }
-

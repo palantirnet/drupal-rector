@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 use DrupalRector\Drupal8\Rector\Deprecation\ConstantToClassConstantRector;
 use DrupalRector\Drupal8\Rector\ValueObject\ConstantToClassConfiguration;
@@ -11,6 +13,6 @@ return static function (RectorConfig $rectorConfig): void {
             'DATETIME_STORAGE_TIMEZONE',
             'Drupal\datetime\Plugin\Field\FieldType\DateTimeItemInterface',
             'STORAGE_TIMEZONE',
-        )
+        ),
     ]);
 };

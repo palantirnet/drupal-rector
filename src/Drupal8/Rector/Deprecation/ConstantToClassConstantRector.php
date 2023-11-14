@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace DrupalRector\Drupal8\Rector\Deprecation;
 
 use DrupalRector\Drupal8\Rector\ValueObject\ConstantToClassConfiguration;
@@ -26,10 +28,7 @@ class ConstantToClassConstantRector extends AbstractRector implements Configurab
     {
         foreach ($configuration as $value) {
             if (!($value instanceof ConstantToClassConfiguration)) {
-                throw new \InvalidArgumentException(sprintf(
-                    'Each configuration item must be an instance of "%s"',
-                    ConstantToClassConfiguration::class
-                ));
+                throw new \InvalidArgumentException(sprintf('Each configuration item must be an instance of "%s"', ConstantToClassConfiguration::class));
             }
         }
 
@@ -37,7 +36,7 @@ class ConstantToClassConstantRector extends AbstractRector implements Configurab
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getRuleDefinition(): RuleDefinition
     {
@@ -58,12 +57,12 @@ CODE_AFTER
                         'CONSTANT'
                     ),
                 ]
-            )
+            ),
         ]);
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getNodeTypes(): array
     {
@@ -73,7 +72,7 @@ CODE_AFTER
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function refactor(Node $node): ?Node
     {

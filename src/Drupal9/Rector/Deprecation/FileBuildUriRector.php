@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace DrupalRector\Drupal9\Rector\Deprecation;
 
 use PhpParser\Node;
@@ -10,29 +12,29 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 final class FileBuildUriRector extends AbstractRector
 {
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getRuleDefinition(): RuleDefinition
     {
-        return new RuleDefinition('Fixes deprecated file_build_uri() calls',[
+        return new RuleDefinition('Fixes deprecated file_build_uri() calls', [
             new CodeSample(
-              <<<'CODE_BEFORE'
+                <<<'CODE_BEFORE'
 $uri1 = file_build_uri('path/to/file.txt');
 $path = 'path/to/other/file.png';
 $uri2 = file_build_uri($path);
 CODE_BEFORE
-              ,
-              <<<'CODE_AFTER'
+                ,
+                <<<'CODE_AFTER'
 $uri1 = \Drupal::service('stream_wrapper_manager')->normalizeUri(\Drupal::config('system.file')->get('default_scheme') . ('://' . 'path/to/file.txt'));
 $path = 'path/to/other/file.png';
 $uri2 = \Drupal::service('stream_wrapper_manager')->normalizeUri(\Drupal::config('system.file')->get('default_scheme') . ('://' . $path));
 CODE_AFTER
-            )
+            ),
         ]);
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getNodeTypes(): array
     {
@@ -42,7 +44,7 @@ CODE_AFTER
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function refactor(Node $node): ?Node
     {
@@ -60,7 +62,7 @@ CODE_AFTER
         );
         $scheme = new Node\Expr\MethodCall($config, new Node\Identifier('get'), [new Node\Arg(new Node\Scalar\String_('default_scheme'))]);
 
-        $arg = New Node\Arg(new Node\Expr\BinaryOp\Concat(
+        $arg = new Node\Arg(new Node\Expr\BinaryOp\Concat(
             $scheme,
             // The nested concatenation is enclosed in parentheses.
             // @see https://github.com/rectorphp/rector/issues/7188

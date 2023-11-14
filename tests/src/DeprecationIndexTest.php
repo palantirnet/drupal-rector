@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace DrupalRector\Tests;
 
@@ -8,10 +10,9 @@ use Symfony\Component\Yaml\Yaml;
 
 final class DeprecationIndexTest extends TestCase
 {
-
     public function testIsValidYaml(): void
     {
-        $contents = file_get_contents(__DIR__ . '/../../deprecation-index.yml');
+        $contents = file_get_contents(__DIR__.'/../../deprecation-index.yml');
         self::assertNotFalse($contents);
         try {
             $contents = Yaml::parse($contents);
@@ -26,7 +27,7 @@ final class DeprecationIndexTest extends TestCase
 
     public function testOnlyAsciiCharacters(): void
     {
-        $contents = file_get_contents(__DIR__ . '/../../deprecation-index.yml');
+        $contents = file_get_contents(__DIR__.'/../../deprecation-index.yml');
         self::assertNotFalse($contents);
         $result = mb_detect_encoding($contents, 'ASCII', true);
         self::assertNotFalse(
@@ -34,5 +35,4 @@ final class DeprecationIndexTest extends TestCase
             'The file contains non ASCII characters. Please make sure `\` and spaces are only using ASCII characters.'
         );
     }
-
 }

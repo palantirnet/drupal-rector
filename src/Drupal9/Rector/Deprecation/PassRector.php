@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace DrupalRector\Drupal9\Rector\Deprecation;
 
@@ -11,7 +13,6 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 final class PassRector extends AbstractRector
 {
-
     use GetDeclaringSourceTrait;
 
     public function getRuleDefinition(): RuleDefinition
@@ -26,7 +27,7 @@ CODE_BEFORE
                 <<<'CODE_AFTER'
 // Check for pass
 CODE_AFTER
-            )
+            ),
         ]);
     }
 

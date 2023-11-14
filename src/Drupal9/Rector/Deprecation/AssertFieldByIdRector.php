@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace DrupalRector\Drupal9\Rector\Deprecation;
 
@@ -9,7 +11,6 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 final class AssertFieldByIdRector extends AbstractRector
 {
-
     public function getRuleDefinition(): RuleDefinition
     {
         return new RuleDefinition('Fixes deprecated AssertLegacyTrait::assertFieldById() calls', [
@@ -27,7 +28,7 @@ CODE_BEFORE
     $this->assertSession()->fieldExists('edit-description');
     $this->assertSession()->fieldValueEquals('edit-description', '');
 CODE_AFTER
-            )
+            ),
         ]);
     }
 
@@ -53,6 +54,7 @@ CODE_AFTER
 
         if (count($args) === 1) {
             $args[] = $this->nodeFactory->createArg('');
+
             return $this->nodeFactory->createMethodCall($assertSessionNode, 'fieldValueEquals', $args);
         }
         // Check if argument two is a `null` and convert to fieldExists.

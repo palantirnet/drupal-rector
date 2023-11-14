@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace DrupalRector\Drupal8\Rector\Deprecation;
 
 use PhpParser\Node;
@@ -20,9 +22,8 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  */
 final class DrupalURLRector extends AbstractRector
 {
-
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getNodeTypes(): array
     {
@@ -31,12 +32,12 @@ final class DrupalURLRector extends AbstractRector
         ];
     }
 
-  /**
-     * @inheritdoc
+    /**
+     * {@inheritdoc}
      */
     public function getRuleDefinition(): RuleDefinition
     {
-        return new RuleDefinition('Fixes deprecated \Drupal::url() calls',[
+        return new RuleDefinition('Fixes deprecated \Drupal::url() calls', [
             new CodeSample(
                 <<<'CODE_BEFORE'
 \Drupal::url('user.login');
@@ -45,34 +46,32 @@ CODE_BEFORE
                 <<<'CODE_AFTER'
 \Drupal\Core\Url::fromRoute('user.login')->toString();
 CODE_AFTER
-            )
+            ),
         ]);
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function refactor(Node $node): ?Node
     {
         /** @var Node\Expr\StaticCall $node */
         if ($this->getName($node->name) === 'url' && $this->getName($node->class) === 'Drupal') {
-
-            $toString_argument = NULL;
+            $toString_argument = null;
             $fromRoute_arguments = $node->args;
 
             // If we are the optional fourth argument, we need to chain a `toString($collect_bubbleable_metadata)`.
             if (count($fromRoute_arguments) === 4) {
-               $toString_argument = $fromRoute_arguments[3];
+                $toString_argument = $fromRoute_arguments[3];
 
-               unset($fromRoute_arguments[3]);
+                unset($fromRoute_arguments[3]);
             }
 
             $new_node = new Node\Expr\StaticCall(new Node\Name\FullyQualified('Drupal\Core\Url'), 'fromRoute', $fromRoute_arguments);
 
             if (is_null($toString_argument)) {
                 $new_node = new Node\Expr\MethodCall($new_node, 'toString');
-            }
-            else {
+            } else {
                 $new_node = new Node\Expr\MethodCall($new_node, 'toString', [$toString_argument]);
             }
 

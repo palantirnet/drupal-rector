@@ -1,12 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace DrupalRector\Drupal8\Rector\Deprecation;
 
+use PhpParser\Node;
+use Rector\Core\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
-use Rector\Core\Rector\AbstractRector;
-use PhpParser\Node;
-
 
 /**
  * Replaced deprecated entity_view() calls.
@@ -22,9 +23,8 @@ use PhpParser\Node;
  */
 final class EntityViewRector extends AbstractRector
 {
-
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getNodeTypes(): array
     {
@@ -34,11 +34,11 @@ final class EntityViewRector extends AbstractRector
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getRuleDefinition(): RuleDefinition
     {
-        return new RuleDefinition('Fixes deprecated entity_view() use',[
+        return new RuleDefinition('Fixes deprecated entity_view() use', [
             new CodeSample(
                 <<<'CODE_BEFORE'
 $rendered = entity_view($entity, 'default');
@@ -48,19 +48,19 @@ CODE_BEFORE
 $rendered = \Drupal::entityTypeManager()->getViewBuilder($entity
   ->getEntityTypeId())->view($entity, 'default');
 CODE_AFTER
-            )
+            ),
         ]);
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function refactor(Node $node): ?Node
     {
         assert($node instanceof Node\Expr\FuncCall);
 
         if ($this->getName($node->name) !== 'entity_view') {
-            return NULL;
+            return null;
         }
 
         $name = new Node\Name\FullyQualified('Drupal');
@@ -91,5 +91,4 @@ CODE_AFTER
 
         return new Node\Expr\MethodCall($view_builder, $view_method_name, $view_args);
     }
-
 }
