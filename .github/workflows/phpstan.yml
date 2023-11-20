@@ -9,7 +9,7 @@ jobs:
         # START: SHARED SETUP
         runs-on: ubuntu-latest
         steps:
-            -   uses: actions/checkout@v2
+            -   uses: actions/checkout@v3
             -   uses: shivammathur/setup-php@v2
                 with:
                     php-version: 8.1
@@ -21,7 +21,5 @@ jobs:
             #     uses: mxschmitt/action-tmate@v2
             # END: SHARED SETUP
 
-            # We cannot have rector/rector in require and rector/rector-src in require-dev, they conflict.
-            - run: composer remove rector/rector --no-update
             - run: composer install
-            - run: php vendor/bin/phpstan
+            - run: composer phpstan

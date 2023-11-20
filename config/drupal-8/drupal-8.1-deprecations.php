@@ -2,5 +2,11 @@
 
 declare(strict_types=1);
 
-return static function (\Rector\Config\RectorConfig $rectorConfig): void {
+use DrupalRector\Services\AddCommentService;
+use Rector\Config\RectorConfig;
+
+return static function (RectorConfig $rectorConfig): void {
+    $rectorConfig->singleton(AddCommentService::class, function () {
+        return new AddCommentService();
+    });
 };

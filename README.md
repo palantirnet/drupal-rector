@@ -4,18 +4,19 @@ Automate fixing deprecated Drupal code.
 
 ## Status
 
-![Functional test: Rector examples](https://github.com/palantirnet/drupal-rector/workflows/functional_test__rector_examples/badge.svg)
+
+
+![Packagist Version](https://img.shields.io/packagist/v/palantirnet/drupal-rector) ![Functional test: Rector examples](https://img.shields.io/github/actions/workflow/status/palantirnet/drupal-rector/functional_test__rector_examples.yml?logo=github&label=Functional%20tests) ![Unit tests](https://img.shields.io/github/actions/workflow/status/palantirnet/drupal-rector/phpunit.yml?logo=github&label=Unit%20tests)  ![PHPStan](https://img.shields.io/github/actions/workflow/status/palantirnet/drupal-rector/phpstan.yml?logo=github&label=PHPStan)
 
 ## Latest release
 
-[Version 0.13.0 for Drupal 8.x and 9.x deprecations](https://github.com/palantirnet/drupal-rector/tree/0.13.0). Note that Drupal 9 deprecation testing recommends PHP 8.
+[Version 0.18.0 for Drupal 8.x, 9.x and 10.x deprecations](https://github.com/palantirnet/drupal-rector/tree/0.18.0).
 
 ### Release notes
 
-* The 0.13.0 release of drupal-rector will include Rector 0.13.8. The upgrade path should be as simple as re-copying the configuration file. `cp vendor/palantirnet/drupal-rector/rector.php`
+* The 0.18.0 and higher releases of drupal-rector will include Rector 0.18+. The upgrade path should be as simple as re-copying the configuration file. `cp vendor/palantirnet/drupal-rector/rector.php`.
 
-* The 0.12.4 is a stable release pinned to Rector 0.12.21. Developers should be aware that Rector 0.12.22 introduces breaking changes to how we handle Drupal configuration.
-
+* The 0.13.0 and higher releases of drupal-rector will include Rector 0.13.8+. The upgrade path should be as simple as re-copying the configuration file. `cp vendor/palantirnet/drupal-rector/rector.php`
 
 *Note that GitHub does not let us have different default homepage and merge branches. If you checked out the project using packagist/composer, read the docs for your version.*
 
@@ -30,6 +31,11 @@ https://www.palantir.net/blog/jumpstart-your-drupal-9-upgrade-drupal-rector
 Development guides, individual deprecation overviews, and other resources can be found here:
 
 https://www.palantir.net/rector
+
+List of all rules with examples:
+
+[Rule overview in docs/rules_overview.md](docs%2Frules_overview.md)
+
 
 ## Scope and limitations
 
@@ -124,7 +130,7 @@ Rector itself has conflicts with older versions of PhpStan.
 
 If you are getting errors like
 
-`[ERROR] Class "DrupalRector\Rector\Deprecation\EntityManagerRector" was not found while loading`
+`[ERROR] Class "DrupalRector\Drupal8\Rector\Deprecation\EntityManagerRector" was not found while loading`
 
 You may need to rebuild your autoload file.
 
@@ -171,9 +177,7 @@ Our goal is to make contributing to this project easy for people. While we've ma
 
 ### Development environment
 
-We recommend using our `drupal-rector-sandbox` development environment [https://github.com/palantirnet/drupal-rector-sandbox](https://github.com/palantirnet/drupal-rector-sandbox)
-
-Alternatively, you can use your existing Drupal project and follow the instructions in [README](https://github.com/palantirnet/drupal-rector-sandbox/blob/master/README.md#developing-with-drupal-rector)
+See the instructions in [README](https://github.com/palantirnet/drupal-rector-sandbox/blob/master/README.md#developing-with-drupal-rector)
 
 ### Adding a Rector rule
 
@@ -241,16 +245,10 @@ The index file is used in part to provide automated updates to https://dev.acqui
 
 ## Pinning dev dependencies
 
-If there are conflicts with Rector, the package version can be conflicted with `conflict` on `rector/rector`.
+If there are conflicts with Rector, the package version can be conflicted with `conflict` on `rector/rector` and `phpstan/phpstan`.
 
-For development, the `require-dev` is on `rector/rector-src` which is `dev-main` and that includes the `dev-main` of all
-its packages.
-
-To properly pin a development release of `rector-src`:
-
-* Set `rector/rector-src` to `dev-main#COMMIT` where `COMMIT` is the tag commit in `rector-src`
 * View the tree for the commit on GitHub and it's `composer/installed.json` file (example https://github.com/rectorphp/rector/blob/0.12.18/vendor/composer/installed.json)
-* Use the references to pin `require-dev` dependencies.
+* Use the reference to pin the `phpstan/phpstan` dependency.
 
 ## Credits
 

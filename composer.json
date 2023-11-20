@@ -10,7 +10,7 @@
         "ast"
     ],
     "require": {
-        "rector/rector": "~0.13.8",
+        "rector/rector": "~0.18.0",
         "webflo/drupal-finder": "^1.2"
     },
     "license": "MIT",
@@ -66,14 +66,22 @@
         "enable-patching": true
     },
     "require-dev": {
-        "php": "^8.0",
+        "php": "^8.1",
         "cweagans/composer-patches": "^1.7.2",
+        "friendsofphp/php-cs-fixer": "^3.38",
         "phpstan/extension-installer": "^1.1",
         "phpstan/phpstan": "^1.0",
         "phpstan/phpstan-deprecation-rules": "^1.0",
-        "phpunit/phpunit": "^9.5",
-        "rector/rector-src": "dev-main",
-        "symplify/vendor-patches": "^11.0",
-        "symfony/yaml": "^5 || ^6"
+        "phpunit/phpunit": "^10.0",
+        "symfony/yaml": "^5 || ^6",
+        "symplify/rule-doc-generator": "^12.0",
+        "symplify/vendor-patches": "^11.0"
+    },
+    "scripts": {
+        "docs": "vendor/bin/rule-doc-generator generate src/ --categorize=3",
+        "test": "vendor/bin/phpunit",
+        "phpstan": "vendor/bin/phpstan analyse --memory-limit=2G",
+        "check-style": "vendor/bin/php-cs-fixer check",
+        "fix-style": "vendor/bin/php-cs-fixer fix"
     }
 }

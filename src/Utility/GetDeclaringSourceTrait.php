@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace DrupalRector\Utility;
 
@@ -9,15 +11,14 @@ use Rector\NodeTypeResolver\Node\AttributeKey;
 
 trait GetDeclaringSourceTrait
 {
-
     /**
-     * Gets a method or property's declaring source (trait or class.)
+     * Gets a method or property's declaring source (trait or class.).
      *
-     * @param Node\Expr\MethodCall|Node\Expr\PropertyFetch $expr
-     *   The expression.
+     * @param node\Expr\MethodCall|Node\Expr\PropertyFetch $expr
+     *                                                           The expression
      *
      * @return string|null
-     *   The declaring source (trait or class.)
+     *                     The declaring source (trait or class.)
      */
     protected function getDeclaringSource(Node\Expr $expr): ?string
     {
@@ -38,9 +39,7 @@ trait GetDeclaringSourceTrait
         } elseif ($expr instanceof Node\Expr\PropertyFetch) {
             $exprReflection = $classReflection->getProperty($name, $scope);
         } else {
-            throw new \InvalidArgumentException(
-                "Can only call getDeclaringSource on MethodCall or PropertyFetch. Received: " . get_class($expr)
-            );
+            throw new \InvalidArgumentException('Can only call getDeclaringSource on MethodCall or PropertyFetch. Received: '.get_class($expr));
         }
 
         $declaringTrait = $exprReflection->getDeclaringTrait();
@@ -48,10 +47,7 @@ trait GetDeclaringSourceTrait
             return $declaringTrait->getName();
         }
         $declaringClass = $exprReflection->getDeclaringClass();
-        if ($declaringClass !== null) {
-            return $declaringClass->getName();
-        }
-        return null;
-    }
 
+        return $declaringClass->getName();
+    }
 }

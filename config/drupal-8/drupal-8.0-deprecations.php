@@ -2,91 +2,73 @@
 
 declare(strict_types=1);
 
-use DrupalRector\Rector\Deprecation\DBDeleteRector;
-use DrupalRector\Rector\Deprecation\DBInsertRector;
-use DrupalRector\Rector\Deprecation\DBQueryRector;
-use DrupalRector\Rector\Deprecation\DBSelectRector;
-use DrupalRector\Rector\Deprecation\DBUpdateRector;
-use DrupalRector\Rector\Deprecation\DrupalLRector;
-use DrupalRector\Rector\Deprecation\DrupalRealpathRector;
-use DrupalRector\Rector\Deprecation\DrupalRenderRector;
-use DrupalRector\Rector\Deprecation\DrupalRenderRootRector;
-use DrupalRector\Rector\Deprecation\DrupalURLRector;
-use DrupalRector\Rector\Deprecation\EntityCreateRector;
-use DrupalRector\Rector\Deprecation\EntityDeleteMultipleRector;
-use DrupalRector\Rector\Deprecation\EntityInterfaceLinkRector;
-use DrupalRector\Rector\Deprecation\EntityInterfaceUrlInfoRector;
-use DrupalRector\Rector\Deprecation\EntityLoadRector;
-use DrupalRector\Rector\Deprecation\EntityManagerRector;
-use DrupalRector\Rector\Deprecation\EntityViewRector;
-use DrupalRector\Rector\Deprecation\FileLoadRector;
-use DrupalRector\Rector\Deprecation\FormatDateRector;
-use DrupalRector\Rector\Deprecation\LinkGeneratorTraitLRector;
-use DrupalRector\Rector\Deprecation\NodeLoadRector;
-use DrupalRector\Rector\Deprecation\SafeMarkupFormatRector;
-use DrupalRector\Rector\Deprecation\UserLoadRector;
+use DrupalRector\Drupal8\Rector\Deprecation\DBRector;
+use DrupalRector\Drupal8\Rector\Deprecation\DrupalLRector;
+use DrupalRector\Drupal8\Rector\Deprecation\DrupalURLRector;
+use DrupalRector\Drupal8\Rector\Deprecation\EntityCreateRector;
+use DrupalRector\Drupal8\Rector\Deprecation\EntityDeleteMultipleRector;
+use DrupalRector\Drupal8\Rector\Deprecation\EntityInterfaceLinkRector;
+use DrupalRector\Drupal8\Rector\Deprecation\EntityLoadRector;
+use DrupalRector\Drupal8\Rector\Deprecation\EntityManagerRector;
+use DrupalRector\Drupal8\Rector\Deprecation\EntityViewRector;
+use DrupalRector\Drupal8\Rector\Deprecation\LinkGeneratorTraitLRector;
+use DrupalRector\Drupal8\Rector\Deprecation\SafeMarkupFormatRector;
+use DrupalRector\Drupal8\Rector\ValueObject\DBConfiguration;
+use DrupalRector\Drupal8\Rector\ValueObject\EntityLoadConfiguration;
+use DrupalRector\Rector\Deprecation\FunctionToServiceRector;
+use DrupalRector\Rector\Deprecation\MethodToMethodWithCheckRector;
+use DrupalRector\Rector\ValueObject\FunctionToServiceConfiguration;
+use DrupalRector\Rector\ValueObject\MethodToMethodWithCheckConfiguration;
+use DrupalRector\Services\AddCommentService;
 use Rector\Config\RectorConfig;
 
 return static function (RectorConfig $rectorConfig): void {
-    $rectorConfig->ruleWithConfiguration(DBInsertRector::class, [
-        'drupal_rector_notices_as_comments' => '%drupal_rector_notices_as_comments%',
-    ]);
-    $rectorConfig->ruleWithConfiguration(DBSelectRector::class, [
-        'drupal_rector_notices_as_comments' => '%drupal_rector_notices_as_comments%',
-    ]);
-    $rectorConfig->ruleWithConfiguration(DBQueryRector::class, [
-        'drupal_rector_notices_as_comments' => '%drupal_rector_notices_as_comments%',
-    ]);
-    $rectorConfig->ruleWithConfiguration(DBDeleteRector::class, [
-        'drupal_rector_notices_as_comments' => '%drupal_rector_notices_as_comments%',
-    ]);
-    $rectorConfig->ruleWithConfiguration(DBUpdateRector::class, [
-        'drupal_rector_notices_as_comments' => '%drupal_rector_notices_as_comments%',
+    $rectorConfig->singleton(AddCommentService::class, function () {
+        return new AddCommentService();
+    });
+
+    $rectorConfig->ruleWithConfiguration(DBRector::class, [
+        // https://www.drupal.org/node/2993033
+        new DBConfiguration('db_delete', 2),
+        new DBConfiguration('db_insert', 2),
+        new DBConfiguration('db_query', 3),
+        new DBConfiguration('db_select', 3),
+        new DBConfiguration('db_update', 2),
     ]);
 
-    $rectorConfig->rule(DrupalRenderRector::class);
-    $rectorConfig->rule(DrupalRenderRootRector::class);
     $rectorConfig->rule(DrupalURLRector::class);
     $rectorConfig->rule(DrupalLRector::class);
-    $rectorConfig->rule(DrupalRealpathRector::class);
     $rectorConfig->rule(EntityCreateRector::class);
     $rectorConfig->rule(EntityDeleteMultipleRector::class);
 
-    $rectorConfig->ruleWithConfiguration(EntityInterfaceLinkRector::class, [
-            'drupal_rector_notices_as_comments' => '%drupal_rector_notices_as_comments%',
-        ]);
+    $rectorConfig->ruleWithConfiguration(FunctionToServiceRector::class, [
+        // https://www.drupal.org/node/2418133
+        new FunctionToServiceConfiguration('drupal_realpath', 'file_system', 'realpath'),
+        // https://www.drupal.org/node/2912696
+        new FunctionToServiceConfiguration('drupal_render', 'renderer', 'render'),
+        // https://www.drupal.org/node/2912696
+        new FunctionToServiceConfiguration('drupal_render_root', 'renderer', 'renderRoot'),
+        // https://www.drupal.org/node/1876852
+        new FunctionToServiceConfiguration('format_date', 'date.formatter', 'format'),
+    ]);
 
-    $rectorConfig->ruleWithConfiguration(EntityInterfaceUrlInfoRector::class, [
-            'drupal_rector_notices_as_comments' => '%drupal_rector_notices_as_comments%',
-        ]);
+    $rectorConfig->rule(EntityInterfaceLinkRector::class);
+
+    $rectorConfig->ruleWithConfiguration(MethodToMethodWithCheckRector::class, [
+        // https://www.drupal.org/node/2614344
+        new MethodToMethodWithCheckConfiguration('Drupal\Core\Entity\EntityInterface', 'urlInfo', 'toUrl'),
+    ]);
 
     $rectorConfig->ruleWithConfiguration(EntityLoadRector::class, [
-            'drupal_rector_notices_as_comments' => '%drupal_rector_notices_as_comments%',
-        ]);
+        new EntityLoadConfiguration('entity'),
+        new EntityLoadConfiguration('file'),
+        new EntityLoadConfiguration('node'),
+        new EntityLoadConfiguration('user'),
+    ]);
 
     $rectorConfig->rule(EntityViewRector::class);
-
-    $rectorConfig->ruleWithConfiguration(EntityManagerRector::class, [
-            'drupal_rector_notices_as_comments' => '%drupal_rector_notices_as_comments%',
-        ]);
-
-    $rectorConfig->rule(FormatDateRector::class);
-
-    $rectorConfig->ruleWithConfiguration(FileLoadRector::class, [
-            'drupal_rector_notices_as_comments' => '%drupal_rector_notices_as_comments%',
-        ]);
-
-    $rectorConfig->ruleWithConfiguration(LinkGeneratorTraitLRector::class, [
-            'drupal_rector_notices_as_comments' => '%drupal_rector_notices_as_comments%',
-        ]);
-
-    $rectorConfig->ruleWithConfiguration(NodeLoadRector::class, [
-            'drupal_rector_notices_as_comments' => '%drupal_rector_notices_as_comments%',
-        ]);
+    $rectorConfig->rule(EntityManagerRector::class);
+    $rectorConfig->rule(LinkGeneratorTraitLRector::class);
 
     $rectorConfig->rule(SafeMarkupFormatRector::class);
-
-    $rectorConfig->ruleWithConfiguration(UserLoadRector::class, [
-            'drupal_rector_notices_as_comments' => '%drupal_rector_notices_as_comments%',
-        ]);
 };

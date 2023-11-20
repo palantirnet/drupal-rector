@@ -4,11 +4,10 @@ declare(strict_types=1);
 
 use DrupalRector\Set\Drupal8SetList;
 use Rector\Config\RectorConfig;
-use Rector\PHPUnit\Rector\ClassMethod\AddDoesNotPerformAssertionToNonAssertingTestRector;
+use Rector\PHPUnit\PHPUnit60\Rector\ClassMethod\AddDoesNotPerformAssertionToNonAssertingTestRector;
 use Rector\PHPUnit\Set\PHPUnitSetList;
 
 return static function (RectorConfig $rectorConfig): void {
-
     $rectorConfig->sets([
         PHPUnitSetList::PHPUNIT_60,
         PHPUnitSetList::PHPUNIT_70,
@@ -25,9 +24,11 @@ return static function (RectorConfig $rectorConfig): void {
 
     // Drupal performs assertions in the ::setUp methods of its test suites,
     // the following rule adds unneeded annotations.
-    $rectorConfig->services()->remove(AddDoesNotPerformAssertionToNonAssertingTestRector::class);
+    $rectorConfig->skip([
+        AddDoesNotPerformAssertionToNonAssertingTestRector::class => ['*'],
+    ]);
 
     $rectorConfig->bootstrapFiles([
-        __DIR__ . '/../drupal-phpunit-bootstrap-file.php'
+        __DIR__.'/../drupal-phpunit-bootstrap-file.php',
     ]);
 };
