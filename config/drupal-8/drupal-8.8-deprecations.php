@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-use DrupalRector\Rector\Class_\FunctionalTestDefaultThemePropertyRector;
 use DrupalRector\Drupal8\Rector\Deprecation\DrupalServiceRenameRector;
 use DrupalRector\Drupal8\Rector\Deprecation\FileDefaultSchemeRector;
 use DrupalRector\Drupal8\Rector\ValueObject\DrupalServiceRenameConfiguration;
+use DrupalRector\Rector\Class_\FunctionalTestDefaultThemePropertyRector;
 use DrupalRector\Rector\Deprecation\FunctionToServiceRector;
 use DrupalRector\Rector\Deprecation\MethodToMethodWithCheckRector;
 use DrupalRector\Rector\ValueObject\FunctionToServiceConfiguration;
@@ -46,5 +46,6 @@ return static function (RectorConfig $rectorConfig): void {
         new MethodToMethodWithCheckConfiguration('Drupal\Core\Entity\EntityTypeInterface', 'getLowercaseLabel', 'getSingularLabel'),
     ]);
 
+    // https://www.drupal.org/node/3083055
     $rectorConfig->rule(FunctionalTestDefaultThemePropertyRector::class);
 };

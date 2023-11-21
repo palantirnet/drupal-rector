@@ -7,9 +7,12 @@ namespace DrupalRector\Rector\Class_;
 use Drupal\Tests\BrowserTestBase;
 use PhpParser\Builder\Property;
 use PhpParser\Node;
+use PHPStan\Analyser\Scope;
 use PHPStan\Type\ObjectType;
+use Rector\BetterPhpDocParser\PhpDocInfo\PhpDocInfoFactory;
 use Rector\Core\Exception\ShouldNotHappenException;
-use Rector\Core\Rector\AbstractRector;
+use Rector\Core\PhpParser\Node\Value\ValueResolver;
+use Rector\Core\Rector\AbstractScopeAwareRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
@@ -18,8 +21,23 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  *
  * @see \DrupalRector\Tests\Rector\Class_\FunctionalTestDefaultThemePropertyRector\FunctionalTestDefaultThemePropertyRectorTest
  */
-final class FunctionalTestDefaultThemePropertyRector extends AbstractRector
+final class FunctionalTestDefaultThemePropertyRector extends AbstractScopeAwareRector
 {
+    /**
+     * @var \Rector\Core\PhpParser\Node\Value\ValueResolver
+     */
+    private ValueResolver $valueResolver;
+
+    /**
+     * @var \Rector\BetterPhpDocParser\PhpDocInfo\PhpDocInfoFactory
+     */
+    private PhpDocInfoFactory $phpDocInfoFactory;
+
+    public function __construct(ValueResolver $valueResolver, PhpDocInfoFactory $phpDocInfoFactory)
+    {
+        $this->valueResolver = $valueResolver;
+        $this->phpDocInfoFactory = $phpDocInfoFactory;
+    }
 
     public function getRuleDefinition(): RuleDefinition
     {
@@ -36,8 +54,7 @@ class SomeClassTest {
   protected $defaultTheme = 'stark'
 }
 CODE_SAMPLE
-
-            )
+            ),
         ]);
     }
 
@@ -52,7 +69,7 @@ CODE_SAMPLE
     /**
      * @param \PhpParser\Node\Stmt\Class_ $node
      */
-    public function refactor(Node $node): ?Node
+    public function refactorWithScope(Node $node, Scope $scope): ?Node
     {
         assert($node instanceof Node\Stmt\Class_);
         if ($node->isAbstract() || $node->isAnonymous()) {
@@ -60,7 +77,7 @@ CODE_SAMPLE
         }
         $type = $this->nodeTypeResolver->getType($node);
         if (!$type instanceof ObjectType) {
-            throw new ShouldNotHappenException(__CLASS__ . ' type for node was not ' . ObjectType::class);
+            throw new ShouldNotHappenException(__CLASS__.' type for node was not '.ObjectType::class);
         }
         $browserTestBaseType = new ObjectType(BrowserTestBase::class);
         if ($type->isSmallerThanOrEqual($browserTestBaseType)->yes()) {
@@ -71,26 +88,15 @@ CODE_SAMPLE
         }
         $classReflection = $type->getClassReflection();
         if ($classReflection === null || !$classReflection->hasNativeProperty('defaultTheme')) {
-            throw new ShouldNotHappenException(
-                sprintf(
-                    "Functional test class %s should have had a defaultTheme property but one not found.",
-                    $type->getClassName()
-                )
-            );
-        }
-        $nativeProperty = $classReflection->getNativeProperty('defaultTheme');
-
-        // Get the default value for the property. PHPStan's reflection for
-        // getting the default value as an expression throws a LogicException
-        // when the value is null and not a typed property.
-        try {
-            $defaultValueExpr = $nativeProperty->getNativeReflection()->getDefaultValueExpr();
-            $defaultThemeValue = $this->valueResolver->getValue($defaultValueExpr);
-        } catch (\LogicException $e) {
-            $defaultThemeValue = null;
+            throw new ShouldNotHappenException(sprintf('Functional test class %s should have had a defaultTheme property but one not found.', $type->getClassName()));
         }
 
-        if ($defaultThemeValue !== null) {
+        $defaultThemeProperty = $classReflection->getProperty('defaultTheme', $scope);
+        $reflectionProperty = $defaultThemeProperty->getNativeReflection();
+        $betterReflection = $reflectionProperty->getBetterReflection();
+        $defaultValueExpression = $betterReflection->getDefaultValueExpression();
+
+        if ($defaultValueExpression instanceof Node\Scalar\String_ && strlen($this->valueResolver->getValue($defaultValueExpression)) > 0) {
             return null;
         }
 

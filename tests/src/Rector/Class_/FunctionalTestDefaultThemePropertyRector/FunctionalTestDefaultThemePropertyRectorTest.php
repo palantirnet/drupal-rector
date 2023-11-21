@@ -11,17 +11,17 @@ final class FunctionalTestDefaultThemePropertyRectorTest extends AbstractRectorT
     /**
      * @dataProvider provideData()
      */
-    public function test(\Symplify\SmartFileSystem\SmartFileInfo $fileInfo): void
+    public function test(string $filePath): void
     {
-        $this->doTestFileInfo($fileInfo);
+        $this->doTestFile($filePath);
     }
 
     /**
-     * @return \Iterator<\Symplify\SmartFileSystem\SmartFileInfo>
+     * @return Iterator<<string>>
      */
-    public function provideData(): \Iterator
+    public static function provideData(): \Iterator
     {
-        return $this->yieldFilesFromDirectory(__DIR__.'/Fixture');
+        return self::yieldFilesFromDirectory(__DIR__.'/fixture');
     }
 
     public function provideConfigFilePath(): string
