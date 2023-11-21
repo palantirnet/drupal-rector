@@ -8,7 +8,6 @@ use Drupal\Tests\BrowserTestBase;
 use PhpParser\Builder\Property;
 use PhpParser\Node;
 use PHPStan\Analyser\Scope;
-use PHPStan\Reflection\Php\PhpPropertyReflection;
 use PHPStan\Type\ObjectType;
 use Rector\BetterPhpDocParser\PhpDocInfo\PhpDocInfoFactory;
 use Rector\Core\Exception\ShouldNotHappenException;
@@ -78,7 +77,7 @@ CODE_SAMPLE
         }
         $type = $this->nodeTypeResolver->getType($node);
 
-        if(count($type->getObjectClassNames()) === 0 || !$type->isObject()->yes()) {
+        if (count($type->getObjectClassNames()) === 0 || !$type->isObject()->yes()) {
             return null;
         }
 
@@ -101,7 +100,6 @@ CODE_SAMPLE
         $reflectionProperty = $defaultThemeProperty->getNativeReflection();
         $betterReflection = $reflectionProperty->getBetterReflection();
         $defaultValueExpression = $betterReflection->getDefaultValueExpression();
-
 
         if ($defaultValueExpression instanceof Node\Scalar\String_ && strlen($this->valueResolver->getValue($defaultValueExpression)) > 0) {
             return null;
