@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace DrupalRector\Rector\Class_;
+namespace DrupalRector\Drupal8\Rector\Deprecation;
 
 use Drupal\Tests\BrowserTestBase;
 use PhpParser\Builder\Property;

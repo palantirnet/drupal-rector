@@ -2,8 +2,9 @@
 
 declare(strict_types=1);
 
-namespace DrupalRector\Tests\Rector\Class_\FunctionalTestDefaultThemePropertyRector;
+namespace DrupalRector\Tests\Drupal8\Rector\Deprecation\FunctionalTestDefaultThemePropertyRector;
 
+use DrupalRector\Tests\Rector\Class_\FunctionalTestDefaultThemePropertyRector\Iterator;
 use Rector\Testing\PHPUnit\AbstractRectorTestCase;
 
 final class FunctionalTestDefaultThemePropertyRectorTest extends AbstractRectorTestCase

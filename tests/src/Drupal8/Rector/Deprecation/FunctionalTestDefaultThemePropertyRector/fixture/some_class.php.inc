@@ -1,6 +1,6 @@
 <?php
 
-namespace Rector\Tests\DrupalRector\Rector\Class_\FunctionalTestDefaultThemePropertyRector\fixture;
+namespace DrupalRector\Tests\Drupal8\Rector\Deprecation\FunctionalTestDefaultThemePropertyRector\fixture;
 
 use Drupal\Tests\BrowserTestBase;
 
@@ -16,7 +16,7 @@ class SomeClassTest extends BrowserTestBase {
 -----
 <?php
 
-namespace Rector\Tests\DrupalRector\Rector\Class_\FunctionalTestDefaultThemePropertyRector\fixture;
+namespace DrupalRector\Tests\Drupal8\Rector\Deprecation\FunctionalTestDefaultThemePropertyRector\fixture;
 
 use Drupal\Tests\BrowserTestBase;
 

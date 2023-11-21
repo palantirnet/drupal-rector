@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 use DrupalRector\Drupal8\Rector\Deprecation\DrupalServiceRenameRector;
 use DrupalRector\Drupal8\Rector\Deprecation\FileDefaultSchemeRector;
+use DrupalRector\Drupal8\Rector\Deprecation\FunctionalTestDefaultThemePropertyRector;
 use DrupalRector\Drupal8\Rector\ValueObject\DrupalServiceRenameConfiguration;
-use DrupalRector\Rector\Class_\FunctionalTestDefaultThemePropertyRector;
 use DrupalRector\Rector\Deprecation\FunctionToServiceRector;
 use DrupalRector\Rector\Deprecation\MethodToMethodWithCheckRector;
 use DrupalRector\Rector\ValueObject\FunctionToServiceConfiguration;
