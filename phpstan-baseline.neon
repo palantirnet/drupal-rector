@@ -104,3 +104,8 @@ parameters:
 			message: "#^Call to an undefined method PHPStan\\\\Type\\\\Type\\:\\:getValue\\(\\)\\.$#"
 			count: 1
 			path: src/Drupal9/Rector/Deprecation/ExtensionPathRector.php
+
+		-
+			message: "#^Doing instanceof PHPStan\\\\Type\\\\ObjectType is error\\-prone and deprecated\\. Use Type\\:\\:isObject\\(\\) or Type\\:\\:getObjectClassNames\\(\\) instead\\.$#"
+			count: 1
+			path: src/Rector/Class_/FunctionalTestDefaultThemePropertyRector.php

@@ -8,6 +8,7 @@ use Drupal\Tests\BrowserTestBase;
 use PhpParser\Builder\Property;
 use PhpParser\Node;
 use PHPStan\Analyser\Scope;
+use PHPStan\Reflection\Php\PhpPropertyReflection;
 use PHPStan\Type\ObjectType;
 use Rector\BetterPhpDocParser\PhpDocInfo\PhpDocInfoFactory;
 use Rector\Core\Exception\ShouldNotHappenException;
@@ -24,19 +25,19 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 final class FunctionalTestDefaultThemePropertyRector extends AbstractScopeAwareRector
 {
     /**
-     * @var \Rector\Core\PhpParser\Node\Value\ValueResolver
-     */
-    private ValueResolver $valueResolver;
-
-    /**
      * @var \Rector\BetterPhpDocParser\PhpDocInfo\PhpDocInfoFactory
      */
     private PhpDocInfoFactory $phpDocInfoFactory;
 
+    /**
+     * @var \Rector\Core\PhpParser\Node\Value\ValueResolver
+     */
+    private ValueResolver $valueResolver;
+
     public function __construct(ValueResolver $valueResolver, PhpDocInfoFactory $phpDocInfoFactory)
     {
-        $this->valueResolver = $valueResolver;
         $this->phpDocInfoFactory = $phpDocInfoFactory;
+        $this->valueResolver = $valueResolver;
     }
 
     public function getRuleDefinition(): RuleDefinition
@@ -76,9 +77,12 @@ CODE_SAMPLE
             return null;
         }
         $type = $this->nodeTypeResolver->getType($node);
-        if (!$type instanceof ObjectType) {
-            throw new ShouldNotHappenException(__CLASS__.' type for node was not '.ObjectType::class);
+
+        if(count($type->getObjectClassNames()) === 0 || !$type->isObject()->yes()) {
+            return null;
         }
+
+        assert($type instanceof ObjectType);
         $browserTestBaseType = new ObjectType(BrowserTestBase::class);
         if ($type->isSmallerThanOrEqual($browserTestBaseType)->yes()) {
             return null;
@@ -92,9 +96,12 @@ CODE_SAMPLE
         }
 
         $defaultThemeProperty = $classReflection->getProperty('defaultTheme', $scope);
+        assert($defaultThemeProperty instanceof \PHPStan\Reflection\Php\PhpPropertyReflection);
+
         $reflectionProperty = $defaultThemeProperty->getNativeReflection();
         $betterReflection = $reflectionProperty->getBetterReflection();
         $defaultValueExpression = $betterReflection->getDefaultValueExpression();
+
 
         if ($defaultValueExpression instanceof Node\Scalar\String_ && strlen($this->valueResolver->getValue($defaultValueExpression)) > 0) {
             return null;
