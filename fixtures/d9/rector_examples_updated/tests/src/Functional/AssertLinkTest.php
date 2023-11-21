@@ -6,6 +6,11 @@ use Drupal\Tests\BrowserTestBase;
 
 class AssertLinkTest extends BrowserTestBase {
 
+    /**
+     * {@inheritdoc}
+     */
+    protected $defaultTheme = 'stark';
+
     public function testLink() {
         $this->assertSession()->linkExists('Anonymous comment title');
     }

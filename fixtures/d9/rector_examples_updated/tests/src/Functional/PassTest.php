@@ -6,6 +6,11 @@ use Drupal\Tests\BrowserTestBase;
 
 class PassTest extends BrowserTestBase {
 
+    /**
+     * {@inheritdoc}
+     */
+    protected $defaultTheme = 'stark';
+
     public function testExample()
     {
     }

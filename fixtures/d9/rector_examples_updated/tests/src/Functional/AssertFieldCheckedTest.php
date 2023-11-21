@@ -6,6 +6,11 @@ use Drupal\Tests\BrowserTestBase;
 
 class AssertFieldCheckedTest extends BrowserTestBase {
 
+    /**
+     * {@inheritdoc}
+     */
+    protected $defaultTheme = 'stark';
+
     public function testFieldChecked() {
         $this->assertSession()->checkboxChecked('edit-settings-view-mode', 'default');
     }

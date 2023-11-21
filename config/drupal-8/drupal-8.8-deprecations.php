@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use DrupalRector\Drupal8\Rector\Deprecation\DrupalServiceRenameRector;
 use DrupalRector\Drupal8\Rector\Deprecation\FileDefaultSchemeRector;
+use DrupalRector\Drupal8\Rector\Deprecation\FunctionalTestDefaultThemePropertyRector;
 use DrupalRector\Drupal8\Rector\ValueObject\DrupalServiceRenameConfiguration;
 use DrupalRector\Rector\Deprecation\FunctionToServiceRector;
 use DrupalRector\Rector\Deprecation\MethodToMethodWithCheckRector;
@@ -44,4 +45,7 @@ return static function (RectorConfig $rectorConfig): void {
         // https://www.drupal.org/node/3075567
         new MethodToMethodWithCheckConfiguration('Drupal\Core\Entity\EntityTypeInterface', 'getLowercaseLabel', 'getSingularLabel'),
     ]);
+
+    // https://www.drupal.org/node/3083055
+    $rectorConfig->rule(FunctionalTestDefaultThemePropertyRector::class);
 };

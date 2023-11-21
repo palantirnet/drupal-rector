@@ -6,6 +6,11 @@ use Drupal\Tests\BrowserTestBase;
 
 class AssertFieldByNameTest extends BrowserTestBase {
 
+    /**
+     * {@inheritdoc}
+     */
+    protected $defaultTheme = 'stark';
+
     public function testFieldByName() {
         $this->assertSession()->fieldValueEquals('field_name', 'expected_value');
         $this->assertSession()->fieldValueEquals("field_name[0][value][date]", '');

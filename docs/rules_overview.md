@@ -1,4 +1,4 @@
-# 49 Rules Overview
+# 50 Rules Overview
 
 <br>
 
@@ -6,7 +6,7 @@
 
 - [Drupal10](#drupal10) (1)
 
-- [Drupal8](#drupal8) (18)
+- [Drupal8](#drupal8) (19)
 
 - [Drupal9](#drupal9) (26)
 
@@ -239,6 +239,20 @@ Fixes deprecated file_default_scheme calls
 ```diff
 -$file_default_scheme = file_default_scheme();
 +$file_default_scheme = \Drupal::config('system.file')->get('default_scheme');
+```
+
+<br>
+
+### FunctionalTestDefaultThemePropertyRector
+
+Adds `$defaultTheme` property to Functional and FunctionalJavascript tests which do not have them.
+
+- class: [`DrupalRector\Drupal8\Rector\Deprecation\FunctionalTestDefaultThemePropertyRector`](../src/Drupal8/Rector/Deprecation/FunctionalTestDefaultThemePropertyRector.php)
+
+```diff
+ class SomeClassTest {
++  protected $defaultTheme = 'stark'
+ }
 ```
 
 <br>
