@@ -1,11 +1,4 @@
 <?php
-/**
- * function system_time_zones($blank = NULL, $grouped = FALSE) {.
- *
- * @trigger_error(__METHOD__ . '() is deprecated in drupal:10.1.0 and is removed from drupal:11.0.0. This function is no longer used in Drupal core. Use \Drupal\Core\Datetime\TimeZoneFormHelper::getOptionsList(), \Drupal\Core\Datetime\TimeZoneFormHelper::getOptionsListByRegion() or \DateTimeZone::listIdentifiers() instead. See https://www.drupal.org/node/3023528', E_USER_DEPRECATED);
- * return $grouped ? TimeZoneFormHelper::getOptionsListByRegion((bool) $blank) : TimeZoneFormHelper::getOptionsList((bool) $blank);
- * }
- */
 
 declare(strict_types=1);
 
