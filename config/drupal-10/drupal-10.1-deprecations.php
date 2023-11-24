@@ -29,5 +29,4 @@ return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->ruleWithConfiguration(SystemTimeZonesRector::class, [
         new DrupalIntroducedVersionConfiguration('10.1.0'),
     ]);
-
 };
