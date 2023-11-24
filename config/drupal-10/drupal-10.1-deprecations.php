@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use DrupalRector\Drupal10\Rector\Deprecation\SystemTimeZonesRector;
 use DrupalRector\Drupal10\Rector\Deprecation\WatchdogExceptionRector;
 use DrupalRector\Rector\Deprecation\FunctionToStaticRector;
 use DrupalRector\Rector\ValueObject\DrupalIntroducedVersionConfiguration;
@@ -21,6 +22,11 @@ return static function (RectorConfig $rectorConfig): void {
 
     // https://www.drupal.org/node/2932520
     $rectorConfig->ruleWithConfiguration(WatchdogExceptionRector::class, [
+        new DrupalIntroducedVersionConfiguration('10.1.0'),
+    ]);
+
+    // https://www.drupal.org/node/3023528
+    $rectorConfig->ruleWithConfiguration(SystemTimeZonesRector::class, [
         new DrupalIntroducedVersionConfiguration('10.1.0'),
     ]);
 };

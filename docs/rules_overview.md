@@ -1,10 +1,10 @@
-# 50 Rules Overview
+# 51 Rules Overview
 
 <br>
 
 ## Categories
 
-- [Drupal10](#drupal10) (1)
+- [Drupal10](#drupal10) (2)
 
 - [Drupal8](#drupal8) (19)
 
@@ -15,6 +15,27 @@
 <br>
 
 ## Drupal10
+
+### SystemTimeZonesRector
+
+Fixes deprecated `system_time_zones()` calls
+
+:wrench: **configure it!**
+
+- class: [`DrupalRector\Drupal10\Rector\Deprecation\SystemTimeZonesRector`](../src/Drupal10/Rector/Deprecation/SystemTimeZonesRector.php)
+
+```diff
+-system_time_zones();
+-system_time_zones(FALSE, TRUE);
+-system_time_zones(NULL, FALSE);
+-system_time_zones(TRUE, FALSE);
++\Drupal\Core\Datetime\TimeZoneFormHelper::getOptionsList();
++\Drupal\Core\Datetime\TimeZoneFormHelper::getOptionsListByRegion();
++\Drupal\Core\Datetime\TimeZoneFormHelper::getOptionsList(NULL);
++\Drupal\Core\Datetime\TimeZoneFormHelper::getOptionsList(TRUE);
+```
+
+<br>
 
 ### WatchdogExceptionRector
 
