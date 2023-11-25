@@ -30,6 +30,20 @@ final class MissingParentInEmptyTest extends KernelTestBase {
 
 }
 
+final class NotAtestClass {
+
+    protected function setUp(): void
+    {
+        $test = 'doing things';
+    }
+
+    protected function tearDown(): void
+    {
+        $test = 'doing things';
+    }
+
+}
+
 ?>
 -----
 <?php
@@ -64,6 +78,20 @@ final class MissingParentInEmptyTest extends KernelTestBase {
     protected function tearDown(): void
     {
         parent::tearDown();
+    }
+
+}
+
+final class NotAtestClass {
+
+    protected function setUp(): void
+    {
+        $test = 'doing things';
+    }
+
+    protected function tearDown(): void
+    {
+        $test = 'doing things';
     }
 
 }
