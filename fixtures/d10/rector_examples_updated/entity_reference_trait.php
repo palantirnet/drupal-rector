@@ -1,6 +1,6 @@
 <?php
 
-use Drupal\Tests\field\Traits\ EntityReferenceFieldCreationTrait;
+use Drupal\Tests\field\Traits\EntityReferenceFieldCreationTrait;
 
 class EntityReferenceItemTest extends FieldKernelTestBase {
 
