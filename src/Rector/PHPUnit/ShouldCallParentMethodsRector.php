@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace DrupalRector\Rector\PHPUnit;
 
 use PhpParser\Node;
-use PhpParser\NodeDumper;
 use PHPStan\Analyser\Scope;
 use Rector\Core\Rector\AbstractScopeAwareRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
@@ -53,8 +52,6 @@ class ShouldCallParentMethodsRector extends AbstractScopeAwareRector
         if (!in_array(strtolower($node->name->name), ['setup', 'teardown'], true)) {
             return null;
         }
-
-        echo (new NodeDumper())->dump($node);
 
         $hasParentCall = $this->hasParentClassCall($node->getStmts());
 
