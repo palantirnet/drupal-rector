@@ -43,12 +43,6 @@ class ShouldCallParentMethodsRector extends AbstractScopeAwareRector
             return null;
         }
 
-        $parentClassesNames = $scope->getClassReflection()
-            ->getParentClassesNames();
-        if (!in_array(\PHPUnit\Framework\TestCase::class, $parentClassesNames)) {
-            return null;
-        }
-
         if (!in_array(strtolower($node->name->name), ['setup', 'teardown'], true)) {
             return null;
         }
