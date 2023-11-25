@@ -4,7 +4,7 @@ namespace Drupal\Tests\Rector\Deprecation\PHPUnit\ShouldCallParentMethodsRector\
 
 use Drupal\KernelTests\KernelTestBase;
 
-final class SetupVoidTest extends KernelTestBase {
+final class MissingParentTest extends KernelTestBase {
 
     protected function setUp(): void
     {
@@ -18,6 +18,18 @@ final class SetupVoidTest extends KernelTestBase {
 
 }
 
+final class MissingParentInEmptyTest extends KernelTestBase {
+
+    protected function setUp(): void
+    {
+    }
+
+    protected function tearDown(): void
+    {
+    }
+
+}
+
 ?>
 -----
 <?php
@@ -26,7 +38,7 @@ namespace Drupal\Tests\Rector\Deprecation\PHPUnit\ShouldCallParentMethodsRector\
 
 use Drupal\KernelTests\KernelTestBase;
 
-final class SetupVoidTest extends KernelTestBase {
+final class MissingParentTest extends KernelTestBase {
 
     protected function setUp(): void
     {
@@ -38,6 +50,20 @@ final class SetupVoidTest extends KernelTestBase {
     {
         parent::tearDown();
         $test = 'doing things';
+    }
+
+}
+
+final class MissingParentInEmptyTest extends KernelTestBase {
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+    }
+
+    protected function tearDown(): void
+    {
+        parent::tearDown();
     }
 
 }
