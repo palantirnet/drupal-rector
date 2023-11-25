@@ -55,7 +55,7 @@ class ShouldCallParentMethodsRector extends AbstractScopeAwareRector
 
         $hasParentCall = $this->hasParentClassCall($node->getStmts());
 
-        if (!$hasParentCall) {
+        if ($hasParentCall === false) {
             $expr = new Node\Stmt\Expression(
                 new Node\Expr\StaticCall(
                     new Node\Name('parent'),
