@@ -6,6 +6,7 @@ namespace DrupalRector\Drupal8\Rector\Deprecation;
 
 use DrupalRector\Services\AddCommentService;
 use PhpParser\Node;
+use PhpParser\NodeDumper;
 use PHPStan\Analyser\Scope;
 use Rector\Core\Exception\ShouldNotHappenException;
 use Rector\Core\Rector\AbstractRector;
@@ -108,6 +109,9 @@ CODE_AFTER
             $expr = $this->findInstanceByNameInAssign($node->expr, Node\Expr\CallLike::class, 'entityManager');
             if (!is_null($expr)) {
                 $expr = $this->refactorExpression($expr, $node);
+                if (is_null($expr)) {
+                    return null;
+                }
                 $node->expr = $this->replaceInstanceByNameInAssign($node->expr, $expr, Node\Expr\CallLike::class, 'entityManager');
 
                 return $node;
@@ -152,10 +156,8 @@ CODE_AFTER
         }
 
         // Find the relevant class with name in the chain.
-        while (isset($node->var) && !($node->var instanceof $class && $this->getName($node->var->name) !== $name)) {
-            $node = $node->var;
-            ++$depth;
-            if ($node instanceof $class && $this->getName($node->name)) {
+        while (isset($node->var) && $node->var !== null && !($node->var instanceof $class && isset($node->var->name) && $this->getName($node->var->name) !== $name)) {
+            if ($node instanceof $class && isset($node->name) && $this->getName($node->name)) {
                 $node->setAttribute(self::class, $depth);
 
                 return $node;

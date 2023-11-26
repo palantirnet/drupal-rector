@@ -258,7 +258,6 @@ class AcquiaContentHubSiteCommands extends DrushCommands {
 ?>
 -----
 <?php
-<?php
 
 namespace Drupal\acquia_contenthub\Commands;
 
