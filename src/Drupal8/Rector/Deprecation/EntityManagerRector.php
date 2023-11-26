@@ -102,7 +102,7 @@ CODE_AFTER
             return null;
         }
 
-        // The expressino of the assign is a method call. Therefor we need to check if there is
+        // The expression of the assign is a method call. Therefor we need to check if there is
         // entityManager somewhere up the call.
         if ($isAssignedMethodCall || $isAssignedStaticCall) {
             $expr = $this->findInstanceByNameInAssign($node->expr, Node\Expr\CallLike::class, 'entityManager');
@@ -148,18 +148,18 @@ CODE_AFTER
         $depth = 0;
 
         // Should the expression be the class we are looking for and the name is the one we are looking for, we can return early.
-        if ($node instanceof $class && $this->getName($node->name) === $name) {
+        if ($node instanceof Node && $node instanceof $class && $this->getName($node->name) === $name) {
             $node->setAttribute(self::class, $depth);
 
             return $node;
         }
 
         // Find the relevant class with name in the chain.
-        while (isset($node->var) && $node->var !== null && !($node->var instanceof $class && isset($node->var->name) && $this->getName($node->var->name) !== $name)) {
+        while (isset($node->var) && !($node->var instanceof $class && isset($node->var->name) && $this->getName($node->var->name) !== $name)) {
             $node = $node->var;
             ++$depth;
 
-            if ($node instanceof $class && isset($node->name) && $this->getName($node->name)) {
+            if ($node instanceof Node && $node instanceof $class && isset($node->name) && $this->getName($node->name)) {
                 $node->setAttribute(self::class, $depth);
 
                 return $node;
