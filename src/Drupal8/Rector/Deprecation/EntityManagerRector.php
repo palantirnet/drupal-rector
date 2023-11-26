@@ -6,7 +6,6 @@ namespace DrupalRector\Drupal8\Rector\Deprecation;
 
 use DrupalRector\Services\AddCommentService;
 use PhpParser\Node;
-use PhpParser\NodeDumper;
 use PHPStan\Analyser\Scope;
 use Rector\Core\Exception\ShouldNotHappenException;
 use Rector\Core\Rector\AbstractRector;
