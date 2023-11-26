@@ -107,11 +107,11 @@ CODE_AFTER
         if ($isAssignedMethodCall || $isAssignedStaticCall) {
             $expr = $this->findInstanceByNameInAssign($node->expr, Node\Expr\CallLike::class, 'entityManager');
             if (!is_null($expr)) {
-                $expr = $this->refactorExpression($expr, $node);
-                if (is_null($expr)) {
+                $exprRefactored = $this->refactorExpression($expr, $node);
+                if (is_null($exprRefactored)) {
                     return null;
                 }
-                $node->expr = $this->replaceInstanceByNameInAssign($node->expr, $expr, Node\Expr\CallLike::class, 'entityManager');
+                $node->expr = $this->replaceInstanceByNameInAssign($node->expr, $exprRefactored, Node\Expr\CallLike::class, 'entityManager');
 
                 return $node;
             }
@@ -156,6 +156,9 @@ CODE_AFTER
 
         // Find the relevant class with name in the chain.
         while (isset($node->var) && $node->var !== null && !($node->var instanceof $class && isset($node->var->name) && $this->getName($node->var->name) !== $name)) {
+            $node = $node->var;
+            ++$depth;
+
             if ($node instanceof $class && isset($node->name) && $this->getName($node->name)) {
                 $node->setAttribute(self::class, $depth);
 
