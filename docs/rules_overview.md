@@ -1,4 +1,4 @@
-# 51 Rules Overview
+# 52 Rules Overview
 
 <br>
 
@@ -10,7 +10,7 @@
 
 - [Drupal9](#drupal9) (26)
 
-- [DrupalRector](#drupalrector) (4)
+- [DrupalRector](#drupalrector) (5)
 
 <br>
 
@@ -1055,6 +1055,36 @@ Fixes deprecated `MetadataBag::clearCsrfTokenSeed()` calls, used in Drupal 8 and
  $entity_type = $node->getEntityType();
 -$entity_type->getLowercaseLabel();
 +$entity_type->getSingularLabel();
+```
+
+<br>
+
+### ShouldCallParentMethodsRector
+
+PHPUnit based tests should call parent methods (setUp, tearDown)
+
+- class: [`DrupalRector\Rector\PHPUnit\ShouldCallParentMethodsRector`](../src/Rector/PHPUnit/ShouldCallParentMethodsRector.php)
+
+```diff
+ namespace Drupal\Tests\Rector\Deprecation\PHPUnit\ShouldCallParentMethodsRector\fixture;
+
+ use Drupal\KernelTests\KernelTestBase;
+
+ final class SetupVoidTest extends KernelTestBase {
+
+     protected function setUp(): void
+     {
++        parent::setUp();
+         $test = 'doing things';
+     }
+
+     protected function tearDown(): void
+     {
++        parent::tearDown();
+         $test = 'doing things';
+     }
+
+ }
 ```
 
 <br>
