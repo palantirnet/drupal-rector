@@ -1,7 +1,11 @@
 name: php-cs-fixer
 
-# This test will run on every pull request, and on every commit on any branch
-on: [push, pull_request]
+# This test will run on every pull request, and on every push on main branch
+on:
+  push:
+    branches:
+      - main
+  pull_request:
 
 jobs:
     php-cs-fixer:
