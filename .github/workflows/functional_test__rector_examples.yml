@@ -2,7 +2,14 @@
 name: functional_test__rector_examples
 
 # This test will run on every pull request, and on every commit on any branch
-on: [push, pull_request]
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+  schedule:
+    # Run tests every week (to check for rector changes)
+    - cron:  '0 0 * * 0'
 
 jobs:
     run_functional_test:
