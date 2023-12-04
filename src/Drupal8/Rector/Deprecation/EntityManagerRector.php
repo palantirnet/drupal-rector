@@ -159,7 +159,7 @@ CODE_AFTER
             $node = $node->var;
             ++$depth;
 
-            if ($node instanceof $class && $this->getName($node->name)) {
+            if ($node instanceof $class && isset($node->name) &&  $this->getName($node->name) === $name) {
                 $node->setAttribute(self::class, $depth);
 
                 return $node;
