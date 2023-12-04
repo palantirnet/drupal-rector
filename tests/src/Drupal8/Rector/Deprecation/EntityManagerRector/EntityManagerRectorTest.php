@@ -29,7 +29,6 @@ class EntityManagerRectorTest extends AbstractRectorTestCase
 
     public function provideConfigFilePath(): string
     {
-        // must be implemented
         return __DIR__.'/config/configured_rule.php';
     }
 }
