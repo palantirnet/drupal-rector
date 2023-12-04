@@ -136,6 +136,8 @@ CODE_AFTER
      *
      * @see DrupalRector\Rector\Deprecation\Base\DBBase
      *
+     * @phpstan-param class-string<Node> $class
+     *
      * @param Node\Expr\Assign $assign
      * @param string           $class
      * @param string           $name
@@ -159,7 +161,7 @@ CODE_AFTER
             $node = $node->var;
             ++$depth;
 
-            if ($node instanceof $class && isset($node->name) &&  $this->getName($node->name) === $name) {
+            if ($node instanceof $class && isset($node->name) && $this->getName($node->name) === $name) {
                 $node->setAttribute(self::class, $depth);
 
                 return $node;
