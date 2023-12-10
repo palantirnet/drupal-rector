@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace DrupalRector\Drupal10\Rector\Deprecation;
 
-use Drupal\Core\Action\Attribute\Action;
-use Drupal\Core\StringTranslation\TranslatableMarkup;
 use PhpParser\Node;
 use PhpParser\Node\Arg;
 use PhpParser\Node\Attribute;
@@ -16,6 +14,7 @@ use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\ClassMethod;
 use PHPStan\PhpDocParser\Ast\PhpDoc\GenericTagValueNode;
 use PHPStan\PhpDocParser\Ast\PhpDoc\PhpDocTagNode;
+use Rector\BetterPhpDocParser\PhpDoc\ArrayItemNode;
 use Rector\BetterPhpDocParser\PhpDocInfo\PhpDocInfo;
 use Rector\BetterPhpDocParser\PhpDocInfo\PhpDocInfoFactory;
 use Rector\BetterPhpDocParser\PhpDocInfo\TokenIteratorFactory;
@@ -170,11 +169,11 @@ CODE_SAMPLE
 
     private function createAttribute(array $parsedArgs): Attribute
     {
-        $fullyQualified = new FullyQualified(Action::class);
+        $fullyQualified = new FullyQualified('Drupal\Core\Action\Attribute\Action');
         $args = [];
         foreach ($parsedArgs as $value) {
-            if ($value->key === 'label') {
-                $arg = new Node\Expr\New_(new Node\Name(TranslatableMarkup::class), [new Arg(new String_($value->value->values[0]->value->value))]);
+            if ($value->key === 'action_label') {
+                $arg = new Node\Expr\New_(new Node\Name('Drupal\Core\StringTranslation\TranslatableMarkup'), [new Arg(new String_($value->value->values[0]->value->value))]);
             } else {
                 $arg = new String_($value->value->value);
             }
