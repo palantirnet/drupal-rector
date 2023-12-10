@@ -1,6 +1,6 @@
 <?php declare (strict_types=1);
 
-namespace DrupalRector\Rector\Deprecation;
+namespace DrupalRector\Drupal10\Rector\Deprecation;
 
 use Drupal\Core\Action\Attribute\Action;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
