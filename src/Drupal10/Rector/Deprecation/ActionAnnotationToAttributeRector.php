@@ -1,4 +1,6 @@
-<?php declare (strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace DrupalRector\Drupal10\Rector\Deprecation;
 
@@ -14,19 +16,19 @@ use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\ClassMethod;
 use PHPStan\PhpDocParser\Ast\PhpDoc\GenericTagValueNode;
 use PHPStan\PhpDocParser\Ast\PhpDoc\PhpDocTagNode;
-use Rector\BetterPhpDocParser\PhpDoc\ArrayItemNode;
-use Rector\BetterPhpDocParser\PhpDocInfo\TokenIteratorFactory;
-use Rector\Core\ValueObject\PhpVersion;
-use RectorPrefix202310\PHPUnit\Framework\Attributes\Ticket;
 use Rector\BetterPhpDocParser\PhpDocInfo\PhpDocInfo;
 use Rector\BetterPhpDocParser\PhpDocInfo\PhpDocInfoFactory;
+use Rector\BetterPhpDocParser\PhpDocInfo\TokenIteratorFactory;
 use Rector\BetterPhpDocParser\PhpDocManipulator\PhpDocTagRemover;
 use Rector\BetterPhpDocParser\PhpDocParser\StaticDoctrineAnnotationParser\ArrayParser;
 use Rector\Comments\NodeDocBlock\DocBlockUpdater;
 use Rector\Core\Rector\AbstractRector;
+use Rector\Core\ValueObject\PhpVersion;
 use Rector\VersionBonding\Contract\MinPhpVersionInterface;
+use RectorPrefix202310\PHPUnit\Framework\Attributes\Ticket;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
+
 /**
  * @changelog https://docs.phpunit.de/en/10.0/annotations.html#ticket
  *
@@ -36,29 +38,35 @@ final class ActionAnnotationToAttributeRector extends AbstractRector implements 
 {
     /**
      * @readonly
+     *
      * @var \Rector\BetterPhpDocParser\PhpDocManipulator\PhpDocTagRemover
      */
     private $phpDocTagRemover;
     /**
      * @readonly
+     *
      * @var \Rector\Comments\NodeDocBlock\DocBlockUpdater
      */
     private $docBlockUpdater;
     /**
      * @readonly
+     *
      * @var \Rector\BetterPhpDocParser\PhpDocParser\StaticDoctrineAnnotationParser\ArrayParser
      */
     private $arrayParser;
     /**
      * @readonly
+     *
      * @var \Rector\BetterPhpDocParser\PhpDocInfo\TokenIteratorFactory
      */
     private $tokenIteratorFactory;
     /**
      * @readonly
+     *
      * @var \Rector\BetterPhpDocParser\PhpDocInfo\PhpDocInfoFactory
      */
     private $phpDocInfoFactory;
+
     public function __construct(PhpDocTagRemover $phpDocTagRemover, DocBlockUpdater $docBlockUpdater, PhpDocInfoFactory $phpDocInfoFactory, ArrayParser $arrayParser, TokenIteratorFactory $tokenIteratorFactory)
     {
         $this->phpDocTagRemover = $phpDocTagRemover;
@@ -67,7 +75,8 @@ final class ActionAnnotationToAttributeRector extends AbstractRector implements 
         $this->arrayParser = $arrayParser;
         $this->tokenIteratorFactory = $tokenIteratorFactory;
     }
-    public function getRuleDefinition() : RuleDefinition
+
+    public function getRuleDefinition(): RuleDefinition
     {
         return new RuleDefinition('Change annotations with value to attribute', [new CodeSample(<<<'CODE_SAMPLE'
 
@@ -86,7 +95,7 @@ use Drupal\Core\Session\AccountInterface;
  */
 class PublishAction extends EntityActionBase {
 CODE_SAMPLE
-, <<<'CODE_SAMPLE'
+            , <<<'CODE_SAMPLE'
 
 namespace Drupal\Core\Action\Plugin\Action;
 
@@ -105,23 +114,26 @@ use Drupal\Core\StringTranslation\TranslatableMarkup;
 )]
 class PublishAction extends EntityActionBase {
 CODE_SAMPLE
-)]);
+        )]);
     }
+
     /**
      * @return array<class-string<Node>>
      */
-    public function getNodeTypes() : array
+    public function getNodeTypes(): array
     {
         return [Class_::class];
     }
-    public function provideMinPhpVersion() : int
+
+    public function provideMinPhpVersion(): int
     {
         return PhpVersion::PHP_81;
     }
+
     /**
      * @param Class_|ClassMethod $node
      */
-    public function refactor(Node $node) : ?Node
+    public function refactor(Node $node): ?Node
     {
         $phpDocInfo = $this->phpDocInfoFactory->createFromNode($node);
         if (!$phpDocInfo instanceof PhpDocInfo) {
@@ -138,7 +150,7 @@ CODE_SAMPLE
                 continue;
             }
             $stringValue = $valueNode->value->value;
-            $stringValue = '{' . trim($stringValue, '()') . '}';
+            $stringValue = '{'.trim($stringValue, '()').'}';
             $tokenIterator = $this->tokenIteratorFactory->create($stringValue);
             $data = $this->arrayParser->parseCurlyArray($tokenIterator, $node);
             $attribute = $this->createAttribute($data);
@@ -149,23 +161,26 @@ CODE_SAMPLE
         }
         if ($hasChanged) {
             $this->docBlockUpdater->updateRefactoredNodeWithPhpDocInfo($node);
+
             return $node;
         }
+
         return null;
     }
-    private function createAttribute(array $parsedArgs) : Attribute
+
+    private function createAttribute(array $parsedArgs): Attribute
     {
         $fullyQualified = new FullyQualified(Action::class);
         $args = [];
         foreach ($parsedArgs as $value) {
             if ($value->key === 'label') {
                 $arg = new Node\Expr\New_(new Node\Name(TranslatableMarkup::class), [new Arg(new String_($value->value->values[0]->value->value))]);
-            }
-            else {
+            } else {
                 $arg = new String_($value->value->value);
             }
             $args[] = new Arg($arg, \false, \false, [], new Node\Identifier($value->key));
         }
+
         return new Attribute($fullyQualified, $args);
     }
 }
