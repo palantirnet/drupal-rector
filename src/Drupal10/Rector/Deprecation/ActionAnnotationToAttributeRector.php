@@ -167,6 +167,11 @@ CODE_SAMPLE
         return null;
     }
 
+    /**
+     * @param array|ArrayItemNode[] $parsedArgs
+     *
+     * @return \PhpParser\Node\Attribute
+     */
     private function createAttribute(array $parsedArgs): Attribute
     {
         $fullyQualified = new FullyQualified('Drupal\Core\Action\Attribute\Action');
