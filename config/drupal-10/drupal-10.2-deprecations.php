@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use DrupalRector\Rector\Deprecation\ActionAnnotationToAttributeRector;
+use DrupalRector\Drupal10\Rector\Deprecation\ActionAnnotationToAttributeRector;
 use DrupalRector\Rector\Deprecation\FunctionToStaticRector;
 use DrupalRector\Rector\Deprecation\MethodToMethodWithCheckRector;
 use DrupalRector\Rector\ValueObject\FunctionToStaticConfiguration;
