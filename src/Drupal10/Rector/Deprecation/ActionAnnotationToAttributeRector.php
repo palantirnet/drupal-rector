@@ -15,6 +15,7 @@ use PhpParser\Node\Stmt\ClassMethod;
 use PHPStan\PhpDocParser\Ast\PhpDoc\GenericTagValueNode;
 use PHPStan\PhpDocParser\Ast\PhpDoc\PhpDocTagNode;
 use Rector\BetterPhpDocParser\PhpDoc\ArrayItemNode;
+use Rector\BetterPhpDocParser\PhpDoc\DoctrineAnnotationTagValueNode;
 use Rector\BetterPhpDocParser\PhpDocInfo\PhpDocInfo;
 use Rector\BetterPhpDocParser\PhpDocInfo\PhpDocInfoFactory;
 use Rector\BetterPhpDocParser\PhpDocInfo\TokenIteratorFactory;
@@ -169,7 +170,7 @@ CODE_SAMPLE
                 $node->attrGroups[] = new AttributeGroup([$attribute]);
             }
 
-            // cleanup
+            // @todo This cleanup needs some extra logic for BC
             $this->phpDocTagRemover->removeTagValueFromNode($phpDocInfo, $valueNode);
             $hasChanged = \true;
         }
@@ -193,7 +194,7 @@ CODE_SAMPLE
         $args = [];
         foreach ($parsedArgs as $value) {
             if ($value->key === 'action_label') {
-                $arg = new Node\Expr\New_(new Node\Name('Drupal\Core\StringTranslation\TranslatableMarkup'), [new Arg(new String_($value->value->values[0]->value->value))]);
+                $arg = $this->convertTranslateAnnotation($value);
             } else {
                 $arg = new String_($value->value->value);
             }
@@ -201,5 +202,46 @@ CODE_SAMPLE
         }
 
         return new Attribute($fullyQualified, $args);
+    }
+
+    public function convertTranslateAnnotation(ArrayItemNode $value): ?Node\Expr\New_ {
+        // Check the annotation type, this will be helpful later.
+        if (!$value->value instanceof DoctrineAnnotationTagValueNode || $value->value->identifierTypeNode->name === 'Translation') {
+            return null;
+        }
+
+        $valueArg = null;
+        $argumentArg = null;
+        $contextArg = null;
+
+        // Loop through the values of the annotation, just to make 100% sure we have the correct argument order
+        foreach ($value->value->values as $translateValue) {
+            if ($translateValue->key === null) {
+                $valueArg = $this->nodeFactory->createArg($translateValue->value->value);
+            }
+            if ($translateValue->key === 'context') {
+                $contextArg = $this->nodeFactory->createArg(['context' => $translateValue->value->value]);
+            }
+            if ($translateValue->key === 'arguments') {
+                $argumentArg = [];
+                foreach ($translateValue->value->values as $argumentValue) {
+                    $argumentArg[$argumentValue->key->value] = $argumentValue->value->value;
+                }
+                $argumentArg = $this->nodeFactory->createArg($argumentArg);
+            }
+        }
+
+        $argArray = [];
+        if ($valueArg !== null) {
+            $argArray[] = $valueArg;
+        }
+        if ($argumentArg !== null) {
+            $argArray[] = $argumentArg;
+        }
+        if ($contextArg !== null) {
+            $argArray[] = $contextArg;
+        }
+
+        return new Node\Expr\New_(new Node\Name('Drupal\Core\StringTranslation\TranslatableMarkup'), $argArray);
     }
 }
