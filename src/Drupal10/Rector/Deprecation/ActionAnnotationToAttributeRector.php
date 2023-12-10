@@ -143,17 +143,32 @@ CODE_SAMPLE
         if ($tagsByName === []) {
             return null;
         }
+
+        $hasAttribute = false;
+        foreach ($node->attrGroups as $attrGroup) {
+            foreach ($attrGroup->attrs as $attr) {
+                if ($attr->name->toString() === 'Drupal\Core\Action\Attribute\Action') {
+                    $hasAttribute = true;
+                    break 2;
+                }
+            }
+        }
+
         $hasChanged = \false;
         foreach ($tagsByName as $valueNode) {
             if (!$valueNode->value instanceof GenericTagValueNode) {
                 continue;
             }
-            $stringValue = $valueNode->value->value;
-            $stringValue = '{'.trim($stringValue, '()').'}';
-            $tokenIterator = $this->tokenIteratorFactory->create($stringValue);
-            $data = $this->arrayParser->parseCurlyArray($tokenIterator, $node);
-            $attribute = $this->createAttribute($data);
-            $node->attrGroups[] = new AttributeGroup([$attribute]);
+
+            if ($hasAttribute === false) {
+                $stringValue = $valueNode->value->value;
+                $stringValue = '{'.trim($stringValue, '()').'}';
+                $tokenIterator = $this->tokenIteratorFactory->create($stringValue);
+                $data = $this->arrayParser->parseCurlyArray($tokenIterator, $node);
+                $attribute = $this->createAttribute($data);
+                $node->attrGroups[] = new AttributeGroup([$attribute]);
+            }
+
             // cleanup
             $this->phpDocTagRemover->removeTagValueFromNode($phpDocInfo, $valueNode);
             $hasChanged = \true;
