@@ -204,7 +204,8 @@ CODE_SAMPLE
         return new Attribute($fullyQualified, $args);
     }
 
-    public function convertTranslateAnnotation(ArrayItemNode $value): ?Node\Expr\New_ {
+    public function convertTranslateAnnotation(ArrayItemNode $value): ?Node\Expr\New_
+    {
         // Check the annotation type, this will be helpful later.
         if (!$value->value instanceof DoctrineAnnotationTagValueNode || $value->value->identifierTypeNode->name === 'Translation') {
             return null;
