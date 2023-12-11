@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace DrupalRector\Drupal10\Rector\Deprecation;
 
+use DrupalRector\Contract\VersionedConfigurationInterface;
+use DrupalRector\Drupal10\Rector\ValueObject\DrupalIntroducedAndRemovalVersionConfiguration;
+use DrupalRector\Rector\AbstractDrupalCoreRector;
+use DrupalRector\Rector\ValueObject\DrupalIntroducedVersionConfiguration;
 use PhpParser\Node;
 use PhpParser\Node\Arg;
 use PhpParser\Node\Attribute;
@@ -13,7 +17,6 @@ use PhpParser\Node\Scalar\String_;
 use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\ClassMethod;
 use PHPStan\PhpDocParser\Ast\PhpDoc\GenericTagValueNode;
-use PHPStan\PhpDocParser\Ast\PhpDoc\PhpDocTagNode;
 use Rector\BetterPhpDocParser\PhpDoc\ArrayItemNode;
 use Rector\BetterPhpDocParser\PhpDoc\DoctrineAnnotationTagValueNode;
 use Rector\BetterPhpDocParser\PhpDocInfo\PhpDocInfo;
@@ -22,7 +25,6 @@ use Rector\BetterPhpDocParser\PhpDocInfo\TokenIteratorFactory;
 use Rector\BetterPhpDocParser\PhpDocManipulator\PhpDocTagRemover;
 use Rector\BetterPhpDocParser\PhpDocParser\StaticDoctrineAnnotationParser\ArrayParser;
 use Rector\Comments\NodeDocBlock\DocBlockUpdater;
-use Rector\Core\Rector\AbstractRector;
 use Rector\Core\ValueObject\PhpVersion;
 use Rector\VersionBonding\Contract\MinPhpVersionInterface;
 use RectorPrefix202310\PHPUnit\Framework\Attributes\Ticket;
@@ -34,38 +36,22 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  *
  * @see \Rector\PHPUnit\Tests\AnnotationsToAttributes\Rector\Class_\TicketAnnotationToAttributeRector\TicketAnnotationToAttributeRectorTest
  */
-final class ActionAnnotationToAttributeRector extends AbstractRector implements MinPhpVersionInterface
+final class ActionAnnotationToAttributeRector extends AbstractDrupalCoreRector implements MinPhpVersionInterface
 {
     /**
-     * @readonly
-     *
-     * @var \Rector\BetterPhpDocParser\PhpDocManipulator\PhpDocTagRemover
+     * @var array|DrupalIntroducedAndRemovalVersionConfiguration[]
      */
-    private $phpDocTagRemover;
-    /**
-     * @readonly
-     *
-     * @var \Rector\Comments\NodeDocBlock\DocBlockUpdater
-     */
-    private $docBlockUpdater;
-    /**
-     * @readonly
-     *
-     * @var \Rector\BetterPhpDocParser\PhpDocParser\StaticDoctrineAnnotationParser\ArrayParser
-     */
-    private $arrayParser;
-    /**
-     * @readonly
-     *
-     * @var \Rector\BetterPhpDocParser\PhpDocInfo\TokenIteratorFactory
-     */
-    private $tokenIteratorFactory;
-    /**
-     * @readonly
-     *
-     * @var \Rector\BetterPhpDocParser\PhpDocInfo\PhpDocInfoFactory
-     */
-    private $phpDocInfoFactory;
+    protected array $configuration = [];
+
+    private PhpDocTagRemover $phpDocTagRemover;
+
+    private DocBlockUpdater $docBlockUpdater;
+
+    private ArrayParser $arrayParser;
+
+    private TokenIteratorFactory $tokenIteratorFactory;
+
+    private PhpDocInfoFactory $phpDocInfoFactory;
 
     public function __construct(PhpDocTagRemover $phpDocTagRemover, DocBlockUpdater $docBlockUpdater, PhpDocInfoFactory $phpDocInfoFactory, ArrayParser $arrayParser, TokenIteratorFactory $tokenIteratorFactory)
     {
@@ -74,6 +60,17 @@ final class ActionAnnotationToAttributeRector extends AbstractRector implements 
         $this->phpDocInfoFactory = $phpDocInfoFactory;
         $this->arrayParser = $arrayParser;
         $this->tokenIteratorFactory = $tokenIteratorFactory;
+    }
+
+    public function configure(array $configuration): void
+    {
+        foreach ($configuration as $value) {
+            if (!($value instanceof DrupalIntroducedAndRemovalVersionConfiguration)) {
+                throw new \InvalidArgumentException(sprintf('Each configuration item must be an instance of "%s"', DrupalIntroducedVersionConfiguration::class));
+            }
+        }
+
+        parent::configure($configuration);
     }
 
     public function getRuleDefinition(): RuleDefinition
@@ -135,11 +132,35 @@ CODE_SAMPLE
      */
     public function refactor(Node $node): ?Node
     {
+        foreach ($this->configuration as $configuration) {
+            if ($this->rectorShouldApplyToDrupalVersion($configuration) === false) {
+                continue;
+            }
+
+            $result = $this->refactorWithConfiguration($node, $configuration);
+
+            // Skip if no result.
+            if ($result === null) {
+                continue;
+            }
+
+            return $result;
+        }
+
+        return null;
+    }
+
+    /**
+     * @param Class_|ClassMethod                             $node
+     * @param DrupalIntroducedAndRemovalVersionConfiguration $configuration
+     */
+    public function refactorWithConfiguration(Node $node, VersionedConfigurationInterface $configuration): ?Node
+    {
         $phpDocInfo = $this->phpDocInfoFactory->createFromNode($node);
         if (!$phpDocInfo instanceof PhpDocInfo) {
             return null;
         }
-        /** @var PhpDocTagNode[] $tagsByName */
+
         $tagsByName = $phpDocInfo->getTagsByName('Action');
         if ($tagsByName === []) {
             return null;
@@ -155,7 +176,7 @@ CODE_SAMPLE
             }
         }
 
-        $hasChanged = \false;
+        $docBlockHasChanged = \false;
         foreach ($tagsByName as $valueNode) {
             if (!$valueNode->value instanceof GenericTagValueNode) {
                 continue;
@@ -170,11 +191,12 @@ CODE_SAMPLE
                 $node->attrGroups[] = new AttributeGroup([$attribute]);
             }
 
-            // @todo This cleanup needs some extra logic for BC
-            $this->phpDocTagRemover->removeTagValueFromNode($phpDocInfo, $valueNode);
-            $hasChanged = \true;
+            if (version_compare($this->installedDrupalVersion(), $configuration->getRemoveVersion(), '>=')) {
+                $this->phpDocTagRemover->removeTagValueFromNode($phpDocInfo, $valueNode);
+                $docBlockHasChanged = \true;
+            }
         }
-        if ($hasChanged) {
+        if ($docBlockHasChanged) {
             $this->docBlockUpdater->updateRefactoredNodeWithPhpDocInfo($node);
 
             return $node;
