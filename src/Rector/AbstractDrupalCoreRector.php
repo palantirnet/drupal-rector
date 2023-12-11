@@ -59,7 +59,7 @@ abstract class AbstractDrupalCoreRector extends AbstractRector implements Config
     public function refactor(Node $node)
     {
         foreach ($this->configuration as $configuration) {
-            if ($this->rectorShouldApplyToDrupalVersion($configuration)) {
+            if ($this->rectorShouldApplyToDrupalVersion($configuration) === false) {
                 continue;
             }
 
@@ -119,17 +119,19 @@ abstract class AbstractDrupalCoreRector extends AbstractRector implements Config
      *
      * @return bool|int
      */
-    public function rectorShouldApplyToDrupalVersion(VersionedConfigurationInterface $configuration) {
-        return version_compare($this->installedDrupalVersion(), $configuration->getIntroducedVersion(), '<');
+    public function rectorShouldApplyToDrupalVersion(VersionedConfigurationInterface $configuration)
+    {
+        return version_compare($this->installedDrupalVersion(), $configuration->getIntroducedVersion(), '>=');
     }
 
     /**
      * @phpstan-return non-empty-string
      */
-    public function installedDrupalVersion(): string {
+    public function installedDrupalVersion(): string
+    {
         return str_replace([
             '.x-dev',
-            '-dev'
+            '-dev',
         ], '.0', \Drupal::VERSION);
     }
 
@@ -145,8 +147,8 @@ abstract class AbstractDrupalCoreRector extends AbstractRector implements Config
      *
      * @return bool
      */
-    public function supportBackwardsCompatibility(VersionedConfigurationInterface $configuration): bool {
+    public function supportBackwardsCompatibility(VersionedConfigurationInterface $configuration): bool
+    {
         return !(version_compare($this->installedDrupalVersion(), '10.1.0', '<') || version_compare($configuration->getIntroducedVersion(), '10.0.0', '<'));
     }
-
 }
