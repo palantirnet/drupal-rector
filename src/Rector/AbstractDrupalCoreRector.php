@@ -58,10 +58,8 @@ abstract class AbstractDrupalCoreRector extends AbstractRector implements Config
 
     public function refactor(Node $node)
     {
-        $drupalVersion = str_replace(['.x-dev', '-dev'], '.0', \Drupal::VERSION);
-
         foreach ($this->configuration as $configuration) {
-            if (version_compare($drupalVersion, $configuration->getIntroducedVersion(), '<')) {
+            if ($this->rectorShouldApplyToDrupalVersion($configuration)) {
                 continue;
             }
 
@@ -82,7 +80,7 @@ abstract class AbstractDrupalCoreRector extends AbstractRector implements Config
             // The reason for this is that will start supplying patches for
             // Drupal 10 when 10.0 is already out of support. This means that
             // we will not support running drupal-rector on Drupal 10.0.x.
-            if (version_compare($drupalVersion, '10.1.0', '<') || version_compare($configuration->getIntroducedVersion(), '10.0.0', '<')) {
+            if ($this->supportBackwardsCompatibility($configuration) === false) {
                 return $result;
             }
 
@@ -115,4 +113,40 @@ abstract class AbstractDrupalCoreRector extends AbstractRector implements Config
             new ArrowFunction(['expr' => $clonedNode]),
         ]);
     }
+
+    /**
+     * @param \DrupalRector\Contract\VersionedConfigurationInterface $configuration
+     *
+     * @return bool|int
+     */
+    public function rectorShouldApplyToDrupalVersion(VersionedConfigurationInterface $configuration) {
+        return version_compare($this->installedDrupalVersion(), $configuration->getIntroducedVersion(), '<');
+    }
+
+    /**
+     * @phpstan-return non-empty-string
+     */
+    public function installedDrupalVersion(): string {
+        return str_replace([
+            '.x-dev',
+            '-dev'
+        ], '.0', \Drupal::VERSION);
+    }
+
+    /**
+     * Check if Drupal version and the introduced version support backward
+     * compatible calls. Although it was introduced in Drupal 10.1 we
+     * also supply these patches for changes introduced in Drupal 10.0.
+     * The reason for this is that will start supplying patches for
+     * Drupal 10 when 10.0 is already out of support. This means that
+     * we will not support running drupal-rector on Drupal 10.0.x.
+     *
+     * @param \DrupalRector\Contract\VersionedConfigurationInterface $configuration
+     *
+     * @return bool
+     */
+    public function supportBackwardsCompatibility(VersionedConfigurationInterface $configuration): bool {
+        return !(version_compare($this->installedDrupalVersion(), '10.1.0', '<') || version_compare($configuration->getIntroducedVersion(), '10.0.0', '<'));
+    }
+
 }
