@@ -9,6 +9,6 @@ use Rector\Config\RectorConfig;
 
 return static function (RectorConfig $rectorConfig): void {
     DeprecationBase::addClass(ActionAnnotationToAttributeRector::class, $rectorConfig, false, [
-        new DrupalIntroducedAndRemovalVersionConfiguration('10.2.0', '11.0.0'),
+        new DrupalIntroducedAndRemovalVersionConfiguration('10.2.0', '10.0.0'),
     ]);
 };
