@@ -216,7 +216,7 @@ CODE_SAMPLE
         $args = [];
         foreach ($parsedArgs as $value) {
             if ($value->key === 'action_label') {
-                $arg = $this->convertTranslateAnnotation($value);
+                $arg = $this->convertTranslateAnnotation($value->value);
             } else {
                 $arg = new String_($value->value->value);
             }
@@ -226,10 +226,10 @@ CODE_SAMPLE
         return new Attribute($fullyQualified, $args);
     }
 
-    public function convertTranslateAnnotation(ArrayItemNode $value): ?Node\Expr\New_
+    public function convertTranslateAnnotation(DoctrineAnnotationTagValueNode $value): ?Node\Expr\New_
     {
         // Check the annotation type, this will be helpful later.
-        if (!$value->value instanceof DoctrineAnnotationTagValueNode || $value->value->identifierTypeNode->name === 'Translation') {
+        if ($value->identifierTypeNode->name !== '@Translation') {
             return null;
         }
 
@@ -238,7 +238,7 @@ CODE_SAMPLE
         $contextArg = null;
 
         // Loop through the values of the annotation, just to make 100% sure we have the correct argument order
-        foreach ($value->value->values as $translateValue) {
+        foreach ($value->values as $translateValue) {
             if ($translateValue->key === null) {
                 $valueArg = $this->nodeFactory->createArg($translateValue->value->value);
             }
