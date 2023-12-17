@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Drupal9\Rector\Deprecation\ModuleLoadInstallRector;
+namespace Drupal9\Rector\Deprecation\ModuleLoadRector;
 
 use Iterator;
 use Rector\Testing\PHPUnit\AbstractRectorTestCase;
 
-class ModuleLoadInstallRectorTest extends AbstractRectorTestCase
+class ModuleLoadRectorTest extends AbstractRectorTestCase
 {
     /**
      * @covers ::refactor
