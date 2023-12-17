@@ -12,7 +12,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 /**
  * Replaces deprecated module_load_install call with ModuleHandler call.
  */
-class ModuleLoadInstallRector extends AbstractRector
+class ModuleLoadRector extends AbstractRector
 {
     /**
      * {@inheritdoc}
@@ -35,6 +35,12 @@ class ModuleLoadInstallRector extends AbstractRector
             $args[] = new Node\Arg(new Node\Scalar\String_('install'));
 
             return $this->nodeFactory->createMethodCall($this->nodeFactory->createStaticCall('Drupal', 'moduleHandler'), 'loadInclude', $args);
+        } elseif ($this->getName($node->name) === 'module_load_include') {
+            $newArgs = $args = $node->getArgs();
+            $newArgs[0] = $args[1];
+            $newArgs[1] = $args[0];
+
+            return $this->nodeFactory->createMethodCall($this->nodeFactory->createStaticCall('Drupal', 'moduleHandler'), 'loadInclude', $newArgs);
         }
 
         return null;
@@ -46,10 +52,20 @@ class ModuleLoadInstallRector extends AbstractRector
             new CodeSample(
                 <<<'CODE_BEFORE'
 module_load_install('example');
+$type = 'install';
+$module = 'example';
+$name = 'name';
+module_load_include($type, $module, $name);
+module_load_include($type, $module);
 CODE_BEFORE
                 ,
                 <<<'CODE_AFTER'
-\Drupal\Core\Extension\ModuleHandler::loadInclude('example', 'install');
+\Drupal::moduleHandler()->loadInclude('example', 'install');
+$type = 'install';
+$module = 'example';
+$name = 'name';
+\Drupal::moduleHandler()->loadInclude($module, $type, $name);
+\Drupal::moduleHandler()->loadInclude($module, $type);
 CODE_AFTER
             ),
         ]);
