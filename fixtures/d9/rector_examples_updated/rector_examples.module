@@ -13,3 +13,8 @@ function rector_examples_with_render() {
     $build = [];
     $output = \Drupal::service('renderer')->render($build);
 }
+
+function rector_utility_bytes_to_int() {
+    $int = \Drupal\Component\Utility\Bytes::toNumber("15");
+}
+
