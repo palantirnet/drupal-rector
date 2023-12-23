@@ -11,6 +11,13 @@ function as_an_argument() {
 
     $class = new \TestClass(FILE_STATUS_PERMANENT);
 }
+
+class ClassDefault {
+    public function test($status = FILE_STATUS_PERMANENT) {
+        return true;
+    }
+}
+
 ?>
 -----
 <?php
@@ -26,4 +33,11 @@ function as_an_argument() {
 
     $class = new \TestClass(\Drupal\file\FileInterface::STATUS_PERMANENT);
 }
+
+class ClassDefault {
+    public function test($status = \Drupal\file\FileInterface::STATUS_PERMANENT) {
+        return true;
+    }
+}
+
 ?>
