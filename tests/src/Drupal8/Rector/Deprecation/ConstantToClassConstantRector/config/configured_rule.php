@@ -15,4 +15,11 @@ return static function (RectorConfig $rectorConfig): void {
             'STORAGE_TIMEZONE',
         ),
     ]);
+    DeprecationBase::addClass(ConstantToClassConstantRector::class, $rectorConfig, false, [
+        new ConstantToClassConfiguration(
+            'FILE_STATUS_PERMANENT',
+            'Drupal\file\FileInterface',
+            'STATUS_PERMANENT',
+        ),
+    ]);
 };
