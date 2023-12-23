@@ -98,6 +98,7 @@ return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->rule(GetAllOptionsRector::class);
     $rectorConfig->rule(UserPasswordRector::class);
 
+    // Change record: https://www.drupal.org/node/3162663
     $rectorConfig->ruleWithConfiguration(RenameStaticMethodRector::class, [
         new RenameStaticMethod(
             'Drupal\Component\Utility\Bytes',
