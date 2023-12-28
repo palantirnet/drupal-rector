@@ -22,7 +22,7 @@ final class AssertNoFieldByNameRector extends AbstractRector
     protected string $comment = 'Verify the assertion: buttonNotExists() if this is for a button.';
 
     /**
-     * @var \DrupalRector\Services\AddCommentService
+     * @var AddCommentService
      */
     private AddCommentService $commentService;
 

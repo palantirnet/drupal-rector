@@ -46,7 +46,7 @@ CODE_AFTER
     /**
      * @param \PhpParser\Node\Expr\MethodCall $node
      *
-     * @throws \Rector\Core\Exception\ShouldNotHappenException
+     * @throws ShouldNotHappenException
      *
      * @return array<int, ?\PhpParser\Node\Arg>
      */

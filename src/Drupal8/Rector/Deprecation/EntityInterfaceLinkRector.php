@@ -24,7 +24,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 final class EntityInterfaceLinkRector extends AbstractRector
 {
     /**
-     * @var \DrupalRector\Services\AddCommentService
+     * @var AddCommentService
      */
     private AddCommentService $commentService;
 

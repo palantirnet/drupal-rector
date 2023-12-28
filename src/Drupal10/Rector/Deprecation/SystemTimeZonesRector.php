@@ -21,7 +21,7 @@ class SystemTimeZonesRector extends AbstractDrupalCoreRector
     protected array $configuration;
 
     /**
-     * @var \Rector\Core\PhpParser\Node\Value\ValueResolver
+     * @var ValueResolver
      */
     private ValueResolver $valueResolver;
 

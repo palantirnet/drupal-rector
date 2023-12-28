@@ -20,7 +20,7 @@ class ExtensionPathRector extends AbstractRector implements ConfigurableRectorIn
     private array $configuration;
 
     /**
-     * @var \DrupalRector\Services\AddCommentService
+     * @var AddCommentService
      */
     private AddCommentService $commentService;
 

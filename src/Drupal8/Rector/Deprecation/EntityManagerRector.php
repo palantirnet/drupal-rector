@@ -41,7 +41,7 @@ final class EntityManagerRector extends AbstractRector
     protected $parentClassScopeResolver;
 
     /**
-     * @var \DrupalRector\Services\AddCommentService
+     * @var AddCommentService
      */
     private AddCommentService $commentService;
 

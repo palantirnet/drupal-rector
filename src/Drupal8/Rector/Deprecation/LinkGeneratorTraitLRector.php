@@ -28,7 +28,7 @@ final class LinkGeneratorTraitLRector extends AbstractRector
     use FindParentByTypeTrait;
 
     /**
-     * @var \DrupalRector\Services\AddCommentService
+     * @var AddCommentService
      */
     private AddCommentService $commentService;
 
