@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use DrupalRector\Drupal8\Rector\Deprecation\ConstantToClassConstantRector;
 use DrupalRector\Drupal8\Rector\ValueObject\ConstantToClassConfiguration;
 use DrupalRector\Drupal9\Rector\Deprecation\ExtensionPathRector;
 use DrupalRector\Drupal9\Rector\Deprecation\FileBuildUriRector;
@@ -69,9 +70,11 @@ return static function (RectorConfig $rectorConfig): void {
     ]);
 
     // Change record: https://www.drupal.org/node/3022147
-    new ConstantToClassConfiguration(
-        'FILE_STATUS_PERMANENT',
-        'Drupal\file\FileInterface',
-        'STATUS_PERMANENT',
-    );
+    $rectorConfig->ruleWithConfiguration(ConstantToClassConstantRector::class, [
+        new ConstantToClassConfiguration(
+            'FILE_STATUS_PERMANENT',
+            'Drupal\file\FileInterface',
+            'STATUS_PERMANENT',
+        ),
+    ]);
 };
