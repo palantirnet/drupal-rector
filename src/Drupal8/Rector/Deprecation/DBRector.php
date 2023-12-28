@@ -61,7 +61,7 @@ class DBRector extends AbstractRector implements ConfigurableRectorInterface
     private array $configuration;
 
     /**
-     * @var \DrupalRector\Services\AddCommentService
+     * @var AddCommentService
      */
     private AddCommentService $commentService;
 

@@ -22,8 +22,8 @@ class ShouldCallParentMethodsRector extends AbstractScopeAwareRector
     /**
      * @phpstan-param Node\Stmt\ClassMethod $node
      *
-     * @param \PhpParser\Node         $node
-     * @param \PHPStan\Analyser\Scope $scope
+     * @param Node  $node
+     * @param Scope $scope
      *
      * @return \PhpParser\Node|null
      */

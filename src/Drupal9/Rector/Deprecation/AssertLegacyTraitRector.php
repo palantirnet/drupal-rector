@@ -25,7 +25,7 @@ class AssertLegacyTraitRector extends AbstractRector implements ConfigurableRect
     private array $assertLegacyTraitMethods;
 
     /**
-     * @var \DrupalRector\Services\AddCommentService
+     * @var AddCommentService
      */
     private AddCommentService $commentService;
 
