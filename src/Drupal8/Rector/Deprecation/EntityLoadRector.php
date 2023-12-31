@@ -27,7 +27,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 final class EntityLoadRector extends AbstractRector implements ConfigurableRectorInterface
 {
     /**
-     * @var \DrupalRector\Drupal8\Rector\ValueObject\EntityLoadConfiguration[]
+     * @var EntityLoadConfiguration[]
      */
     protected array $entityTypes;
 

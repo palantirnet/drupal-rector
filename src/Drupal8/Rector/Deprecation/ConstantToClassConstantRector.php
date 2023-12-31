@@ -20,7 +20,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 class ConstantToClassConstantRector extends AbstractRector implements ConfigurableRectorInterface
 {
     /**
-     * @var \DrupalRector\Drupal8\Rector\ValueObject\ConstantToClassConfiguration[]
+     * @var ConstantToClassConfiguration[]
      */
     private array $constantToClassRenames;
 
