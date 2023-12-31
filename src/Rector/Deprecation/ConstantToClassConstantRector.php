@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace DrupalRector\Drupal8\Rector\Deprecation;
+namespace DrupalRector\Rector\Deprecation;
 
-use DrupalRector\Drupal8\Rector\ValueObject\ConstantToClassConfiguration;
+use DrupalRector\Rector\ValueObject\ConstantToClassConfiguration;
 use PhpParser\Node;
 use Rector\Contract\Rector\ConfigurableRectorInterface;
 use Rector\Rector\AbstractRector;
@@ -20,7 +20,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 class ConstantToClassConstantRector extends AbstractRector implements ConfigurableRectorInterface
 {
     /**
-     * @var \DrupalRector\Drupal8\Rector\ValueObject\ConstantToClassConfiguration[]
+     * @var ConstantToClassConfiguration[]
      */
     private array $constantToClassRenames;
 
@@ -40,7 +40,7 @@ class ConstantToClassConstantRector extends AbstractRector implements Configurab
      */
     public function getRuleDefinition(): RuleDefinition
     {
-        return new RuleDefinition('Fixes deprecated contant use', [
+        return new RuleDefinition('Fixes deprecated contant use, used in Drupal 8 and 9 deprecations', [
             new ConfiguredCodeSample(
                 <<<'CODE_BEFORE'
 $result = file_unmanaged_copy($source, $destination, DEPRECATED_CONSTANT);

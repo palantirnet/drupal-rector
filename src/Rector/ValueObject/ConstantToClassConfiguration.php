@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace DrupalRector\Drupal8\Rector\ValueObject;
+namespace DrupalRector\Rector\ValueObject;
 
 use Rector\Validation\RectorAssert;
 

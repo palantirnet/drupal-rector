@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Drupal8\Rector\Deprecation\ConstantToClassConstantRector;
+namespace DrupalRector\Rector\Deprecation\ConstantToClassConstantRector;
 
 use Iterator;
 use Rector\Testing\PHPUnit\AbstractRectorTestCase;
