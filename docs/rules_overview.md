@@ -6,11 +6,11 @@
 
 - [Drupal10](#drupal10) (2)
 
-- [Drupal8](#drupal8) (19)
+- [Drupal8](#drupal8) (18)
 
 - [Drupal9](#drupal9) (26)
 
-- [DrupalRector](#drupalrector) (5)
+- [DrupalRector](#drupalrector) (6)
 
 <br>
 
@@ -55,21 +55,6 @@ Fixes deprecated watchdog_exception('update', `$exception)` calls
 <br>
 
 ## Drupal8
-
-### ConstantToClassConstantRector
-
-Fixes deprecated contant use
-
-:wrench: **configure it!**
-
-- class: [`DrupalRector\Drupal8\Rector\Deprecation\ConstantToClassConstantRector`](../src/Drupal8/Rector/Deprecation/ConstantToClassConstantRector.php)
-
-```diff
--$result = file_unmanaged_copy($source, $destination, DEPRECATED_CONSTANT);
-+$result = file_unmanaged_copy($source, $destination, \Drupal\MyClass::CONSTANT);
-```
-
-<br>
 
 ### DBRector
 
@@ -857,6 +842,21 @@ Fixes deprecated `user_password()` calls
 <br>
 
 ## DrupalRector
+
+### ConstantToClassConstantRector
+
+Fixes deprecated contant use, used in Drupal 8 and 9 deprecations
+
+:wrench: **configure it!**
+
+- class: [`DrupalRector\Rector\Deprecation\ConstantToClassConstantRector`](../src/Rector/Deprecation/ConstantToClassConstantRector.php)
+
+```diff
+-$result = file_unmanaged_copy($source, $destination, DEPRECATED_CONSTANT);
++$result = file_unmanaged_copy($source, $destination, \Drupal\MyClass::CONSTANT);
+```
+
+<br>
 
 ### DeprecationHelperRemoveRector
 
