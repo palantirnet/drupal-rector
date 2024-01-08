@@ -715,15 +715,22 @@ Fixes deprecated `AssertLegacyTrait::getRawContent()` calls
 
 <br>
 
-### ModuleLoadInstallRector
+### ModuleLoadRector
 
 Fixes deprecated `module_load_install()` calls
 
-- class: [`DrupalRector\Drupal9\Rector\Deprecation\ModuleLoadInstallRector`](../src/Drupal9/Rector/Deprecation/ModuleLoadInstallRector.php)
+- class: [`DrupalRector\Drupal9\Rector\Deprecation\ModuleLoadRector`](../src/Drupal9/Rector/Deprecation/ModuleLoadRector.php)
 
 ```diff
 -module_load_install('example');
-+\Drupal\Core\Extension\ModuleHandler::loadInclude('example', 'install');
++\Drupal::moduleHandler()->loadInclude('example', 'install');
+ $type = 'install';
+ $module = 'example';
+ $name = 'name';
+-module_load_include($type, $module, $name);
+-module_load_include($type, $module);
++\Drupal::moduleHandler()->loadInclude($module, $type, $name);
++\Drupal::moduleHandler()->loadInclude($module, $type);
 ```
 
 <br>

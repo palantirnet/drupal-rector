@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+use DrupalRector\Drupal8\Rector\Deprecation\ConstantToClassConstantRector;
+use DrupalRector\Drupal8\Rector\ValueObject\ConstantToClassConfiguration;
 use DrupalRector\Drupal9\Rector\Deprecation\ExtensionPathRector;
 use DrupalRector\Drupal9\Rector\Deprecation\FileBuildUriRector;
 use DrupalRector\Drupal9\Rector\Deprecation\FunctionToEntityTypeStorageMethod;
@@ -65,5 +67,14 @@ return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->ruleWithConfiguration(FunctionToFirstArgMethodRector::class, [
         new FunctionToFirstArgMethodConfiguration('taxonomy_term_uri', 'toUrl'),
         new FunctionToFirstArgMethodConfiguration('taxonomy_term_title', 'label'),
+    ]);
+
+    // Change record: https://www.drupal.org/node/3022147
+    $rectorConfig->ruleWithConfiguration(ConstantToClassConstantRector::class, [
+        new ConstantToClassConfiguration(
+            'FILE_STATUS_PERMANENT',
+            'Drupal\file\FileInterface',
+            'STATUS_PERMANENT',
+        ),
     ]);
 };

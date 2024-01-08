@@ -1,5 +1,6 @@
 <?php
 
+use Drupal\Component\Utility\Bytes;
 function extension_paths() {
     \Drupal::service('extension.list.module')->getPath('node');
     \Drupal::service('extension.list.theme')->getPath('seven');
@@ -13,3 +14,8 @@ function rector_examples_with_render() {
     $build = [];
     $output = \Drupal::service('renderer')->render($build);
 }
+
+function rector_utility_bytes_to_int() {
+    $int = Bytes::toNumber("15");
+}
+

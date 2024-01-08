@@ -1,5 +1,6 @@
 <?php
 
+use Drupal\Component\Utility\Bytes;
 function extension_paths() {
     drupal_get_path('module', 'node');
     drupal_get_path('theme', 'seven');
@@ -12,4 +13,8 @@ function extension_paths() {
 function rector_examples_with_render() {
     $build = [];
     $output = render($build);
+}
+
+function rector_utility_bytes_to_int() {
+    $int = Bytes::toInt("15");
 }

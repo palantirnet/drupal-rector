@@ -32,7 +32,7 @@ final class EntityLoadRector extends AbstractRector implements ConfigurableRecto
     protected array $entityTypes;
 
     /**
-     * @var \DrupalRector\Services\AddCommentService
+     * @var AddCommentService
      */
     private AddCommentService $commentService;
 

@@ -24,12 +24,12 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 final class FunctionalTestDefaultThemePropertyRector extends AbstractScopeAwareRector
 {
     /**
-     * @var \Rector\BetterPhpDocParser\PhpDocInfo\PhpDocInfoFactory
+     * @var PhpDocInfoFactory
      */
     private PhpDocInfoFactory $phpDocInfoFactory;
 
     /**
-     * @var \Rector\Core\PhpParser\Node\Value\ValueResolver
+     * @var ValueResolver
      */
     private ValueResolver $valueResolver;
 
