@@ -46,7 +46,7 @@ jobs:
             -   name: Install Drupal Rector
                 run: |
                     cd ~/drupal
-                    composer require palantirnet/drupal-rector:@dev --no-progress
+                    composer require palantirnet/drupal-rector:@dev --no-progress --update-with-dependencies
             -   name: Install Drupal Rector Config
                 run: |
                     cd ~/drupal

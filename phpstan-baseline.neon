@@ -51,6 +51,11 @@ parameters:
 			path: src/Drupal8/Rector/Deprecation/EntityLoadRector.php
 
 		-
+			message: "#^Parameter \\#1 \\$items of class PhpParser\\\\Node\\\\Expr\\\\Array_ constructor expects array\\<PhpParser\\\\Node\\\\ArrayItem\\>, array\\<int, PhpParser\\\\Node\\\\Expr\\\\ArrayItem\\> given\\.$#"
+			count: 1
+			path: src/Drupal8/Rector/Deprecation/EntityLoadRector.php
+
+		-
 			message: "#^Access to an undefined property PhpParser\\\\Node\\\\Expr\\:\\:\\$expr\\.$#"
 			count: 2
 			path: src/Drupal8/Rector/Deprecation/EntityManagerRector.php
