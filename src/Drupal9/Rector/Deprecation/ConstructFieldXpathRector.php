@@ -6,7 +6,7 @@ namespace DrupalRector\Drupal9\Rector\Deprecation;
 
 use DrupalRector\Utility\GetDeclaringSourceTrait;
 use PhpParser\Node;
-use Rector\Core\Rector\AbstractRector;
+use Rector\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 

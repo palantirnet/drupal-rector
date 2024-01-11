@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace DrupalRector\Rector\Deprecation\Base;
 
 use PhpParser\Node;
-use Rector\Core\Rector\AbstractRector;
+use Rector\Rector\AbstractRector;
 
 /**
  * Replaces deprecated static call with service method call.
