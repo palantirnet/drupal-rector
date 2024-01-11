@@ -12,7 +12,7 @@ return static function (RectorConfig $rectorConfig): void {
     });
     // https://www.drupal.org/node/2802569
     $rectorConfig->ruleWithConfiguration(FunctionToStaticRector::class, [
-        new \DrupalRector\Rector\ValueObject\FunctionToStaticConfiguration(
+        new DrupalRector\Rector\ValueObject\FunctionToStaticConfiguration(
             '8.2.0',
             'file_directory_os_temp',
             'Drupal\Component\FileSystem\FileSystem',

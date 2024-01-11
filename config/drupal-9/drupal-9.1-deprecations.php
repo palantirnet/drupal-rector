@@ -42,7 +42,7 @@ return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->rule(AssertNoFieldByNameRector::class);
     $rectorConfig->rule(AssertFieldByIdRector::class);
 
-    $rectorConfig->ruleWithConfiguration(\DrupalRector\Drupal9\Rector\Deprecation\AssertLegacyTraitRector::class, [
+    $rectorConfig->ruleWithConfiguration(DrupalRector\Drupal9\Rector\Deprecation\AssertLegacyTraitRector::class, [
         new AssertLegacyTraitConfiguration('assertLinkByHref', 'linkByHrefExists'),
         new AssertLegacyTraitConfiguration('assertLink', 'linkExists'),
         new AssertLegacyTraitConfiguration('assertNoEscaped', 'assertNoEscaped'),
