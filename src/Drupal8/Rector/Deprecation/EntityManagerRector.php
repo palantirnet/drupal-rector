@@ -7,10 +7,10 @@ namespace DrupalRector\Drupal8\Rector\Deprecation;
 use DrupalRector\Services\AddCommentService;
 use PhpParser\Node;
 use PHPStan\Analyser\Scope;
-use Rector\Core\Exception\ShouldNotHappenException;
-use Rector\Core\Rector\AbstractRector;
+use Rector\Exception\ShouldNotHappenException;
 use Rector\NodeCollector\ScopeResolver\ParentClassScopeResolver;
 use Rector\NodeTypeResolver\Node\AttributeKey;
+use Rector\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 

@@ -33,9 +33,9 @@ return static function (RectorConfig $rectorConfig): void {
     ]);
 
     // Change record: https://www.drupal.org/node/2940031
-    $rectorConfig->rule(\DrupalRector\Drupal9\Rector\Deprecation\FileCreateUrlRector::class);
-    $rectorConfig->rule(\DrupalRector\Drupal9\Rector\Deprecation\FileUrlTransformRelativeRector::class);
-    $rectorConfig->rule(\DrupalRector\Drupal9\Rector\Deprecation\FromUriRector::class);
+    $rectorConfig->rule(DrupalRector\Drupal9\Rector\Deprecation\FileCreateUrlRector::class);
+    $rectorConfig->rule(DrupalRector\Drupal9\Rector\Deprecation\FileUrlTransformRelativeRector::class);
+    $rectorConfig->rule(DrupalRector\Drupal9\Rector\Deprecation\FromUriRector::class);
 
     // Change record: https://www.drupal.org/node/3223520
     $rectorConfig->ruleWithConfiguration(FunctionToServiceRector::class, [
