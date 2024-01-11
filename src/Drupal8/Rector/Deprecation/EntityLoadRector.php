@@ -169,10 +169,18 @@ CODE_AFTER
 
                     $resetCache_method_name = new Node\Identifier('resetCache');
 
+
+                    if (!class_exists('\PhpParser\Node\ArrayItem')) {
+                        $arrayItems = [new Node\Expr\ArrayItem($entity_id->value)];
+                    } else {
+                        $arrayItems = [new \PhpParser\Node\ArrayItem($entity_id->value)];
+                    }
+
                     $reset_args = [
                         // This creates a new argument that wraps the entity ID in an array.
-                        new Node\Arg(new Node\Expr\Array_([new \PhpParser\Node\ArrayItem($entity_id->value)])),
+                        new Node\Arg(new Node\Expr\Array_($arrayItems)),
                     ];
+
 
                     $entity_load_reset_node = new Node\Expr\MethodCall($getStorage_node,
                         $resetCache_method_name, $reset_args);
