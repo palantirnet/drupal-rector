@@ -12,6 +12,10 @@ function simple_example() {
 function simple_example_os_temp() {
     $x = file_directory_os_temp();
 }
+
+function simple_example_format_size() {
+    $size_literal = format_size(81862076662);
+}
 ?>
 -----
 <?php
@@ -27,5 +31,9 @@ function simple_example() {
  */
 function simple_example_os_temp() {
     $x = \Drupal\Component\FileSystem\FileSystem::getOsTemporaryDirectory();
+}
+
+function simple_example_format_size() {
+    $size_literal = \Drupal\Component\Utility\DeprecationHelper::backwardsCompatibleCall(\Drupal::VERSION, '10.2.0', fn() => format_size(81862076662), fn() => \\Drupal\Core\StringTranslation\ByteSizeMarkup::create(81862076662));
 }
 ?>
