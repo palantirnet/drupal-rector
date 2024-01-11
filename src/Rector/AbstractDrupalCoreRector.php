@@ -8,8 +8,8 @@ use Drupal\Component\Utility\DeprecationHelper;
 use DrupalRector\Contract\VersionedConfigurationInterface;
 use PhpParser\Node;
 use PhpParser\Node\Expr\ArrowFunction;
-use Rector\Core\Contract\Rector\ConfigurableRectorInterface;
-use Rector\Core\Rector\AbstractRector;
+use Rector\Contract\Rector\ConfigurableRectorInterface;
+use Rector\Rector\AbstractRector;
 
 abstract class AbstractDrupalCoreRector extends AbstractRector implements ConfigurableRectorInterface
 {

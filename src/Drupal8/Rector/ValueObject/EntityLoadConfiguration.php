@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace DrupalRector\Drupal8\Rector\ValueObject;
 
-use Rector\Core\Validation\RectorAssert;
+use Rector\Validation\RectorAssert;
 
 final class EntityLoadConfiguration
 {

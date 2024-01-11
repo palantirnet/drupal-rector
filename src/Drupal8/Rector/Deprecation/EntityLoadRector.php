@@ -7,8 +7,8 @@ namespace DrupalRector\Drupal8\Rector\Deprecation;
 use DrupalRector\Drupal8\Rector\ValueObject\EntityLoadConfiguration;
 use DrupalRector\Services\AddCommentService;
 use PhpParser\Node;
-use Rector\Core\Contract\Rector\ConfigurableRectorInterface;
-use Rector\Core\Rector\AbstractRector;
+use Rector\Contract\Rector\ConfigurableRectorInterface;
+use Rector\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\ConfiguredCodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
@@ -169,9 +169,15 @@ CODE_AFTER
 
                     $resetCache_method_name = new Node\Identifier('resetCache');
 
+                    if (!class_exists('\PhpParser\Node\ArrayItem')) {
+                        $arrayItems = [new Node\Expr\ArrayItem($entity_id->value)];
+                    } else {
+                        $arrayItems = [new \PhpParser\Node\ArrayItem($entity_id->value)];
+                    }
+
                     $reset_args = [
                         // This creates a new argument that wraps the entity ID in an array.
-                        new Node\Arg(new Node\Expr\Array_([new Node\Expr\ArrayItem($entity_id->value)])),
+                        new Node\Arg(new Node\Expr\Array_($arrayItems)),
                     ];
 
                     $entity_load_reset_node = new Node\Expr\MethodCall($getStorage_node,
