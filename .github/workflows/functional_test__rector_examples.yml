@@ -15,6 +15,7 @@ jobs:
     run_functional_test:
         name: Functional Test | PHP ${{ matrix.php-version }} | Drupal ${{ matrix.drupal }}"
         strategy:
+            fail-fast: false
             matrix:
                 include:
                     - php-version: "7.4"
