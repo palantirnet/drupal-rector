@@ -80,8 +80,8 @@ abstract class AbstractDrupalCoreRector extends AbstractRector implements Config
         return $this->nodeFactory->createStaticCall(DeprecationHelper::class, 'backwardsCompatibleCall', [
             $this->nodeFactory->createClassConstFetch(\Drupal::class, 'VERSION'),
             $introducedVersion,
-            new ArrowFunction(['expr' => $clonedNode]),
             new ArrowFunction(['expr' => $result]),
+            new ArrowFunction(['expr' => $clonedNode]),
         ]);
     }
 }
