@@ -15,12 +15,12 @@ function simple_example() {
 <?php
 
 function simple_example() {
-    \Drupal\Component\Utility\DeprecationHelper::backwardsCompatibleCall(\Drupal::VERSION, '10.1.0', fn() => system_time_zones(), fn() => \Drupal\Core\Datetime\TimeZoneFormHelper::getOptionsList());
+    \Drupal\Component\Utility\DeprecationHelper::backwardsCompatibleCall(\Drupal::VERSION, '10.1.0', fn() => \Drupal\Core\Datetime\TimeZoneFormHelper::getOptionsList(), fn() => system_time_zones());
 
-    \Drupal\Component\Utility\DeprecationHelper::backwardsCompatibleCall(\Drupal::VERSION, '10.1.0', fn() => system_time_zones(FALSE, TRUE), fn() => \Drupal\Core\Datetime\TimeZoneFormHelper::getOptionsListByRegion());
+    \Drupal\Component\Utility\DeprecationHelper::backwardsCompatibleCall(\Drupal::VERSION, '10.1.0', fn() => \Drupal\Core\Datetime\TimeZoneFormHelper::getOptionsListByRegion(), fn() => system_time_zones(FALSE, TRUE));
 
-    \Drupal\Component\Utility\DeprecationHelper::backwardsCompatibleCall(\Drupal::VERSION, '10.1.0', fn() => system_time_zones(NULL, FALSE), fn() => \Drupal\Core\Datetime\TimeZoneFormHelper::getOptionsList(NULL));
+    \Drupal\Component\Utility\DeprecationHelper::backwardsCompatibleCall(\Drupal::VERSION, '10.1.0', fn() => \Drupal\Core\Datetime\TimeZoneFormHelper::getOptionsList(NULL), fn() => system_time_zones(NULL, FALSE));
 
-    \Drupal\Component\Utility\DeprecationHelper::backwardsCompatibleCall(\Drupal::VERSION, '10.1.0', fn() => system_time_zones(TRUE, FALSE), fn() => \Drupal\Core\Datetime\TimeZoneFormHelper::getOptionsList(TRUE));
+    \Drupal\Component\Utility\DeprecationHelper::backwardsCompatibleCall(\Drupal::VERSION, '10.1.0', fn() => \Drupal\Core\Datetime\TimeZoneFormHelper::getOptionsList(TRUE), fn() => system_time_zones(TRUE, FALSE));
 }
 ?>

@@ -23,7 +23,7 @@ function simple_example_format_size() {
 function simple_example() {
     $settings = [];
     $filename = 'simple_filename.yaml';
-    \Drupal\Component\Utility\DeprecationHelper::backwardsCompatibleCall(\Drupal::VERSION, '10.1.0', fn() => drupal_rewrite_settings($settings, $filename), fn() => \Drupal\Core\Site\SettingsEditor::rewrite($filename, $settings));
+    \Drupal\Component\Utility\DeprecationHelper::backwardsCompatibleCall(\Drupal::VERSION, '10.1.0', fn() => \Drupal\Core\Site\SettingsEditor::rewrite($filename, $settings), fn() => drupal_rewrite_settings($settings, $filename));
 }
 
 /**
@@ -34,6 +34,6 @@ function simple_example_os_temp() {
 }
 
 function simple_example_format_size() {
-    $size_literal = \Drupal\Component\Utility\DeprecationHelper::backwardsCompatibleCall(\Drupal::VERSION, '10.2.0', fn() => format_size(81862076662), fn() => \\Drupal\Core\StringTranslation\ByteSizeMarkup::create(81862076662));
+    $size_literal = \Drupal\Component\Utility\DeprecationHelper::backwardsCompatibleCall(\Drupal::VERSION, '10.2.0', fn() => \\Drupal\Core\StringTranslation\ByteSizeMarkup::create(81862076662), fn() => format_size(81862076662));
 }
 ?>

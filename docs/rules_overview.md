@@ -869,10 +869,10 @@ Remove DeprecationHelper calls for versions before configured minimum requiremen
 ```diff
  $settings = [];
  $filename = 'simple_filename.yaml';
--DeprecationHelper::backwardsCompatibleCall(\Drupal::VERSION, '9.1.0', fn() => old_function(), fn() => new_function());
--DeprecationHelper::backwardsCompatibleCall(\Drupal::VERSION, '10.5.0', fn() => drupal_rewrite_settings($settings, $filename), fn() => SettingsEditor::rewrite($filename, $settings));
+-DeprecationHelper::backwardsCompatibleCall(\Drupal::VERSION, '9.1.0', fn() => new_function(), fn() => old_function());
+-DeprecationHelper::backwardsCompatibleCall(\Drupal::VERSION, '10.5.0', fn() => SettingsEditor::rewrite($filename, $settings), fn() => drupal_rewrite_settings($settings, $filename));
 +drupal_rewrite_settings($settings, $filename);
- DeprecationHelper::backwardsCompatibleCall(\Drupal::VERSION, '11.1.0', fn() => old_function(), fn() => new_function());
+ DeprecationHelper::backwardsCompatibleCall(\Drupal::VERSION, '11.1.0', fn() => new_function(), fn() => old_function());
 ```
 
 <br>
