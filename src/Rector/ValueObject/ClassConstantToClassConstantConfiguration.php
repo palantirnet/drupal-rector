@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace DrupalRector\Rector\ValueObject;
 
-use Rector\Core\Validation\RectorAssert;
+use Rector\Validation\RectorAssert;
 
 final class ClassConstantToClassConstantConfiguration
 {
