@@ -115,7 +115,7 @@ abstract class AbstractDrupalCoreRector extends AbstractRector implements Config
     }
 
     /**
-     * @param \DrupalRector\Contract\VersionedConfigurationInterface $configuration
+     * @param VersionedConfigurationInterface $configuration
      *
      * @return bool|int
      */
@@ -143,7 +143,7 @@ abstract class AbstractDrupalCoreRector extends AbstractRector implements Config
      * Drupal 10 when 10.0 is already out of support. This means that
      * we will not support running drupal-rector on Drupal 10.0.x.
      *
-     * @param \DrupalRector\Contract\VersionedConfigurationInterface $configuration
+     * @param VersionedConfigurationInterface $configuration
      *
      * @return bool
      */

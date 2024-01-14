@@ -25,7 +25,7 @@ use Rector\BetterPhpDocParser\PhpDocInfo\TokenIteratorFactory;
 use Rector\BetterPhpDocParser\PhpDocManipulator\PhpDocTagRemover;
 use Rector\BetterPhpDocParser\PhpDocParser\StaticDoctrineAnnotationParser\ArrayParser;
 use Rector\Comments\NodeDocBlock\DocBlockUpdater;
-use Rector\Core\ValueObject\PhpVersion;
+use Rector\ValueObject\PhpVersion;
 use Rector\VersionBonding\Contract\MinPhpVersionInterface;
 use RectorPrefix202310\PHPUnit\Framework\Attributes\Ticket;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
@@ -208,7 +208,7 @@ CODE_SAMPLE
     /**
      * @param array|ArrayItemNode[] $parsedArgs
      *
-     * @return \PhpParser\Node\Attribute
+     * @return Attribute
      */
     private function createAttribute(array $parsedArgs): Attribute
     {
