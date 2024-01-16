@@ -51,7 +51,7 @@ CODE_SAMPLE
     }
 
     /**
-     * @param \PhpParser\Node\Stmt\Property $node
+     * @param Node\Stmt\Property $node
      */
     public function refactor(Node $node): ?Node
     {

@@ -172,7 +172,7 @@ CODE_AFTER
                     if (!class_exists('\PhpParser\Node\ArrayItem')) {
                         $arrayItems = [new Node\Expr\ArrayItem($entity_id->value)];
                     } else {
-                        $arrayItems = [new \PhpParser\Node\ArrayItem($entity_id->value)];
+                        $arrayItems = [new Node\ArrayItem($entity_id->value)];
                     }
 
                     $reset_args = [

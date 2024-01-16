@@ -44,7 +44,7 @@ CODE_AFTER
     }
 
     /**
-     * @param \PhpParser\Node\Expr\MethodCall $node
+     * @param Node\Expr\MethodCall $node
      *
      * @throws ShouldNotHappenException
      *
