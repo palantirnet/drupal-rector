@@ -100,7 +100,7 @@ CODE_AFTER
      * @param string                         $method
      * @param array<Arg|VariadicPlaceholder> $args
      *
-     * @return \PhpParser\Node\Expr\MethodCall
+     * @return Node\Expr\MethodCall
      */
     protected function createAssertSessionMethodCall(string $method, array $args): Node\Expr\MethodCall
     {
