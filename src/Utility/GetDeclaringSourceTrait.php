@@ -14,7 +14,7 @@ trait GetDeclaringSourceTrait
     /**
      * Gets a method or property's declaring source (trait or class.).
      *
-     * @param node\Expr\MethodCall|Node\Expr\PropertyFetch $expr
+     * @param Node\Expr\MethodCall|Node\Expr\PropertyFetch $expr
      *                                                           The expression
      *
      * @return string|null
