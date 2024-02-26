@@ -22,7 +22,7 @@ class AssertLegacyTraitConfiguration
      * @param bool   $processFirstArgumentOnly toggle to reduce the number of arguments passed to 1
      * @param string $declaringSource          the class that declares the deprecated method
      */
-    public function __construct(string $deprecatedMethodName, string $methodName, string $comment = '', bool $isAssertSessionMethod = true, bool $processFirstArgumentOnly = false, string $declaringSource = 'Drupal\FunctionalTests\AssertLegacyTrait', string $prependArgument = null)
+    public function __construct(string $deprecatedMethodName, string $methodName, string $comment = '', bool $isAssertSessionMethod = true, bool $processFirstArgumentOnly = false, string $declaringSource = 'Drupal\FunctionalTests\AssertLegacyTrait', ?string $prependArgument = null)
     {
         $this->deprecatedMethodName = $deprecatedMethodName;
         $this->methodName = $methodName;
