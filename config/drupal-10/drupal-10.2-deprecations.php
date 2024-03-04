@@ -21,9 +21,4 @@ return static function (RectorConfig $rectorConfig): void {
         new MethodToMethodWithCheckConfiguration('Drupal\system\Plugin\ImageToolkit\GDToolkit', 'getResource', 'getImage'),
         new MethodToMethodWithCheckConfiguration('Drupal\system\Plugin\ImageToolkit\GDToolkit', 'setResource', 'setImage'),
     ]);
-
-    // https://www.drupal.org/node/3265963
-    $rectorConfig->ruleWithConfiguration(RenamePropertyRector::class, [
-        new RenameProperty('Drupal\system\Plugin\ImageToolkit\GDToolkit', 'resource', 'image'),
-    ]);
 };
