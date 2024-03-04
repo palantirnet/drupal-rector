@@ -7,8 +7,6 @@ use DrupalRector\Rector\Deprecation\MethodToMethodWithCheckRector;
 use DrupalRector\Rector\ValueObject\FunctionToStaticConfiguration;
 use DrupalRector\Rector\ValueObject\MethodToMethodWithCheckConfiguration;
 use Rector\Config\RectorConfig;
-use Rector\Renaming\Rector\PropertyFetch\RenamePropertyRector;
-use Rector\Renaming\ValueObject\RenameProperty;
 
 return static function (RectorConfig $rectorConfig): void {
     // https://www.drupal.org/node/2999981
