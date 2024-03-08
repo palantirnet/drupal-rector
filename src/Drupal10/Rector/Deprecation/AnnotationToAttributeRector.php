@@ -25,6 +25,7 @@ use Rector\BetterPhpDocParser\PhpDocInfo\TokenIteratorFactory;
 use Rector\BetterPhpDocParser\PhpDocManipulator\PhpDocTagRemover;
 use Rector\BetterPhpDocParser\PhpDocParser\StaticDoctrineAnnotationParser\ArrayParser;
 use Rector\Comments\NodeDocBlock\DocBlockUpdater;
+use Rector\PhpAttribute\AnnotationToAttributeMapper;
 use Rector\ValueObject\PhpVersion;
 use Rector\VersionBonding\Contract\MinPhpVersionInterface;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
@@ -52,13 +53,19 @@ final class AnnotationToAttributeRector extends AbstractDrupalCoreRector impleme
 
     private PhpDocInfoFactory $phpDocInfoFactory;
 
-    public function __construct(PhpDocTagRemover $phpDocTagRemover, DocBlockUpdater $docBlockUpdater, PhpDocInfoFactory $phpDocInfoFactory, ArrayParser $arrayParser, TokenIteratorFactory $tokenIteratorFactory)
+    /**
+     * @var \Rector\PhpAttribute\AnnotationToAttributeMapper
+     */
+    private AnnotationToAttributeMapper $annotationToAttributeMapper;
+
+    public function __construct(PhpDocTagRemover $phpDocTagRemover, DocBlockUpdater $docBlockUpdater, PhpDocInfoFactory $phpDocInfoFactory, ArrayParser $arrayParser, TokenIteratorFactory $tokenIteratorFactory, AnnotationToAttributeMapper $annotationToAttributeMapper)
     {
         $this->phpDocTagRemover = $phpDocTagRemover;
         $this->docBlockUpdater = $docBlockUpdater;
         $this->phpDocInfoFactory = $phpDocInfoFactory;
         $this->arrayParser = $arrayParser;
         $this->tokenIteratorFactory = $tokenIteratorFactory;
+        $this->annotationToAttributeMapper = $annotationToAttributeMapper;
     }
 
     public function configure(array $configuration): void
@@ -218,9 +225,13 @@ CODE_SAMPLE
                 $arg = $this->nodeFactory->createClassConstFetch($value->value->value,'class');
             } elseif ($value->value instanceof DoctrineAnnotationTagValueNode) {
                 $arg = $this->convertTranslateAnnotation($value->value);
+            } elseif ($value->key === 'forms') {
+                $attribute = $this->annotationToAttributeMapper->map($value);
+                $arg = $attribute->value;
             } else {
                 $arg = new String_($value->value->value);
             }
+
             $args[] = new Arg($arg, \false, \false, [], new Node\Identifier($value->key));
         }
 
