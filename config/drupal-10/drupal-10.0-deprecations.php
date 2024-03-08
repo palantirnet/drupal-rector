@@ -4,15 +4,22 @@ declare(strict_types=1);
 
 use DrupalRector\Rector\PHPUnit\ShouldCallParentMethodsRector;
 use Rector\Config\RectorConfig;
-use Rector\PHPUnit\Set\PHPUnitLevelSetList;
-use Rector\Symfony\Set\SymfonyLevelSetList;
-use Rector\Symfony\Set\TwigLevelSetList;
+use Rector\PHPUnit\Set\PHPUnitSetList;
+use Rector\Symfony\Set\SymfonySetList;
+use Rector\Symfony\Set\TwigSetList;
 
 return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->sets([
-        PHPUnitLevelSetList::UP_TO_PHPUNIT_90,
-        SymfonyLevelSetList::UP_TO_SYMFONY_62,
-        TwigLevelSetList::UP_TO_TWIG_240,
+        PHPUnitSetList::PHPUNIT_90,
+        SymfonySetList::SYMFONY_50,
+        SymfonySetList::SYMFONY_51,
+        SymfonySetList::SYMFONY_52,
+        SymfonySetList::SYMFONY_53,
+        SymfonySetList::SYMFONY_54,
+        SymfonySetList::SYMFONY_60,
+        SymfonySetList::SYMFONY_61,
+        SymfonySetList::SYMFONY_62,
+        TwigSetList::TWIG_240,
     ]);
 
     $rectorConfig->rule(ShouldCallParentMethodsRector::class);

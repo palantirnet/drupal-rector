@@ -67,7 +67,7 @@ CODE_SAMPLE
     }
 
     /**
-     * @param \PhpParser\Node\Stmt\Class_ $node
+     * @param Node\Stmt\Class_ $node
      */
     public function refactorWithScope(Node $node, Scope $scope): ?Node
     {

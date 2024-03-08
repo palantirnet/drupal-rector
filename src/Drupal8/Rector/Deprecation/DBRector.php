@@ -98,37 +98,37 @@ class DBRector extends AbstractRector implements ConfigurableRectorInterface
     {
         assert($node instanceof Node\Stmt\Expression);
 
-        $isFuncCall = $node->expr instanceof Node\Expr\FuncCall;
-        $isMethodCall = $node->expr instanceof Node\Expr\MethodCall;
-        $isAssignedFuncCall = $node->expr instanceof Node\Expr\Assign && $node->expr->expr instanceof Node\Expr\FuncCall;
+        $isFuncCall = $node->expr instanceof Expr\FuncCall;
+        $isMethodCall = $node->expr instanceof MethodCall;
+        $isAssignedFuncCall = $node->expr instanceof Expr\Assign && $node->expr->expr instanceof Expr\FuncCall;
         if (!$isFuncCall && !$isAssignedFuncCall && !$isMethodCall) {
             return null;
         }
 
         foreach ($this->configuration as $configuration) {
-            if ($node->expr instanceof Node\Expr\FuncCall && $this->getName($node->expr->name) !== $configuration->getDeprecatedMethodName()) {
+            if ($node->expr instanceof Expr\FuncCall && $this->getName($node->expr->name) !== $configuration->getDeprecatedMethodName()) {
                 continue;
             }
 
-            if ($node->expr instanceof Node\Expr\Assign && $node->expr->expr instanceof Node\Expr\FuncCall && $this->getName($node->expr->expr->name) !== $configuration->getDeprecatedMethodName()) {
+            if ($node->expr instanceof Expr\Assign && $node->expr->expr instanceof Expr\FuncCall && $this->getName($node->expr->expr->name) !== $configuration->getDeprecatedMethodName()) {
                 continue;
             }
 
-            if ($node->expr instanceof Node\Expr\FuncCall) {
+            if ($node->expr instanceof Expr\FuncCall) {
                 $methodCall = $this->getMethodCall($node->expr, $node, $configuration);
                 $node->expr = $methodCall;
 
                 return $node;
             }
 
-            if ($node->expr instanceof Node\Expr\Assign && $node->expr->expr instanceof Node\Expr\FuncCall) {
+            if ($node->expr instanceof Expr\Assign && $node->expr->expr instanceof Expr\FuncCall) {
                 $methodCall = $this->getMethodCall($node->expr->expr, $node, $configuration);
                 $node->expr->expr = $methodCall;
 
                 return $node;
             }
 
-            if ($node->expr instanceof Node\Expr\MethodCall) {
+            if ($node->expr instanceof MethodCall) {
                 $funcCall = $this->findRootFuncCallForMethodCall($node->expr);
                 if ($funcCall === null || $this->getName($funcCall->name) !== $configuration->getDeprecatedMethodName()) {
                     continue;
@@ -187,7 +187,7 @@ class DBRector extends AbstractRector implements ConfigurableRectorInterface
         return null;
     }
 
-    public function getMethodCall(Node\Expr\FuncCall $expr, Node\Stmt\Expression $statement, DBConfiguration $configuration): Node\Expr\MethodCall
+    public function getMethodCall(Expr\FuncCall $expr, Node\Stmt\Expression $statement, DBConfiguration $configuration): MethodCall
     {
         // TODO: Check if we have are in a class and inject \Drupal\Core\Database\Connection
         // TODO: Check if we have are in a class and don't have access to the container, use `\Drupal\core\Database\Database::getConnection()`.
@@ -229,11 +229,11 @@ class DBRector extends AbstractRector implements ConfigurableRectorInterface
             $this->commentService->addDrupalRectorComment($statement, 'You will need to use `\Drupal\core\Database\Database::getConnection()` if you do not yet have access to the container here.');
         }
 
-        $var = new Node\Expr\StaticCall($name, $call, $method_arguments);
+        $var = new Expr\StaticCall($name, $call, $method_arguments);
 
         $method_name = new Node\Identifier(substr($configuration->getDeprecatedMethodName(), 3));
 
-        $methodCall = new Node\Expr\MethodCall($var, $method_name, $expr->args);
+        $methodCall = new MethodCall($var, $method_name, $expr->args);
 
         return $methodCall;
     }

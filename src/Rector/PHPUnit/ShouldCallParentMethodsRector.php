@@ -25,7 +25,7 @@ class ShouldCallParentMethodsRector extends AbstractScopeAwareRector
      * @param Node  $node
      * @param Scope $scope
      *
-     * @return \PhpParser\Node|null
+     * @return Node|null
      */
     public function refactorWithScope(Node $node, Scope $scope)
     {
