@@ -27,12 +27,4 @@ return static function (RectorConfig $rectorConfig): void {
         new MethodToMethodWithCheckConfiguration('Drupal\system\Plugin\ImageToolkit\GDToolkit', 'setResource', 'setImage'),
     ]);
 
-    // @see https://www.drupal.org/node/3395575
-    $rectorConfig->ruleWithConfiguration(AnnotationToAttributeRector::class, [
-        new AnnotationToAttributeConfiguration('10.2.0', '12.0.0', 'Action', 'Drupal\Core\Action\Attribute\Action'),
-    ]);
-    // This rule is disabled from now to first see how it performs on core.
-    $rectorConfig->skip([
-        AnnotationToAttributeRector::class,
-    ]);
 };
