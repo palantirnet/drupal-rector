@@ -10,5 +10,6 @@ use Rector\Config\RectorConfig;
 return static function (RectorConfig $rectorConfig): void {
     DeprecationBase::addClass(AnnotationToAttributeRector::class, $rectorConfig, false, [
         new AnnotationToAttributeConfiguration('10.2.0', '11.0.0', 'Action', 'Drupal\Core\Action\Attribute\Action'),
+        new AnnotationToAttributeConfiguration('10.2.0', '11.0.0', 'Block', 'Drupal\Core\Action\Attribute\Block'),
     ]);
 };
