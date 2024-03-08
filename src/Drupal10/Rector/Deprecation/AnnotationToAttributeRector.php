@@ -229,6 +229,11 @@ CODE_SAMPLE
                 $arg = $attribute->value;
             }
 
+            // Sometimes the end ) matches. We need to remove it.
+            if($value->key === null) {
+                continue;
+            }
+
             $args[] = new Arg($arg, \false, \false, [], new Node\Identifier($value->key));
         }
 
