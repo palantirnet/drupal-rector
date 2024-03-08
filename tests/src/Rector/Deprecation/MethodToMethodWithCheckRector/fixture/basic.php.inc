@@ -7,6 +7,10 @@ function simple_example() {
     /** @var \Drupal\Core\Entity\EntityInterface $untranslated_entity */
     $untranslated_entity = \Drupal::entityTypeManager()->getStorage('node')->load(123);
     $form_state->setRedirectUrl($untranslated_entity->urlInfo('canonical'));
+
+    $toolkit = new \Drupal\system\Plugin\ImageToolkit\GDToolkit;
+    $toolkit->getResource();
+    $toolkit->setResource();
 }
 ?>
 -----
@@ -19,5 +23,9 @@ function simple_example() {
     /** @var \Drupal\Core\Entity\EntityInterface $untranslated_entity */
     $untranslated_entity = \Drupal::entityTypeManager()->getStorage('node')->load(123);
     $form_state->setRedirectUrl($untranslated_entity->toUrl('canonical'));
+
+    $toolkit = new \Drupal\system\Plugin\ImageToolkit\GDToolkit;
+    $toolkit->getImage();
+    $toolkit->setImage();
 }
 ?>
