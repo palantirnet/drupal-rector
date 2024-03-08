@@ -224,12 +224,10 @@ CODE_SAMPLE
             if ($value->key == 'deriver') {
                 $arg = $this->nodeFactory->createClassConstFetch($value->value->value, 'class');
             } elseif ($value->value instanceof DoctrineAnnotationTagValueNode) {
-                $arg = $this->convertTranslateAnnotation($value->value);
-            } elseif ($value->key === 'forms') {
+                $arg = $this->convertAnnotation($value->value);
+            } else {
                 $attribute = $this->annotationToAttributeMapper->map($value);
                 $arg = $attribute->value;
-            } else {
-                $arg = new String_($value->value->value);
             }
 
             $args[] = new Arg($arg, \false, \false, [], new Node\Identifier($value->key));
@@ -238,6 +236,25 @@ CODE_SAMPLE
         return new Attribute($fullyQualified, $args);
     }
 
+    public function convertAnnotation(DoctrineAnnotationTagValueNode $value): ?Node\Expr {
+        return match ($value->identifierTypeNode->name) {
+            '@Translation' => $this->convertTranslateAnnotation($value),
+            '@PluralTranslation' => $this->convertPluralTranslationAnnotation($value),
+            default => null,
+        };
+    }
+
+    public function convertPluralTranslationAnnotation(DoctrineAnnotationTagValueNode $value): ?Node\Expr  {
+        // Check the annotation type, this will be helpful later.
+        if ($value->identifierTypeNode->name !== '@PluralTranslation') {
+            return null;
+        }
+
+        return $this->nodeFactory->createArray([
+            $value->values[0]->key => $value->values[0]->value->value,
+            $value->values[1]->key => $value->values[1]->value->value,
+        ]);
+    }
     public function convertTranslateAnnotation(DoctrineAnnotationTagValueNode $value): ?Node\Expr\New_
     {
         // Check the annotation type, this will be helpful later.
@@ -250,7 +267,7 @@ CODE_SAMPLE
         $contextArg = null;
 
         // Loop through the values of the annotation, just to make 100% sure we have the correct argument order
-        foreach ($value->values as $translateValue) {
+            foreach ($value->values as $translateValue) {
             if ($translateValue->key === null) {
                 $valueArg = $this->nodeFactory->createArg($translateValue->value->value);
             }
