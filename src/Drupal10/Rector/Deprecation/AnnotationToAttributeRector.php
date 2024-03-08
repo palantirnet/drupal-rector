@@ -160,7 +160,7 @@ CODE_SAMPLE
      * @param Class_|ClassMethod                 $node
      * @param AnnotationToAttributeConfiguration $configuration
      */
-    public function refactorWithConfiguration(Node $node, VersionedConfigurationInterface $configuration): ?Node
+    protected function refactorWithConfiguration(Node $node, VersionedConfigurationInterface $configuration): ?Node
     {
         $phpDocInfo = $this->phpDocInfoFactory->createFromNode($node);
         if (!$phpDocInfo instanceof PhpDocInfo) {
