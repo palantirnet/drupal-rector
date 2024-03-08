@@ -13,7 +13,6 @@ use PhpParser\Node\Arg;
 use PhpParser\Node\Attribute;
 use PhpParser\Node\AttributeGroup;
 use PhpParser\Node\Name\FullyQualified;
-use PhpParser\Node\Scalar\String_;
 use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\ClassMethod;
 use PHPStan\PhpDocParser\Ast\PhpDoc\GenericTagValueNode;
@@ -236,7 +235,8 @@ CODE_SAMPLE
         return new Attribute($fullyQualified, $args);
     }
 
-    public function convertAnnotation(DoctrineAnnotationTagValueNode $value): ?Node\Expr {
+    public function convertAnnotation(DoctrineAnnotationTagValueNode $value): ?Node\Expr
+    {
         return match ($value->identifierTypeNode->name) {
             '@Translation' => $this->convertTranslateAnnotation($value),
             '@PluralTranslation' => $this->convertPluralTranslationAnnotation($value),
@@ -244,7 +244,8 @@ CODE_SAMPLE
         };
     }
 
-    public function convertPluralTranslationAnnotation(DoctrineAnnotationTagValueNode $value): ?Node\Expr  {
+    public function convertPluralTranslationAnnotation(DoctrineAnnotationTagValueNode $value): ?Node\Expr
+    {
         // Check the annotation type, this will be helpful later.
         if ($value->identifierTypeNode->name !== '@PluralTranslation') {
             return null;
@@ -255,6 +256,7 @@ CODE_SAMPLE
             $value->values[1]->key => $value->values[1]->value->value,
         ]);
     }
+
     public function convertTranslateAnnotation(DoctrineAnnotationTagValueNode $value): ?Node\Expr\New_
     {
         // Check the annotation type, this will be helpful later.
@@ -267,7 +269,7 @@ CODE_SAMPLE
         $contextArg = null;
 
         // Loop through the values of the annotation, just to make 100% sure we have the correct argument order
-            foreach ($value->values as $translateValue) {
+        foreach ($value->values as $translateValue) {
             if ($translateValue->key === null) {
                 $valueArg = $this->nodeFactory->createArg($translateValue->value->value);
             }
