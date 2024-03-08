@@ -214,7 +214,9 @@ CODE_SAMPLE
         $fullyQualified = new FullyQualified($attributeClass);
         $args = [];
         foreach ($parsedArgs as $value) {
-            if ($value->value instanceof DoctrineAnnotationTagValueNode) {
+            if ($value->key == 'deriver') {
+                $arg = $this->nodeFactory->createClassConstFetch($value->value->value,'class');
+            } elseif ($value->value instanceof DoctrineAnnotationTagValueNode) {
                 $arg = $this->convertTranslateAnnotation($value->value);
             } else {
                 $arg = new String_($value->value->value);
