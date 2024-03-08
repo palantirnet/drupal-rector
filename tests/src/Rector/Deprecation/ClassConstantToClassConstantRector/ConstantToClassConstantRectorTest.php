@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Drupal8\Rector\Deprecation\ConstantToClassConstantRector;
+namespace DrupalRector\Rector\Deprecation\ClassConstantToClassConstantRector;
 
 use Iterator;
 use Rector\Testing\PHPUnit\AbstractRectorTestCase;
 
-class ConstantToClassConstantRectorTest extends AbstractRectorTestCase
+class ClassConstantToClassConstantRectorTest extends AbstractRectorTestCase
 {
     /**
      * @covers ::refactor

@@ -15,6 +15,8 @@ use DrupalRector\Drupal9\Rector\Deprecation\PassRector;
 use DrupalRector\Drupal9\Rector\Deprecation\UiHelperTraitDrupalPostFormRector;
 use DrupalRector\Drupal9\Rector\Deprecation\UserPasswordRector;
 use DrupalRector\Drupal9\Rector\ValueObject\AssertLegacyTraitConfiguration;
+use DrupalRector\Rector\Deprecation\ClassConstantToClassConstantRector;
+use DrupalRector\Rector\ValueObject\ClassConstantToClassConstantConfiguration;
 use DrupalRector\Services\AddCommentService;
 use Rector\Config\RectorConfig;
 use Rector\PHPUnit\Set\PHPUnitSetList;
@@ -105,6 +107,28 @@ return static function (RectorConfig $rectorConfig): void {
             'toInt',
             'Drupal\Component\Utility\Bytes',
             'toNumber'
+        ),
+    ]);
+
+    // Change record: https://www.drupal.org/node/3151009 (only constants are supported)
+    $rectorConfig->ruleWithConfiguration(ClassConstantToClassConstantRector::class, [
+        new ClassConstantToClassConstantConfiguration(
+            'Symfony\Cmf\Component\Routing\RouteObjectInterface',
+            'ROUTE_NAME',
+            'Drupal\Core\Routing\RouteObjectInterface',
+            'ROUTE_NAME',
+        ),
+        new ClassConstantToClassConstantConfiguration(
+            'Symfony\Cmf\Component\Routing\RouteObjectInterface',
+            'ROUTE_OBJECT',
+            'Drupal\Core\Routing\RouteObjectInterface',
+            'ROUTE_OBJECT',
+        ),
+        new ClassConstantToClassConstantConfiguration(
+            'Symfony\Cmf\Component\Routing\RouteObjectInterface',
+            'CONTROLLER_NAME',
+            'Drupal\Core\Routing\RouteObjectInterface',
+            'CONTROLLER_NAME',
         ),
     ]);
 };
