@@ -6,8 +6,8 @@ namespace DrupalRector\Rector\Deprecation;
 
 use DrupalRector\Rector\ValueObject\DeprecationHelperRemoveConfiguration;
 use PhpParser\Node;
-use Rector\Core\Contract\Rector\ConfigurableRectorInterface;
-use Rector\Core\Rector\AbstractRector;
+use Rector\Contract\Rector\ConfigurableRectorInterface;
+use Rector\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\ConfiguredCodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
@@ -28,16 +28,16 @@ final class DeprecationHelperRemoveRector extends AbstractRector implements Conf
                 <<<'CODE_BEFORE'
 $settings = [];
 $filename = 'simple_filename.yaml';
-DeprecationHelper::backwardsCompatibleCall(\Drupal::VERSION, '9.1.0', fn() => old_function(), fn() => new_function());
-DeprecationHelper::backwardsCompatibleCall(\Drupal::VERSION, '10.5.0', fn() => drupal_rewrite_settings($settings, $filename), fn() => SettingsEditor::rewrite($filename, $settings));
-DeprecationHelper::backwardsCompatibleCall(\Drupal::VERSION, '11.1.0', fn() => old_function(), fn() => new_function());
+DeprecationHelper::backwardsCompatibleCall(\Drupal::VERSION, '9.1.0', fn() => new_function(), fn() => old_function());
+DeprecationHelper::backwardsCompatibleCall(\Drupal::VERSION, '10.5.0', fn() => SettingsEditor::rewrite($filename, $settings), fn() => drupal_rewrite_settings($settings, $filename));
+DeprecationHelper::backwardsCompatibleCall(\Drupal::VERSION, '11.1.0', fn() => new_function(), fn() => old_function());
 CODE_BEFORE
                 ,
                 <<<'CODE_AFTER'
 $settings = [];
 $filename = 'simple_filename.yaml';
 drupal_rewrite_settings($settings, $filename);
-DeprecationHelper::backwardsCompatibleCall(\Drupal::VERSION, '11.1.0', fn() => old_function(), fn() => new_function());
+DeprecationHelper::backwardsCompatibleCall(\Drupal::VERSION, '11.1.0', fn() => new_function(), fn() => old_function());
 CODE_AFTER
                 ,
                 [
@@ -88,7 +88,7 @@ CODE_AFTER
                 continue;
             }
 
-            $newCall = $args[3]->value;
+            $newCall = $args[2]->value;
             if ($newCall instanceof Node\Expr\ArrowFunction) {
                 return $newCall->expr;
             }

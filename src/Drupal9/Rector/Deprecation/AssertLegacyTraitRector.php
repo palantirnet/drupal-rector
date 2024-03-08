@@ -10,8 +10,8 @@ use DrupalRector\Utility\GetDeclaringSourceTrait;
 use PhpParser\Node;
 use PhpParser\Node\Arg;
 use PhpParser\Node\VariadicPlaceholder;
-use Rector\Core\Contract\Rector\ConfigurableRectorInterface;
-use Rector\Core\Rector\AbstractRector;
+use Rector\Contract\Rector\ConfigurableRectorInterface;
+use Rector\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\ConfiguredCodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
@@ -56,7 +56,7 @@ class AssertLegacyTraitRector extends AbstractRector implements ConfigurableRect
      * @param string                         $method
      * @param array<Arg|VariadicPlaceholder> $args
      *
-     * @return \PhpParser\Node\Expr\MethodCall
+     * @return Node\Expr\MethodCall
      */
     protected function createAssertSessionMethodCall(string $method, array $args): Node\Expr\MethodCall
     {

@@ -8,11 +8,11 @@ use DrupalRector\Rector\Deprecation\FunctionToStaticRector;
 use DrupalRector\Rector\ValueObject\DrupalIntroducedVersionConfiguration;
 use DrupalRector\Rector\ValueObject\FunctionToStaticConfiguration;
 use Rector\Config\RectorConfig;
-use Rector\Symfony\Set\SymfonyLevelSetList;
+use Rector\Symfony\Set\SymfonySetList;
 
 return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->sets([
-        SymfonyLevelSetList::UP_TO_SYMFONY_63,
+        SymfonySetList::SYMFONY_63,
     ]);
 
     // https://www.drupal.org/node/3244583

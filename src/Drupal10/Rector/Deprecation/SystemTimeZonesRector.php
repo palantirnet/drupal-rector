@@ -9,7 +9,7 @@ use DrupalRector\Rector\AbstractDrupalCoreRector;
 use DrupalRector\Rector\ValueObject\DrupalIntroducedVersionConfiguration;
 use PhpParser\Node;
 use PhpParser\Node\Expr\ConstFetch;
-use Rector\Core\PhpParser\Node\Value\ValueResolver;
+use Rector\PhpParser\Node\Value\ValueResolver;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\ConfiguredCodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 

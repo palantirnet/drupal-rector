@@ -9,7 +9,7 @@ use DrupalRector\Utility\GetDeclaringSourceTrait;
 use PhpParser\Node;
 use PhpParser\Node\Arg;
 use PhpParser\Node\VariadicPlaceholder;
-use Rector\Core\Rector\AbstractRector;
+use Rector\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
@@ -100,7 +100,7 @@ CODE_AFTER
      * @param string                         $method
      * @param array<Arg|VariadicPlaceholder> $args
      *
-     * @return \PhpParser\Node\Expr\MethodCall
+     * @return Node\Expr\MethodCall
      */
     protected function createAssertSessionMethodCall(string $method, array $args): Node\Expr\MethodCall
     {

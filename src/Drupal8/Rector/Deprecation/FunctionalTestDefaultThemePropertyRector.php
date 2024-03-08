@@ -10,9 +10,9 @@ use PhpParser\Node;
 use PHPStan\Analyser\Scope;
 use PHPStan\Type\ObjectType;
 use Rector\BetterPhpDocParser\PhpDocInfo\PhpDocInfoFactory;
-use Rector\Core\Exception\ShouldNotHappenException;
-use Rector\Core\PhpParser\Node\Value\ValueResolver;
-use Rector\Core\Rector\AbstractScopeAwareRector;
+use Rector\Exception\ShouldNotHappenException;
+use Rector\PhpParser\Node\Value\ValueResolver;
+use Rector\Rector\AbstractScopeAwareRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
@@ -67,7 +67,7 @@ CODE_SAMPLE
     }
 
     /**
-     * @param \PhpParser\Node\Stmt\Class_ $node
+     * @param Node\Stmt\Class_ $node
      */
     public function refactorWithScope(Node $node, Scope $scope): ?Node
     {

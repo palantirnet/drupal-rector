@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace DrupalRector\Drupal9\Rector\Property;
 
 use PhpParser\Node;
-use Rector\Core\Rector\AbstractRector;
 use Rector\Privatization\NodeManipulator\VisibilityManipulator;
+use Rector\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
@@ -51,7 +51,7 @@ CODE_SAMPLE
     }
 
     /**
-     * @param \PhpParser\Node\Stmt\Property $node
+     * @param Node\Stmt\Property $node
      */
     public function refactor(Node $node): ?Node
     {

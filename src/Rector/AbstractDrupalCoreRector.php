@@ -8,8 +8,10 @@ use Drupal\Component\Utility\DeprecationHelper;
 use DrupalRector\Contract\VersionedConfigurationInterface;
 use PhpParser\Node;
 use PhpParser\Node\Expr\ArrowFunction;
-use Rector\Core\Contract\Rector\ConfigurableRectorInterface;
-use Rector\Core\Rector\AbstractRector;
+use PHPStan\Reflection\MethodReflection;
+use Rector\Contract\Rector\ConfigurableRectorInterface;
+use Rector\NodeTypeResolver\Node\AttributeKey;
+use Rector\Rector\AbstractRector;
 
 abstract class AbstractDrupalCoreRector extends AbstractRector implements ConfigurableRectorInterface
 {
@@ -29,12 +31,41 @@ abstract class AbstractDrupalCoreRector extends AbstractRector implements Config
         $this->configuration = $configuration;
     }
 
+    protected function isInBackwardsCompatibleCall(Node $node): bool
+    {
+        if (!class_exists(DeprecationHelper::class)) {
+            return false;
+        }
+
+        $scope = $node->getAttribute(AttributeKey::SCOPE);
+
+        $callStack = $scope->getFunctionCallStackWithParameters();
+        if (count($callStack) === 0) {
+            return false;
+        }
+        [$function, $parameter] = $callStack[0];
+        if (!$function instanceof MethodReflection) {
+            return false;
+        }
+        if ($function->getName() !== 'backwardsCompatibleCall'
+            || $function->getDeclaringClass()->getName() !== DeprecationHelper::class
+        ) {
+            return false;
+        }
+
+        return $parameter !== null && $parameter->getName() === 'deprecatedCallable';
+    }
+
     public function refactor(Node $node)
     {
         $drupalVersion = str_replace(['.x-dev', '-dev'], '.0', \Drupal::VERSION);
 
         foreach ($this->configuration as $configuration) {
             if (version_compare($drupalVersion, $configuration->getIntroducedVersion(), '<')) {
+                continue;
+            }
+
+            if ($this->isInBackwardsCompatibleCall($node)) {
                 continue;
             }
 
@@ -80,8 +111,8 @@ abstract class AbstractDrupalCoreRector extends AbstractRector implements Config
         return $this->nodeFactory->createStaticCall(DeprecationHelper::class, 'backwardsCompatibleCall', [
             $this->nodeFactory->createClassConstFetch(\Drupal::class, 'VERSION'),
             $introducedVersion,
-            new ArrowFunction(['expr' => $clonedNode]),
             new ArrowFunction(['expr' => $result]),
+            new ArrowFunction(['expr' => $clonedNode]),
         ]);
     }
 }
