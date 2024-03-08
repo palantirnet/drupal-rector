@@ -30,6 +30,10 @@
         {
             "name": "Matt Glaman",
             "email": "nmd.matt@gmail.com"
+        },
+        {
+            "name": "Björn Brala",
+            "email": "drupal@bjorn.dev"
         }
     ],
     "autoload": {
