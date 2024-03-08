@@ -2,7 +2,8 @@
 
 declare(strict_types=1);
 
-use DrupalRector\Drupal10\Rector\Deprecation\ActionAnnotationToAttributeRector;
+use DrupalRector\Drupal10\Rector\Deprecation\AnnotationToAttributeRector;
+use DrupalRector\Drupal10\Rector\ValueObject\AnnotationToAttributeConfiguration;
 use DrupalRector\Rector\Deprecation\FunctionToStaticRector;
 use DrupalRector\Rector\Deprecation\MethodToMethodWithCheckRector;
 use DrupalRector\Rector\ValueObject\FunctionToStaticConfiguration;
@@ -27,5 +28,11 @@ return static function (RectorConfig $rectorConfig): void {
     ]);
 
     // @see https://www.drupal.org/node/3395575
-    $rectorConfig->rule(ActionAnnotationToAttributeRector::class);
+    $rectorConfig->ruleWithConfiguration(AnnotationToAttributeRector::class, [
+        new AnnotationToAttributeConfiguration('10.2.0', '12.0.0', 'Action', 'Drupal\Core\Action\Attribute\Action'),
+    ]);
+    // This rule is disabled from now to first see how it performs on core.
+    $rectorConfig->skip([
+        AnnotationToAttributeRector::class,
+    ]);
 };

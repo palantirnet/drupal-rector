@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace DrupalRector\Drupal10\Rector\Deprecation;
 
 use DrupalRector\Contract\VersionedConfigurationInterface;
-use DrupalRector\Drupal10\Rector\ValueObject\DrupalIntroducedAndRemovalVersionConfiguration;
+use DrupalRector\Drupal10\Rector\ValueObject\AnnotationToAttributeConfiguration;
 use DrupalRector\Rector\AbstractDrupalCoreRector;
 use DrupalRector\Rector\ValueObject\DrupalIntroducedVersionConfiguration;
 use PhpParser\Node;
@@ -35,10 +35,10 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  *
  * @see \Rector\PHPUnit\Tests\AnnotationsToAttributes\Rector\Class_\TicketAnnotationToAttributeRector\TicketAnnotationToAttributeRectorTest
  */
-final class ActionAnnotationToAttributeRector extends AbstractDrupalCoreRector implements MinPhpVersionInterface
+final class AnnotationToAttributeRector extends AbstractDrupalCoreRector implements MinPhpVersionInterface
 {
     /**
-     * @var array|DrupalIntroducedAndRemovalVersionConfiguration[]
+     * @var array|AnnotationToAttributeConfiguration[]
      */
     protected array $configuration = [];
 
@@ -64,7 +64,7 @@ final class ActionAnnotationToAttributeRector extends AbstractDrupalCoreRector i
     public function configure(array $configuration): void
     {
         foreach ($configuration as $value) {
-            if (!($value instanceof DrupalIntroducedAndRemovalVersionConfiguration)) {
+            if (!($value instanceof AnnotationToAttributeConfiguration)) {
                 throw new \InvalidArgumentException(sprintf('Each configuration item must be an instance of "%s"', DrupalIntroducedVersionConfiguration::class));
             }
         }
@@ -150,8 +150,8 @@ CODE_SAMPLE
     }
 
     /**
-     * @param Class_|ClassMethod                             $node
-     * @param DrupalIntroducedAndRemovalVersionConfiguration $configuration
+     * @param Class_|ClassMethod                 $node
+     * @param AnnotationToAttributeConfiguration $configuration
      */
     public function refactorWithConfiguration(Node $node, VersionedConfigurationInterface $configuration): ?Node
     {
@@ -160,7 +160,7 @@ CODE_SAMPLE
             return null;
         }
 
-        $tagsByName = $phpDocInfo->getTagsByName('Action');
+        $tagsByName = $phpDocInfo->getTagsByName($configuration->getAnnotation());
         if ($tagsByName === []) {
             return null;
         }
@@ -168,7 +168,7 @@ CODE_SAMPLE
         $hasAttribute = false;
         foreach ($node->attrGroups as $attrGroup) {
             foreach ($attrGroup->attrs as $attr) {
-                if ($attr->name->toString() === 'Drupal\Core\Action\Attribute\Action') {
+                if ($attr->name->toString() === $configuration->getAttributeClass()) {
                     $hasAttribute = true;
                     break 2;
                 }
@@ -186,7 +186,7 @@ CODE_SAMPLE
                 $stringValue = '{'.trim($stringValue, '()').'}';
                 $tokenIterator = $this->tokenIteratorFactory->create($stringValue);
                 $data = $this->arrayParser->parseCurlyArray($tokenIterator, $node);
-                $attribute = $this->createAttribute($data);
+                $attribute = $this->createAttribute($configuration->getAttributeClass(), $data);
                 $node->attrGroups[] = new AttributeGroup([$attribute]);
             }
 
@@ -209,12 +209,12 @@ CODE_SAMPLE
      *
      * @return Attribute
      */
-    private function createAttribute(array $parsedArgs): Attribute
+    private function createAttribute(string $attributeClass, array $parsedArgs): Attribute
     {
-        $fullyQualified = new FullyQualified('Drupal\Core\Action\Attribute\Action');
+        $fullyQualified = new FullyQualified($attributeClass);
         $args = [];
         foreach ($parsedArgs as $value) {
-            if ($value->key === 'action_label') {
+            if ($value->value instanceof DoctrineAnnotationTagValueNode) {
                 $arg = $this->convertTranslateAnnotation($value->value);
             } else {
                 $arg = new String_($value->value->value);
