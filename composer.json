@@ -34,6 +34,10 @@
         {
             "name": "Björn Brala",
             "email": "drupal@bjorn.dev"
+        },
+        {
+            "name": "Ken Rickard",
+            "email": "agentrickard@gmail.com"
         }
     ],
     "autoload": {
