@@ -27,7 +27,6 @@ use Rector\BetterPhpDocParser\PhpDocParser\StaticDoctrineAnnotationParser\ArrayP
 use Rector\Comments\NodeDocBlock\DocBlockUpdater;
 use Rector\ValueObject\PhpVersion;
 use Rector\VersionBonding\Contract\MinPhpVersionInterface;
-use RectorPrefix202310\PHPUnit\Framework\Attributes\Ticket;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
