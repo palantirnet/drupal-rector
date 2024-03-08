@@ -11,6 +11,6 @@ return static function (RectorConfig $rectorConfig): void {
     DeprecationBase::addClass(AnnotationToAttributeRector::class, $rectorConfig, false, [
         new AnnotationToAttributeConfiguration('10.2.0', '12.0.0', 'Action', 'Drupal\Core\Action\Attribute\Action'),
         new AnnotationToAttributeConfiguration('10.2.0', '12.0.0', 'Block', 'Drupal\Core\Action\Attribute\Block'),
-        new AnnotationToAttributeConfiguration('10.2.0', '12.0.0', 'ContentEntityType', 'Drupal\Core\Entity\Attribute\ConfigEntityType'),
+        new AnnotationToAttributeConfiguration('10.2.0', '12.0.0', 'ContentEntityType', 'Drupal\Core\Entity\Attribute\ContentEntityType'),
     ]);
 };
