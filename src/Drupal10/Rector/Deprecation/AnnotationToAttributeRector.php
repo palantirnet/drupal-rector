@@ -54,7 +54,7 @@ final class AnnotationToAttributeRector extends AbstractDrupalCoreRector impleme
     private PhpDocInfoFactory $phpDocInfoFactory;
 
     /**
-     * @var \Rector\PhpAttribute\AnnotationToAttributeMapper
+     * @var AnnotationToAttributeMapper
      */
     private AnnotationToAttributeMapper $annotationToAttributeMapper;
 
@@ -222,7 +222,7 @@ CODE_SAMPLE
         $args = [];
         foreach ($parsedArgs as $value) {
             if ($value->key == 'deriver') {
-                $arg = $this->nodeFactory->createClassConstFetch($value->value->value,'class');
+                $arg = $this->nodeFactory->createClassConstFetch($value->value->value, 'class');
             } elseif ($value->value instanceof DoctrineAnnotationTagValueNode) {
                 $arg = $this->convertTranslateAnnotation($value->value);
             } elseif ($value->key === 'forms') {
