@@ -301,6 +301,6 @@ CODE_SAMPLE
             $argArray[] = $contextArg;
         }
 
-        return new Node\Expr\New_(new Node\Name('Drupal\Core\StringTranslation\TranslatableMarkup'), $argArray);
+        return new Node\Expr\New_(new Node\Name('\Drupal\Core\StringTranslation\TranslatableMarkup'), $argArray);
     }
 }

@@ -9,7 +9,7 @@
  *   type = "system"
  * )
  */
-#[\Drupal\Core\Action\Attribute\Action(id: 'action_example_basic_action', action_label: new Drupal\Core\StringTranslation\TranslatableMarkup('Action Example: A basic example action that does nothing'), type: 'system')]
+#[\Drupal\Core\Action\Attribute\Action(id: 'action_example_basic_action', action_label: new \Drupal\Core\StringTranslation\TranslatableMarkup('Action Example: A basic example action that does nothing'), type: 'system')]
 class BasicExample extends ActionBase implements ContainerFactoryPluginInterface {
 
 }
@@ -21,7 +21,7 @@ class BasicExample extends ActionBase implements ContainerFactoryPluginInterface
 /**
  * A basic example action that does nothing.
  */
-#[\Drupal\Core\Action\Attribute\Action(id: 'action_example_basic_action', action_label: new Drupal\Core\StringTranslation\TranslatableMarkup('Action Example: A basic example action that does nothing'), type: 'system')]
+#[\Drupal\Core\Action\Attribute\Action(id: 'action_example_basic_action', action_label: new \Drupal\Core\StringTranslation\TranslatableMarkup('Action Example: A basic example action that does nothing'), type: 'system')]
 class BasicExample extends ActionBase implements ContainerFactoryPluginInterface {
 
 }
