@@ -230,7 +230,7 @@ CODE_SAMPLE
             }
 
             // Sometimes the end ) matches. We need to remove it.
-            if($value->key === null) {
+            if ($value->key === null) {
                 continue;
             }
 
