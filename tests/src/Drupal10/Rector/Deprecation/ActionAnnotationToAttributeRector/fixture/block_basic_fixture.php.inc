@@ -30,7 +30,7 @@ class BasicExample extends ActionBase implements ContainerFactoryPluginInterface
  *   },
  * )
  */
-#[\Drupal\Core\Action\Attribute\Block(id: 'page_title_block', admin_label: new Drupal\Core\StringTranslation\TranslatableMarkup('Page title'), forms: ['settings_tray' => false])]
+#[\Drupal\Core\Action\Attribute\Block(id: 'page_title_block', admin_label: new \Drupal\Core\StringTranslation\TranslatableMarkup('Page title'), forms: ['settings_tray' => false])]
 class BasicExample extends ActionBase implements ContainerFactoryPluginInterface {
 
 }
