@@ -26,10 +26,10 @@ return static function(RectorConfig $rectorConfig): void {
   ]);
 
   $rectorConfig->autoloadPaths([
-    './lib',
-    './modules',
-    './profiles',
-    './themes'
+    './core/lib',
+    './core/modules',
+    './core/profiles',
+    './core/themes'
   ]);
 
 
