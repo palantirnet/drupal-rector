@@ -43,13 +43,13 @@ return static function (RectorConfig $rectorConfig): void {
 
     $rectorConfig->ruleWithConfiguration(FunctionToServiceRector::class, [
         // https://www.drupal.org/node/2418133
-        new FunctionToServiceConfiguration('drupal_realpath', 'file_system', 'realpath'),
+        new FunctionToServiceConfiguration('8.0.0', 'drupal_realpath', 'file_system', 'realpath'),
         // https://www.drupal.org/node/2912696
-        new FunctionToServiceConfiguration('drupal_render', 'renderer', 'render'),
+        new FunctionToServiceConfiguration('8.0.0', 'drupal_render', 'renderer', 'render'),
         // https://www.drupal.org/node/2912696
-        new FunctionToServiceConfiguration('drupal_render_root', 'renderer', 'renderRoot'),
+        new FunctionToServiceConfiguration('8.0.0', 'drupal_render_root', 'renderer', 'renderRoot'),
         // https://www.drupal.org/node/1876852
-        new FunctionToServiceConfiguration('format_date', 'date.formatter', 'format'),
+        new FunctionToServiceConfiguration('8.0.0', 'format_date', 'date.formatter', 'format'),
     ]);
 
     $rectorConfig->rule(EntityInterfaceLinkRector::class);

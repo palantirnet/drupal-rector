@@ -15,9 +15,9 @@ return static function (RectorConfig $rectorConfig): void {
     });
     $rectorConfig->ruleWithConfiguration(FunctionToServiceRector::class, [
         // https://www.drupal.org/node/3006851
-        new FunctionToServiceConfiguration('file_prepare_directory', 'file_system', 'prepareDirectory'),
+        new FunctionToServiceConfiguration('8.7.0', 'file_prepare_directory', 'file_system', 'prepareDirectory'),
         // https://www.drupal.org/node/3006851
-        new FunctionToServiceConfiguration('file_unmanaged_save_data', 'file_system', 'saveData'),
+        new FunctionToServiceConfiguration('8.7.0', 'file_unmanaged_save_data', 'file_system', 'saveData'),
     ]);
 
     /**
