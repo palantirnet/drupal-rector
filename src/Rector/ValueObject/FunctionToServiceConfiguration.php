@@ -48,8 +48,8 @@ class FunctionToServiceConfiguration implements VersionedConfigurationInterface
         return $this->serviceMethodName;
     }
 
-    public function getIntroducedVersion(): string {
+    public function getIntroducedVersion(): string
+    {
         return $this->introducedVersion;
     }
-
 }

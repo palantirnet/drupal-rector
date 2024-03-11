@@ -8,8 +8,6 @@ use DrupalRector\Contract\VersionedConfigurationInterface;
 use DrupalRector\Rector\AbstractDrupalCoreRector;
 use DrupalRector\Rector\ValueObject\FunctionToServiceConfiguration;
 use PhpParser\Node;
-use Rector\Contract\Rector\ConfigurableRectorInterface;
-use Rector\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\ConfiguredCodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
@@ -58,14 +56,14 @@ class FunctionToServiceRector extends AbstractDrupalCoreRector
         assert($configuration instanceof FunctionToServiceConfiguration);
         assert($node instanceof Node\Expr\FuncCall);
 
-            if ($this->getName($node->name) === $configuration->getDeprecatedFunctionName()) {
-                // This creates a service call like `\Drupal::service('file_system').
-                $service = new Node\Expr\StaticCall(new Node\Name\FullyQualified('Drupal'), 'service', [new Node\Arg(new Node\Scalar\String_($configuration->getServiceName()))]);
+        if ($this->getName($node->name) === $configuration->getDeprecatedFunctionName()) {
+            // This creates a service call like `\Drupal::service('file_system').
+            $service = new Node\Expr\StaticCall(new Node\Name\FullyQualified('Drupal'), 'service', [new Node\Arg(new Node\Scalar\String_($configuration->getServiceName()))]);
 
-                $method_name = new Node\Identifier($configuration->getServiceMethodName());
+            $method_name = new Node\Identifier($configuration->getServiceMethodName());
 
-                return new Node\Expr\MethodCall($service, $method_name, $node->args);
-            }
+            return new Node\Expr\MethodCall($service, $method_name, $node->args);
+        }
 
         return null;
     }
@@ -268,7 +266,7 @@ $date = \Drupal::service('date.formatter')->format($timestamp, $type, $format, $
 CODE_AFTER
                 ,
                 [
-                    new FunctionToServiceConfiguration('8.0.0' , 'format_date', 'date.formatter', 'format'),
+                    new FunctionToServiceConfiguration('8.0.0', 'format_date', 'date.formatter', 'format'),
                 ]
             ),
             new ConfiguredCodeSample(
