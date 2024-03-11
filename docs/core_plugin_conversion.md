@@ -1,10 +1,13 @@
 # Core annotation to attribute conversion
 
-To convert a plugin in core from an annotation to an attribute, you need to do the following:
+To convert a plugin in core from an annotation to an attribute, you need to do the following after checking out core.
 
 ## Install drupal-rector
+
+Adding `-W` since PHPStan needs updateing.
+
 ```bash
-composer require --dev palantirnet/drupal-rector
+composer require --dev palantirnet/drupal-rector -W
 ```
 
 ## Configure drupal-rector (rector.php)
