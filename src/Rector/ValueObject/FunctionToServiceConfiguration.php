@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace DrupalRector\Rector\ValueObject;
 
-class FunctionToServiceConfiguration
+use DrupalRector\Contract\VersionedConfigurationInterface;
+
+class FunctionToServiceConfiguration implements VersionedConfigurationInterface
 {
     /**
      * The deprecated function name.
@@ -21,11 +23,14 @@ class FunctionToServiceConfiguration
      */
     protected string $serviceMethodName;
 
-    public function __construct(string $deprecatedFunctionName, string $serviceName, string $serviceMethodName)
+    protected string $introducedVersion;
+
+    public function __construct(string $introducedVersion, string $deprecatedFunctionName, string $serviceName, string $serviceMethodName)
     {
         $this->deprecatedFunctionName = $deprecatedFunctionName;
         $this->serviceName = $serviceName;
         $this->serviceMethodName = $serviceMethodName;
+        $this->introducedVersion = $introducedVersion;
     }
 
     public function getDeprecatedFunctionName(): string
@@ -41,5 +46,10 @@ class FunctionToServiceConfiguration
     public function getServiceMethodName(): string
     {
         return $this->serviceMethodName;
+    }
+
+    public function getIntroducedVersion(): string
+    {
+        return $this->introducedVersion;
     }
 }
