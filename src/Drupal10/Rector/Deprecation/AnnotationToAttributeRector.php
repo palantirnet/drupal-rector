@@ -27,7 +27,6 @@ use Rector\Comments\NodeDocBlock\DocBlockUpdater;
 use Rector\PhpAttribute\AnnotationToAttributeMapper;
 use Rector\ValueObject\PhpVersion;
 use Rector\VersionBonding\Contract\MinPhpVersionInterface;
-use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\ConfiguredCodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
@@ -117,10 +116,10 @@ use Drupal\Core\StringTranslation\TranslatableMarkup;
 )]
 class PublishAction extends EntityActionBase {
 CODE_SAMPLE
-        ,
-        [
-            new AnnotationToAttributeConfiguration('10.2.0', '12.0.0', 'Action', 'Drupal\Core\Action\Attribute\Action'),
-        ])]);
+            ,
+            [
+                new AnnotationToAttributeConfiguration('10.2.0', '12.0.0', 'Action', 'Drupal\Core\Action\Attribute\Action'),
+            ])]);
     }
 
     /**
