@@ -12,4 +12,6 @@ final class Drupal10SetList implements SetListInterface
     public const DRUPAL_100 = __DIR__.'/../../config/drupal-10/drupal-10.0-deprecations.php';
     public const DRUPAL_101 = __DIR__.'/../../config/drupal-10/drupal-10.1-deprecations.php';
     public const DRUPAL_102 = __DIR__.'/../../config/drupal-10/drupal-10.2-deprecations.php';
+
+    public const ANNOTATION_TO_ATTRIBUTES = __DIR__.'/../../config/drupal-10/drupal-10-annotation-to-attributes.php';
 }
