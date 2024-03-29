@@ -30,6 +30,9 @@ jobs:
                     - php-version: "8.1"
                       drupal: "^10.0"
                       fixture: "d10"
+                    - php-version: "8.2"
+                      drupal: "^10.0"
+                      fixture: "d10"
         runs-on: ubuntu-latest
         steps:
             -   uses: actions/checkout@v3
