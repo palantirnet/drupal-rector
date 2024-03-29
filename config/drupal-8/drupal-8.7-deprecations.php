@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-use DrupalRector\Drupal8\Rector\Deprecation\ConstantToClassConstantRector;
-use DrupalRector\Drupal8\Rector\ValueObject\ConstantToClassConfiguration;
+use DrupalRector\Rector\Deprecation\ConstantToClassConstantRector;
 use DrupalRector\Rector\Deprecation\FunctionToServiceRector;
+use DrupalRector\Rector\ValueObject\ConstantToClassConfiguration;
 use DrupalRector\Rector\ValueObject\FunctionToServiceConfiguration;
 use DrupalRector\Services\AddCommentService;
 use Rector\Config\RectorConfig;
