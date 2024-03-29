@@ -1,20 +1,55 @@
-# 52 Rules Overview
+# 54 Rules Overview
 
 <br>
 
 ## Categories
 
-- [Drupal10](#drupal10) (2)
+- [Drupal10](#drupal10) (3)
 
 - [Drupal8](#drupal8) (18)
 
 - [Drupal9](#drupal9) (26)
 
-- [DrupalRector](#drupalrector) (6)
+- [DrupalRector](#drupalrector) (7)
 
 <br>
 
 ## Drupal10
+
+### AnnotationToAttributeRector
+
+Change annotations with value to attribute
+
+:wrench: **configure it!**
+
+- class: [`DrupalRector\Drupal10\Rector\Deprecation\AnnotationToAttributeRector`](../src/Drupal10/Rector/Deprecation/AnnotationToAttributeRector.php)
+
+```diff
+ namespace Drupal\Core\Action\Plugin\Action;
+
++use Drupal\Core\Action\Plugin\Action\Derivative\EntityPublishedActionDeriver;
++use Drupal\Core\Action\Attribute\Action;
+ use Drupal\Core\Session\AccountInterface;
++use Drupal\Core\StringTranslation\TranslatableMarkup;
+
+ /**
+  * Publishes an entity.
+- *
+- * @Action(
+- *   id = "entity:publish_action",
+- *   action_label = @Translation("Publish"),
+- *   deriver = "Drupal\Core\Action\Plugin\Action\Derivative\EntityPublishedActionDeriver",
+- * )
+  */
++#[Action(
++  id: 'entity:publish_action',
++  action_label: new TranslatableMarkup('Publish'),
++  deriver: EntityPublishedActionDeriver::class
++)]
+ class PublishAction extends EntityActionBase {
+```
+
+<br>
 
 ### SystemTimeZonesRector
 
@@ -842,6 +877,25 @@ Fixes deprecated `user_password()` calls
 <br>
 
 ## DrupalRector
+
+### ClassConstantToClassConstantRector
+
+Fixes deprecated class contant use, used in Drupal 9.1 deprecations
+
+:wrench: **configure it!**
+
+- class: [`DrupalRector\Rector\Deprecation\ClassConstantToClassConstantRector`](../src/Rector/Deprecation/ClassConstantToClassConstantRector.php)
+
+```diff
+-$value = Symfony\Cmf\Component\Routing\RouteObjectInterface::ROUTE_NAME;
+-$value2 = Symfony\Cmf\Component\Routing\RouteObjectInterface::ROUTE_OBJECT;
+-$value3 = Symfony\Cmf\Component\Routing\RouteObjectInterface::CONTROLLER_NAME;
++$value = \Drupal\Core\Routing\RouteObjectInterface::ROUTE_NAME;
++$value2 = \Drupal\Core\Routing\RouteObjectInterface::ROUTE_OBJECT;
++$value3 = \Drupal\Core\Routing\RouteObjectInterface::CONTROLLER_NAME;
+```
+
+<br>
 
 ### ConstantToClassConstantRector
 
