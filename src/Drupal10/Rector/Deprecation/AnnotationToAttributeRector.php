@@ -177,7 +177,8 @@ CODE_SAMPLE
         $hasAttribute = false;
         foreach ($node->attrGroups as $attrGroup) {
             foreach ($attrGroup->attrs as $attr) {
-                if ($attr->name->toString() === $configuration->getAttributeClass()) {
+                echo "Comparing {$attr->name->toString()} with {$configuration->getAttributeClass()}\n";
+                if (ltrim($attr->name->toString(), '\\') === ltrim($configuration->getAttributeClass(), '\\')) {
                     $hasAttribute = true;
                     break 2;
                 }
