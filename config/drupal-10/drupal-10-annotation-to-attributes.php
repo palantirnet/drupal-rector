@@ -57,11 +57,15 @@ return static function (RectorConfig $rectorConfig): void {
     $configurations = [];
     foreach ($lines as $line) {
         $parts = explode("\t", $line);
+
+        $annotationParts = explode('\\', $parts[0]);
+        $annotation = array_pop($annotationParts);
+        $attributeClass = $parts[1];
         $configurations[] = new \DrupalRector\Drupal10\Rector\ValueObject\AnnotationToAttributeConfiguration(
             '10.3.0',
             '12.0.0',
-            $parts[0],
-            $parts[1]
+            $annotation,
+            $attributeClass
         );
     }
 
@@ -72,11 +76,15 @@ return static function (RectorConfig $rectorConfig): void {
     $configurations = [];
     foreach ($lines as $line) {
         $parts = explode("\t", $line);
+
+        $annotationParts = explode('\\', $parts[0]);
+        $annotation = array_pop($annotationParts);
+        $attributeClass = $parts[1];
         $configurations[] = new \DrupalRector\Drupal10\Rector\ValueObject\AnnotationToAttributeConfiguration(
             '10.2.0',
             '12.0.0',
-            $parts[0],
-            $parts[1]
+            $annotation,
+            $attributeClass
         );
     }
 
