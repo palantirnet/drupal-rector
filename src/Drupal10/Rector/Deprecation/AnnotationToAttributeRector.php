@@ -220,7 +220,7 @@ CODE_SAMPLE
      */
     private function createAttribute(string $attributeClass, array $parsedArgs): Attribute
     {
-        $fullyQualified = new FullyQualified($attributeClass);
+        $fullyQualified = new FullyQualified(ltrim($attributeClass, '\\'));
         $args = [];
         foreach ($parsedArgs as $value) {
             if ($value->key == 'deriver') {
