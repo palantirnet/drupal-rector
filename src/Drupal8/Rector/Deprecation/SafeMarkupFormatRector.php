@@ -27,15 +27,15 @@ final class SafeMarkupFormatRector extends AbstractRector
     public function getRuleDefinition(): RuleDefinition
     {
         return new RuleDefinition('Fixes deprecated SafeMarkup::format() calls', [
-          new CodeSample(
-              <<<'CODE_BEFORE'
+            new CodeSample(
+                <<<'CODE_BEFORE'
 $safe_string_markup_object = \Drupal\Component\Utility\SafeMarkup::format('hello world');
 CODE_BEFORE
-              ,
-              <<<'CODE_AFTER'
+                ,
+                <<<'CODE_AFTER'
 $safe_string_markup_object = new \Drupal\Component\Render\FormattableMarkup('hello world');
 CODE_AFTER
-          ),
+            ),
         ]);
     }
 
@@ -45,7 +45,7 @@ CODE_AFTER
     public function getNodeTypes(): array
     {
         return [
-          Node\Expr\StaticCall::class,
+            Node\Expr\StaticCall::class,
         ];
     }
 
