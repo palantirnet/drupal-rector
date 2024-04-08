@@ -46,7 +46,7 @@ CODE_AFTER
     public function getNodeTypes(): array
     {
         return [
-           Node\Expr\StaticCall::class,
+            Node\Expr\StaticCall::class,
         ];
     }
 
