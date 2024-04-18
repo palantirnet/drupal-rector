@@ -16,7 +16,7 @@ return static function (RectorConfig $rectorConfig): void {
 
     // https://www.drupal.org/node/2999981
     $rectorConfig->ruleWithConfiguration(FunctionToStaticRector::class, [
-        new FunctionToStaticConfiguration('10.2.0', 'format_size', '\Drupal\Core\StringTranslation\ByteSizeMarkup', 'create'),
+        new FunctionToStaticConfiguration('10.2.0', 'format_size', 'Drupal\Core\StringTranslation\ByteSizeMarkup', 'create'),
     ]);
 
     // https://www.drupal.org/node/3265963
