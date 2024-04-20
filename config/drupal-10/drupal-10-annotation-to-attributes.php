@@ -2,13 +2,7 @@
 
 declare(strict_types=1);
 
-use DrupalRector\Drupal10\Rector\Deprecation\SystemTimeZonesRector;
-use DrupalRector\Drupal10\Rector\Deprecation\WatchdogExceptionRector;
-use DrupalRector\Rector\Deprecation\FunctionToStaticRector;
-use DrupalRector\Rector\ValueObject\DrupalIntroducedVersionConfiguration;
-use DrupalRector\Rector\ValueObject\FunctionToStaticConfiguration;
 use Rector\Config\RectorConfig;
-use Rector\Symfony\Set\SymfonySetList;
 
 return static function (RectorConfig $rectorConfig): void {
     $source = '\Drupal\Core\Annotation\Mail	\Drupal\Core\Mail\Attribute\Mail
@@ -48,10 +42,18 @@ return static function (RectorConfig $rectorConfig): void {
 \Drupal\views\Annotation\ViewsDisplay	\Drupal\views\Attribute\ViewsDisplay
 \Drupal\views\Annotation\ViewsStyle	\Drupal\views\Attribute\ViewsStyle
 \Drupal\views\Annotation\ViewsArgumentDefault	\Drupal\views\Attribute\ViewsArgumentDefault
+\Drupal\views\Annotation\ViewsWizard	\Drupal\views\Attribute\ViewsWizard
 \Drupal\editor\Annotation\Editor	\Drupal\editor\Attribute\Editor
 \Drupal\Core\Display\Annotation\DisplayVariant	\Drupal\Core\Display\Attribute\DisplayVariant
 \Drupal\Core\Render\Annotation\FormElement	\Drupal\Core\Render\Attribute\FormElement
-\Drupal\Core\Render\Annotation\RenderElement	\Drupal\Core\Render\Attribute\RenderElement';
+\Drupal\Core\Render\Annotation\RenderElement	\Drupal\Core\Render\Attribute\RenderElement
+\Drupal\migrate\Annotation\MigrateDestination	\Drupal\migrate\Attribute\MigrateDestination
+\Drupal\migrate_drupal\Annotation\MigrateField	\Drupal\migrate_drupal\Attribute\MigrateField
+\Drupal\Component\Annotation\PluginID	\Drupal\Component\Plugin\Attribute\PluginID
+\Drupal\migrate\Annotation\MigrateProcess	\Drupal\migrate\Attribute\MigrateProcess
+\Drupal\media\Attribute\MediaSource	\Drupal\media\Attribute\MediaSource'; //  or \Drupal\media\Attribute\OEmbedMediaSource if it is an oEmbed source
+
+    // PluginID: ID Map plugins?
 
     $lines = explode("\n", $source);
     $configurations = [];
@@ -61,7 +63,7 @@ return static function (RectorConfig $rectorConfig): void {
         $annotationParts = explode('\\', $parts[0]);
         $annotation = array_pop($annotationParts);
         $attributeClass = $parts[1];
-        $configurations[] = new \DrupalRector\Drupal10\Rector\ValueObject\AnnotationToAttributeConfiguration(
+        $configurations[] = new DrupalRector\Drupal10\Rector\ValueObject\AnnotationToAttributeConfiguration(
             '10.3.0',
             '12.0.0',
             $annotation,
@@ -80,7 +82,7 @@ return static function (RectorConfig $rectorConfig): void {
         $annotationParts = explode('\\', $parts[0]);
         $annotation = array_pop($annotationParts);
         $attributeClass = $parts[1];
-        $configurations[] = new \DrupalRector\Drupal10\Rector\ValueObject\AnnotationToAttributeConfiguration(
+        $configurations[] = new DrupalRector\Drupal10\Rector\ValueObject\AnnotationToAttributeConfiguration(
             '10.2.0',
             '12.0.0',
             $annotation,
@@ -88,5 +90,5 @@ return static function (RectorConfig $rectorConfig): void {
         );
     }
 
-    $rectorConfig->ruleWithConfiguration(\DrupalRector\Drupal10\Rector\Deprecation\AnnotationToAttributeRector::class, $configurations);
+    $rectorConfig->ruleWithConfiguration(DrupalRector\Drupal10\Rector\Deprecation\AnnotationToAttributeRector::class, $configurations);
 };
