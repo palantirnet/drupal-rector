@@ -30,15 +30,15 @@ return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->ruleWithConfiguration(FunctionToServiceRector::class,
         [
             // https://www.drupal.org/node/2835616
-            new FunctionToServiceConfiguration('entity_get_display', 'entity_display.repository', 'getViewDisplay'),
+            new FunctionToServiceConfiguration('8.8.0', 'entity_get_display', 'entity_display.repository', 'getViewDisplay'),
             // https://www.drupal.org/node/2835616
-            new FunctionToServiceConfiguration('entity_get_form_display', 'entity_display.repository', 'getFormDisplay'),
+            new FunctionToServiceConfiguration('8.8.0', 'entity_get_form_display', 'entity_display.repository', 'getFormDisplay'),
             // https://www.drupal.org/node/3039255
-            new FunctionToServiceConfiguration('file_directory_temp', 'file_system', 'getTempDirectory'),
+            new FunctionToServiceConfiguration('8.8.0', 'file_directory_temp', 'file_system', 'getTempDirectory'),
             // https://www.drupal.org/node/3038437
-            new FunctionToServiceConfiguration('file_scan_directory', 'file_system', 'scanDirectory'),
+            new FunctionToServiceConfiguration('8.8.0', 'file_scan_directory', 'file_system', 'scanDirectory'),
             // https://www.drupal.org/node/3035273
-            new FunctionToServiceConfiguration('file_uri_target', 'stream_wrapper_manager', 'getTarget'),
+            new FunctionToServiceConfiguration('8.8.0', 'file_uri_target', 'stream_wrapper_manager', 'getTarget'),
         ]);
 
     $rectorConfig->ruleWithConfiguration(MethodToMethodWithCheckRector::class, [

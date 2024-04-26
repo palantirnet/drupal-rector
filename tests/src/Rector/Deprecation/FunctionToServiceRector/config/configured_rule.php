@@ -9,9 +9,10 @@ use Rector\Config\RectorConfig;
 
 return static function (RectorConfig $rectorConfig): void {
     DeprecationBase::addClass(FunctionToServiceRector::class, $rectorConfig, false, [
-        new FunctionToServiceConfiguration('render', 'renderer', 'render'),
-        new FunctionToServiceConfiguration('file_copy', 'file.repository', 'copy'),
-        new FunctionToServiceConfiguration('file_move', 'file.repository', 'move'),
-        new FunctionToServiceConfiguration('file_save_data', 'file.repository', 'writeData'),
+        new FunctionToServiceConfiguration('9.3.0', 'render', 'renderer', 'render'),
+        new FunctionToServiceConfiguration('8.0.0', 'file_copy', 'file.repository', 'copy'),
+        new FunctionToServiceConfiguration('9.3.0', 'file_move', 'file.repository', 'move'),
+        new FunctionToServiceConfiguration('9.3.0', 'file_save_data', 'file.repository', 'writeData'),
+        new FunctionToServiceConfiguration('10.1.0', 'drupal_theme_rebuild', 'theme.registry', 'reset'),
     ]);
 };
