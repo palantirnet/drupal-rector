@@ -34,6 +34,6 @@ function simple_example_os_temp() {
 }
 
 function simple_example_format_size() {
-    $size_literal = \Drupal\Component\Utility\DeprecationHelper::backwardsCompatibleCall(\Drupal::VERSION, '10.2.0', fn() => \\Drupal\Core\StringTranslation\ByteSizeMarkup::create(81862076662), fn() => format_size(81862076662));
+    $size_literal = \Drupal\Component\Utility\DeprecationHelper::backwardsCompatibleCall(\Drupal::VERSION, '10.2.0', fn() => \Drupal\Core\StringTranslation\ByteSizeMarkup::create(81862076662), fn() => format_size(81862076662));
 }
 ?>
