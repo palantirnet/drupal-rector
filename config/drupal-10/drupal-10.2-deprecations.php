@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+use DrupalRector\Drupal10\Rector\Deprecation\VersionedFunctionToServiceRector;
+use DrupalRector\Drupal10\Rector\ValueObject\VersionedFunctionToServiceConfiguration;
 use DrupalRector\Rector\Deprecation\FunctionToStaticRector;
 use DrupalRector\Rector\Deprecation\MethodToMethodWithCheckRector;
 use DrupalRector\Rector\ValueObject\FunctionToStaticConfiguration;
@@ -29,5 +31,10 @@ return static function (RectorConfig $rectorConfig): void {
     // https://www.drupal.org/node/3401941
     $rectorConfig->ruleWithConfiguration(RenameClassRector::class, [
         'Drupal\\Tests\\field\\Traits\\EntityReferenceTestTrait' => 'Drupal\\Tests\\field\\Traits\\EntityReferenceFieldCreationTrait',
+    ]);      
+
+    // https://www.drupal.org/node/3358337
+    $rectorConfig->ruleWithConfiguration(VersionedFunctionToServiceRector::class, [
+        new VersionedFunctionToServiceConfiguration('10.2.0', '_drupal_flush_css_js', 'asset.query_string', 'reset'),
     ]);
 };
