@@ -31,7 +31,7 @@ return static function (RectorConfig $rectorConfig): void {
     // https://www.drupal.org/node/3401941
     $rectorConfig->ruleWithConfiguration(RenameClassRector::class, [
         'Drupal\\Tests\\field\\Traits\\EntityReferenceTestTrait' => 'Drupal\\Tests\\field\\Traits\\EntityReferenceFieldCreationTrait',
-    ]);      
+    ]);
 
     // https://www.drupal.org/node/3358337
     $rectorConfig->ruleWithConfiguration(VersionedFunctionToServiceRector::class, [
