@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+use DrupalRector\Drupal10\Rector\Deprecation\AnnotationToAttributeRector;
+use DrupalRector\Drupal10\Rector\ValueObject\AnnotationToAttributeConfiguration;
 use Rector\Config\RectorConfig;
 
 return static function (RectorConfig $rectorConfig): void {
@@ -51,7 +53,12 @@ return static function (RectorConfig $rectorConfig): void {
 \Drupal\migrate_drupal\Annotation\MigrateField	\Drupal\migrate_drupal\Attribute\MigrateField
 \Drupal\Component\Annotation\PluginID	\Drupal\Component\Plugin\Attribute\PluginID
 \Drupal\migrate\Annotation\MigrateProcess	\Drupal\migrate\Attribute\MigrateProcess
-\Drupal\media\Attribute\MediaSource	\Drupal\media\Attribute\MediaSource'; //  or \Drupal\media\Attribute\OEmbedMediaSource if it is an oEmbed source
+\Drupal\media\Annotation\MediaSource	\Drupal\media\Attribute\MediaSource
+\Drupal\Core\Field\Annotation\FieldType	\Drupal\Core\Field\Attribute\FieldType
+\Drupal\ckeditor5\Annotation\CKEditor5Plugin	\Drupal\ckeditor5\Attribute\CKEditor5Plugin
+\Drupal\ckeditor5\Annotation\CKEditor5AspectsOfCKEditor5Plugin	\Drupal\ckeditor5\Attribute\CKEditor5AspectsOfCKEditor5Plugin
+\Drupal\ckeditor5\Annotation\DrupalAspectsOfCKEditor5Plugin	\Drupal\ckeditor5\Attribute\DrupalAspectsOfCKEditor5Plugin
+\Drupal\Core\Layout\Annotation\Layout	\Drupal\Core\Layout\Attribute\Layout'; // \Drupal\media\Attribute\MediaSource or \Drupal\media\Attribute\OEmbedMediaSource if it is an oEmbed source
 
     // PluginID: ID Map plugins?
 
@@ -63,7 +70,7 @@ return static function (RectorConfig $rectorConfig): void {
         $annotationParts = explode('\\', $parts[0]);
         $annotation = array_pop($annotationParts);
         $attributeClass = $parts[1];
-        $configurations[] = new DrupalRector\Drupal10\Rector\ValueObject\AnnotationToAttributeConfiguration(
+        $configurations[] = new AnnotationToAttributeConfiguration(
             '10.3.0',
             '12.0.0',
             $annotation,
@@ -82,7 +89,7 @@ return static function (RectorConfig $rectorConfig): void {
         $annotationParts = explode('\\', $parts[0]);
         $annotation = array_pop($annotationParts);
         $attributeClass = $parts[1];
-        $configurations[] = new DrupalRector\Drupal10\Rector\ValueObject\AnnotationToAttributeConfiguration(
+        $configurations[] = new AnnotationToAttributeConfiguration(
             '10.2.0',
             '12.0.0',
             $annotation,
@@ -90,5 +97,5 @@ return static function (RectorConfig $rectorConfig): void {
         );
     }
 
-    $rectorConfig->ruleWithConfiguration(DrupalRector\Drupal10\Rector\Deprecation\AnnotationToAttributeRector::class, $configurations);
+    $rectorConfig->ruleWithConfiguration(AnnotationToAttributeRector::class, $configurations);
 };
