@@ -1,10 +1,10 @@
 <?php
 
-$request = \Symfony\Component\HttpKernel\HttpKernelInterface::MASTER_REQUEST;
-
+use Symfony\Component\HttpKernel\HttpKernelInterface;
+$request = HttpKernelInterface::MAIN_REQUEST;
 
 class Foo {
-    public function bar(\Symfony\Component\HttpKernel\HttpKernelInterface $request) {
-        $request = \Symfony\Component\HttpKernel\HttpKernelInterface::MASTER_REQUEST; // Did it update?
+    public function bar(HttpKernelInterface $request) {
+        $request = HttpKernelInterface::MAIN_REQUEST; // Did it update?
     }
 }
