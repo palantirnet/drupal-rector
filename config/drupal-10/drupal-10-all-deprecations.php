@@ -10,6 +10,7 @@ return static function (RectorConfig $rectorConfig): void {
         Drupal10SetList::DRUPAL_100,
         Drupal10SetList::DRUPAL_101,
         Drupal10SetList::DRUPAL_102,
+        Drupal10SetList::DRUPAL_103,
     ]);
 
     $rectorConfig->bootstrapFiles([
