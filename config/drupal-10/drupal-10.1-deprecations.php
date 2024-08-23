@@ -8,11 +8,21 @@ use DrupalRector\Rector\Deprecation\FunctionToStaticRector;
 use DrupalRector\Rector\ValueObject\DrupalIntroducedVersionConfiguration;
 use DrupalRector\Rector\ValueObject\FunctionToStaticConfiguration;
 use Rector\Config\RectorConfig;
+use Rector\PHPUnit\PHPUnit100\Rector\Class_\PublicDataProviderClassMethodRector;
+use Rector\PHPUnit\PHPUnit100\Rector\Class_\StaticDataProviderClassMethodRector;
+use Rector\PHPUnit\PHPUnit100\Rector\MethodCall\RemoveSetMethodsMethodCallRector;
 use Rector\Symfony\Set\SymfonySetList;
 
 return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->sets([
         SymfonySetList::SYMFONY_63,
+    ]);
+
+    // PHPUnit 10.0 rules
+    $rectorConfig->rules([
+        PublicDataProviderClassMethodRector::class,
+        StaticDataProviderClassMethodRector::class,
+        RemoveSetMethodsMethodCallRector::class,
     ]);
 
     // https://www.drupal.org/node/3244583
