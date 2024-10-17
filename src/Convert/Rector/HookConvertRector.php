@@ -15,7 +15,7 @@ use Rector\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
-class HookConvert extends AbstractRector
+class HookConvertRector extends AbstractRector
 {
 
     protected string $inputFilename = '';
