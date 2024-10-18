@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Utils\Rector\Rector;
+namespace DrupalRector\Convert\Rector;
 
 use DrupalRector\Services\AddCommentService;
 use PhpParser\Comment\Doc;
