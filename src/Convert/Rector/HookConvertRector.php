@@ -2,11 +2,12 @@
 
 declare(strict_types=1);
 
-namespace DrupalRector\Convert\Rector;
+namespace Utils\Rector\Rector;
 
 use DrupalRector\Services\AddCommentService;
 use PhpParser\Comment\Doc;
 use PhpParser\Node;
+use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Stmt\ClassMethod;
 use PhpParser\Node\Stmt\Function_;
 use Rector\Doctrine\CodeQuality\Utils\CaseStringHelper;
@@ -103,7 +104,7 @@ CODE_SAMPLE
             // See the note in ::getMethod() about how it's important to not
             // change any object property of $node here.
             // Rewrite the function body to be a single service call.
-            $node->stmts = [$this->getServiceCall($node)];
+            $node->stmts = [new Node\Stmt\Return_($this->getServiceCall($node))];
             // Mark this function as a legacy hook.
             $node->attrGroups[] = new Node\AttributeGroup([new Node\Attribute(new Node\Name\FullyQualified('Drupal\Core\Hook\Attribute\LegacyHook'))]);
         }
@@ -137,7 +138,13 @@ CODE_SAMPLE
         if ($this->module && $this->hookClass->stmts)
         {
             $className = $this->hookClass->name->toString();
-            $namespace = "Drupal\\$this->module\\Hook";
+            $counter = '';
+            do {
+              $candidate = "$className$counter";
+              $hookClassFilename = "$this->moduleDir/src/Hook/$candidate.php";
+              $this->hookClass->name = new Node\Name($candidate);
+              $counter = $counter ? $counter + 1 : 1;
+            } while (file_exists($hookClassFilename));
             // Create the statement use Drupal\Core\Hook\Attribute\Hook;
             $name = new Node\Name('Drupal\Core\Hook\Attribute\Hook');
             // UseItem contains an unguarded class_alias to the deprecated
@@ -146,6 +153,7 @@ CODE_SAMPLE
             // it is already loaded or the UseUse class is completely gone.
             $useHook = class_exists('PhpParser\Node\UseItem', FALSE) || !class_exists('PhpParser\Node\Stmt\UseUse') ? new Node\UseItem($name) : new Node\Stmt\UseUse($name);
             // Put the class together.
+            $namespace = "Drupal\\$this->module\\Hook";
             $hookClassStmts = [
                 new Node\Stmt\Namespace_(new Node\Name($namespace)),
                 ... $this->useStmts,
@@ -155,7 +163,6 @@ CODE_SAMPLE
             // Write it out.
             @mkdir("$this->moduleDir/src");
             @mkdir("$this->moduleDir/src/Hook");
-            $hookClassFilename = "$this->moduleDir/src/Hook/$className.php";
             $printer = new BetterStandardPrinter();
             file_put_contents($hookClassFilename, $printer->prettyPrintFile($hookClassStmts));
             static::writeServicesYml("$this->moduleDir/$this->module.services.yml", "$namespace\\$className");
@@ -251,18 +258,17 @@ CODE_SAMPLE
         return $method;
     }
 
-    /**
-     * @param \PhpParser\Node\Stmt\Function_ $node
-     *   E.g.: user_entity_operation(EntityInterface $entity)
-     *
-     * @return \PhpParser\Node\Stmt\Expression
-     *   E.g.: Drupal::service('Drupal\user\Hook\UserHooks')->userEntityOperation($entity);
-     *
-     */
-    protected function getServiceCall(Function_ $node): Node\Stmt\Expression
+  /**
+   * @param \PhpParser\Node\Stmt\Function_ $node
+   *   E.g.: user_entity_operation(EntityInterface $entity)
+   *
+   * @return \PhpParser\Node\Expr\MethodCall
+   *   E.g.: Drupal::service('Drupal\user\Hook\UserHooks')->userEntityOperation($entity);
+   */
+    protected function getServiceCall(Function_ $node): MethodCall
     {
         $args = array_map(fn($param) => $this->nodeFactory->createArg($param->var), $node->getParams());
-        return new Node\Stmt\Expression($this->nodeFactory->createMethodCall($this->drupalServiceCall, static::getMethodName($node), $args));
+        return $this->nodeFactory->createMethodCall($this->drupalServiceCall, static::getMethodName($node), $args);
     }
 
     /**
