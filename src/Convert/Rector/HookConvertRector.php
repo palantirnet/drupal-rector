@@ -121,7 +121,8 @@ CODE_SAMPLE
         while (($this->moduleDir = dirname($this->moduleDir)) && !($info = glob("$this->moduleDir/*.info.yml")));
         if ($infoFile = reset($info)) {
             $this->module = basename($infoFile, '.info.yml');
-            $hookClassName = ucfirst(CaseStringHelper::camelCase($this->module . '_hooks'));
+            $filename = pathinfo($this->file->getFilePath(), \PATHINFO_FILENAME);
+            $hookClassName = ucfirst(CaseStringHelper::camelCase(str_replace('.', '_', $filename) . '_hooks'));
             $namespace = implode('\\', ['Drupal', $this->module, 'Hook']);
             $this->hookClass = new Node\Stmt\Class_(new Node\Name($hookClassName));
             // Using $this->nodeFactory->createStaticCall() results in
