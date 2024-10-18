@@ -11,8 +11,6 @@ use PhpParser\Node\Stmt\ClassMethod;
 use PhpParser\Node\Stmt\Function_;
 use PhpParser\Node\Stmt\Return_;
 use PhpParser\NodeFinder;
-use PhpParser\NodeTraverser;
-use PhpParser\NodeVisitor\FirstFindingVisitor;
 use Rector\Doctrine\CodeQuality\Utils\CaseStringHelper;
 use Rector\PhpParser\Printer\BetterStandardPrinter;
 use Rector\Rector\AbstractRector;
@@ -57,7 +55,7 @@ class HookConvertRector extends AbstractRector
      */
     protected Node\Expr\StaticCall $drupalServiceCall;
 
-    public function __construct(protected AddCommentService $addCommentService)
+    public function __construct(protected AddCommentService $addCommentService, protected BetterStandardPrinter $printer)
     {
     }
 
@@ -107,7 +105,7 @@ CODE_SAMPLE
             $serviceCall = $this->getServiceCall($node);
             // If the function body doesn't contain a return statement,
             // remove the return from the service call.
-            if (!(new NodeFinder)->findInstanceOf([$node], Return_::class))
+            if (!(new NodeFinder)->findFirstInstanceOf([$node], Return_::class))
             {
                 $serviceCall = new Node\Stmt\Expression($serviceCall->expr);
             }
@@ -171,8 +169,7 @@ CODE_SAMPLE
             // Write it out.
             @mkdir("$this->moduleDir/src");
             @mkdir("$this->moduleDir/src/Hook");
-            $printer = new BetterStandardPrinter();
-            file_put_contents($hookClassFilename, $printer->prettyPrintFile($hookClassStmts));
+            file_put_contents($hookClassFilename, $this->printer->prettyPrintFile($hookClassStmts));
             static::writeServicesYml("$this->moduleDir/$this->module.services.yml", "$namespace\\$className");
             $this->module = '';
         }
