@@ -105,7 +105,7 @@ CODE_SAMPLE
             // Rewrite the function body to be a single service call.
             $node->stmts = [$this->getServiceCall($node)];
             // Mark this function as a legacy hook.
-            $node->attrGroups[] = new Node\AttributeGroup([new Node\Attribute(new Node\Name\FullyQualified('Drupal\Core\Hook\LegacyHook'))]);
+            $node->attrGroups[] = new Node\AttributeGroup([new Node\Attribute(new Node\Name\FullyQualified('Drupal\Core\Hook\Attribute\LegacyHook'))]);
         }
         return $node;
     }
