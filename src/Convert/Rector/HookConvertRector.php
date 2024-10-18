@@ -7,9 +7,11 @@ namespace Utils\Rector\Rector;
 use DrupalRector\Services\AddCommentService;
 use PhpParser\Comment\Doc;
 use PhpParser\Node;
-use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Stmt\ClassMethod;
 use PhpParser\Node\Stmt\Function_;
+use PhpParser\Node\Stmt\Return_;
+use PhpParser\NodeTraverser;
+use PhpParser\NodeVisitor\FirstFindingVisitor;
 use Rector\Doctrine\CodeQuality\Utils\CaseStringHelper;
 use Rector\PhpParser\Printer\BetterStandardPrinter;
 use Rector\Rector\AbstractRector;
@@ -54,10 +56,9 @@ class HookConvertRector extends AbstractRector
      */
     protected Node\Expr\StaticCall $drupalServiceCall;
 
-    public function __construct(protected AddCommentService $addCommentService) {
+    public function __construct(protected AddCommentService $addCommentService)
+    {
     }
-
-
 
     public function getRuleDefinition(): RuleDefinition
     {
@@ -82,7 +83,7 @@ CODE_SAMPLE
         return [Function_::class, Node\Stmt\Use_::class];
     }
 
-    public function refactor(Node $node): ?Node
+    public function refactor(Node $node): Node|array|NULL
     {
         $filePath = $this->file->getFilePath();
         $ext = pathinfo($filePath, \PATHINFO_EXTENSION);
@@ -101,16 +102,22 @@ CODE_SAMPLE
         if ($node instanceof Function_ && $this->module && ($method = $this->createMethodFromFunction($node)))
         {
             $this->hookClass->stmts[] = $method;
+            // Rewrite the function body to be a single service call.
+            $serviceCall = $this->getServiceCall($node);
+            // If the function body doesn't contain a return statement,
+            // remove the return from the service call.
+            if (!$this->hasReturn($node))
+            {
+                $serviceCall = new Node\Stmt\Expression($serviceCall->expr);
+            }
             // See the note in ::getMethod() about how it's important to not
             // change any object property of $node here.
-            // Rewrite the function body to be a single service call.
-            $node->stmts = [new Node\Stmt\Return_($this->getServiceCall($node))];
+            $node->stmts = [$serviceCall];
             // Mark this function as a legacy hook.
             $node->attrGroups[] = new Node\AttributeGroup([new Node\Attribute(new Node\Name\FullyQualified('Drupal\Core\Hook\Attribute\LegacyHook'))]);
         }
         return $node;
     }
-
 
     protected function initializeHookClass(): void
     {
@@ -140,10 +147,10 @@ CODE_SAMPLE
             $className = $this->hookClass->name->toString();
             $counter = '';
             do {
-              $candidate = "$className$counter";
-              $hookClassFilename = "$this->moduleDir/src/Hook/$candidate.php";
-              $this->hookClass->name = new Node\Name($candidate);
-              $counter = $counter ? $counter + 1 : 1;
+                $candidate = "$className$counter";
+                $hookClassFilename = "$this->moduleDir/src/Hook/$candidate.php";
+                $this->hookClass->name = new Node\Name($candidate);
+                $counter = $counter ? $counter + 1 : 1;
             } while (file_exists($hookClassFilename));
             // Create the statement use Drupal\Core\Hook\Attribute\Hook;
             $name = new Node\Name('Drupal\Core\Hook\Attribute\Hook');
@@ -262,13 +269,13 @@ CODE_SAMPLE
    * @param \PhpParser\Node\Stmt\Function_ $node
    *   E.g.: user_entity_operation(EntityInterface $entity)
    *
-   * @return \PhpParser\Node\Expr\MethodCall
-   *   E.g.: Drupal::service('Drupal\user\Hook\UserHooks')->userEntityOperation($entity);
+   * @return \PhpParser\Node\Stmt\Return_
+   *   E.g.: return Drupal::service('Drupal\user\Hook\UserHooks')->userEntityOperation($entity);
    */
-    protected function getServiceCall(Function_ $node): MethodCall
+    protected function getServiceCall(Function_ $node): Return_
     {
         $args = array_map(fn($param) => $this->nodeFactory->createArg($param->var), $node->getParams());
-        return $this->nodeFactory->createMethodCall($this->drupalServiceCall, static::getMethodName($node), $args);
+        return new Return_($this->nodeFactory->createMethodCall($this->drupalServiceCall, static::getMethodName($node), $args));
     }
 
     /**
@@ -297,6 +304,15 @@ CODE_SAMPLE
             $services .= "$id    class: $fullyClassifiedClassName\n    autowire: true\n";
             file_put_contents($fileName, $services);
         }
+    }
+
+    protected function hasReturn(Function_ $node): bool
+    {
+        $returnVisitor = new FirstFindingVisitor(fn(Node $node) => $node instanceof Return_);
+        $traverser = new NodeTraverser();
+        $traverser->addVisitor($returnVisitor);
+        $traverser->traverse([$node]);
+        return $returnVisitor->getFoundNode() !== NULL;
     }
 
 }
