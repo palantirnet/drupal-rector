@@ -138,8 +138,8 @@ CODE_SAMPLE
         {
             $className = $this->hookClass->name->toString();
             $namespace = "Drupal\\$this->module\\Hook";
-            // Create the statement use Drupal\Core\Hook\Hook;
-            $name = new Node\Name('Drupal\Core\Hook\Hook');
+            // Create the statement use Drupal\Core\Hook\Attribute\Hook;
+            $name = new Node\Name('Drupal\Core\Hook\Attribute\Hook');
             // UseItem contains an unguarded class_alias to the deprecated
             // UseUse class. However, due to some version mix-up it seems the
             // old class is used for parsing so only use the UseItem class if
