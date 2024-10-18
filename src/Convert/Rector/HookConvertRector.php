@@ -10,6 +10,7 @@ use PhpParser\Node;
 use PhpParser\Node\Stmt\ClassMethod;
 use PhpParser\Node\Stmt\Function_;
 use PhpParser\Node\Stmt\Return_;
+use PhpParser\NodeFinder;
 use PhpParser\NodeTraverser;
 use PhpParser\NodeVisitor\FirstFindingVisitor;
 use Rector\Doctrine\CodeQuality\Utils\CaseStringHelper;
@@ -106,7 +107,7 @@ CODE_SAMPLE
             $serviceCall = $this->getServiceCall($node);
             // If the function body doesn't contain a return statement,
             // remove the return from the service call.
-            if (!$this->hasReturn($node))
+            if (!(new NodeFinder)->findInstanceOf([$node], Return_::class))
             {
                 $serviceCall = new Node\Stmt\Expression($serviceCall->expr);
             }
@@ -304,15 +305,6 @@ CODE_SAMPLE
             $services .= "$id    class: $fullyClassifiedClassName\n    autowire: true\n";
             file_put_contents($fileName, $services);
         }
-    }
-
-    protected function hasReturn(Function_ $node): bool
-    {
-        $returnVisitor = new FirstFindingVisitor(fn(Node $node) => $node instanceof Return_);
-        $traverser = new NodeTraverser();
-        $traverser->addVisitor($returnVisitor);
-        $traverser->traverse([$node]);
-        return $returnVisitor->getFoundNode() !== NULL;
     }
 
 }
