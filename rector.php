@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-use DrupalFinder\DrupalFinderComposerRuntime;
 use DrupalRector\Set\Drupal10SetList;
 use DrupalRector\Set\Drupal8SetList;
 use DrupalRector\Set\Drupal9SetList;
@@ -18,7 +17,11 @@ return static function (RectorConfig $rectorConfig): void {
         Drupal10SetList::DRUPAL_10,
     ]);
 
-    $drupalFinder = new DrupalFinderComposerRuntime();
+    if (class_exists('DrupalFinder\DrupalFinderComposerRuntime')) {
+        $drupalFinder = new DrupalFinder\DrupalFinderComposerRuntime();
+    } else {
+        $drupalFinder = new DrupalFinder\DrupalFinder(__DIR__);
+    }
     $drupalRoot = $drupalFinder->getDrupalRoot();
     $rectorConfig->autoloadPaths([
         $drupalRoot . '/core',

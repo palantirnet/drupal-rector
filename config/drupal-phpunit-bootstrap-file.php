@@ -6,13 +6,18 @@
  * This fixes Drupal testing namespace autoloading and PHPUnit compatibility.
  */
 
-use DrupalFinder\DrupalFinderComposerRuntime;
 use Rector\Core\Autoloading\BootstrapFilesIncluder;
 use Rector\Core\Exception\ShouldNotHappenException;
 
-$finder = new DrupalFinderComposerRuntime();
-$drupalRoot = $finder->getDrupalRoot();
-$drupalVendorRoot = $finder->getVendorDir();
+
+if (class_exists('DrupalFinder\DrupalFinderComposerRuntime')) {
+    $drupalFinder = new DrupalFinder\DrupalFinderComposerRuntime();
+} else {
+    $drupalFinder = new DrupalFinder\DrupalFinder(__DIR__);
+}
+
+$drupalRoot = $drupalFinder->getDrupalRoot();
+$drupalVendorRoot = $drupalFinder->getVendorDir();
 
 if (! (bool) $drupalRoot || ! (bool) $drupalVendorRoot) {
     throw new \RuntimeException("Unable to detect Drupal at $drupalRoot");
