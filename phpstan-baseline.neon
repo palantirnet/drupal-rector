@@ -117,3 +117,27 @@ parameters:
 			"""
 			count: 1
 			path: src/Drupal9/Rector/Deprecation/PassRector.php
+
+		-
+			message: """
+				#^Class DrupalRector\\\\Set\\\\Drupal10SetList implements deprecated interface Rector\\\\Set\\\\Contract\\\\SetListInterface\\:
+				This interface needs a reflection to load and uses constant links\\. Now we changed to services provider architecture that can be used and registerd easily\\. Use$#
+			"""
+			count: 1
+			path: src/Set/Drupal10SetList.php
+
+		-
+			message: """
+				#^Class DrupalRector\\\\Set\\\\Drupal8SetList implements deprecated interface Rector\\\\Set\\\\Contract\\\\SetListInterface\\:
+				This interface needs a reflection to load and uses constant links\\. Now we changed to services provider architecture that can be used and registerd easily\\. Use$#
+			"""
+			count: 1
+			path: src/Set/Drupal8SetList.php
+
+		-
+			message: """
+				#^Class DrupalRector\\\\Set\\\\Drupal9SetList implements deprecated interface Rector\\\\Set\\\\Contract\\\\SetListInterface\\:
+				This interface needs a reflection to load and uses constant links\\. Now we changed to services provider architecture that can be used and registerd easily\\. Use$#
+			"""
+			count: 1
+			path: src/Set/Drupal9SetList.php
