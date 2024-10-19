@@ -9,10 +9,7 @@ namespace DrupalRector\Convert\Rector;
 
 use Composer\InstalledVersions;
 use PhpParser\Node;
-use PhpParser\Node\Stmt\Class_;
-use PhpParser\Node\Stmt\ClassMethod;
-use PhpParser\Node\Stmt\Function_;
-use PhpParser\Node\Stmt\Return_;
+use PhpParser\Node\Stmt\{Use_, Class_, ClassMethod, Function_, Return_};
 use PhpParser\NodeFinder;
 use PhpParser\NodeTraverser;
 use Rector\Doctrine\CodeQuality\Utils\CaseStringHelper;
@@ -26,30 +23,12 @@ class HookConvertRector extends AbstractRector
 
     protected string $inputFilename = '';
 
-    /**
-     * @var Node\Stmt\Use_[]
-     */
     protected array $useStmts = [];
 
-    /**
-     * @var \PhpParser\Node\Stmt\Class_
-     *
-     * The hook class itself.
-     */
-    protected Node\Stmt\Class_ $hookClass;
+    protected Class_ $hookClass;
 
-    /**
-     * @var string
-     *
-     * The name of the module, used to guess which functions are hooks.
-     */
     protected string $module = '';
 
-    /**
-     * @var string
-     *
-     * THe module directory, used to write services.yml
-     */
     protected string $moduleDir = '';
 
     /**
@@ -59,14 +38,14 @@ class HookConvertRector extends AbstractRector
      */
     protected Node\Expr\StaticCall $drupalServiceCall;
 
-    private string $drupalCore = "\0";
+    private string $drupalCorePath = "\0";
 
     public function __construct(protected BetterStandardPrinter $printer)
     {
         try
         {
-            if ($corePath = InstalledVersions::getInstallPath('drupal/core')) {
-                $this->drupalCore = realpath($corePath);
+            if (class_exists(InstalledVersions::class) && ($corePath = InstalledVersions::getInstallPath('drupal/core'))) {
+                $this->drupalCorePath = realpath($corePath);
             }
         }
         catch (\OutOfBoundsException $e) { }
@@ -92,7 +71,7 @@ CODE_SAMPLE
      */
     public function getNodeTypes(): array
     {
-        return [Function_::class, Node\Stmt\Use_::class];
+        return [Function_::class, Use_::class];
     }
 
     public function refactor(Node $node): Node|NULL|int
@@ -105,13 +84,13 @@ CODE_SAMPLE
         if ($filePath !== $this->inputFilename) {
             $this->initializeHookClass();
         }
-        if ($node instanceof Node\Stmt\Use_) {
-            $this->useStmts[] = $node;
+        if ($node instanceof Use_) {
+            $this->useStmts[$this->printer->prettyPrint([$node])] = $node;
         }
 
         if ($node instanceof Function_ && $this->module && ($method = $this->createMethodFromFunction($node))) {
             $this->hookClass->stmts[] = $method;
-            return str_starts_with($filePath, $this->drupalCore) ? NodeTraverser::REMOVE_NODE : $this->getLegacyHookFunction($node);
+            return str_starts_with($filePath, $this->drupalCorePath) ? NodeTraverser::REMOVE_NODE : $this->getLegacyHookFunction($node);
         }
         return NULL;
     }
@@ -129,11 +108,12 @@ CODE_SAMPLE
             $filename = pathinfo($this->file->getFilePath(), \PATHINFO_FILENAME);
             $hookClassName = ucfirst(CaseStringHelper::camelCase(str_replace('.', '_', $filename) . '_hooks'));
             $namespace = implode('\\', ['Drupal', $this->module, 'Hook']);
-            $this->hookClass = new Node\Stmt\Class_(new Node\Name($hookClassName));
+            $this->hookClass = new Class_(new Node\Name($hookClassName));
             // Using $this->nodeFactory->createStaticCall() results in
             // use \Drupal; on top which is not desirable.
             $classConst = new Node\Expr\ClassConstFetch(new Node\Name\FullyQualified("$namespace\\$hookClassName"), 'class');
             $this->drupalServiceCall = new Node\Expr\StaticCall(new Node\Name\FullyQualified('Drupal'), 'service', [new Node\Arg($classConst)]);
+            $this->useStmts = [];
         }
     }
 
@@ -153,28 +133,23 @@ CODE_SAMPLE
             $hookClassStmts = [
                 new Node\Stmt\Namespace_(new Node\Name($namespace)),
                 ... $this->useStmts,
-                new Node\Stmt\Use_([new Node\Stmt\UseUse(new Node\Name('Drupal\Core\Hook\Attribute\Hook'))]),
+                new Use_([new Node\Stmt\UseUse(new Node\Name('Drupal\Core\Hook\Attribute\Hook'))]),
                 $this->hookClass,
             ];
             // Write it out.
             @mkdir("$this->moduleDir/src");
             @mkdir("$this->moduleDir/src/Hook");
             file_put_contents($hookClassFilename, $this->printer->prettyPrintFile($hookClassStmts));
-            if (!str_starts_with($this->moduleDir, $this->drupalCore)) {
+            if (!str_starts_with($this->moduleDir, $this->drupalCorePath)) {
                 static::writeServicesYml("$this->moduleDir/$this->module.services.yml", "$namespace\\$className");
             }
-            $this->module = '';
-            $this->useStmts = [];
         }
+        $this->module = '';
     }
 
     protected function createMethodFromFunction(Function_ $node): ?ClassMethod
     {
-        // If the doxygen contains "Implements hook_foo()" then parse the hook
-        // name. A difficulty here is "Implements hook_form_FORM_ID_alter".
-        // Find these by looking for an optional part starting with an
-        // uppercase letter.
-        if ($info = static::getHookAndModuleName($node)) {
+        if ($info = $this->getHookAndModuleName($node)) {
             ['hook' => $hook, 'module' => $implementsModule] = $info;
             $procOnly = [
                 'install',
@@ -204,8 +179,12 @@ CODE_SAMPLE
         return NULL;
     }
 
-    protected static function getHookAndModuleName(Function_ $node): array
+    protected function getHookAndModuleName(Function_ $node): array
     {
+        // If the doxygen contains "Implements hook_foo()" then parse the hook
+        // name. A difficulty here is "Implements hook_form_FORM_ID_alter".
+        // Find these by looking for an optional part starting with an
+        // uppercase letter.
         if (preg_match('/^ \* Implements hook_([a-z0-9_]*)(?:[A-Z][A-Z0-9_]+(_[a-z0-9_]*))?/m', (string) $node->getDocComment()?->getReformattedText(), $matches)) {
             $hookRegex = $matches[1];
             // If the optional part is present then replace the uppercase
@@ -213,9 +192,14 @@ CODE_SAMPLE
             if (isset($matches[2])) {
               $hookRegex .= '[a-z0-9_]+' . $matches[2];
             }
+            $hookRegex = "_(?<hook>$hookRegex)";
+            $functionName = $node->name->toString();
             // And now find the module and the hook.
-            preg_match("/^(?<module>.+?)_(?<hook>$hookRegex)$/", $node->name->toString(), $matches);
-            return $matches;
+            foreach ([$this->module, '.+?'] as $module) {
+                if (preg_match("/^(?<module>$module)$hookRegex$/", $functionName, $matches)) {
+                  return $matches;
+                }
+            }
         }
         return [];
     }
