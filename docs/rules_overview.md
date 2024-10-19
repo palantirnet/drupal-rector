@@ -1,10 +1,10 @@
-# 54 Rules Overview
+# 55 Rules Overview
 
 <br>
 
 ## Categories
 
-- [Drupal10](#drupal10) (3)
+- [Drupal10](#drupal10) (4)
 
 - [Drupal8](#drupal8) (18)
 
@@ -68,6 +68,21 @@ Fixes deprecated `system_time_zones()` calls
 +\Drupal\Core\Datetime\TimeZoneFormHelper::getOptionsListByRegion();
 +\Drupal\Core\Datetime\TimeZoneFormHelper::getOptionsList(NULL);
 +\Drupal\Core\Datetime\TimeZoneFormHelper::getOptionsList(TRUE);
+```
+
+<br>
+
+### VersionedFunctionToServiceRector
+
+Fixes deprecated function to service calls, used in Drupal 8 and 9 deprecations
+
+:wrench: **configure it!**
+
+- class: [`DrupalRector\Drupal10\Rector\Deprecation\VersionedFunctionToServiceRector`](../src/Drupal10/Rector/Deprecation/VersionedFunctionToServiceRector.php)
+
+```diff
+-_drupal_flush_css_js();
++\Drupal::service('asset.query_string')->reset();
 ```
 
 <br>
