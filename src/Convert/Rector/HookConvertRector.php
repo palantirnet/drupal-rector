@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace DrupalRector\Convert\Rector;
 
-use DrupalRector\Services\AddCommentService;
 use PhpParser\Comment\Doc;
 use PhpParser\Node;
 use PhpParser\Node\Stmt\ClassMethod;
@@ -55,7 +54,7 @@ class HookConvertRector extends AbstractRector
      */
     protected Node\Expr\StaticCall $drupalServiceCall;
 
-    public function __construct(protected AddCommentService $addCommentService, protected BetterStandardPrinter $printer)
+    public function __construct(protected BetterStandardPrinter $printer)
     {
     }
 
@@ -178,66 +177,44 @@ CODE_SAMPLE
     protected function createMethodFromFunction(Function_ $node): ?ClassMethod
     {
         $name = $node->name->toString();
-        if (str_starts_with($name, '_'))
-        {
-            return NULL;
-        }
-        $hook = '';
-        // If the function name starts with the module name, presume it's a hook.
-        if (preg_match("/^{$this->module}_(.*)/", $name, $matches))
-        {
-            $hook = $matches[1];
-        }
-        // If there is doxygen but there's no hook yet then try to find the
-        // hook and module by parsing the doxygen for "Implements hook_foo()."
-        if (($doc = $node->getDocComment()) && !$hook)
-        {
-            $implementsModule = static::getImplementsModule($hook, $name, $doc->getReformattedText());
-        }
-        if ($hook)
-        {
-            // I prefer static because it shows what the method actually
-            // depends on.
-            return static::getMethod($node, $doc, $hook, $implementsModule ?? '', fn($name) => $this->nodeFactory->createPublicMethod($name));
-        }
-        elseif (!str_starts_with($name, 'template_preprocess_'))
-        {
-            $this->addCommentService->addDrupalRectorComment($node, 'If this is a hook then convert it according to https://www.drupal.org/node/3442349');
-        }
-        return NULL;
-    }
-
-    protected static function getImplementsModule(string &$hook, string $functionName, string $doxygen): string {
         // If the doxygen contains "Implements hook_foo()" then parse the hook
         // name. A difficulty here is "Implements hook_form_FORM_ID_alter".
         // Find these by looking for an optional part starting with an
         // uppercase letter.
-        if (preg_match('/^ \* Implements hook_([a-z0-9_]+)(([A-Z][A-Z0-9_]+)(_[a-z0-9_]*))?/m', $doxygen, $matches))
+        if (($doc = $node->getDocComment()) && ($return = static::getHookAndModuleName($name, $doc)))
+        {
+            [, $implementsModule, $hook] = $return;
+            if (str_starts_with($hook, 'preprocess') || str_starts_with($hook, 'preprocess'))
+            {
+                return NULL;
+            }
+            if ($implementsModule === $this->module) {
+                $implementsModule = '';
+            }
+            $method = $this->nodeFactory->createPublicMethod($this->getMethodName($node));
+            return static::copyFunctionToMethod($node, $doc, $hook, $implementsModule, $method);
+        }
+        return NULL;
+    }
+
+    protected static function getHookAndModuleName(string $functionName, Doc $doc): array
+    {
+        if (preg_match('/^ \* Implements hook_([a-z0-9_]*)(([A-Z][A-Z0-9_]+)(_[a-z0-9_]*))?/m', $doc->getReformattedText(), $matches))
         {
             $preg = $matches[1];
             // If the optional part is present then replace the uppercase
             // portions with an appropriate regex.
-            if (isset($matches[4]))
-            {
+            if (isset($matches[4])) {
                 $preg .= '[a-z0-9_]+' . $matches[4];
             }
             // And now find the module and the hook.
-            if (preg_match("/^(.*?)_($preg)$/", $functionName, $matches))
-            {
-                $hook = $matches[2];
-                return $matches[1];
-            }
+            preg_match("/^(.+)_($preg)$/", $functionName, $matches);
         }
-        return '';
+        return $matches;
     }
 
-    protected static function getMethod(Function_ $node, ?Doc $doc, string $hook, string $implementsModule, callable $methodFactory): ClassMethod {
-        $method = $methodFactory(static::getMethodName($node));
-        assert($method instanceof ClassMethod);
-        if ($doc)
-        {
-            $method->setDocComment($doc);
-        }
+    protected static function copyFunctionToMethod(Function_ $node, Doc $doc, string $hook, string $implementsModule, ClassMethod $method): ClassMethod {
+        $method->setDocComment($doc);
         // Do the actual copying.
         foreach ($node->getSubNodeNames() as $subNodeName)
         {
@@ -273,7 +250,7 @@ CODE_SAMPLE
     protected function getServiceCall(Function_ $node): Return_
     {
         $args = array_map(fn($param) => $this->nodeFactory->createArg($param->var), $node->getParams());
-        return new Return_($this->nodeFactory->createMethodCall($this->drupalServiceCall, static::getMethodName($node), $args));
+        return new Return_($this->nodeFactory->createMethodCall($this->drupalServiceCall, $this->getMethodName($node), $args));
     }
 
     /**
@@ -284,9 +261,10 @@ CODE_SAMPLE
      * @return string
      *   The function name converted to camelCase for e.g. userUserRoleInsert.
      */
-    public static function getMethodName(Function_ $node): string
+    protected function getMethodName(Function_ $node): string
     {
-        return CaseStringHelper::camelCase($node->name->toString());
+      $name = preg_replace("/^$this->module" . '_/', '', $node->name->toString());
+      return CaseStringHelper::camelCase($name);
     }
 
     protected static function writeServicesYml(string $fileName, string $fullyClassifiedClassName): void
