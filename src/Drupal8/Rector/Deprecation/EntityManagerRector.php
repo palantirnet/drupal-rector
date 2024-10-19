@@ -47,7 +47,7 @@ final class EntityManagerRector extends AbstractRector
 
     public function __construct(
         ParentClassScopeResolver $parentClassScopeResolver,
-        AddCommentService $commentService
+        AddCommentService $commentService,
     ) {
         $this->parentClassScopeResolver = $parentClassScopeResolver;
         $this->commentService = $commentService;
