@@ -1,6 +1,16 @@
 parameters:
 	ignoreErrors:
 		-
+			message: """
+				#^Call to deprecated method locateRoot\\(\\) of class DrupalFinder\\\\DrupalFinder\\:
+				Will be removed in v2\\. Future usage should instantiate
+				  a new DrupalFinder object by passing the starting path to its
+				  constructor\\.$#
+			"""
+			count: 1
+			path: config/drupal-phpunit-bootstrap-file.php
+
+		-
 			message: "#^Function drupal_phpunit_contrib_extension_directory_roots\\(\\) return type has no value type specified in iterable type array\\.$#"
 			count: 1
 			path: config/drupal-phpunit-bootstrap-file.php
@@ -43,6 +53,16 @@ parameters:
 			"""
 			count: 1
 			path: config/drupal-phpunit-bootstrap-file.php
+
+		-
+			message: """
+				#^Call to deprecated method locateRoot\\(\\) of class DrupalFinder\\\\DrupalFinder\\:
+				Will be removed in v2\\. Future usage should instantiate
+				  a new DrupalFinder object by passing the starting path to its
+				  constructor\\.$#
+			"""
+			count: 1
+			path: rector.php
 
 		-
 			message: """

@@ -20,7 +20,8 @@ return static function (RectorConfig $rectorConfig): void {
     if (class_exists('DrupalFinder\DrupalFinderComposerRuntime')) {
         $drupalFinder = new DrupalFinder\DrupalFinderComposerRuntime();
     } else {
-        $drupalFinder = new DrupalFinder\DrupalFinder(__DIR__);
+        $drupalFinder = new DrupalFinder\DrupalFinder();
+        $drupalFinder->locateRoot(__DIR__);
     }
     $drupalRoot = $drupalFinder->getDrupalRoot();
     $rectorConfig->autoloadPaths([
