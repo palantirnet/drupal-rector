@@ -1,15 +1,20 @@
 <?php
 
+/** @noinspection PhpMultipleClassDeclarationsInspection */
+/** @noinspection DuplicatedCode */
+
 declare(strict_types=1);
 
 namespace DrupalRector\Convert\Rector;
 
-use PhpParser\Comment\Doc;
+use Composer\InstalledVersions;
 use PhpParser\Node;
+use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\ClassMethod;
 use PhpParser\Node\Stmt\Function_;
 use PhpParser\Node\Stmt\Return_;
 use PhpParser\NodeFinder;
+use PhpParser\NodeTraverser;
 use Rector\Doctrine\CodeQuality\Utils\CaseStringHelper;
 use Rector\PhpParser\Printer\BetterStandardPrinter;
 use Rector\Rector\AbstractRector;
@@ -54,8 +59,17 @@ class HookConvertRector extends AbstractRector
      */
     protected Node\Expr\StaticCall $drupalServiceCall;
 
+    private string $drupalCore = "\0";
+
     public function __construct(protected BetterStandardPrinter $printer)
     {
+        try
+        {
+            if ($corePath = InstalledVersions::getInstallPath('drupal/core')) {
+                $this->drupalCore = realpath($corePath);
+            }
+        }
+        catch (\OutOfBoundsException $e) { }
     }
 
     public function getRuleDefinition(): RuleDefinition
@@ -81,40 +95,25 @@ CODE_SAMPLE
         return [Function_::class, Node\Stmt\Use_::class];
     }
 
-    public function refactor(Node $node): Node|array|NULL
+    public function refactor(Node $node): Node|NULL|int
     {
         $filePath = $this->file->getFilePath();
         $ext = pathinfo($filePath, \PATHINFO_EXTENSION);
-        if (!in_array($ext, ['inc', 'module']))
-        {
-            return $node;
+        if (!in_array($ext, ['inc', 'module'])) {
+            return NULL;
         }
-        if ($filePath !== $this->inputFilename)
-        {
+        if ($filePath !== $this->inputFilename) {
             $this->initializeHookClass();
         }
         if ($node instanceof Node\Stmt\Use_) {
             $this->useStmts[] = $node;
         }
 
-        if ($node instanceof Function_ && $this->module && ($method = $this->createMethodFromFunction($node)))
-        {
+        if ($node instanceof Function_ && $this->module && ($method = $this->createMethodFromFunction($node))) {
             $this->hookClass->stmts[] = $method;
-            // Rewrite the function body to be a single service call.
-            $serviceCall = $this->getServiceCall($node);
-            // If the function body doesn't contain a return statement,
-            // remove the return from the service call.
-            if (!(new NodeFinder)->findFirstInstanceOf([$node], Return_::class))
-            {
-                $serviceCall = new Node\Stmt\Expression($serviceCall->expr);
-            }
-            // See the note in ::getMethod() about how it's important to not
-            // change any object property of $node here.
-            $node->stmts = [$serviceCall];
-            // Mark this function as a legacy hook.
-            $node->attrGroups[] = new Node\AttributeGroup([new Node\Attribute(new Node\Name\FullyQualified('Drupal\Core\Hook\Attribute\LegacyHook'))]);
+            return str_starts_with($filePath, $this->drupalCore) ? NodeTraverser::REMOVE_NODE : $this->getLegacyHookFunction($node);
         }
-        return $node;
+        return NULL;
     }
 
     protected function initializeHookClass(): void
@@ -133,15 +132,14 @@ CODE_SAMPLE
             $this->hookClass = new Node\Stmt\Class_(new Node\Name($hookClassName));
             // Using $this->nodeFactory->createStaticCall() results in
             // use \Drupal; on top which is not desirable.
-            $classConst = new Node\Expr\ClassConstFetch(new Node\Name\FullyQualified("$namespace\\$hookClassName"), 'CLASS');
+            $classConst = new Node\Expr\ClassConstFetch(new Node\Name\FullyQualified("$namespace\\$hookClassName"), 'class');
             $this->drupalServiceCall = new Node\Expr\StaticCall(new Node\Name\FullyQualified('Drupal'), 'service', [new Node\Arg($classConst)]);
         }
     }
 
     public function __destruct()
     {
-        if ($this->module && $this->hookClass->stmts)
-        {
+        if ($this->module && $this->hookClass->stmts) {
             $className = $this->hookClass->name->toString();
             $counter = '';
             do {
@@ -150,107 +148,76 @@ CODE_SAMPLE
                 $this->hookClass->name = new Node\Name($candidate);
                 $counter = $counter ? $counter + 1 : 1;
             } while (file_exists($hookClassFilename));
-            // Create the statement use Drupal\Core\Hook\Attribute\Hook;
-            $name = new Node\Name('Drupal\Core\Hook\Attribute\Hook');
-            // UseItem contains an unguarded class_alias to the deprecated
-            // UseUse class. However, due to some version mix-up it seems the
-            // old class is used for parsing so only use the UseItem class if
-            // it is already loaded or the UseUse class is completely gone.
-            $useHook = class_exists('PhpParser\Node\UseItem', FALSE) || !class_exists('PhpParser\Node\Stmt\UseUse') ? new Node\UseItem($name) : new Node\Stmt\UseUse($name);
-            // Put the class together.
+            // Put the file together.
             $namespace = "Drupal\\$this->module\\Hook";
             $hookClassStmts = [
                 new Node\Stmt\Namespace_(new Node\Name($namespace)),
                 ... $this->useStmts,
-                new Node\Stmt\Use_([$useHook]),
+                new Node\Stmt\Use_([new Node\Stmt\UseUse(new Node\Name('Drupal\Core\Hook\Attribute\Hook'))]),
                 $this->hookClass,
             ];
             // Write it out.
             @mkdir("$this->moduleDir/src");
             @mkdir("$this->moduleDir/src/Hook");
             file_put_contents($hookClassFilename, $this->printer->prettyPrintFile($hookClassStmts));
-            static::writeServicesYml("$this->moduleDir/$this->module.services.yml", "$namespace\\$className");
+            if (!str_starts_with($this->moduleDir, $this->drupalCore)) {
+                static::writeServicesYml("$this->moduleDir/$this->module.services.yml", "$namespace\\$className");
+            }
             $this->module = '';
+            $this->useStmts = [];
         }
     }
 
     protected function createMethodFromFunction(Function_ $node): ?ClassMethod
     {
-        $name = $node->name->toString();
         // If the doxygen contains "Implements hook_foo()" then parse the hook
         // name. A difficulty here is "Implements hook_form_FORM_ID_alter".
         // Find these by looking for an optional part starting with an
         // uppercase letter.
-        if (($doc = $node->getDocComment()) && ($return = static::getHookAndModuleName($name, $doc)))
-        {
-            [, $implementsModule, $hook] = $return;
-            if (str_starts_with($hook, 'preprocess') || str_starts_with($hook, 'preprocess'))
-            {
+        if ($info = static::getHookAndModuleName($node)) {
+            ['hook' => $hook, 'module' => $implementsModule] = $info;
+            $procOnly = [
+                'install',
+                'module_preinstall',
+                'module_preuninstall',
+                'modules_installed',
+                'modules_uninstalled',
+                'requirements',
+                'schema',
+                'uninstall',
+                'update_last_removed',
+            ];
+            if (in_array($hook, $procOnly) || str_starts_with($hook, 'preprocess') || str_starts_with($hook, 'process')) {
                 return NULL;
             }
-            if ($implementsModule === $this->module) {
-                $implementsModule = '';
+            $method = new ClassMethod($this->getMethodName($node), get_object_vars($node), $node->getAttributes());
+            $method->flags = Class_::MODIFIER_PUBLIC;
+            // Assemble the arguments for the #[Hook] attribute.
+            $arguments = [new Node\Arg(new Node\Scalar\String_($hook))];
+            if ($implementsModule !== $this->module) {
+                $arguments[] = new Node\Arg(new Node\Scalar\String_($implementsModule), name: new Node\Identifier('module'));
             }
-            $method = $this->nodeFactory->createPublicMethod($this->getMethodName($node));
-            return static::copyFunctionToMethod($node, $doc, $hook, $implementsModule, $method);
+            $hookAttribute = new Node\Attribute(new Node\Name('Hook'), $arguments);
+            $method->attrGroups[] = new Node\AttributeGroup([$hookAttribute]);
+            return $method;
         }
         return NULL;
     }
 
-    protected static function getHookAndModuleName(string $functionName, Doc $doc): array
+    protected static function getHookAndModuleName(Function_ $node): array
     {
-        if (preg_match('/^ \* Implements hook_([a-z0-9_]*)(([A-Z][A-Z0-9_]+)(_[a-z0-9_]*))?/m', $doc->getReformattedText(), $matches))
-        {
-            $preg = $matches[1];
+        if (preg_match('/^ \* Implements hook_([a-z0-9_]*)(?:[A-Z][A-Z0-9_]+(_[a-z0-9_]*))?/m', (string) $node->getDocComment()?->getReformattedText(), $matches)) {
+            $hookRegex = $matches[1];
             // If the optional part is present then replace the uppercase
             // portions with an appropriate regex.
-            if (isset($matches[4])) {
-                $preg .= '[a-z0-9_]+' . $matches[4];
+            if (isset($matches[2])) {
+              $hookRegex .= '[a-z0-9_]+' . $matches[2];
             }
             // And now find the module and the hook.
-            preg_match("/^(.+)_($preg)$/", $functionName, $matches);
+            preg_match("/^(?<module>.+?)_(?<hook>$hookRegex)$/", $node->name->toString(), $matches);
+            return $matches;
         }
-        return $matches;
-    }
-
-    protected static function copyFunctionToMethod(Function_ $node, Doc $doc, string $hook, string $implementsModule, ClassMethod $method): ClassMethod {
-        $method->setDocComment($doc);
-        // Do the actual copying.
-        foreach ($node->getSubNodeNames() as $subNodeName)
-        {
-            // The name is set up in the constructor.
-            if ($subNodeName !== 'name')
-            {
-                // Copying an object property could be a problem as those
-                // are copied by handle so changing it would change it in
-                // both places. But ::refactor() only changes stmts and
-                // attrGroups and both are arrays. This function also only
-                // changes attrGroups.
-                $method->$subNodeName = $node->$subNodeName;
-            }
-        }
-        // Assemble the arguments for the #[Hook] attribute.
-        $arguments = [new Node\Arg(new Node\Scalar\String_($hook))];
-        if ($implementsModule)
-        {
-            $arguments[] = new Node\Arg(new Node\Scalar\String_($implementsModule), name: new Node\Identifier('module'));
-        }
-        $hookAttribute = new Node\Attribute(new Node\Name('Hook'), $arguments);
-        $method->attrGroups[] = new Node\AttributeGroup([$hookAttribute]);
-        return $method;
-    }
-
-  /**
-   * @param \PhpParser\Node\Stmt\Function_ $node
-   *   E.g.: user_entity_operation(EntityInterface $entity)
-   *
-   * @return \PhpParser\Node\Stmt\Return_
-   *   E.g.: return Drupal::service('Drupal\user\Hook\UserHooks')->userEntityOperation($entity);
-   */
-    protected function getServiceCall(Function_ $node): Return_
-    {
-        $args = array_map(fn($param) => $this->nodeFactory->createArg($param->var), $node->getParams());
-        return new Return_($this->nodeFactory->createMethodCall($this->drupalServiceCall, $this->getMethodName($node), $args));
+        return [];
     }
 
     /**
@@ -263,23 +230,33 @@ CODE_SAMPLE
      */
     protected function getMethodName(Function_ $node): string
     {
-      $name = preg_replace("/^$this->module" . '_/', '', $node->name->toString());
-      return CaseStringHelper::camelCase($name);
+        $name = preg_replace("/^{$this->module}_/", '', $node->name->toString());
+        return CaseStringHelper::camelCase($name);
+    }
+
+    public function getLegacyHookFunction(Function_ $node): Function_
+    {
+        $args = array_map(fn($param) => $this->nodeFactory->createArg($param->var), $node->getParams());
+        $methodCall = $this->nodeFactory->createMethodCall($this->drupalServiceCall, $this->getMethodName($node), $args);
+        $hasReturn = (new NodeFinder)->findFirstInstanceOf([$node], Return_::class);
+        $node->stmts = [$hasReturn ? new Return_($methodCall) : new Node\Stmt\Expression($methodCall)];
+        // Mark this function as a legacy hook.
+        $node->attrGroups[] = new Node\AttributeGroup([new Node\Attribute(new Node\Name\FullyQualified('Drupal\Core\Hook\Attribute\LegacyHook'))]);
+        return $node;
     }
 
     protected static function writeServicesYml(string $fileName, string $fullyClassifiedClassName): void
     {
         $services = is_file($fileName) ? file_get_contents($fileName) : '';
         $id = "\n  $fullyClassifiedClassName:\n";
-        if (!str_contains($services, $id))
-        {
-            if (!str_contains($services, 'services:'))
-            {
+        if (!str_contains($services, $id)) {
+            if (!str_contains($services, 'services:')) {
                 $services .= "\nservices:";
             }
             $services .= "$id    class: $fullyClassifiedClassName\n    autowire: true\n";
             file_put_contents($fileName, $services);
         }
     }
+
 
 }
