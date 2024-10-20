@@ -20,11 +20,17 @@ jobs:
                 include:
                     - php-version: "8.0"
                       drupal: "^9.2"
+                      fixture: "d8"
+                    - php-version: "8.0"
+                      drupal: "^9.2"
+                      fixture: "d9"
+                    - php-version: "8.1"
+                      drupal: "^10.0"
                       fixture: "d9"
                     - php-version: "8.1"
                       drupal: "^10.0"
                       fixture: "d10"
-                    - php-version: "8.2"
+                    - php-version: "8.3"
                       drupal: "^10.0"
                       fixture: "d10"
         runs-on: ubuntu-latest
