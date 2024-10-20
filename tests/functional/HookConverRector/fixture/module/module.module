@@ -1,0 +1,7 @@
+<?php
+
+function node_user_cancel($edit, UserInterface $account, $method) {
+    $red = 'red';
+}
+
+?>

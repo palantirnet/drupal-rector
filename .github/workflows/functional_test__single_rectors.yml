@@ -1,0 +1,73 @@
+
+name: functional_test_single
+
+# This test will run on every pull request, and on every commit on any branch
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+  schedule:
+    # Run tests every week (to check for rector changes)
+    - cron:  '0 0 * * 0'
+
+jobs:
+    run_functional_test_single:
+        name: Functional Test | single rectors"
+        runs-on: ubuntu-latest
+        steps:
+            -   uses: actions/checkout@v3
+            -   uses: shivammathur/setup-php@v2
+                with:
+                    php-version: "${{ matrix.php-version }}"
+                    coverage: none
+                    tools: composer:v2
+                    extensions: dom, curl, libxml, mbstring, zip, pdo, mysql, pdo_mysql, gd
+            -   name: Setup Drupal
+                uses: bluehorndigital/setup-drupal@v1.0.4
+                with:
+                    version: '^11.0'
+                    path: ~/drupal
+            -   name: Install Drupal Rector
+                run: |
+                    cd ~/drupal
+                    composer require palantirnet/drupal-rector:@dev --no-progress
+            -   name: Prepare rector_examples folder in the drupal modules directory
+                run: |
+                    cd ~/drupal
+                    mkdir -p web/modules/custom
+                    cp -R vendor/palantirnet/drupal-rector/tests/functional/* web/modules/custom
+            # dry-run is expected to return exit code 2 if there are changes, which we are expecting to happen, here.
+            # an error code of 1 represents other errors.
+            # @see \Rector\Core\Console\ExitCode::CHANGED_CODE
+            -   name: Run rector against Drupal (dry-run)
+                run: |
+                    cd ~/drupal
+                    for d in web/modules/custom/*; do
+                        if [ -d "$d" ]; then
+                            cp ${d}/rector.php .
+                            vendor/bin/rector process $d/fixture/module --dry-run --debug || if (($? == 2)); then true; else exit 1; fi
+                        fi
+                    done
+            -   name: Run rector against Drupal
+                run: |
+                    cd ~/drupal
+                    for d in web/modules/custom/*; do
+                        if [ -d "$d" ]; then
+                            cp ${d}/rector.php .
+                            vendor/bin/rector process $d/fixture/module --debug
+                        fi
+                    done
+            # diff options:
+            # -r: recursive
+            # -u: show the joined context, like git diff
+            # -b: ignore whitespace
+            # -B: ignore lines that are only whitespace
+            -   name: Check that the updated examples match expectations
+                run: |
+                    cd ~/drupal
+                    for d in web/modules/custom/*; do
+                        if [ -d "$d" ]; then
+                            diff -rubB "$d/fixture/module" "$d/fixture/module_updated"
+                        fi
+                    done
