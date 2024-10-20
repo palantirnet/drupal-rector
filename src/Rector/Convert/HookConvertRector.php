@@ -1,17 +1,15 @@
 <?php
 
-/** @noinspection PhpMultipleClassDeclarationsInspection */
-/** @noinspection DuplicatedCode */
-
 declare(strict_types=1);
 
 namespace DrupalRector\Rector\Convert;
 
 use Composer\InstalledVersions;
 use PhpParser\Node;
-use PhpParser\Node\Stmt\{Use_, Class_, ClassMethod, Function_, Return_};
-use PhpParser\NodeFinder;
+use PhpParser\Node\Name\FullyQualified;
 use PhpParser\NodeTraverser;
+use PhpParser\Node\Stmt\{Use_, Class_, ClassMethod, Function_};
+use PhpParser\NodeFinder;
 use Rector\Doctrine\CodeQuality\Utils\CaseStringHelper;
 use Rector\PhpParser\Printer\BetterStandardPrinter;
 use Rector\Rector\AbstractRector;
@@ -23,6 +21,9 @@ class HookConvertRector extends AbstractRector
 
     protected string $inputFilename = '';
 
+    /**
+     * @var Use_[]
+     */
     protected array $useStmts = [];
 
     protected Class_ $hookClass;
@@ -85,6 +86,8 @@ CODE_SAMPLE
             $this->initializeHookClass();
         }
         if ($node instanceof Use_) {
+            // For some unknown reason some Use_ statements are passed twice
+            // to this method.
             $this->useStmts[$this->printer->prettyPrint([$node])] = $node;
         }
 
@@ -103,16 +106,17 @@ CODE_SAMPLE
         // Find the relevant info.yml: it's either in the current directory or
         // one of the parents.
         while (($this->moduleDir = dirname($this->moduleDir)) && !($info = glob("$this->moduleDir/*.info.yml")));
-        if ($infoFile = reset($info)) {
+        if (!empty($info)) {
+            $infoFile = reset($info);
             $this->module = basename($infoFile, '.info.yml');
             $filename = pathinfo($this->file->getFilePath(), \PATHINFO_FILENAME);
             $hookClassName = ucfirst(CaseStringHelper::camelCase(str_replace('.', '_', $filename) . '_hooks'));
             $namespace = implode('\\', ['Drupal', $this->module, 'Hook']);
-            $this->hookClass = new Class_(new Node\Name($hookClassName));
+            $this->hookClass = new Class_(new Node\Identifier($hookClassName));
             // Using $this->nodeFactory->createStaticCall() results in
             // use \Drupal; on top which is not desirable.
-            $classConst = new Node\Expr\ClassConstFetch(new Node\Name\FullyQualified("$namespace\\$hookClassName"), 'class');
-            $this->drupalServiceCall = new Node\Expr\StaticCall(new Node\Name\FullyQualified('Drupal'), 'service', [new Node\Arg($classConst)]);
+            $classConst = new Node\Expr\ClassConstFetch(new FullyQualified("$namespace\\$hookClassName"), 'class');
+            $this->drupalServiceCall = new Node\Expr\StaticCall(new FullyQualified('Drupal'), 'service', [new Node\Arg($classConst)]);
             $this->useStmts = [];
         }
     }
@@ -125,7 +129,7 @@ CODE_SAMPLE
             do {
                 $candidate = "$className$counter";
                 $hookClassFilename = "$this->moduleDir/src/Hook/$candidate.php";
-                $this->hookClass->name = new Node\Name($candidate);
+                $this->hookClass->name = new Node\Identifier($candidate);
                 $counter = $counter ? $counter + 1 : 1;
             } while (file_exists($hookClassFilename));
             // Put the file together.
@@ -165,6 +169,7 @@ CODE_SAMPLE
             if (in_array($hook, $procOnly) || str_starts_with($hook, 'preprocess') || str_starts_with($hook, 'process')) {
                 return NULL;
             }
+            // Convert the function to a method.
             $method = new ClassMethod($this->getMethodName($node), get_object_vars($node), $node->getAttributes());
             $method->flags = Class_::MODIFIER_PUBLIC;
             // Assemble the arguments for the #[Hook] attribute.
@@ -172,13 +177,30 @@ CODE_SAMPLE
             if ($implementsModule !== $this->module) {
                 $arguments[] = new Node\Arg(new Node\Scalar\String_($implementsModule), name: new Node\Identifier('module'));
             }
-            $hookAttribute = new Node\Attribute(new Node\Name('Hook'), $arguments);
-            $method->attrGroups[] = new Node\AttributeGroup([$hookAttribute]);
+            $method->attrGroups[] = new Node\AttributeGroup([new Node\Attribute(new Node\Name('Hook'), $arguments)]);
             return $method;
         }
         return NULL;
     }
 
+  /**
+   * Get the hook and module name from a function name and doxygen.
+   *
+   * If the doxygen has Implements hook_foo() in it then this method attempts
+   * to find a matching module name and hook. Function names like
+   * user_access_test_user_access() are ambiguous: it could be the user module
+   * implementing the hook_ENTITY_TYPE_access hook for the access_test_user
+   * entity type or it could be the user_access_test module implementing it for
+   * the user entity type. The current module name is preferred by the method
+   * then the shortest possible module name producing a match is returned.
+   *
+   * @param \PhpParser\Node\Stmt\Function_ $node
+   *   A function node.
+   *
+   * @return array
+   *   If a match was found then an associative array with keys hook and module
+   *   with corresponding values. Otherwise, the array is empty.
+   */
     protected function getHookAndModuleName(Function_ $node): array
     {
         // If the doxygen contains "Implements hook_foo()" then parse the hook
@@ -210,7 +232,8 @@ CODE_SAMPLE
      *   function.
      *
      * @return string
-     *   The function name converted to camelCase for e.g. userUserRoleInsert.
+     *   The function name converted to camelCase for e.g. userRoleInsert. The
+     *   current module name is removed from the beginning.
      */
     protected function getMethodName(Function_ $node): string
     {
@@ -220,12 +243,12 @@ CODE_SAMPLE
 
     public function getLegacyHookFunction(Function_ $node): Function_
     {
-        $args = array_map(fn($param) => $this->nodeFactory->createArg($param->var), $node->getParams());
-        $methodCall = $this->nodeFactory->createMethodCall($this->drupalServiceCall, $this->getMethodName($node), $args);
-        $hasReturn = (new NodeFinder)->findFirstInstanceOf([$node], Return_::class);
-        $node->stmts = [$hasReturn ? new Return_($methodCall) : new Node\Stmt\Expression($methodCall)];
+        $args = array_map(fn (Node\Param $param) => new Node\Arg($param->var), $node->getParams());
+        $methodCall = new Node\Expr\MethodCall($this->drupalServiceCall, $this->getMethodName($node), $args);
+        $hasReturn = (new NodeFinder)->findFirstInstanceOf([$node], Node\Stmt\Return_::class);
+        $node->stmts = [$hasReturn ? new Node\Stmt\Return_($methodCall) : new Node\Stmt\Expression($methodCall)];
         // Mark this function as a legacy hook.
-        $node->attrGroups[] = new Node\AttributeGroup([new Node\Attribute(new Node\Name\FullyQualified('Drupal\Core\Hook\Attribute\LegacyHook'))]);
+        $node->attrGroups[] = new Node\AttributeGroup([new Node\Attribute(new FullyQualified('Drupal\Core\Hook\Attribute\LegacyHook'))]);
         return $node;
     }
 
