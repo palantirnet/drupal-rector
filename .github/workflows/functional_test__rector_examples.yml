@@ -20,12 +20,6 @@ jobs:
                 include:
                     - php-version: "8.0"
                       drupal: "^9.2"
-                      fixture: "d8"
-                    - php-version: "8.0"
-                      drupal: "^9.2"
-                      fixture: "d9"
-                    - php-version: "8.1"
-                      drupal: "^10.0"
                       fixture: "d9"
                     - php-version: "8.1"
                       drupal: "^10.0"
