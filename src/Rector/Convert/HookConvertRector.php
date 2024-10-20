@@ -5,7 +5,7 @@
 
 declare(strict_types=1);
 
-namespace DrupalRector\Convert\Rector;
+namespace DrupalRector\Rector\Convert;
 
 use Composer\InstalledVersions;
 use PhpParser\Node;
