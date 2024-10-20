@@ -14,6 +14,7 @@ return static function (RectorConfig $rectorConfig): void {
     //   new possible option with ComposerTriggeredSet
     //   https://github.com/rectorphp/rector-src/blob/b5a5739b7d7dde621053adff113449860ed5331f/src/Set/ValueObject/ComposerTriggeredSet.php
     $rectorConfig->sets([
+        Drupal8SetList::DRUPAL_8,
         Drupal9SetList::DRUPAL_9,
         Drupal10SetList::DRUPAL_10,
     ]);
