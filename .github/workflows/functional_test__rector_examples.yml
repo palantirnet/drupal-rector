@@ -13,7 +13,7 @@ on:
 
 jobs:
     run_functional_test:
-        name: Functional Test | PHP ${{ matrix.php-version }} | Drupal ${{ matrix.drupal }}"
+        name: Functional Test | PHP ${{ matrix.php-version }} | Drupal ${{ matrix.drupal }}" || Fixture ${{ matrix.fixture }}
         strategy:
             fail-fast: false
             matrix:
