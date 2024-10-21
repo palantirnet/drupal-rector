@@ -7,7 +7,9 @@ namespace DrupalRector\Rector\Convert;
 use Composer\InstalledVersions;
 use PhpParser\Node;
 use PhpParser\Node\Name\FullyQualified;
+use PhpParser\Node\Scalar\String_;
 use PhpParser\NodeTraverser;
+use PhpParser\NodeVisitorAbstract;
 use PhpParser\Node\Stmt\{Use_, Class_, ClassMethod, Function_};
 use PhpParser\NodeFinder;
 use Rector\Doctrine\CodeQuality\Utils\CaseStringHelper;
@@ -169,6 +171,18 @@ CODE_SAMPLE
             if (in_array($hook, $procOnly) || str_starts_with($hook, 'preprocess') || str_starts_with($hook, 'process')) {
                 return NULL;
             }
+            $functionConstantResolver = new class(new String_($node->name->toString())) extends NodeVisitorAbstract {
+                public function __construct(protected String_ $name)
+                {
+                }
+                public function leaveNode(Node $node)
+                {
+                    return $node instanceof Node\Scalar\MagicConst\Function_ ? $this->name : parent::leaveNode($node);
+                }
+            };
+            $traverser = new NodeTraverser();
+            $traverser->addVisitor($functionConstantResolver);
+            $traverser->traverse([$node]);
             // Convert the function to a method.
             $method = new ClassMethod($this->getMethodName($node), get_object_vars($node), $node->getAttributes());
             $method->flags = Class_::MODIFIER_PUBLIC;
