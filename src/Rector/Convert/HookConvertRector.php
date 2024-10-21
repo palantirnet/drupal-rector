@@ -91,6 +91,7 @@ CODE_SAMPLE
             // For some unknown reason some Use_ statements are passed twice
             // to this method.
             $this->useStmts[$this->printer->prettyPrint([$node])] = $node;
+            $node->setAttribute('comments', []);
         }
 
         if ($node instanceof Function_ && $this->module && ($method = $this->createMethodFromFunction($node))) {
