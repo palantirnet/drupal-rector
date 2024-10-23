@@ -184,6 +184,7 @@ CODE_SAMPLE
                         $parts = $node->name->getParts();
                         if (count($parts) === 1) {
                             $node->name = new Node\Name(reset($parts));
+                            return $node;
                         }
                     }
                     return $node instanceof Node\Scalar\MagicConst\Function_ ? $this->functionName : parent::leaveNode($node);
