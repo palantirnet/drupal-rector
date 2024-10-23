@@ -172,6 +172,8 @@ CODE_SAMPLE
             if (in_array($hook, $procOnly) || str_starts_with($hook, 'preprocess') || str_starts_with($hook, 'process')) {
                 return NULL;
             }
+            // Resolve __FUNCTION__ and unqualify things so TRUE doesn't
+            // become \TRUE.
             $visitor = new class(new String_($node->name->toString())) extends NodeVisitorAbstract {
                 public function __construct(protected String_ $name)
                 {
