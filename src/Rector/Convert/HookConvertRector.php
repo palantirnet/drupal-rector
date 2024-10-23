@@ -183,7 +183,7 @@ CODE_SAMPLE
                     if (isset($node->name) && $node->name instanceof FullyQualified) {
                         $parts = $node->name->getParts();
                         if (count($parts) === 1) {
-                            $node->name = new Node\Name(reset($parts));
+                            $node->name = new Node\Name($parts);
                             return $node;
                         }
                     }
