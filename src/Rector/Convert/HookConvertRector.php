@@ -178,7 +178,7 @@ CODE_SAMPLE
                 }
                 public function leaveNode(Node $node)
                 {
-                    if ($node instanceof Node\Expr\ConstFetch && $node->name instanceof FullyQualified) {
+                    if (isset($node->name) && $node->name instanceof FullyQualified) {
                         $parts = $node->name->getParts();
                         if (count($parts) === 1) {
                             $node->name = new Node\Name(reset($parts));
