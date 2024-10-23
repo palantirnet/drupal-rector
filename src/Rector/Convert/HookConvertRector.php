@@ -114,11 +114,17 @@ CODE_SAMPLE
             $this->module = basename($infoFile, '.info.yml');
             $filename = pathinfo($this->file->getFilePath(), \PATHINFO_FILENAME);
             $hookClassName = ucfirst(CaseStringHelper::camelCase(str_replace('.', '_', $filename) . '_hooks'));
+            $counter = '';
+            do {
+              $candidate = "$hookClassName$counter";
+              $hookClassFilename = "$this->moduleDir/src/Hook/$candidate.php";
+              $counter = $counter ? $counter + 1 : 1;
+            } while (file_exists($hookClassFilename));
             $namespace = implode('\\', ['Drupal', $this->module, 'Hook']);
-            $this->hookClass = new Class_(new Node\Identifier($hookClassName));
+            $this->hookClass = new Class_(new Node\Identifier($candidate));
             // Using $this->nodeFactory->createStaticCall() results in
             // use \Drupal; on top which is not desirable.
-            $classConst = new Node\Expr\ClassConstFetch(new FullyQualified("$namespace\\$hookClassName"), 'class');
+            $classConst = new Node\Expr\ClassConstFetch(new FullyQualified("$namespace\\$candidate"), 'class');
             $this->drupalServiceCall = new Node\Expr\StaticCall(new FullyQualified('Drupal'), 'service', [new Node\Arg($classConst)]);
             $this->useStmts = [];
         }
@@ -128,13 +134,6 @@ CODE_SAMPLE
     {
         if ($this->module && $this->hookClass->stmts) {
             $className = $this->hookClass->name->toString();
-            $counter = '';
-            do {
-                $candidate = "$className$counter";
-                $hookClassFilename = "$this->moduleDir/src/Hook/$candidate.php";
-                $this->hookClass->name = new Node\Identifier($candidate);
-                $counter = $counter ? $counter + 1 : 1;
-            } while (file_exists($hookClassFilename));
             // Put the file together.
             $namespace = "Drupal\\$this->module\\Hook";
             $hookClassStmts = [
@@ -146,7 +145,7 @@ CODE_SAMPLE
             // Write it out.
             @mkdir("$this->moduleDir/src");
             @mkdir("$this->moduleDir/src/Hook");
-            file_put_contents($hookClassFilename, $this->printer->prettyPrintFile($hookClassStmts));
+            file_put_contents("$this->moduleDir/src/Hook/$className.php", $this->printer->prettyPrintFile($hookClassStmts));
             if (!str_starts_with($this->moduleDir, $this->drupalCorePath)) {
                 static::writeServicesYml("$this->moduleDir/$this->module.services.yml", "$namespace\\$className");
             }
