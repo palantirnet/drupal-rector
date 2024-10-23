@@ -181,9 +181,9 @@ CODE_SAMPLE
                 public function leaveNode(Node $node)
                 {
                     if (isset($node->name) && $node->name instanceof FullyQualified) {
-                        $parts = $node->name->getParts();
-                        if (count($parts) === 1) {
-                            $node->name = new Node\Name($parts);
+                        $name = new Node\Name($node->name);
+                        if ($name->isUnqualified()) {
+                            $node->name = $name;
                             return $node;
                         }
                     }
