@@ -175,7 +175,7 @@ CODE_SAMPLE
             // Resolve __FUNCTION__ and unqualify things so TRUE doesn't
             // become \TRUE.
             $visitor = new class(new String_($node->name->toString())) extends NodeVisitorAbstract {
-                public function __construct(protected String_ $name)
+                public function __construct(protected String_ $functionName)
                 {
                 }
                 public function leaveNode(Node $node)
@@ -186,7 +186,7 @@ CODE_SAMPLE
                             $node->name = new Node\Name(reset($parts));
                         }
                     }
-                    return $node instanceof Node\Scalar\MagicConst\Function_ ? $this->name : parent::leaveNode($node);
+                    return $node instanceof Node\Scalar\MagicConst\Function_ ? $this->functionName : parent::leaveNode($node);
                 }
             };
             $traverser = new NodeTraverser();
