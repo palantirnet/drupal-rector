@@ -172,7 +172,7 @@ CODE_SAMPLE
             if (in_array($hook, $procOnly) || str_starts_with($hook, 'preprocess') || str_starts_with($hook, 'process')) {
                 return NULL;
             }
-            $functionConstantResolver = new class(new String_($node->name->toString())) extends NodeVisitorAbstract {
+            $visitor = new class(new String_($node->name->toString())) extends NodeVisitorAbstract {
                 public function __construct(protected String_ $name)
                 {
                 }
@@ -188,7 +188,7 @@ CODE_SAMPLE
                 }
             };
             $traverser = new NodeTraverser();
-            $traverser->addVisitor($functionConstantResolver);
+            $traverser->addVisitor($visitor);
             $traverser->traverse([$node]);
             // Convert the function to a method.
             $method = new ClassMethod($this->getMethodName($node), get_object_vars($node), $node->getAttributes());
