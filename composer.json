@@ -5,8 +5,7 @@
     "keywords": [
         "code style",
         "rector",
-        "drupal 8",
-        "drupal 9",
+        "drupal",
         "ast"
     ],
     "require": {

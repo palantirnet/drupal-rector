@@ -13,24 +13,18 @@ on:
 
 jobs:
     run_functional_test:
-        name: Functional Test | PHP ${{ matrix.php-version }} | Drupal ${{ matrix.drupal }}"
+        name: Functional | PHP ${{ matrix.php-version }} | Drupal ${{ matrix.drupal }}"
         strategy:
             fail-fast: false
             matrix:
                 include:
-                    - php-version: "7.4"
-                      drupal: "^8.9"
-                      fixture: "d8"
-                    - php-version: "7.4"
-                      drupal: "^9.2"
-                      fixture: "d9"
                     - php-version: "8.0"
                       drupal: "^9.2"
                       fixture: "d9"
                     - php-version: "8.1"
                       drupal: "^10.0"
                       fixture: "d10"
-                    - php-version: "8.2"
+                    - php-version: "8.3"
                       drupal: "^10.0"
                       fixture: "d10"
         runs-on: ubuntu-latest
