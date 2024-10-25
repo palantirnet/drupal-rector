@@ -142,6 +142,7 @@ CODE_SAMPLE
                 new Use_([new Node\Stmt\UseUse(new Node\Name('Drupal\Core\Hook\Attribute\Hook'))]),
                 $this->hookClass,
             ];
+            $this->hookClass->setDocComment(new \PhpParser\Comment\Doc("/**\n * Hook implementations for $this->module.\n */"));
             // Write it out.
             @mkdir("$this->moduleDir/src");
             @mkdir("$this->moduleDir/src/Hook");
