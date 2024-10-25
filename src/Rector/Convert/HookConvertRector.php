@@ -10,10 +10,10 @@ use PhpParser\Node\Name\FullyQualified;
 use PhpParser\Node\Scalar\String_;
 use PhpParser\NodeTraverser;
 use PhpParser\NodeVisitorAbstract;
+use Rector\PhpParser\Printer\BetterStandardPrinter;
 use PhpParser\Node\Stmt\{Use_, Class_, ClassMethod, Function_};
 use PhpParser\NodeFinder;
 use Rector\Doctrine\CodeQuality\Utils\CaseStringHelper;
-use Rector\PhpParser\Printer\BetterStandardPrinter;
 use Rector\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
@@ -43,8 +43,32 @@ class HookConvertRector extends AbstractRector
 
     private string $drupalCorePath = "\0";
 
-    public function __construct(protected BetterStandardPrinter $printer)
+    /**
+     * @var \Rector\PhpParser\Printer\BetterStandardPrinter
+     */
+    private BetterStandardPrinter $printer;
+
+    public function __construct(BetterStandardPrinter $printer)
     {
+        if (!(new \ReflectionClass(BetterStandardPrinter::class))->isFinal()) {
+            $this->printer = new class extends BetterStandardPrinter {
+                protected bool $multilineArray = FALSE;
+                protected function pExpr_Array(Node\Expr\Array_ $array): string
+                {
+                    $result = $this->multilineArray ? '' : $this->pCommaSeparated($array->items);
+                    if ($this->multilineArray || strlen($result) > 80) {
+                      $multilineArray = $this->multilineArray;
+                      $this->multilineArray = TRUE;
+                      $result = $this->pCommaSeparatedMultiline($array->items, TRUE) . $this->nl;
+                      $this->multilineArray = $multilineArray;
+                    }
+                    return '[' . $result  . ']';
+                }
+            };
+        }
+        else {
+            $this->printer = $printer;
+        }
         try
         {
             if (class_exists(InstalledVersions::class) && ($corePath = InstalledVersions::getInstallPath('drupal/core'))) {
