@@ -197,6 +197,7 @@ CODE_SAMPLE
                 'schema',
                 'uninstall',
                 'update_last_removed',
+                'module_implements_alter'
             ];
             if (in_array($hook, $procOnly) || str_starts_with($hook, 'preprocess') || str_starts_with($hook, 'process')) {
                 return null;
