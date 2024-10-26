@@ -8,19 +8,21 @@ use Composer\InstalledVersions;
 use PhpParser\Node;
 use PhpParser\Node\Name\FullyQualified;
 use PhpParser\Node\Scalar\String_;
+use PhpParser\Node\Stmt\Class_;
+use PhpParser\Node\Stmt\ClassMethod;
+use PhpParser\Node\Stmt\Function_;
+use PhpParser\Node\Stmt\Use_;
+use PhpParser\NodeFinder;
 use PhpParser\NodeTraverser;
 use PhpParser\NodeVisitorAbstract;
-use Rector\PhpParser\Printer\BetterStandardPrinter;
-use PhpParser\Node\Stmt\{Use_, Class_, ClassMethod, Function_};
-use PhpParser\NodeFinder;
 use Rector\Doctrine\CodeQuality\Utils\CaseStringHelper;
+use Rector\PhpParser\Printer\BetterStandardPrinter;
 use Rector\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 class HookConvertRector extends AbstractRector
 {
-
     protected string $inputFilename = '';
 
     /**
@@ -44,7 +46,7 @@ class HookConvertRector extends AbstractRector
     private string $drupalCorePath = "\0";
 
     /**
-     * @var \Rector\PhpParser\Printer\BetterStandardPrinter
+     * @var BetterStandardPrinter
      */
     private BetterStandardPrinter $printer;
 
@@ -52,30 +54,30 @@ class HookConvertRector extends AbstractRector
     {
         if (!(new \ReflectionClass(BetterStandardPrinter::class))->isFinal()) {
             $this->printer = new class extends BetterStandardPrinter {
-                protected bool $multilineArray = FALSE;
+                protected bool $multilineArray = false;
+
                 protected function pExpr_Array(Node\Expr\Array_ $array): string
                 {
                     $result = $this->multilineArray ? '' : $this->pCommaSeparated($array->items);
                     if ($this->multilineArray || strlen($result) > 80) {
-                      $multilineArray = $this->multilineArray;
-                      $this->multilineArray = TRUE;
-                      $result = $this->pCommaSeparatedMultiline($array->items, TRUE) . $this->nl;
-                      $this->multilineArray = $multilineArray;
+                        $multilineArray = $this->multilineArray;
+                        $this->multilineArray = true;
+                        $result = $this->pCommaSeparatedMultiline($array->items, true).$this->nl;
+                        $this->multilineArray = $multilineArray;
                     }
-                    return '[' . $result  . ']';
+
+                    return '['.$result.']';
                 }
             };
-        }
-        else {
+        } else {
             $this->printer = $printer;
         }
-        try
-        {
+        try {
             if (class_exists(InstalledVersions::class) && ($corePath = InstalledVersions::getInstallPath('drupal/core'))) {
                 $this->drupalCorePath = realpath($corePath);
             }
+        } catch (\OutOfBoundsException $e) {
         }
-        catch (\OutOfBoundsException $e) { }
     }
 
     public function getRuleDefinition(): RuleDefinition
@@ -101,12 +103,12 @@ CODE_SAMPLE
         return [Function_::class, Use_::class];
     }
 
-    public function refactor(Node $node): Node|NULL|int
+    public function refactor(Node $node): Node|int|null
     {
         $filePath = $this->file->getFilePath();
         $ext = pathinfo($filePath, \PATHINFO_EXTENSION);
         if (!in_array($ext, ['inc', 'module'])) {
-            return NULL;
+            return null;
         }
         if ($filePath !== $this->inputFilename) {
             $this->initializeHookClass();
@@ -120,9 +122,11 @@ CODE_SAMPLE
 
         if ($node instanceof Function_ && $this->module && ($method = $this->createMethodFromFunction($node))) {
             $this->hookClass->stmts[] = $method;
+
             return str_starts_with($filePath, $this->drupalCorePath) ? NodeTraverser::REMOVE_NODE : $this->getLegacyHookFunction($node);
         }
-        return NULL;
+
+        return null;
     }
 
     protected function initializeHookClass(): void
@@ -132,17 +136,18 @@ CODE_SAMPLE
         $this->inputFilename = $this->moduleDir;
         // Find the relevant info.yml: it's either in the current directory or
         // one of the parents.
-        while (($this->moduleDir = dirname($this->moduleDir)) && !($info = glob("$this->moduleDir/*.info.yml")));
+        while (($this->moduleDir = dirname($this->moduleDir)) && !($info = glob("$this->moduleDir/*.info.yml"))) {
+        }
         if (!empty($info)) {
             $infoFile = reset($info);
             $this->module = basename($infoFile, '.info.yml');
             $filename = pathinfo($this->file->getFilePath(), \PATHINFO_FILENAME);
-            $hookClassName = ucfirst(CaseStringHelper::camelCase(str_replace('.', '_', $filename) . '_hooks'));
+            $hookClassName = ucfirst(CaseStringHelper::camelCase(str_replace('.', '_', $filename).'_hooks'));
             $counter = '';
             do {
-              $candidate = "$hookClassName$counter";
-              $hookClassFilename = "$this->moduleDir/src/Hook/$candidate.php";
-              $counter = $counter ? $counter + 1 : 1;
+                $candidate = "$hookClassName$counter";
+                $hookClassFilename = "$this->moduleDir/src/Hook/$candidate.php";
+                $counter = $counter ? $counter + 1 : 1;
             } while (file_exists($hookClassFilename));
             $namespace = implode('\\', ['Drupal', $this->module, 'Hook']);
             $this->hookClass = new Class_(new Node\Identifier($candidate));
@@ -162,7 +167,7 @@ CODE_SAMPLE
             $namespace = "Drupal\\$this->module\\Hook";
             $hookClassStmts = [
                 new Node\Stmt\Namespace_(new Node\Name($namespace)),
-                ... $this->useStmts,
+                ...$this->useStmts,
                 new Use_([new Node\Stmt\UseUse(new Node\Name('Drupal\Core\Hook\Attribute\Hook'))]),
                 $this->hookClass,
             ];
@@ -194,7 +199,7 @@ CODE_SAMPLE
                 'update_last_removed',
             ];
             if (in_array($hook, $procOnly) || str_starts_with($hook, 'preprocess') || str_starts_with($hook, 'process')) {
-                return NULL;
+                return null;
             }
             // Resolve __FUNCTION__ and unqualify things so TRUE doesn't
             // become \TRUE.
@@ -202,15 +207,18 @@ CODE_SAMPLE
                 public function __construct(protected String_ $functionName)
                 {
                 }
+
                 public function leaveNode(Node $node)
                 {
                     if (isset($node->name) && $node->name instanceof FullyQualified) {
                         $name = new Node\Name($node->name);
                         if ($name->isUnqualified()) {
                             $node->name = $name;
+
                             return $node;
                         }
                     }
+
                     return $node instanceof Node\Scalar\MagicConst\Function_ ? $this->functionName : parent::leaveNode($node);
                 }
             };
@@ -221,34 +229,36 @@ CODE_SAMPLE
             $method = new ClassMethod($this->getMethodName($node), get_object_vars($node), $node->getAttributes());
             $method->flags = Class_::MODIFIER_PUBLIC;
             // Assemble the arguments for the #[Hook] attribute.
-            $arguments = [new Node\Arg(new Node\Scalar\String_($hook))];
+            $arguments = [new Node\Arg(new String_($hook))];
             if ($implementsModule !== $this->module) {
-                $arguments[] = new Node\Arg(new Node\Scalar\String_($implementsModule), name: new Node\Identifier('module'));
+                $arguments[] = new Node\Arg(new String_($implementsModule), name: new Node\Identifier('module'));
             }
             $method->attrGroups[] = new Node\AttributeGroup([new Node\Attribute(new Node\Name('Hook'), $arguments)]);
+
             return $method;
         }
-        return NULL;
+
+        return null;
     }
 
-  /**
-   * Get the hook and module name from a function name and doxygen.
-   *
-   * If the doxygen has Implements hook_foo() in it then this method attempts
-   * to find a matching module name and hook. Function names like
-   * user_access_test_user_access() are ambiguous: it could be the user module
-   * implementing the hook_ENTITY_TYPE_access hook for the access_test_user
-   * entity type or it could be the user_access_test module implementing it for
-   * the user entity type. The current module name is preferred by the method
-   * then the shortest possible module name producing a match is returned.
-   *
-   * @param \PhpParser\Node\Stmt\Function_ $node
-   *   A function node.
-   *
-   * @return array
-   *   If a match was found then an associative array with keys hook and module
-   *   with corresponding values. Otherwise, the array is empty.
-   */
+    /**
+     * Get the hook and module name from a function name and doxygen.
+     *
+     * If the doxygen has Implements hook_foo() in it then this method attempts
+     * to find a matching module name and hook. Function names like
+     * user_access_test_user_access() are ambiguous: it could be the user module
+     * implementing the hook_ENTITY_TYPE_access hook for the access_test_user
+     * entity type or it could be the user_access_test module implementing it for
+     * the user entity type. The current module name is preferred by the method
+     * then the shortest possible module name producing a match is returned.
+     *
+     * @param Function_ $node
+     *                        A function node
+     *
+     * @return array
+     *               If a match was found then an associative array with keys hook and module
+     *               with corresponding values. Otherwise, the array is empty.
+     */
     protected function getHookAndModuleName(Function_ $node): array
     {
         // If the doxygen contains "Implements hook_foo()" then parse the hook
@@ -260,32 +270,34 @@ CODE_SAMPLE
             // If the optional part is present then replace the uppercase
             // portions with an appropriate regex.
             if (isset($matches[2])) {
-              $hookRegex .= '[a-z0-9_]+' . $matches[2];
+                $hookRegex .= '[a-z0-9_]+'.$matches[2];
             }
             $hookRegex = "_(?<hook>$hookRegex)";
             $functionName = $node->name->toString();
             // And now find the module and the hook.
             foreach ([$this->module, '.+?'] as $module) {
                 if (preg_match("/^(?<module>$module)$hookRegex$/", $functionName, $matches)) {
-                  return $matches;
+                    return $matches;
                 }
             }
         }
+
         return [];
     }
 
     /**
-     * @param \PhpParser\Node\Stmt\Function_ $node
-     *   A function declaration for example the entire user_user_role_insert()
-     *   function.
+     * @param Function_ $node
+     *                        A function declaration for example the entire user_user_role_insert()
+     *                        function
      *
      * @return string
-     *   The function name converted to camelCase for e.g. userRoleInsert. The
-     *   current module name is removed from the beginning.
+     *                The function name converted to camelCase for e.g. userRoleInsert. The
+     *                current module name is removed from the beginning.
      */
     protected function getMethodName(Function_ $node): string
     {
         $name = preg_replace("/^{$this->module}_/", '', $node->name->toString());
+
         return CaseStringHelper::camelCase($name);
     }
 
@@ -293,10 +305,11 @@ CODE_SAMPLE
     {
         $args = array_map(fn (Node\Param $param) => new Node\Arg($param->var), $node->getParams());
         $methodCall = new Node\Expr\MethodCall($this->drupalServiceCall, $this->getMethodName($node), $args);
-        $hasReturn = (new NodeFinder)->findFirstInstanceOf([$node], Node\Stmt\Return_::class);
+        $hasReturn = (new NodeFinder())->findFirstInstanceOf([$node], Node\Stmt\Return_::class);
         $node->stmts = [$hasReturn ? new Node\Stmt\Return_($methodCall) : new Node\Stmt\Expression($methodCall)];
         // Mark this function as a legacy hook.
         $node->attrGroups[] = new Node\AttributeGroup([new Node\Attribute(new FullyQualified('Drupal\Core\Hook\Attribute\LegacyHook'))]);
+
         return $node;
     }
 
@@ -312,6 +325,4 @@ CODE_SAMPLE
             file_put_contents($fileName, $services);
         }
     }
-
-
 }
