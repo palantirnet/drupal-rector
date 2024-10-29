@@ -120,8 +120,18 @@ CODE_SAMPLE
             $node->setAttribute('comments', []);
         }
 
-        if ($node instanceof Function_ && $this->module && ($method = $this->createMethodFromFunction($node))) {
-            $this->hookClass->stmts[] = $method;
+        if ($node instanceof Function_) {
+            if ($node->name->toString() === 'system_theme') {
+                return null;
+            }
+            if ($this->module && ($method = $this->createMethodFromFunction($node))) {
+                $this->hookClass->stmts[] = $method;
+                if ($node->name->toString() === 'system_page_attachments') {
+                    $method->stmts = [new Node\Stmt\Expression(new Node\Expr\FuncCall(new Node\Name('_system_page_attachments')))];
+                    $node->name = new Node\Identifier('_system_page_attachments');
+                    return $node;
+                }
+            }
 
             return str_starts_with($filePath, $this->drupalCorePath) ? NodeTraverser::REMOVE_NODE : $this->getLegacyHookFunction($node);
         }
