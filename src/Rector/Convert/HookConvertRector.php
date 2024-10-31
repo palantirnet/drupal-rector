@@ -131,9 +131,9 @@ CODE_SAMPLE
                     $node->name = new Node\Identifier('_system_page_attachments');
                     return $node;
                 }
-            }
 
-            return str_starts_with($filePath, $this->drupalCorePath) ? NodeTraverser::REMOVE_NODE : $this->getLegacyHookFunction($node);
+                return str_starts_with($filePath, $this->drupalCorePath) ? NodeTraverser::REMOVE_NODE : $this->getLegacyHookFunction($node);
+            }
         }
 
         return null;
