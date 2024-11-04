@@ -127,7 +127,8 @@ CODE_SAMPLE
             if ($this->module && ($method = $this->createMethodFromFunction($node))) {
                 $this->hookClass->stmts[] = $method;
                 if ($node->name->toString() === 'system_page_attachments') {
-                    $method->stmts = [new Node\Stmt\Expression(new Node\Expr\FuncCall(new Node\Name('_system_page_attachments')))];
+                    $args = array_map(fn (Node\Param $param) => new Node\Arg($param->var), $node->getParams());
+                    $method->stmts = [new Node\Stmt\Expression(new Node\Expr\FuncCall(new Node\Name('_system_page_attachments'), $args))];
                     $node->name = new Node\Identifier('_system_page_attachments');
                     return $node;
                 }
