@@ -127,8 +127,7 @@ CODE_SAMPLE
             if ($this->module && ($method = $this->createMethodFromFunction($node))) {
                 $this->hookClass->stmts[] = $method;
                 if ($node->name->toString() === 'system_page_attachments') {
-                    $args = array_map(fn (Node\Param $param) => new Node\Arg($param->var), $node->getParams());
-                    $method->stmts = [new Node\Stmt\Expression(new Node\Expr\FuncCall(new Node\Name('_system_page_attachments'), $args))];
+                    $method->stmts = [new Node\Stmt\Expression(new Node\Expr\FuncCall(new Node\Name('_system_page_attachments'), self::convertParamsToArgs($node)))];
                     $node->name = new Node\Identifier('_system_page_attachments');
                     return $node;
                 }
@@ -317,8 +316,7 @@ CODE_SAMPLE
 
     public function getLegacyHookFunction(Function_ $node): Function_
     {
-        $args = array_map(fn (Node\Param $param) => new Node\Arg($param->var), $node->getParams());
-        $methodCall = new Node\Expr\MethodCall($this->drupalServiceCall, $this->getMethodName($node), $args);
+        $methodCall = new Node\Expr\MethodCall($this->drupalServiceCall, $this->getMethodName($node), self::convertParamsToArgs($node));
         $hasReturn = (new NodeFinder())->findFirstInstanceOf([$node], Node\Stmt\Return_::class);
         $node->stmts = [$hasReturn ? new Node\Stmt\Return_($methodCall) : new Node\Stmt\Expression($methodCall)];
         // Mark this function as a legacy hook.
@@ -339,4 +337,14 @@ CODE_SAMPLE
             file_put_contents($fileName, $services);
         }
     }
+
+  /**
+   * @param \PhpParser\Node\Stmt\Function_ $node
+   *
+   * @return \PhpParser\Node\Arg[]
+   */
+  protected static function convertParamsToArgs(Function_ $node): array
+  {
+      return array_map(fn(Node\Param $param) => new Node\Arg($param->var), $node->getParams());
+  }
 }
