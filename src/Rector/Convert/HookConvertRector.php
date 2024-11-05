@@ -210,6 +210,7 @@ CODE_SAMPLE
                 'module_implements_alter',
                 'hook_info',
                 'cache_flush',
+                'system_info_alter',
             ];
             if (in_array($hook, $procOnly) || str_starts_with($hook, 'preprocess') || str_starts_with($hook, 'process')) {
                 return null;
