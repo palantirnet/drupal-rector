@@ -199,17 +199,12 @@ CODE_SAMPLE
             ['hook' => $hook, 'module' => $implementsModule] = $info;
             $procOnly = [
                 'install',
-                'module_preinstall',
-                'module_preuninstall',
-                'modules_installed',
-                'modules_uninstalled',
                 'requirements',
                 'schema',
                 'uninstall',
                 'update_last_removed',
                 'module_implements_alter',
                 'hook_info',
-                'cache_flush',
             ];
             if (in_array($hook, $procOnly) || str_starts_with($hook, 'preprocess') || str_starts_with($hook, 'process')) {
                 return null;
