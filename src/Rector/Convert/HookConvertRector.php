@@ -205,6 +205,8 @@ CODE_SAMPLE
                 'update_last_removed',
                 'module_implements_alter',
                 'hook_info',
+                'install_tasks',
+                'install_tasks_alter',
             ];
             if (in_array($hook, $procOnly) || str_starts_with($hook, 'preprocess') || str_starts_with($hook, 'process')) {
                 return null;
