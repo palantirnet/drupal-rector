@@ -205,8 +205,6 @@ CODE_SAMPLE
                 'update_last_removed',
                 'module_implements_alter',
                 'hook_info',
-                'install_tasks',
-                'install_tasks_alter',
             ];
             if (in_array($hook, $procOnly) || str_starts_with($hook, 'preprocess') || str_starts_with($hook, 'process')) {
                 return null;
@@ -275,13 +273,24 @@ CODE_SAMPLE
         // name. A difficulty here is "Implements hook_form_FORM_ID_alter".
         // Find these by looking for an optional part starting with an
         // uppercase letter.
-        if (preg_match('/^ \* Implements hook_([a-z0-9_]*)(?:[A-Z][A-Z0-9_]+(_[a-z0-9_]*))?/m', (string) $node->getDocComment()?->getReformattedText(), $matches)) {
-            $hookRegex = $matches[1];
-            // If the optional part is present then replace the uppercase
-            // portions with an appropriate regex.
-            if (isset($matches[2])) {
-                $hookRegex .= '[a-z0-9_]+'.$matches[2];
+        if (preg_match('/^ \* Implements hook_([a-zA-Z0-9_]+)/m', (string) $node->getDocComment()?->getReformattedText(), $matches)) {
+            $parts = explode('_', $matches[1]);
+            $isUppercase = FALSE;
+            foreach ($parts as &$part) {
+                if (!$part) {
+                    continue;
+                }
+                if ($part === strtoupper($part)) {
+                    if (!$isUppercase) {
+                        $isUppercase = TRUE;
+                        $part = '[a-z0-9_]+';
+                    }
             }
+            else {
+                $isUpperCase = FALSE;
+            }
+            }
+            $hookRegex = implode('_', $parts);
             $hookRegex = "_(?<hook>$hookRegex)";
             $functionName = $node->name->toString();
             // And now find the module and the hook.
