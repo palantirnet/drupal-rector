@@ -116,7 +116,8 @@ CODE_SAMPLE
         if ($node instanceof Use_) {
             // For some unknown reason some Use_ statements are passed twice
             // to this method.
-            $this->useStmts[$this->printer->prettyPrint([$node])] = $node;
+            $newNode = new Use_($node->uses, $node->type, ['comments' => []] + $node->getAttributes());
+            $this->useStmts[$this->printer->prettyPrint([$newNode])] = $newNode;
         }
 
         if ($node instanceof Function_) {
