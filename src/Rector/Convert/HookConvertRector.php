@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace DrupalRector\Rector\Convert;
 
 use Composer\InstalledVersions;
+use PhpParser\Modifiers;
 use PhpParser\Node;
 use PhpParser\Node\Name\FullyQualified;
 use PhpParser\Node\Scalar\String_;
@@ -14,6 +15,7 @@ use PhpParser\Node\Stmt\Function_;
 use PhpParser\Node\Stmt\Use_;
 use PhpParser\NodeFinder;
 use PhpParser\NodeTraverser;
+use PhpParser\NodeVisitor;
 use PhpParser\NodeVisitorAbstract;
 use Rector\Configuration\Option;
 use Rector\Doctrine\CodeQuality\Utils\CaseStringHelper;
@@ -138,7 +140,7 @@ CODE_SAMPLE
                     return $node;
                 }
 
-                return str_starts_with($filePath, $this->drupalCorePath) ? NodeTraverser::REMOVE_NODE : $this->getLegacyHookFunction($node);
+                return str_starts_with($filePath, $this->drupalCorePath) ? NodeVisitor::REMOVE_NODE : $this->getLegacyHookFunction($node);
             }
         }
 
@@ -246,7 +248,7 @@ CODE_SAMPLE
             $traverser->traverse([$node]);
             // Convert the function to a method.
             $method = new ClassMethod($this->getMethodName($node), get_object_vars($node), $node->getAttributes());
-            $method->flags = Class_::MODIFIER_PUBLIC;
+            $method->flags = Modifiers::PUBLIC;
             // Assemble the arguments for the #[Hook] attribute.
             $arguments = [new Node\Arg(new String_($hook))];
             if ($implementsModule !== $this->module) {
@@ -274,7 +276,7 @@ CODE_SAMPLE
      * @param Function_ $node
      *                        A function node
      *
-     * @return array
+     * @return array<string, string>
      *               If a match was found then an associative array with keys hook and module
      *               with corresponding values. Otherwise, the array is empty.
      */
