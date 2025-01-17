@@ -15,6 +15,7 @@ use PhpParser\Node\Stmt\Use_;
 use PhpParser\NodeFinder;
 use PhpParser\NodeTraverser;
 use PhpParser\NodeVisitorAbstract;
+use Rector\Configuration\Option;
 use Rector\Doctrine\CodeQuality\Utils\CaseStringHelper;
 use Rector\PhpParser\Printer\BetterStandardPrinter;
 use Rector\Rector\AbstractRector;
@@ -50,8 +51,12 @@ class HookConvertRector extends AbstractRector
      */
     private BetterStandardPrinter $printer;
 
+    private bool $isDryRun;
+
     public function __construct(BetterStandardPrinter $printer)
     {
+        $this->isDryRun = !in_array(['--'.Option::DRY_RUN, '-'.Option::DRY_RUN_SHORT], $_SERVER['argv'] ?? []);
+
         if (!(new \ReflectionClass(BetterStandardPrinter::class))->isFinal()) {
             $this->printer = new class extends BetterStandardPrinter {
                 protected bool $multilineArray = false;
@@ -183,12 +188,15 @@ CODE_SAMPLE
                 $this->hookClass,
             ];
             $this->hookClass->setDocComment(new \PhpParser\Comment\Doc("/**\n * Hook implementations for $this->module.\n */"));
-            // Write it out.
-            @mkdir("$this->moduleDir/src");
-            @mkdir("$this->moduleDir/src/Hook");
-            file_put_contents("$this->moduleDir/src/Hook/$className.php", $this->printer->prettyPrintFile($hookClassStmts));
-            if (!str_starts_with($this->moduleDir, $this->drupalCorePath)) {
-                static::writeServicesYml("$this->moduleDir/$this->module.services.yml", "$namespace\\$className");
+            // Write it out if not a dry run
+            if ($this->isDryRun === false) {
+                @mkdir("$this->moduleDir/src");
+                @mkdir("$this->moduleDir/src/Hook");
+
+                file_put_contents("$this->moduleDir/src/Hook/$className.php", $this->printer->prettyPrintFile($hookClassStmts));
+                if (!str_starts_with($this->moduleDir, $this->drupalCorePath)) {
+                    static::writeServicesYml("$this->moduleDir/$this->module.services.yml", "$namespace\\$className");
+                }
             }
         }
         $this->module = '';
