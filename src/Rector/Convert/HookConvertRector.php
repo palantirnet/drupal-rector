@@ -277,8 +277,8 @@ CODE_SAMPLE
      *                        A function node
      *
      * @return array<string, string>
-     *               If a match was found then an associative array with keys hook and module
-     *               with corresponding values. Otherwise, the array is empty.
+     *                               If a match was found then an associative array with keys hook and module
+     *                               with corresponding values. Otherwise, the array is empty.
      */
     protected function getHookAndModuleName(Function_ $node): array
     {
