@@ -1,9 +1,0 @@
-<?php
-
-function node_user_cancel($edit, UserInterface $account, $method) {
-    $red = 'red';
-
-    // should have been updated
-}
-
-?>
