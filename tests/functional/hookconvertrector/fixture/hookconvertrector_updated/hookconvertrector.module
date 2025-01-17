@@ -8,5 +8,5 @@ use Drupal\hookconvertrector\Hook\HookconvertrectorHooks;
  */
 #[LegacyHook]
 function hookconvertrector_user_cancel($edit, UserInterface $account, $method) {
-    \Drupal::service(HookconvertrectorHooks::class)->moduleUserCancel($edit, $account, $method);
+    \Drupal::service(HookconvertrectorHooks::class)->userCancel($edit, $account, $method);
 }
