@@ -36,7 +36,7 @@ jobs:
                 run: |
                     cd ~/drupal
                     mkdir -p web/modules/custom
-                    cp -R vendor/palantirnet/drupal-rector/tests/functional/HookConvertRector/fixture/module web/modules/custom/HookConvertRector
+                    cp -R vendor/palantirnet/drupal-rector/tests/functional/hookconvertrector/fixture/hookconvertrector web/modules/custom/hookconvertrector
             # dry-run is expected to return exit code 2 if there are changes, which we are expecting to happen, here.
             # an error code of 1 represents other errors.
             # @see \Rector\Core\Console\ExitCode::CHANGED_CODE
@@ -47,7 +47,7 @@ jobs:
                         if [ -d "$d" ]; then
                             echo "Processing $d"
                             cp vendor/palantirnet/drupal-rector/tests/functional/$(basename ${d})/rector.php .
-                            vendor/bin/rector process $d/fixture/module -vvv --dry-run --debug || if (($? == 2)); then true; else exit 1; fi
+                            vendor/bin/rector process $d -vvv --dry-run --debug || if (($? == 2)); then true; else exit 1; fi
                         fi
                     done
             -   name: Run rector against Drupal
@@ -57,7 +57,7 @@ jobs:
                         if [ -d "$d" ]; then
                             echo "Processing $d"
                             cp vendor/palantirnet/drupal-rector/tests/functional/$(basename ${d})/rector.php .
-                            vendor/bin/rector process $d/fixture/module --debug
+                            vendor/bin/rector process $d --debug
                         fi
                     done
             # diff options:
@@ -70,6 +70,6 @@ jobs:
                     cd ~/drupal
                     for d in web/modules/custom/*; do
                         if [ -d "$d" ]; then
-                            diff -rubB "$d" "vendor/palantirnet/drupal-rector/tests/functional/$(basename ${d})/fixture/module_updated"
+                            diff -rubB "$d" "vendor/palantirnet/drupal-rector/tests/functional/$(basename ${d})/fixture/$(basename ${d})_updated"
                         fi
                     done
