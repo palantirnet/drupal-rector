@@ -129,6 +129,7 @@ CODE_SAMPLE
                 if ($node->name->toString() === 'system_page_attachments') {
                     $method->stmts = [new Node\Stmt\Expression(new Node\Expr\FuncCall(new Node\Name('_system_page_attachments'), self::convertParamsToArgs($node)))];
                     $node->name = new Node\Identifier('_system_page_attachments');
+
                     return $node;
                 }
 
@@ -277,20 +278,19 @@ CODE_SAMPLE
         // uppercase letter.
         if (preg_match('/^ \* Implements hook_([a-zA-Z0-9_]+)/m', (string) $node->getDocComment()?->getReformattedText(), $matches)) {
             $parts = explode('_', $matches[1]);
-            $isUppercase = FALSE;
+            $isUppercase = false;
             foreach ($parts as &$part) {
                 if (!$part) {
                     continue;
                 }
                 if ($part === strtoupper($part)) {
                     if (!$isUppercase) {
-                        $isUppercase = TRUE;
+                        $isUppercase = true;
                         $part = '[a-z0-9_]+';
                     }
-            }
-            else {
-                $isUpperCase = FALSE;
-            }
+                } else {
+                    $isUpperCase = false;
+                }
             }
             $hookRegex = implode('_', $parts);
             $hookRegex = "_(?<hook>$hookRegex)";
@@ -346,13 +346,13 @@ CODE_SAMPLE
         }
     }
 
-  /**
-   * @param \PhpParser\Node\Stmt\Function_ $node
-   *
-   * @return \PhpParser\Node\Arg[]
-   */
-  protected static function convertParamsToArgs(Function_ $node): array
-  {
-      return array_map(fn(Node\Param $param) => new Node\Arg($param->var), $node->getParams());
-  }
+    /**
+     * @param Function_ $node
+     *
+     * @return Node\Arg[]
+     */
+    protected static function convertParamsToArgs(Function_ $node): array
+    {
+        return array_map(fn (Node\Param $param) => new Node\Arg($param->var), $node->getParams());
+    }
 }
