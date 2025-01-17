@@ -55,7 +55,7 @@ class HookConvertRector extends AbstractRector
 
     public function __construct(BetterStandardPrinter $printer)
     {
-        $options = ['--' . Option::DRY_RUN, '-' . Option::DRY_RUN_SHORT];
+        $options = ['--'.Option::DRY_RUN, '-'.Option::DRY_RUN_SHORT];
         $this->isDryRun = in_array($options, $_SERVER['argv'] ?? []);
 
         if (!(new \ReflectionClass(BetterStandardPrinter::class))->isFinal()) {
