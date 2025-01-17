@@ -7,6 +7,6 @@ use Drupal\hookconvertrector\Hook\HookconvertrectorHooks;
  * Implements hook_user_cancel().
  */
 #[LegacyHook]
-function module_user_cancel($edit, UserInterface $account, $method) {
+function hookconvertrector_user_cancel($edit, UserInterface $account, $method) {
     \Drupal::service(HookconvertrectorHooks::class)->moduleUserCancel($edit, $account, $method);
 }
