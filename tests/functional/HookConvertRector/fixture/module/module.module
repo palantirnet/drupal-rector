@@ -1,0 +1,10 @@
+<?php
+
+/**
+ * Implements hook_user_cancel().
+ */
+function module_user_cancel($edit, UserInterface $account, $method) {
+    $red = 'red';
+}
+
+?>

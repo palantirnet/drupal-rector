@@ -13,7 +13,7 @@ on:
 
 jobs:
     run_functional_test_single:
-        name: Functional Test | single rectors"
+        name: Functional Test | single rectors
         runs-on: ubuntu-latest
         steps:
             -   uses: actions/checkout@v3
@@ -36,7 +36,7 @@ jobs:
                 run: |
                     cd ~/drupal
                     mkdir -p web/modules/custom
-                    cp -R vendor/palantirnet/drupal-rector/tests/functional/* web/modules/custom
+                    cp -R vendor/palantirnet/drupal-rector/tests/functional/HookConvertRector/fixture/module web/modules/custom/HookConvertRector
             # dry-run is expected to return exit code 2 if there are changes, which we are expecting to happen, here.
             # an error code of 1 represents other errors.
             # @see \Rector\Core\Console\ExitCode::CHANGED_CODE
@@ -45,8 +45,9 @@ jobs:
                     cd ~/drupal
                     for d in web/modules/custom/*; do
                         if [ -d "$d" ]; then
-                            cp ${d}/rector.php .
-                            vendor/bin/rector process $d/fixture/module --dry-run --debug || if (($? == 2)); then true; else exit 1; fi
+                            echo "Processing $d"
+                            cp vendor/palantirnet/drupal-rector/tests/functional/$(basename ${d})/rector.php .
+                            vendor/bin/rector process $d/fixture/module -vvv --dry-run --debug || if (($? == 2)); then true; else exit 1; fi
                         fi
                     done
             -   name: Run rector against Drupal
@@ -54,7 +55,8 @@ jobs:
                     cd ~/drupal
                     for d in web/modules/custom/*; do
                         if [ -d "$d" ]; then
-                            cp ${d}/rector.php .
+                            echo "Processing $d"
+                            cp vendor/palantirnet/drupal-rector/tests/functional/$(basename ${d})/rector.php .
                             vendor/bin/rector process $d/fixture/module --debug
                         fi
                     done
@@ -68,6 +70,6 @@ jobs:
                     cd ~/drupal
                     for d in web/modules/custom/*; do
                         if [ -d "$d" ]; then
-                            diff -rubB "$d/fixture/module" "$d/fixture/module_updated"
+                            diff -rubB "$d" "vendor/palantirnet/drupal-rector/tests/functional/$(basename ${d})/fixture/module_updated"
                         fi
                     done

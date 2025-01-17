@@ -1,0 +1,5 @@
+
+services:
+  Drupal\module\Hook\ModuleHooks:
+    class: Drupal\module\Hook\ModuleHooks
+    autowire: true
