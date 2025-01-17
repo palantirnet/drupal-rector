@@ -6,6 +6,9 @@ $finder = (new PhpCsFixer\Finder())
         __DIR__.'/tests',
         __DIR__.'/config/drupal-*',
     ])
+    ->exclude([
+        'functional/HookConvertRector/fixture/module_updated',
+    ])
 ;
 
 return (new PhpCsFixer\Config())
