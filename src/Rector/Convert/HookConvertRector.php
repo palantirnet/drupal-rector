@@ -58,27 +58,8 @@ class HookConvertRector extends AbstractRector
     public function __construct(BetterStandardPrinter $printer)
     {
         $this->isDryRun = in_array('--'.Option::DRY_RUN, $_SERVER['argv'] ?? []) || in_array('-'.Option::DRY_RUN_SHORT, $_SERVER['argv'] ?? []);
+        $this->printer = $printer;
 
-        if (!(new \ReflectionClass(BetterStandardPrinter::class))->isFinal()) {
-            $this->printer = new class extends BetterStandardPrinter {
-                protected bool $multilineArray = false;
-
-                protected function pExpr_Array(Node\Expr\Array_ $array): string
-                {
-                    $result = $this->multilineArray ? '' : $this->pCommaSeparated($array->items);
-                    if ($this->multilineArray || strlen($result) > 80) {
-                        $multilineArray = $this->multilineArray;
-                        $this->multilineArray = true;
-                        $result = $this->pCommaSeparatedMultiline($array->items, true).$this->nl;
-                        $this->multilineArray = $multilineArray;
-                    }
-
-                    return '['.$result.']';
-                }
-            };
-        } else {
-            $this->printer = $printer;
-        }
         try {
             if (class_exists(InstalledVersions::class) && ($corePath = InstalledVersions::getInstallPath('drupal/core'))) {
                 $this->drupalCorePath = realpath($corePath);
@@ -131,6 +112,17 @@ CODE_SAMPLE
             if ($node->name->toString() === 'system_theme') {
                 return null;
             }
+            /*
+             @todo Something like this should fix the issue with the legacy hooks
+               foreach ($node->attrGroups as $attrGroup) {
+                   foreach ($attrGroup->attrs as $attribute) {
+                       if (str_ends_with($this->nodeNameResolver->getName($attribute->name), 'LegacyHook')) {
+                           return null;
+                       }
+                   }
+               }
+            */
+
             if ($this->module && ($method = $this->createMethodFromFunction($node))) {
                 $this->hookClass->stmts[] = $method;
                 if ($node->name->toString() === 'system_page_attachments') {
@@ -238,6 +230,10 @@ CODE_SAMPLE
 
                             return $node;
                         }
+                    }
+
+                    if ($node instanceof Node\Expr\Array_) {
+                        $node->setAttribute(AttributeKey::NEWLINED_ARRAY_PRINT, true);
                     }
 
                     return $node instanceof Node\Scalar\MagicConst\Function_ ? $this->functionName : parent::leaveNode($node);
