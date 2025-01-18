@@ -33,5 +33,5 @@ function hookconvertrector_user_add($edit, UserInterface $account, $method)
 #[LegacyHook]
 function hookconvertrector_page_attachments(array &$page)
 {
-    \Drupal::service(HookconvertrectorHooks::class)->pageAttachments($page);
+    return \Drupal::service(HookconvertrectorHooks::class)->pageAttachments($page);
 }
