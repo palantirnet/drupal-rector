@@ -130,6 +130,9 @@ CODE_SAMPLE
         return [Class_::class];
     }
 
+    /**
+     * @return PhpVersion::PHP_81
+     */
     public function provideMinPhpVersion(): int
     {
         return PhpVersion::PHP_81;
@@ -145,7 +148,7 @@ CODE_SAMPLE
                 continue;
             }
 
-            $result = $this->refactorWithConfiguration($node, $configuration);
+            $result = $this->refactorWithConficlearguration($node, $configuration);
 
             // Skip if no result.
             if ($result === null) {
