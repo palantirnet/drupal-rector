@@ -12,15 +12,15 @@ on:
 
 jobs:
     tests:
-        name: 'PHPUnit | PHP ${{ matrix.phpstan }}'
+        name: 'PHPUnit | rector/rector:${{ matrix.rector }}'
         runs-on: ubuntu-latest
         strategy:
             matrix:
                 include:
                     - php-version: "8.2"
-                      phpstan: "^1"
+                      rector: "^1"
                     - php-version: "8.2"
-                      phpstan: "^2"
+                      rector: "^2"
         steps:
             -   uses: actions/checkout@v3
             -   uses: shivammathur/setup-php@v2
@@ -28,5 +28,5 @@ jobs:
                     php-version: ${{ matrix.php-version }}
                     coverage: none
                     tools: composer:v2
-            - run: composer require phpstan/phpstan:${{ matrix.phpstan }} --dev
+            - run: composer require rector/rector:${{ matrix.rector }} --dev
             - run: composer test
