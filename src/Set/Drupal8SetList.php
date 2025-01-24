@@ -4,9 +4,7 @@ declare(strict_types=1);
 
 namespace DrupalRector\Set;
 
-use Rector\Set\Contract\SetListInterface;
-
-final class Drupal8SetList implements SetListInterface
+final class Drupal8SetList
 {
     public const DRUPAL_8 = __DIR__.'/../../config/drupal-8/drupal-8-all-deprecations.php';
     public const DRUPAL_80 = __DIR__.'/../../config/drupal-8/drupal-8.0-deprecations.php';
