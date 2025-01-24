@@ -7,6 +7,8 @@ namespace DrupalRector\Drupal8\Rector\Deprecation;
 use Drupal\Tests\BrowserTestBase;
 use PhpParser\Builder\Property;
 use PhpParser\Node;
+use PHPStan\Php\PhpVersion;
+use PHPStan\Php\PhpVersionFactory;
 use PHPStan\Type\ObjectType;
 use Rector\BetterPhpDocParser\PhpDocInfo\PhpDocInfoFactory;
 use Rector\Exception\ShouldNotHappenException;
@@ -31,10 +33,14 @@ final class FunctionalTestDefaultThemePropertyRector extends AbstractRector
      */
     private ValueResolver $valueResolver;
 
-    public function __construct(ValueResolver $valueResolver, PhpDocInfoFactory $phpDocInfoFactory)
+    private PhpVersionFactory $phpVersionFactory;
+
+    public function __construct(ValueResolver $valueResolver, PhpDocInfoFactory $phpDocInfoFactory, PhpVersionFactory $phpVersionFactory)
     {
         $this->phpDocInfoFactory = $phpDocInfoFactory;
         $this->valueResolver = $valueResolver;
+        $this->phpVersionFactory = $phpVersionFactory;
+
     }
 
     public function getRuleDefinition(): RuleDefinition
@@ -79,7 +85,7 @@ CODE_SAMPLE
         }
 
         $browserTestBaseType = new ObjectType(BrowserTestBase::class);
-        if ($type->isSmallerThanOrEqual($browserTestBaseType)->yes()) {
+        if ($type->isSmallerThanOrEqual($browserTestBaseType, $this->phpVersionFactory->create())->yes()) {
             return null;
         }
         if ($type->isSuperTypeOf(new ObjectType(BrowserTestBase::class))->no()) {
