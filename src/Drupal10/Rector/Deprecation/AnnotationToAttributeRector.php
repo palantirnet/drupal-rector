@@ -148,7 +148,7 @@ CODE_SAMPLE
                 continue;
             }
 
-            $result = $this->refactorWithConficlearguration($node, $configuration);
+            $result = $this->refactorWithConfiguration($node, $configuration);
 
             // Skip if no result.
             if ($result === null) {
