@@ -9,7 +9,7 @@
         "ast"
     ],
     "require": {
-        "rector/rector": "^1 | ^2",
+        "rector/rector": "^1 || ^2",
         "webflo/drupal-finder": "^1.2"
     },
     "license": "MIT",
