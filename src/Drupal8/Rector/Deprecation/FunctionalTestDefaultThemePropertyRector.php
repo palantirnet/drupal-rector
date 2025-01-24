@@ -7,21 +7,19 @@ namespace DrupalRector\Drupal8\Rector\Deprecation;
 use Drupal\Tests\BrowserTestBase;
 use PhpParser\Builder\Property;
 use PhpParser\Node;
-use PHPStan\Analyser\Scope;
 use PHPStan\Type\ObjectType;
 use Rector\BetterPhpDocParser\PhpDocInfo\PhpDocInfoFactory;
 use Rector\Exception\ShouldNotHappenException;
 use Rector\PhpParser\Node\Value\ValueResolver;
-use Rector\Rector\AbstractScopeAwareRector;
+use Rector\PHPStan\ScopeFetcher;
+use Rector\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 /**
  * @changelog https://www.drupal.org/node/3083055
- *
- * @see \DrupalRector\Tests\Rector\Class_\FunctionalTestDefaultThemePropertyRector\FunctionalTestDefaultThemePropertyRectorTest
  */
-final class FunctionalTestDefaultThemePropertyRector extends AbstractScopeAwareRector
+final class FunctionalTestDefaultThemePropertyRector extends AbstractRector
 {
     /**
      * @var PhpDocInfoFactory
@@ -69,9 +67,8 @@ CODE_SAMPLE
     /**
      * @param Node\Stmt\Class_ $node
      */
-    public function refactorWithScope(Node $node, Scope $scope): ?Node
+    public function refactor(Node $node): ?Node
     {
-        assert($node instanceof Node\Stmt\Class_);
         if ($node->isAbstract() || $node->isAnonymous()) {
             return null;
         }
@@ -81,7 +78,6 @@ CODE_SAMPLE
             return null;
         }
 
-        assert($type instanceof ObjectType);
         $browserTestBaseType = new ObjectType(BrowserTestBase::class);
         if ($type->isSmallerThanOrEqual($browserTestBaseType)->yes()) {
             return null;
@@ -94,6 +90,7 @@ CODE_SAMPLE
             throw new ShouldNotHappenException(sprintf('Functional test class %s should have had a defaultTheme property but one not found.', $type->getClassName()));
         }
 
+        $scope = ScopeFetcher::fetch($node);
         $defaultThemeProperty = $classReflection->getProperty('defaultTheme', $scope);
         assert($defaultThemeProperty instanceof \PHPStan\Reflection\Php\PhpPropertyReflection);
 
