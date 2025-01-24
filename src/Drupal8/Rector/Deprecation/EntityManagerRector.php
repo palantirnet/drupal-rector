@@ -183,9 +183,9 @@ CODE_AFTER
      *
      * @throws ShouldNotHappenException
      *
-     * @return Node|null
+     * @return Node\Expr\Assign
      */
-    public function replaceInstanceByNameInAssign(Node\Expr\Assign $assign, Node $replacement, string $class, string $name): Node
+    public function replaceInstanceByNameInAssign(Node\Expr\Assign $assign, Node $replacement, string $class, string $name): Node\Expr\Assign
     {
         $node = $assign->expr;
 

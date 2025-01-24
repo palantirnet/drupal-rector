@@ -134,11 +134,6 @@ parameters:
 			path: src/Drupal8/Rector/Deprecation/EntityManagerRector.php
 
 		-
-			message: "#^Property PhpParser\\\\Node\\\\Stmt\\\\Expression\\:\\:\\$expr \\(PhpParser\\\\Node\\\\Expr\\) does not accept PhpParser\\\\Node\\|null\\.$#"
-			count: 1
-			path: src/Drupal8/Rector/Deprecation/EntityManagerRector.php
-
-		-
 			message: "#^Doing instanceof PHPStan\\\\Type\\\\ObjectType is error\\-prone and deprecated\\. Use Type\\:\\:isObject\\(\\) or Type\\:\\:getObjectClassNames\\(\\) instead\\.$#"
 			count: 1
 			path: src/Drupal8/Rector/Deprecation/FunctionalTestDefaultThemePropertyRector.php
