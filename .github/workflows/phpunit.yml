@@ -12,7 +12,7 @@ on:
 
 jobs:
     tests:
-        name: 'PHPUnit | PHP ${{ matrix.php-version }}'
+        name: 'PHPUnit | PHP ${{ matrix.phpstan }}'
         runs-on: ubuntu-latest
         strategy:
             matrix:
