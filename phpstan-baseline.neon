@@ -147,11 +147,3 @@ parameters:
 			message: "#^Call to an undefined method PHPStan\\\\Type\\\\Type\\:\\:getValue\\(\\)\\.$#"
 			count: 1
 			path: src/Drupal9/Rector/Deprecation/ExtensionPathRector.php
-
-		-
-			message: """
-				#^Fetching deprecated class constant REMOVE_NODE of class PhpParser\\\\NodeTraverser\\:
-				Use NodeVisitor\\:\\:REMOVE_NODE instead\\.$#
-			"""
-			count: 1
-			path: src/Drupal9/Rector/Deprecation/PassRector.php
