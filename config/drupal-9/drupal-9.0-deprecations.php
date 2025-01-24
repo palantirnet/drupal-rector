@@ -15,6 +15,12 @@ return static function (RectorConfig $rectorConfig): void {
         return new AddCommentService();
     });
 
+    if (defined('TwigSetList::TWIG_24')) {
+        $twigSet = TwigSetList::TWIG_24;
+    } else {
+        $twigSet = TwigSetList::TWIG_240;
+    }
+
     $rectorConfig->sets([
         PHPUnitSetList::PHPUNIT_80,
         SymfonySetList::SYMFONY_40,
@@ -22,7 +28,7 @@ return static function (RectorConfig $rectorConfig): void {
         SymfonySetList::SYMFONY_42,
         SymfonySetList::SYMFONY_43,
         SymfonySetList::SYMFONY_44,
-        TwigSetList::TWIG_240,
+        $twigSet,
     ]);
     $rectorConfig->rule(ProtectedStaticModulesPropertyRector::class);
 
