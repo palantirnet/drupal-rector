@@ -89,9 +89,15 @@ CODE_SAMPLE
         if ($type->isSuperTypeOf(new ObjectType(BrowserTestBase::class))->no()) {
             return null;
         }
-        $classReflection = $type->getClassReflection();
+
+        $classReflections = $type->getObjectClassReflections();
+        $classReflection = null;
+        if (count($classReflections) !== 0) {
+            $classReflection = $classReflections[0];
+        }
+
         if ($classReflection === null || !$classReflection->hasNativeProperty('defaultTheme')) {
-            throw new ShouldNotHappenException(sprintf('Functional test class %s should have had a defaultTheme property but one not found.', $type->getClassName()));
+            throw new ShouldNotHappenException(sprintf('Functional test class %s should have had a defaultTheme property but one not found.', $this->getName($node)));
         }
 
         if (class_exists('Rector\PHPStan\ScopeFetcher')) {
