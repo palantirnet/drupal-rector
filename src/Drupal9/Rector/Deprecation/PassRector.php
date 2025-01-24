@@ -39,6 +39,11 @@ CODE_AFTER
         ];
     }
 
+    /**
+     * @param Node $node
+     *
+     * @return Node|NodeTraverser::REMOVE_NODE|NodeVisitor::REMOVE_NODE|null
+     */
     public function refactor(Node $node)
     {
         assert($node instanceof Node\Stmt\Expression);
