@@ -48,7 +48,7 @@ CODE_AFTER
      *
      * @throws ShouldNotHappenException
      *
-     * @return array<int, ?\PhpParser\Node\Arg>
+     * @return array<int, ?Node\Arg>
      */
     private function safeArgDestructure(Node\Expr\MethodCall $node): array
     {

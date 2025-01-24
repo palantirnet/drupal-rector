@@ -4,9 +4,7 @@ declare(strict_types=1);
 
 namespace DrupalRector\Set;
 
-use Rector\Set\Contract\SetListInterface;
-
-final class Drupal9SetList implements SetListInterface
+final class Drupal9SetList
 {
     public const DRUPAL_9 = __DIR__.'/../../config/drupal-9/drupal-9-all-deprecations.php';
     public const DRUPAL_90 = __DIR__.'/../../config/drupal-9/drupal-9.0-deprecations.php';
