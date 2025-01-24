@@ -28,6 +28,5 @@ return static function (RectorConfig $rectorConfig): void {
         $twigSet,
     ]);
 
-
     $rectorConfig->rule(ShouldCallParentMethodsRector::class);
 };
