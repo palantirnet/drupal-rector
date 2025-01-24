@@ -56,7 +56,7 @@ class DBRector extends AbstractRector implements ConfigurableRectorInterface
     protected $optionsArgumentPosition;
 
     /**
-     * @var \DrupalRector\Drupal8\Rector\ValueObject\DBConfiguration[]
+     * @var DBConfiguration[]
      */
     private array $configuration;
 

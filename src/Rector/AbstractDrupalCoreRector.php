@@ -16,7 +16,7 @@ use Rector\Rector\AbstractRector;
 abstract class AbstractDrupalCoreRector extends AbstractRector implements ConfigurableRectorInterface
 {
     /**
-     * @var array|\DrupalRector\Contract\VersionedConfigurationInterface[]
+     * @var array|VersionedConfigurationInterface[]
      */
     protected array $configuration = [];
 
