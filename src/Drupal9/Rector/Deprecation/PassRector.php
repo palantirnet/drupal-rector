@@ -53,9 +53,9 @@ CODE_AFTER
 
         if ($this->getDeclaringSource($node->expr) === 'Drupal\KernelTests\AssertLegacyTrait') {
             if (defined('\PhpParser\NodeVisitor::REMOVE_NODE')) {
-                return \PhpParser\NodeVisitor::REMOVE_NODE;
+                return NodeVisitor::REMOVE_NODE;
             } else {
-                /** @@phpstan-ignore-next-line */
+                /* @@phpstan-ignore-next-line */
                 return NodeTraverser::REMOVE_NODE;
             }
         }
