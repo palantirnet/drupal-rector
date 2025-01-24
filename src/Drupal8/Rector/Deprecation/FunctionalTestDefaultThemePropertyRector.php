@@ -96,7 +96,11 @@ CODE_SAMPLE
             throw new ShouldNotHappenException(sprintf('Functional test class %s should have had a defaultTheme property but one not found.', $type->getClassName()));
         }
 
-        $scope = ScopeFetcher::fetch($node);
+        if (class_exists('Rector\PHPStan\ScopeFetcher')) {
+            $scope = ScopeFetcher::fetch($node);
+        } else {
+            $scope = $node->getAttribute('scope');
+        }
         $defaultThemeProperty = $classReflection->getProperty('defaultTheme', $scope);
         assert($defaultThemeProperty instanceof \PHPStan\Reflection\Php\PhpPropertyReflection);
 

@@ -28,7 +28,11 @@ class ShouldCallParentMethodsRector extends AbstractRector
      */
     public function refactor(Node $node)
     {
-        $scope = ScopeFetcher::fetch($node);
+        if (class_exists('Rector\PHPStan\ScopeFetcher')) {
+            $scope = ScopeFetcher::fetch($node);
+        } else {
+            $scope = $node->getAttribute('scope');
+        }
         if ($scope->getClassReflection() === null) {
             return null;
         }
