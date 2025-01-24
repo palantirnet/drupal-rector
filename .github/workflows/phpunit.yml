@@ -16,10 +16,11 @@ jobs:
         runs-on: ubuntu-latest
         strategy:
             matrix:
-                - php-version: "8.2"
-                  phpstan: "^1"
-                - php-version: "8.2"
-                  phpstan: "^2"
+                include:
+                    - php-version: "8.2"
+                      phpstan: "^1"
+                    - php-version: "8.2"
+                      phpstan: "^2"
         steps:
             -   uses: actions/checkout@v3
             -   uses: shivammathur/setup-php@v2
