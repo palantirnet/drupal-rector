@@ -55,7 +55,7 @@ CODE_AFTER
             if (defined('\PhpParser\NodeVisitor::REMOVE_NODE')) {
                 return NodeVisitor::REMOVE_NODE;
             } else {
-                /* @@phpstan-ignore-next-line */
+                /* @phpstan-ignore-next-line */
                 return NodeTraverser::REMOVE_NODE;
             }
         }
