@@ -7,7 +7,6 @@ namespace DrupalRector\Drupal8\Rector\Deprecation;
 use Drupal\Tests\BrowserTestBase;
 use PhpParser\Builder\Property;
 use PhpParser\Node;
-use PHPStan\Php\PhpVersion;
 use PHPStan\Php\PhpVersionFactory;
 use PHPStan\Type\ObjectType;
 use Rector\BetterPhpDocParser\PhpDocInfo\PhpDocInfoFactory;
@@ -40,7 +39,6 @@ final class FunctionalTestDefaultThemePropertyRector extends AbstractRector
         $this->phpDocInfoFactory = $phpDocInfoFactory;
         $this->valueResolver = $valueResolver;
         $this->phpVersionFactory = $phpVersionFactory;
-
     }
 
     public function getRuleDefinition(): RuleDefinition
