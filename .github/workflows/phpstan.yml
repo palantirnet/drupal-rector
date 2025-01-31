@@ -15,6 +15,15 @@ jobs:
         name: Static analysis with PHPStan
         # START: SHARED SETUP
         runs-on: ubuntu-latest
+        strategy:
+            matrix:
+                include:
+                    - php-version: "8.2"
+                      rector: "^1"
+                      phpstan-config: phpstan-1.neon
+                    - php-version: "8.2"
+                      rector: "^2"
+                      phpstan-config: phpstan.neon
         steps:
             -   uses: actions/checkout@v3
             -   uses: shivammathur/setup-php@v2
@@ -28,5 +37,5 @@ jobs:
             #     uses: mxschmitt/action-tmate@v2
             # END: SHARED SETUP
 
-            - run: composer install
-            - run: composer phpstan
+            - run: composer require rector/rector:${{ matrix.rector }} --dev
+            - run: vendor/bin/phpstan analyse -c ${{ matrix.phpstan-config }}
