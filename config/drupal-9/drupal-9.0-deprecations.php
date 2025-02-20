@@ -15,7 +15,7 @@ return static function (RectorConfig $rectorConfig): void {
         return new AddCommentService();
     });
 
-    if (defined('TwigSetList::TWIG_24')) {
+    if (defined('\Rector\Symfony\Set\TwigSetList::TWIG_24')) {
         $twigSet = TwigSetList::TWIG_24;
     } else {
         $twigSet = TwigSetList::TWIG_240;
