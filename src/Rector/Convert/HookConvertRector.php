@@ -133,7 +133,9 @@ CODE_SAMPLE
                     return $node;
                 }
 
-                return str_starts_with($filePath, $this->drupalCorePath) ? NodeVisitor::REMOVE_NODE : $this->getLegacyHookFunction($node);
+                $new_name = '\PhpParser\NodeVisitor::REMOVE_NODE';
+                $remove_node = defined($new_name) ? constant($new_name) : NodeTraverser::REMOVE_NODE;
+                return str_starts_with($filePath, $this->drupalCorePath) ? $remove_node : $this->getLegacyHookFunction($node);
             }
         }
 
