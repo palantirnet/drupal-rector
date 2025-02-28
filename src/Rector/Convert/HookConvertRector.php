@@ -113,16 +113,14 @@ CODE_SAMPLE
             if ($node->name->toString() === 'system_theme') {
                 return null;
             }
-            /*
-             @todo Something like this should fix the issue with the legacy hooks
-               foreach ($node->attrGroups as $attrGroup) {
-                   foreach ($attrGroup->attrs as $attribute) {
-                       if (str_ends_with($this->nodeNameResolver->getName($attribute->name), 'LegacyHook')) {
-                           return null;
-                       }
-                   }
-               }
-            */
+            // @todo Skip already converted legacy hooks
+            foreach ($node->attrGroups as $attrGroup) {
+              foreach ($attrGroup->attrs as $attribute) {
+                  if ($this->nodeNameResolver->getName($attribute->name) == 'Drupal\Core\Hook\Attribute\LegacyHook') {
+                      return null;
+                  }
+              }
+          }
 
             if ($this->module && ($method = $this->createMethodFromFunction($node))) {
                 $this->hookClass->stmts[] = $method;
