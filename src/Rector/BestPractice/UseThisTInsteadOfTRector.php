@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace DrupalRector\Rector\BestPractice;
 
 use PhpParser\Node;
-use Rector\Core\Rector\AbstractRector;
+use Rector\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\ConfiguredCodeSample;
 use PhpParser\Node\Expr\FuncCall;
