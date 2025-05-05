@@ -10,6 +10,7 @@ on:
     # Run tests every week (to check for rector changes)
     - cron:  '0 0 * * 0'
   pull_request:
+    types: [opened, synchronize, reopened, closed]
 
 jobs:
     run_functional_test:
