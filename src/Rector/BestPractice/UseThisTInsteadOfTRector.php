@@ -5,19 +5,18 @@ declare(strict_types=1);
 namespace DrupalRector\Rector\BestPractice;
 
 use PhpParser\Node;
-use Rector\Rector\AbstractRector;
-use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
-use Symplify\RuleDocGenerator\ValueObject\CodeSample\ConfiguredCodeSample;
 use PhpParser\Node\Expr\FuncCall;
-use Rector\NodeTypeResolver\Node\AttributeKey;
 use PhpParser\Node\Stmt\Class_;
+use Rector\NodeTypeResolver\Node\AttributeKey;
+use Rector\Rector\AbstractRector;
+use Symplify\RuleDocGenerator\ValueObject\CodeSample\ConfiguredCodeSample;
+use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 /**
  * Replaces t() with $this->t().
  */
 final class UseThisTInsteadOfTRector extends AbstractRector
 {
-
     public function getRuleDefinition(): RuleDefinition
     {
         return new RuleDefinition(
@@ -50,7 +49,7 @@ final class UseThisTInsteadOfTRector extends AbstractRector
         }
 
         // not to refactor here
-        $isVirtual = (bool)$node->name->getAttribute(
+        $isVirtual = (bool) $node->name->getAttribute(
             AttributeKey::VIRTUAL_NODE
         );
         if ($isVirtual) {
@@ -75,6 +74,7 @@ final class UseThisTInsteadOfTRector extends AbstractRector
                 $node->args
             );
         }
+
         return null;
     }
 }
