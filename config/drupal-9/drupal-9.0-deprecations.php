@@ -15,9 +15,9 @@ return static function (RectorConfig $rectorConfig): void {
         return new AddCommentService();
     });
 
-    if (defined(TwigSetList::class .'::TWIG_24')) {
+    if (defined(TwigSetList::class.'::TWIG_24')) {
         $twigSet = TwigSetList::TWIG_24;
-    } elseif (defined(TwigSetList::class .'::TWIG_240'))  {
+    } elseif (defined(TwigSetList::class.'::TWIG_240')) {
         $twigSet = TwigSetList::TWIG_240;
     } else {
         throw new ShouldNotHappenException('Could not detect twig set.');
