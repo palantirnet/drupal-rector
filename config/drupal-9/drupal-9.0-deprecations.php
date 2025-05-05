@@ -15,10 +15,12 @@ return static function (RectorConfig $rectorConfig): void {
         return new AddCommentService();
     });
 
-    if (defined('\Rector\Symfony\Set\TwigSetList::TWIG_24')) {
+    if (defined(TwigSetList::class .'::TWIG_24')) {
         $twigSet = TwigSetList::TWIG_24;
-    } else {
+    } elseif (defined(TwigSetList::class .'::TWIG_240'))  {
         $twigSet = TwigSetList::TWIG_240;
+    } else {
+        throw new ShouldNotHappenException('Could not detect twig set.');
     }
 
     $rectorConfig->sets([
