@@ -16,8 +16,9 @@ class PassRectorTest extends AbstractRectorTestCase
      */
     public function test(string $filePath): void
     {
-        if (str_contains($filePath, 'skip')) {
+        if (str_contains($filePath, 'skip') && method_exists($this, 'doTestFileExpectingWarningAboutRuleApplied')) {
             $this->doTestFileExpectingWarningAboutRuleApplied($filePath, 'DrupalRector\Drupal9\Rector\Deprecation\PassRector');
+
             return;
         }
 
