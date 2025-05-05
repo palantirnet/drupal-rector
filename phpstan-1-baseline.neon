@@ -1,16 +1,6 @@
 parameters:
 	ignoreErrors:
 		-
-			message: "#^Access to undefined constant Rector\\\\Symfony\\\\Set\\\\TwigSetList\\:\\:TWIG_24\\.$#"
-			count: 1
-			path: config/drupal-10/drupal-10.0-deprecations.php
-
-		-
-			message: "#^Access to undefined constant Rector\\\\Symfony\\\\Set\\\\TwigSetList\\:\\:TWIG_24\\.$#"
-			count: 1
-			path: config/drupal-9/drupal-9.0-deprecations.php
-
-		-
 			message: """
 				#^Call to deprecated method locateRoot\\(\\) of class DrupalFinder\\\\DrupalFinder\\:
 				Will be removed in v2\\. Future usage should instantiate
