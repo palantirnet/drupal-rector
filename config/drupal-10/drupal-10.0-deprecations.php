@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use DrupalRector\Rector\PHPUnit\ShouldCallParentMethodsRector;
 use Rector\Config\RectorConfig;
+use Rector\Exception\ShouldNotHappenException;
 use Rector\PHPUnit\Set\PHPUnitSetList;
 use Rector\Symfony\Set\SymfonySetList;
 use Rector\Symfony\Set\TwigSetList;
