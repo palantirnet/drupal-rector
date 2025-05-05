@@ -5,10 +5,10 @@ on:
   push:
     branches:
       - main
-  pull_request:
   schedule:
     # Run tests every week (to check for rector changes)
     - cron:  '0 0 * * 0'
+  pull_request:
 
 jobs:
     tests:
