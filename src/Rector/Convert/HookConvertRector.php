@@ -15,7 +15,6 @@ use PhpParser\Node\Stmt\Function_;
 use PhpParser\Node\Stmt\Use_;
 use PhpParser\NodeFinder;
 use PhpParser\NodeTraverser;
-use PhpParser\NodeVisitor;
 use PhpParser\NodeVisitorAbstract;
 use Rector\Configuration\Option;
 use Rector\Doctrine\CodeQuality\Utils\CaseStringHelper;
@@ -115,12 +114,12 @@ CODE_SAMPLE
             }
             // @todo Skip already converted legacy hooks
             foreach ($node->attrGroups as $attrGroup) {
-              foreach ($attrGroup->attrs as $attribute) {
-                  if ($this->nodeNameResolver->getName($attribute->name) == 'Drupal\Core\Hook\Attribute\LegacyHook') {
-                      return null;
-                  }
-              }
-          }
+                foreach ($attrGroup->attrs as $attribute) {
+                    if ($this->nodeNameResolver->getName($attribute->name) == 'Drupal\Core\Hook\Attribute\LegacyHook') {
+                        return null;
+                    }
+                }
+            }
 
             if ($this->module && ($method = $this->createMethodFromFunction($node))) {
                 $this->hookClass->stmts[] = $method;
@@ -133,6 +132,7 @@ CODE_SAMPLE
 
                 $new_name = '\PhpParser\NodeVisitor::REMOVE_NODE';
                 $remove_node = defined($new_name) ? constant($new_name) : NodeTraverser::REMOVE_NODE;
+
                 return str_starts_with($filePath, $this->drupalCorePath) ? $remove_node : $this->getLegacyHookFunction($node);
             }
         }
