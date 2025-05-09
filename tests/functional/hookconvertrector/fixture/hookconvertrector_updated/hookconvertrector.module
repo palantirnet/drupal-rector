@@ -1,7 +1,7 @@
 <?php
 
-use Drupal\Core\Hook\Attribute\LegacyHook;
 use Drupal\hookconvertrector\Hook\HookconvertrectorHooks;
+use Drupal\Core\Hook\Attribute\LegacyHook;
 
 /**
  * Implements hook_user_cancel().
