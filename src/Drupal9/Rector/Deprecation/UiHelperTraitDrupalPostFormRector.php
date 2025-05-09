@@ -72,6 +72,9 @@ CODE_AFTER
         throw new ShouldNotHappenException('Unexpected argument count for drupalPostForm');
     }
 
+    /**
+     * @return Node[]|null
+     */
     public function refactor(Node $node)
     {
         assert($node instanceof Node\Stmt\Expression);

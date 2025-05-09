@@ -1,0 +1,12 @@
+parameters:
+	level: 6
+	paths:
+		- config
+		- src
+		- rector.php
+	bootstrapFiles:
+	    - vendor/rector/rector/vendor/autoload.php
+	dynamicConstantNames:
+		- Drupal::VERSION
+includes:
+	- phpstan-1-baseline.neon

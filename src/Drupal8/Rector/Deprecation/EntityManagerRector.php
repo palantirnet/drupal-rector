@@ -148,7 +148,7 @@ CODE_AFTER
         $depth = 0;
 
         // Should the expression be the class we are looking for and the name is the one we are looking for, we can return early.
-        if ($node instanceof Node && $node instanceof $class && $this->getName($node->name) === $name) {
+        if ($node instanceof $class && $this->getName($node->name) === $name) {
             $node->setAttribute(self::class, $depth);
 
             return $node;
@@ -183,9 +183,9 @@ CODE_AFTER
      *
      * @throws ShouldNotHappenException
      *
-     * @return Node|null
+     * @return Node\Expr\Assign
      */
-    public function replaceInstanceByNameInAssign(Node\Expr\Assign $assign, Node $replacement, string $class, string $name): ?Node
+    public function replaceInstanceByNameInAssign(Node\Expr\Assign $assign, Node $replacement, string $class, string $name): Node\Expr\Assign
     {
         $node = $assign->expr;
 

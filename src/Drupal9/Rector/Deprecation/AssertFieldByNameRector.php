@@ -37,7 +37,7 @@ CODE_AFTER
         ];
     }
 
-    public function refactor(Node $node)
+    public function refactor(Node $node): ?Node\Expr\MethodCall
     {
         assert($node instanceof Node\Expr\MethodCall);
         if ($this->getName($node->name) !== 'assertFieldByName') {

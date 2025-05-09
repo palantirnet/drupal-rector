@@ -1,0 +1,149 @@
+parameters:
+	ignoreErrors:
+		-
+			message: """
+				#^Call to deprecated method locateRoot\\(\\) of class DrupalFinder\\\\DrupalFinder\\:
+				Will be removed in v2\\. Future usage should instantiate
+				  a new DrupalFinder object by passing the starting path to its
+				  constructor\\.$#
+			"""
+			count: 1
+			path: config/drupal-phpunit-bootstrap-file.php
+
+		-
+			message: "#^Function drupal_phpunit_contrib_extension_directory_roots\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: config/drupal-phpunit-bootstrap-file.php
+
+		-
+			message: "#^Function drupal_phpunit_find_extension_directories\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: config/drupal-phpunit-bootstrap-file.php
+
+		-
+			message: "#^Function drupal_phpunit_get_extension_namespaces\\(\\) has parameter \\$dirs with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: config/drupal-phpunit-bootstrap-file.php
+
+		-
+			message: "#^Function drupal_phpunit_get_extension_namespaces\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: config/drupal-phpunit-bootstrap-file.php
+
+		-
+			message: "#^Function drupal_phpunit_populate_class_loader\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: config/drupal-phpunit-bootstrap-file.php
+
+		-
+			message: "#^Function drupal_phpunit_populate_class_loader\\(\\) has parameter \\$drupalRoot with no type specified\\.$#"
+			count: 1
+			path: config/drupal-phpunit-bootstrap-file.php
+
+		-
+			message: "#^Function drupal_phpunit_populate_class_loader\\(\\) has parameter \\$vendorRoot with no type specified\\.$#"
+			count: 1
+			path: config/drupal-phpunit-bootstrap-file.php
+
+		-
+			message: """
+				#^Instantiation of deprecated class DrupalFinder\\\\DrupalFinder\\:
+				in drupal\\-finder\\:1\\.3\\.0 and is removed from drupal\\-finder\\:2\\.0\\.0\\.
+				  Use \\\\DrupalFinder\\\\DrupalFinderComposerRuntime instead\\.$#
+			"""
+			count: 1
+			path: config/drupal-phpunit-bootstrap-file.php
+
+		-
+			message: """
+				#^Call to deprecated method locateRoot\\(\\) of class DrupalFinder\\\\DrupalFinder\\:
+				Will be removed in v2\\. Future usage should instantiate
+				  a new DrupalFinder object by passing the starting path to its
+				  constructor\\.$#
+			"""
+			count: 1
+			path: rector.php
+
+		-
+			message: """
+				#^Instantiation of deprecated class DrupalFinder\\\\DrupalFinder\\:
+				in drupal\\-finder\\:1\\.3\\.0 and is removed from drupal\\-finder\\:2\\.0\\.0\\.
+				  Use \\\\DrupalFinder\\\\DrupalFinderComposerRuntime instead\\.$#
+			"""
+			count: 1
+			path: rector.php
+
+		-
+			message: "#^Access to an undefined property PhpParser\\\\Node\\\\Expr\\:\\:\\$value\\.$#"
+			count: 2
+			path: src/Drupal8/Rector/Deprecation/DBRector.php
+
+		-
+			message: "#^Call to an undefined method PHPStan\\\\Type\\\\Type\\:\\:getValue\\(\\)\\.$#"
+			count: 1
+			path: src/Drupal8/Rector/Deprecation/DrupalSetMessageRector.php
+
+		-
+			message: "#^Access to an undefined property PhpParser\\\\Node\\\\Expr\\:\\:\\$expr\\.$#"
+			count: 1
+			path: src/Drupal8/Rector/Deprecation/EntityLoadRector.php
+
+		-
+			message: "#^Access to an undefined property PhpParser\\\\Node\\\\Expr\\:\\:\\$expr\\.$#"
+			count: 2
+			path: src/Drupal8/Rector/Deprecation/EntityManagerRector.php
+
+		-
+			message: "#^Access to an undefined property PhpParser\\\\Node\\\\Expr\\:\\:\\$name\\.$#"
+			count: 3
+			path: src/Drupal8/Rector/Deprecation/EntityManagerRector.php
+
+		-
+			message: "#^Method DrupalRector\\\\Drupal8\\\\Rector\\\\Deprecation\\\\EntityManagerRector\\:\\:getServiceByMethodName\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: src/Drupal8/Rector/Deprecation/EntityManagerRector.php
+
+		-
+			message: "#^PHPDoc tag @param references unknown parameter\\: \\$node$#"
+			count: 1
+			path: src/Drupal8/Rector/Deprecation/EntityManagerRector.php
+
+		-
+			message: "#^Parameter \\#1 \\$assign of method DrupalRector\\\\Drupal8\\\\Rector\\\\Deprecation\\\\EntityManagerRector\\:\\:findInstanceByNameInAssign\\(\\) expects PhpParser\\\\Node\\\\Expr\\\\Assign, PhpParser\\\\Node\\\\Expr given\\.$#"
+			count: 1
+			path: src/Drupal8/Rector/Deprecation/EntityManagerRector.php
+
+		-
+			message: "#^Parameter \\#1 \\$assign of method DrupalRector\\\\Drupal8\\\\Rector\\\\Deprecation\\\\EntityManagerRector\\:\\:replaceInstanceByNameInAssign\\(\\) expects PhpParser\\\\Node\\\\Expr\\\\Assign, PhpParser\\\\Node\\\\Expr given\\.$#"
+			count: 1
+			path: src/Drupal8/Rector/Deprecation/EntityManagerRector.php
+
+		-
+			message: "#^Parameter \\#1 \\$expr of method DrupalRector\\\\Drupal8\\\\Rector\\\\Deprecation\\\\EntityManagerRector\\:\\:refactorExpression\\(\\) expects PhpParser\\\\Node\\\\Expr\\\\MethodCall\\|PhpParser\\\\Node\\\\Expr\\\\StaticCall, PhpParser\\\\Node given\\.$#"
+			count: 1
+			path: src/Drupal8/Rector/Deprecation/EntityManagerRector.php
+
+		-
+			message: "#^Parameter \\#1 \\$expr of method DrupalRector\\\\Drupal8\\\\Rector\\\\Deprecation\\\\EntityManagerRector\\:\\:refactorExpression\\(\\) expects PhpParser\\\\Node\\\\Expr\\\\MethodCall\\|PhpParser\\\\Node\\\\Expr\\\\StaticCall, PhpParser\\\\Node\\\\Expr given\\.$#"
+			count: 1
+			path: src/Drupal8/Rector/Deprecation/EntityManagerRector.php
+
+		-
+			message: "#^Property PhpParser\\\\Node\\\\Expr\\\\Assign\\:\\:\\$expr \\(PhpParser\\\\Node\\\\Expr\\) does not accept PhpParser\\\\Node\\.$#"
+			count: 1
+			path: src/Drupal8/Rector/Deprecation/EntityManagerRector.php
+
+		-
+			message: "#^Calling PHPStan\\\\Php\\\\PhpVersionFactory\\:\\:create\\(\\) is not covered by backward compatibility promise\\. The method might change in a minor PHPStan version\\.$#"
+			count: 1
+			path: src/Drupal8/Rector/Deprecation/FunctionalTestDefaultThemePropertyRector.php
+
+		-
+			message: "#^Method PHPStan\\\\Type\\\\Type\\:\\:isSmallerThanOrEqual\\(\\) invoked with 2 parameters, 1 required\\.$#"
+			count: 1
+			path: src/Drupal8/Rector/Deprecation/FunctionalTestDefaultThemePropertyRector.php
+
+		-
+			message: "#^Call to an undefined method PHPStan\\\\Type\\\\Type\\:\\:getValue\\(\\)\\.$#"
+			count: 1
+			path: src/Drupal9/Rector/Deprecation/ExtensionPathRector.php

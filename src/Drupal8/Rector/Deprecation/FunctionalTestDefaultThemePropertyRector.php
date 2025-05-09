@@ -7,21 +7,20 @@ namespace DrupalRector\Drupal8\Rector\Deprecation;
 use Drupal\Tests\BrowserTestBase;
 use PhpParser\Builder\Property;
 use PhpParser\Node;
-use PHPStan\Analyser\Scope;
+use PHPStan\Php\PhpVersionFactory;
 use PHPStan\Type\ObjectType;
 use Rector\BetterPhpDocParser\PhpDocInfo\PhpDocInfoFactory;
 use Rector\Exception\ShouldNotHappenException;
 use Rector\PhpParser\Node\Value\ValueResolver;
-use Rector\Rector\AbstractScopeAwareRector;
+use Rector\PHPStan\ScopeFetcher;
+use Rector\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 /**
  * @changelog https://www.drupal.org/node/3083055
- *
- * @see \DrupalRector\Tests\Rector\Class_\FunctionalTestDefaultThemePropertyRector\FunctionalTestDefaultThemePropertyRectorTest
  */
-final class FunctionalTestDefaultThemePropertyRector extends AbstractScopeAwareRector
+final class FunctionalTestDefaultThemePropertyRector extends AbstractRector
 {
     /**
      * @var PhpDocInfoFactory
@@ -33,10 +32,13 @@ final class FunctionalTestDefaultThemePropertyRector extends AbstractScopeAwareR
      */
     private ValueResolver $valueResolver;
 
-    public function __construct(ValueResolver $valueResolver, PhpDocInfoFactory $phpDocInfoFactory)
+    private PhpVersionFactory $phpVersionFactory;
+
+    public function __construct(ValueResolver $valueResolver, PhpDocInfoFactory $phpDocInfoFactory, PhpVersionFactory $phpVersionFactory)
     {
         $this->phpDocInfoFactory = $phpDocInfoFactory;
         $this->valueResolver = $valueResolver;
+        $this->phpVersionFactory = $phpVersionFactory;
     }
 
     public function getRuleDefinition(): RuleDefinition
@@ -69,9 +71,8 @@ CODE_SAMPLE
     /**
      * @param Node\Stmt\Class_ $node
      */
-    public function refactorWithScope(Node $node, Scope $scope): ?Node
+    public function refactor(Node $node): ?Node
     {
-        assert($node instanceof Node\Stmt\Class_);
         if ($node->isAbstract() || $node->isAnonymous()) {
             return null;
         }
@@ -81,19 +82,29 @@ CODE_SAMPLE
             return null;
         }
 
-        assert($type instanceof ObjectType);
         $browserTestBaseType = new ObjectType(BrowserTestBase::class);
-        if ($type->isSmallerThanOrEqual($browserTestBaseType)->yes()) {
+        if ($type->isSmallerThanOrEqual($browserTestBaseType, $this->phpVersionFactory->create())->yes()) {
             return null;
         }
         if ($type->isSuperTypeOf(new ObjectType(BrowserTestBase::class))->no()) {
             return null;
         }
-        $classReflection = $type->getClassReflection();
-        if ($classReflection === null || !$classReflection->hasNativeProperty('defaultTheme')) {
-            throw new ShouldNotHappenException(sprintf('Functional test class %s should have had a defaultTheme property but one not found.', $type->getClassName()));
+
+        $classReflections = $type->getObjectClassReflections();
+        $classReflection = null;
+        if (count($classReflections) !== 0) {
+            $classReflection = $classReflections[0];
         }
 
+        if ($classReflection === null || !$classReflection->hasNativeProperty('defaultTheme')) {
+            throw new ShouldNotHappenException(sprintf('Functional test class %s should have had a defaultTheme property but one not found.', $this->getName($node)));
+        }
+
+        if (class_exists('Rector\PHPStan\ScopeFetcher')) {
+            $scope = ScopeFetcher::fetch($node);
+        } else {
+            $scope = $node->getAttribute('scope');
+        }
         $defaultThemeProperty = $classReflection->getProperty('defaultTheme', $scope);
         assert($defaultThemeProperty instanceof \PHPStan\Reflection\Php\PhpPropertyReflection);
 

@@ -37,6 +37,9 @@ CODE_AFTER
         ];
     }
 
+    /**
+     * @return Node|null
+     */
     public function refactor(Node $node)
     {
         assert($node instanceof Node\Expr\MethodCall);

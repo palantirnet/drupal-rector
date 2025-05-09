@@ -87,7 +87,7 @@ CODE_AFTER
             return $node;
         }
 
-        if ($node->expr instanceof Node\Expr\Assign && $node->expr->expr instanceof Node\Expr\MethodCall) {
+        if ($node->expr->expr instanceof Node\Expr\MethodCall) {
             $methodCall = $this->getMethodCall($node->expr->expr, $node);
             $node->expr->expr = $methodCall;
 
