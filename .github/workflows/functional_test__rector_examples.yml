@@ -70,4 +70,4 @@ jobs:
             # -B: ignore lines that are only whitespace
             -   name: Check that the updated examples match expectations
                 run: |
-                    diff -rubB fixtures/${{ matrix.fixture }}/rector_examples_updated ~/drupal/web/modules/custom/rector_examples
+                    diff --color -rubB fixtures/${{ matrix.fixture }}/rector_examples_updated ~/drupal/web/modules/custom/rector_examples

@@ -65,11 +65,12 @@ jobs:
             # -u: show the joined context, like git diff
             # -b: ignore whitespace
             # -B: ignore lines that are only whitespace
+            # --color: colorize the output
             -   name: Check that the updated examples match expectations
                 run: |
                     cd ~/drupal
                     for d in web/modules/custom/*; do
                         if [ -d "$d" ]; then
-                            diff -rubB "$d" "vendor/palantirnet/drupal-rector/tests/functional/$(basename ${d})/fixture/$(basename ${d})_updated"
+                            diff --color -rubB "$d" "vendor/palantirnet/drupal-rector/tests/functional/$(basename ${d})/fixture/$(basename ${d})_updated"
                         fi
                     done
