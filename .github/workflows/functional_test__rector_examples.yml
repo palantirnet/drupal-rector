@@ -6,10 +6,11 @@ on:
   push:
     branches:
       - main
-  pull_request:
   schedule:
     # Run tests every week (to check for rector changes)
     - cron:  '0 0 * * 0'
+  pull_request:
+    types: [opened, synchronize, reopened, closed]
 
 jobs:
     run_functional_test:
@@ -18,9 +19,6 @@ jobs:
             fail-fast: false
             matrix:
                 include:
-                    - php-version: "8.0"
-                      drupal: "^9.2"
-                      fixture: "d9"
                     - php-version: "8.1"
                       drupal: "^10.0"
                       fixture: "d10"

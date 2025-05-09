@@ -48,7 +48,7 @@ CODE_AFTER
      *
      * @throws ShouldNotHappenException
      *
-     * @return array<int, ?\PhpParser\Node\Arg>
+     * @return array<int, ?Node\Arg>
      */
     private function safeArgDestructure(Node\Expr\MethodCall $node): array
     {
@@ -72,6 +72,9 @@ CODE_AFTER
         throw new ShouldNotHappenException('Unexpected argument count for drupalPostForm');
     }
 
+    /**
+     * @return Node[]|null
+     */
     public function refactor(Node $node)
     {
         assert($node instanceof Node\Stmt\Expression);

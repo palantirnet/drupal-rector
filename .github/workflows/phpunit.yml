@@ -5,19 +5,23 @@ on:
   push:
     branches:
       - main
-  pull_request:
   schedule:
     # Run tests every week (to check for rector changes)
     - cron:  '0 0 * * 0'
+  pull_request:
+    types: [opened, synchronize, reopened, closed]
 
 jobs:
     tests:
-        name: 'PHPUnit | PHP ${{ matrix.php-version }}'
+        name: 'PHPUnit | rector/rector:${{ matrix.rector }}'
         runs-on: ubuntu-latest
         strategy:
             matrix:
-                php-version:
-                    - "8.2"
+                include:
+                    - php-version: "8.2"
+                      rector: "^1"
+                    - php-version: "8.2"
+                      rector: "^2"
         steps:
             -   uses: actions/checkout@v3
             -   uses: shivammathur/setup-php@v2
@@ -25,5 +29,5 @@ jobs:
                     php-version: ${{ matrix.php-version }}
                     coverage: none
                     tools: composer:v2
-            - run: composer install
+            - run: composer require rector/rector:${{ matrix.rector }} --dev
             - run: composer test

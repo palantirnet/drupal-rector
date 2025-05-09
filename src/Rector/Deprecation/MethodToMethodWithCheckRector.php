@@ -117,8 +117,6 @@ class MethodToMethodWithCheckRector extends AbstractRector implements Configurab
 
     public function refactorNode(Node\Expr\MethodCall $node, ?Node\Stmt\Expression $statement, MethodToMethodWithCheckConfiguration $configuration): ?Node\Expr\MethodCall
     {
-        assert($node instanceof Node\Expr\MethodCall);
-
         $callerType = $this->nodeTypeResolver->getType($node->var);
         $expectedType = new ObjectType($configuration->getClassName());
 

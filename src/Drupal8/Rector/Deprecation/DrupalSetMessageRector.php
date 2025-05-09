@@ -84,7 +84,6 @@ CODE_AFTER
         }
 
         $expression = $node->expr;
-        assert($expression instanceof Node\Expr\FuncCall);
 
         if ($this->getName($expression->name) === 'drupal_set_message') {
             $scope = $node->getAttribute(AttributeKey::SCOPE);

@@ -5,12 +5,12 @@ declare(strict_types=1);
 namespace DrupalRector\Rector\PHPUnit;
 
 use PhpParser\Node;
-use PHPStan\Analyser\Scope;
-use Rector\Rector\AbstractScopeAwareRector;
+use Rector\PHPStan\ScopeFetcher;
+use Rector\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
-class ShouldCallParentMethodsRector extends AbstractScopeAwareRector
+class ShouldCallParentMethodsRector extends AbstractRector
 {
     public function getNodeTypes(): array
     {
@@ -22,13 +22,17 @@ class ShouldCallParentMethodsRector extends AbstractScopeAwareRector
     /**
      * @phpstan-param Node\Stmt\ClassMethod $node
      *
-     * @param Node  $node
-     * @param Scope $scope
+     * @param Node $node
      *
      * @return Node|null
      */
-    public function refactorWithScope(Node $node, Scope $scope)
+    public function refactor(Node $node)
     {
+        if (class_exists('Rector\PHPStan\ScopeFetcher')) {
+            $scope = ScopeFetcher::fetch($node);
+        } else {
+            $scope = $node->getAttribute('scope');
+        }
         if ($scope->getClassReflection() === null) {
             return null;
         }

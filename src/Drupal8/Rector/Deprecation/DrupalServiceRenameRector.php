@@ -14,7 +14,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 class DrupalServiceRenameRector extends AbstractRector implements ConfigurableRectorInterface
 {
     /**
-     * @var \DrupalRector\Drupal8\Rector\ValueObject\DrupalServiceRenameConfiguration[]
+     * @var DrupalServiceRenameConfiguration[]
      */
     protected array $staticArgumentRenameConfigs = [];
 

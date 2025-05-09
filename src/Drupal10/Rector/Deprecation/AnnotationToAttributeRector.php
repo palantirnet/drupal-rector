@@ -130,6 +130,9 @@ CODE_SAMPLE
         return [Class_::class];
     }
 
+    /**
+     * @return PhpVersion::PHP_81
+     */
     public function provideMinPhpVersion(): int
     {
         return PhpVersion::PHP_81;
@@ -186,17 +189,22 @@ CODE_SAMPLE
 
         $docBlockHasChanged = \false;
         foreach ($tagsByName as $valueNode) {
-            if (!$valueNode->value instanceof GenericTagValueNode) {
+            if (!$valueNode->value instanceof GenericTagValueNode && !$valueNode->value instanceof DoctrineAnnotationTagValueNode) {
                 continue;
             }
 
             if ($hasAttribute === false) {
-                $stringValue = $valueNode->value->value;
-                $stringValue = '{'.trim($stringValue, '()').'}';
-                $tokenIterator = $this->tokenIteratorFactory->create($stringValue);
-                $data = $this->arrayParser->parseCurlyArray($tokenIterator, $node);
-                $attribute = $this->createAttribute($configuration->getAttributeClass(), $data);
-                $node->attrGroups[] = new AttributeGroup([$attribute]);
+                if ($valueNode->value instanceof GenericTagValueNode) {
+                    $stringValue = $valueNode->value->value;
+                    $stringValue = '{'.trim($stringValue, '()').'}';
+                    $tokenIterator = $this->tokenIteratorFactory->create($stringValue);
+                    $data = $this->arrayParser->parseCurlyArray($tokenIterator, $node);
+                    $attribute = $this->createAttribute($configuration->getAttributeClass(), $data);
+                    $node->attrGroups[] = new AttributeGroup([$attribute]);
+                } elseif ($valueNode->value instanceof DoctrineAnnotationTagValueNode) {
+                    $attribute = $this->createAttribute($configuration->getAttributeClass(), $valueNode->value->values);
+                    $node->attrGroups[] = new AttributeGroup([$attribute]);
+                }
             }
 
             if (version_compare($this->installedDrupalVersion(), $configuration->getRemoveVersion(), '>=')) {

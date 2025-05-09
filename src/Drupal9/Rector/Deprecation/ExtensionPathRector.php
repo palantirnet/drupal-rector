@@ -15,7 +15,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 class ExtensionPathRector extends AbstractRector implements ConfigurableRectorInterface
 {
     /**
-     * @var \DrupalRector\Drupal9\Rector\ValueObject\ExtensionPathConfiguration[]
+     * @var ExtensionPathConfiguration[]
      */
     private array $configuration;
 

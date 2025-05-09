@@ -7,6 +7,7 @@ namespace DrupalRector\Drupal9\Rector\Deprecation;
 use DrupalRector\Utility\GetDeclaringSourceTrait;
 use PhpParser\Node;
 use PhpParser\NodeTraverser;
+use PhpParser\NodeVisitor;
 use Rector\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
@@ -38,6 +39,11 @@ CODE_AFTER
         ];
     }
 
+    /**
+     * @param Node $node
+     *
+     * @return Node|NodeTraverser::REMOVE_NODE|NodeVisitor::REMOVE_NODE|null
+     */
     public function refactor(Node $node)
     {
         assert($node instanceof Node\Stmt\Expression);
@@ -51,7 +57,12 @@ CODE_AFTER
         }
 
         if ($this->getDeclaringSource($node->expr) === 'Drupal\KernelTests\AssertLegacyTrait') {
-            return NodeTraverser::REMOVE_NODE;
+            if (defined('\PhpParser\NodeVisitor::REMOVE_NODE')) {
+                return NodeVisitor::REMOVE_NODE;
+            } else {
+                /* @phpstan-ignore-next-line */
+                return NodeTraverser::REMOVE_NODE;
+            }
         }
 
         return $node;
