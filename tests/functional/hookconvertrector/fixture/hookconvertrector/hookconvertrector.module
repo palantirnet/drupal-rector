@@ -1,5 +1,7 @@
 <?php
 
+use Drupal\Core\Hook\Attribute\LegacyHook;
+
 /**
  * Implements hook_user_cancel().
  */

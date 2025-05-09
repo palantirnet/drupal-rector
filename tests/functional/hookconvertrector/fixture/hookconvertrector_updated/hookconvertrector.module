@@ -16,8 +16,7 @@ function hookconvertrector_user_cancel($edit, UserInterface $account, $method)
  * Implements hook_user_add().
  */
 #[LegacyHook]
-function hookconvertrector_user_add($edit, UserInterface $account, $method)
-{
+function hookconvertrector_user_add($edit, UserInterface $account, $method) {
     $red = 'red';
     $method = [
         'red',
