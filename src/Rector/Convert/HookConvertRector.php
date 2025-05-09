@@ -113,7 +113,7 @@ CODE_SAMPLE
             if ($node->name->toString() === 'system_theme') {
                 return null;
             }
-            // @todo Skip already converted legacy hooks
+            // Skip already converted hooks marked with the LegacyHook attribute.
             foreach ($node->attrGroups as $attrGroup) {
                 foreach ($attrGroup->attrs as $attribute) {
                     if ($this->nodeNameResolver->getName($attribute->name) == 'Drupal\\Core\\Hook\\Attribute\\LegacyHook') {
