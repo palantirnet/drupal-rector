@@ -20,7 +20,11 @@ function hookconvertrector_user_cancel($edit, UserInterface $account, $method) {
 #[LegacyHook]
 function hookconvertrector_user_add($edit, UserInterface $account, $method) {
     $red = 'red';
-    $method = ['red', 'green', 'blue'];
+    $method = [
+        'red',
+        'green',
+        'blue',
+    ];
     $edit = [
         'red' => 'red',
         'green' => 'green',
