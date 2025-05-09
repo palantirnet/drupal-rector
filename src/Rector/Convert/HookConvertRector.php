@@ -74,11 +74,45 @@ class HookConvertRector extends AbstractRector
         return new RuleDefinition('Hook conversion script', [
             new CodeSample(
                 <<<'CODE_SAMPLE'
-Drupal Hook Implementation
+/**
+ * Implements hook_user_cancel().
+ */
+function hookconvertrector_user_cancel($edit, UserInterface $account, $method) {
+    $red = 'red';
+    $method = ['red', 'green', 'blue'];
+    $edit = [
+        'red' => 'red',
+        'green' => 'green',
+        'blue' => 'blue',
+    ];
+}
 CODE_SAMPLE
                 ,
                 <<<'CODE_SAMPLE'
-https://www.drupal.org/node/3442349
+/**
+ * Hook implementations for hookconvertrector.
+ */
+class HookconvertrectorHooks
+{
+    /**
+     * Implements hook_user_cancel().
+     */
+    #[Hook('user_cancel')]
+    public function userCancel($edit, \UserInterface $account, $method)
+    {
+        $red = 'red';
+        $method = [
+            'red',
+            'green',
+            'blue',
+        ];
+        $edit = [
+            'red' => 'red',
+            'green' => 'green',
+            'blue' => 'blue',
+        ];
+    }
+}
 CODE_SAMPLE
             ),
         ]);
