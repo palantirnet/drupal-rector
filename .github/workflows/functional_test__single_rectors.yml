@@ -1,30 +1,19 @@
 
-name: functional_test__rector_examples
+name: functional_test_single
 
 # This test will run on every pull request, and on every commit on any branch
 on:
   push:
     branches:
       - main
+  pull_request:
   schedule:
     # Run tests every week (to check for rector changes)
     - cron:  '0 0 * * 0'
-  pull_request:
-    types: [opened, synchronize, reopened, closed]
 
 jobs:
-    run_functional_test:
-        name: Functional | PHP ${{ matrix.php-version }} | Drupal ${{ matrix.drupal }}"
-        strategy:
-            fail-fast: false
-            matrix:
-                include:
-                    - php-version: "8.1"
-                      drupal: "^10.0"
-                      fixture: "d10"
-                    - php-version: "8.3"
-                      drupal: "^10.0"
-                      fixture: "d10"
+    run_functional_test_single:
+        name: Functional Test | single rectors
         runs-on: ubuntu-latest
         steps:
             -   uses: actions/checkout@v3
@@ -37,37 +26,51 @@ jobs:
             -   name: Setup Drupal
                 uses: bluehorndigital/setup-drupal@v1.0.4
                 with:
-                    version: '${{ matrix.drupal }}'
+                    version: '^11.0'
                     path: ~/drupal
             -   name: Install Drupal Rector
                 run: |
                     cd ~/drupal
                     composer require palantirnet/drupal-rector:@dev --no-progress
-            -   name: Install Drupal Rector Config
-                run: |
-                    cd ~/drupal
-                    cp vendor/palantirnet/drupal-rector/rector.php .
             -   name: Prepare rector_examples folder in the drupal modules directory
                 run: |
                     cd ~/drupal
                     mkdir -p web/modules/custom
-                    cp -R vendor/palantirnet/drupal-rector/fixtures/${{ matrix.fixture }}/rector_examples web/modules/custom
+                    cp -R vendor/palantirnet/drupal-rector/tests/functional/hookconvertrector/fixture/hookconvertrector web/modules/custom/hookconvertrector
             # dry-run is expected to return exit code 2 if there are changes, which we are expecting to happen, here.
             # an error code of 1 represents other errors.
             # @see \Rector\Core\Console\ExitCode::CHANGED_CODE
             -   name: Run rector against Drupal (dry-run)
                 run: |
                     cd ~/drupal
-                    vendor/bin/rector process web/modules/custom/rector_examples --dry-run --debug || if (($? == 2)); then true; else false; fi
+                    for d in web/modules/custom/*; do
+                        if [ -d "$d" ]; then
+                            echo "Processing $d"
+                            cp vendor/palantirnet/drupal-rector/tests/functional/$(basename ${d})/rector.php .
+                            vendor/bin/rector process $d -vvv --dry-run --debug || if (($? == 2)); then true; else exit 1; fi
+                        fi
+                    done
             -   name: Run rector against Drupal
                 run: |
                     cd ~/drupal
-                    vendor/bin/rector process web/modules/custom/rector_examples --debug
+                    for d in web/modules/custom/*; do
+                        if [ -d "$d" ]; then
+                            echo "Processing $d"
+                            cp vendor/palantirnet/drupal-rector/tests/functional/$(basename ${d})/rector.php .
+                            vendor/bin/rector process $d --debug
+                        fi
+                    done
             # diff options:
             # -r: recursive
             # -u: show the joined context, like git diff
             # -b: ignore whitespace
             # -B: ignore lines that are only whitespace
+            # --color: colorize the output
             -   name: Check that the updated examples match expectations
                 run: |
-                    diff --color -rubB fixtures/${{ matrix.fixture }}/rector_examples_updated ~/drupal/web/modules/custom/rector_examples
+                    cd ~/drupal
+                    for d in web/modules/custom/*; do
+                        if [ -d "$d" ]; then
+                            diff --color -rubB "$d" "vendor/palantirnet/drupal-rector/tests/functional/$(basename ${d})/fixture/$(basename ${d})_updated"
+                        fi
+                    done

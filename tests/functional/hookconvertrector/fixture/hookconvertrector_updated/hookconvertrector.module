@@ -1,0 +1,40 @@
+<?php
+
+use Drupal\hookconvertrector\Hook\HookconvertrectorHooks;
+use Drupal\Core\Hook\Attribute\LegacyHook;
+
+/**
+ * Implements hook_user_cancel().
+ */
+#[LegacyHook]
+function hookconvertrector_user_cancel($edit, UserInterface $account, $method)
+{
+    \Drupal::service(HookconvertrectorHooks::class)->userCancel($edit, $account, $method);
+}
+
+/**
+ * Implements hook_user_add().
+ */
+#[LegacyHook]
+function hookconvertrector_user_add($edit, UserInterface $account, $method) {
+    $red = 'red';
+    $method = [
+        'red',
+        'green',
+        'blue',
+    ];
+    $edit = [
+        'red' => 'red',
+        'green' => 'green',
+        'blue' => 'blue',
+    ];
+}
+
+/**
+ * Implements hook_page_attachments().
+ */
+#[LegacyHook]
+function hookconvertrector_page_attachments(array &$page)
+{
+    return \Drupal::service(HookconvertrectorHooks::class)->pageAttachments($page);
+}

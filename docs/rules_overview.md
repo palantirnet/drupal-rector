@@ -1,4 +1,4 @@
-# 55 Rules Overview
+# 56 Rules Overview
 
 <br>
 
@@ -10,7 +10,7 @@
 
 - [Drupal9](#drupal9) (26)
 
-- [DrupalRector](#drupalrector) (7)
+- [DrupalRector](#drupalrector) (8)
 
 <br>
 
@@ -1098,6 +1098,50 @@ Fixes deprecated `file_directory_os_temp()` calls, used in Drupal 8, 9 and 10 de
  $filename = 'simple_filename.yaml';
 -drupal_rewrite_settings($settings, $filename);
 +SettingsEditor::rewrite($filename, $settings);
+```
+
+<br>
+
+### HookConvertRector
+
+Hook conversion script
+
+- class: [`DrupalRector\Rector\Convert\HookConvertRector`](../src/Rector/Convert/HookConvertRector.php)
+
+```diff
+ /**
+- * Implements hook_user_cancel().
++ * Hook implementations for hookconvertrector.
+  */
+-function hookconvertrector_user_cancel($edit, UserInterface $account, $method) {
+-    $red = 'red';
+-    $method = ['red', 'green', 'blue'];
+-    $edit = [
+-        'red' => 'red',
+-        'green' => 'green',
+-        'blue' => 'blue',
+-    ];
++class HookconvertrectorHooks
++{
++    /**
++     * Implements hook_user_cancel().
++     */
++    #[Hook('user_cancel')]
++    public function userCancel($edit, \UserInterface $account, $method)
++    {
++        $red = 'red';
++        $method = [
++            'red',
++            'green',
++            'blue',
++        ];
++        $edit = [
++            'red' => 'red',
++            'green' => 'green',
++            'blue' => 'blue',
++        ];
++    }
+ }
 ```
 
 <br>

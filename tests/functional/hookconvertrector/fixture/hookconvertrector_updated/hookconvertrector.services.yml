@@ -1,0 +1,5 @@
+
+services:
+  Drupal\hookconvertrector\Hook\HookconvertrectorHooks:
+    class: Drupal\hookconvertrector\Hook\HookconvertrectorHooks
+    autowire: true
