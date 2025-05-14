@@ -360,33 +360,3 @@ parameters:
 			identifier: method.notFound
 			count: 1
 			path: src/Drupal9/Rector/Deprecation/ExtensionPathRector.php
-
-		-
-			message: '#^Although PHPStan\\Reflection\\Php\\PhpMethodReflection is covered by backward compatibility promise, this instanceof assumption might break because it''s not guaranteed to always stay the same\.$#'
-			identifier: phpstanApi.instanceofAssumption
-			count: 1
-			path: src/Drupal9/Rector/Deprecation/FromUriRector.php
-
-		-
-			message: '#^Although PHPStan\\Reflection\\Php\\PhpMethodReflection is covered by backward compatibility promise, this instanceof assumption might break because it''s not guaranteed to always stay the same\.$#'
-			identifier: phpstanApi.instanceofAssumption
-			count: 1
-			path: src/Drupal9/Rector/Deprecation/GetAllOptionsRector.php
-
-		-
-			message: '#^Although PHPStan\\Reflection\\Php\\PhpMethodReflection is covered by backward compatibility promise, this instanceof assumption might break because it''s not guaranteed to always stay the same\.$#'
-			identifier: phpstanApi.instanceofAssumption
-			count: 1
-			path: src/Drupal9/Rector/Deprecation/GetRawContentRector.php
-
-		-
-			message: '#^Although PHPStan\\Reflection\\Php\\PhpMethodReflection is covered by backward compatibility promise, this instanceof assumption might break because it''s not guaranteed to always stay the same\.$#'
-			identifier: phpstanApi.instanceofAssumption
-			count: 1
-			path: src/Drupal9/Rector/Deprecation/PassRector.php
-
-		-
-			message: '#^Parameter \#3 \$args of method Rector\\PhpParser\\Node\\NodeFactory\:\:createStaticCall\(\) expects array\<PhpParser\\Node\>, array\<int, PhpParser\\Node\\Expr\\ArrowFunction\|PhpParser\\Node\\Expr\\ClassConstFetch\|string\> given\.$#'
-			identifier: argument.type
-			count: 1
-			path: src/Rector/AbstractDrupalCoreRector.php
