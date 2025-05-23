@@ -150,7 +150,7 @@ CODE_SAMPLE
             // Skip already converted hooks marked with the LegacyHook attribute.
             foreach ($node->attrGroups as $attrGroup) {
                 foreach ($attrGroup->attrs as $attribute) {
-                    if ($this->nodeNameResolver->getName($attribute->name) == 'Drupal\\Core\\Hook\\Attribute\\LegacyHook') {
+                    if ($this->getName($attribute->name) == 'Drupal\\Core\\Hook\\Attribute\\LegacyHook') {
                         return null;
                     }
                 }
