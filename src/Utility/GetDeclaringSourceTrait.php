@@ -31,12 +31,20 @@ trait GetDeclaringSourceTrait
 
         $name = $this->getName($expr->name);
         if ($expr instanceof Node\Expr\MethodCall) {
+            if (!$classReflection->hasMethod($name)) {
+                return null;
+            }
+
             $exprReflection = $classReflection->getMethod($name, $scope);
             // Concrete method has getDeclaringTrait, not interface.
             if (!$exprReflection instanceof PhpMethodReflection) {
                 return null;
             }
         } elseif ($expr instanceof Node\Expr\PropertyFetch) {
+            if (!$classReflection->hasProperty($name)) {
+                return null;
+            }
+
             $exprReflection = $classReflection->getProperty($name, $scope);
         } else {
             throw new \InvalidArgumentException('Can only call getDeclaringSource on MethodCall or PropertyFetch. Received: '.get_class($expr));
