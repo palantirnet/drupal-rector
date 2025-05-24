@@ -31,6 +31,10 @@ trait GetDeclaringSourceTrait
 
         $name = $this->getName($expr->name);
         if ($expr instanceof Node\Expr\MethodCall) {
+            if (! $classReflection->hasMethod($name)) {
+                return null;
+            }
+
             $exprReflection = $classReflection->getMethod($name, $scope);
             // Concrete method has getDeclaringTrait, not interface.
             if (!$exprReflection instanceof PhpMethodReflection) {
