@@ -31,7 +31,7 @@ trait GetDeclaringSourceTrait
 
         $name = $this->getName($expr->name);
         if ($expr instanceof Node\Expr\MethodCall) {
-            if (! $classReflection->hasMethod($name)) {
+            if (!$classReflection->hasMethod($name)) {
                 return null;
             }
 
