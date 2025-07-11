@@ -192,9 +192,7 @@ CODE_SAMPLE
             $infoFile = reset($info);
             $this->module = basename($infoFile, '.info.yml');
             $filename = pathinfo($this->file->getFilePath(), \PATHINFO_FILENAME);
-            // Remove _theme before merge.
-            // This is important.
-            $hookClassName = ucfirst(CaseStringHelper::camelCase(str_replace('.', '_', $filename).'_theme_hooks'));
+            $hookClassName = ucfirst(CaseStringHelper::camelCase(str_replace('.', '_', $filename).'_hooks'));
             $counter = '';
             do {
                 $candidate = "$hookClassName$counter";
