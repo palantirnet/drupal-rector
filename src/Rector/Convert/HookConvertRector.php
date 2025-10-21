@@ -324,7 +324,7 @@ CODE_SAMPLE
             // Replace sections that start and end with an uppercase character
             // and contain any number of uppercase characters or underscores
             // inbetween.
-            $hookRegex = preg_replace('/([A-Z][A-Z0-9_]*[A-Z0-9])/', '[a-zA-Z0-9]+', $matches[1]);
+            $hookRegex = preg_replace('/([A-Z][A-Z0-9_]*[A-Z0-9])/', '[a-zA-Z0-9_]+', $matches[1]);
             $hookRegex = "_(?<hook>$hookRegex)";
             $functionName = $node->name->toString();
             // And now find the module and the hook.
