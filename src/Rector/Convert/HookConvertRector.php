@@ -241,17 +241,19 @@ CODE_SAMPLE
         if ($info = $this->getHookAndModuleName($node)) {
             ['hook' => $hook, 'module' => $implementsModule] = $info;
             $procOnly = [
-                'install',
-                'requirements',
-                'schema',
-                'uninstall',
-                'update_last_removed',
-                'module_implements_alter',
-                'hook_info',
-                'install_tasks',
-                'install_tasks_alter',
+              'hook_info',
+              'install',
+              'install_tasks',
+              'install_tasks_alter',
+              'module_implements_alter',
+              'removed_post_updates',
+              'requirements',
+              'schema',
+              'uninstall',
+              'update_dependencies',
+              'update_last_removed',
             ];
-            if (in_array($hook, $procOnly) || str_starts_with($hook, 'preprocess') || str_starts_with($hook, 'process')) {
+            if (in_array($hook, $procOnly)) {
                 return null;
             }
             // Resolve __FUNCTION__ and unqualify things so TRUE doesn't
