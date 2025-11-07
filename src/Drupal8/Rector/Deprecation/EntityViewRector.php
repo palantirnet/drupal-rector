@@ -42,8 +42,7 @@ final class EntityViewRector extends AbstractRector
             new CodeSample(
                 <<<'CODE_BEFORE'
 $rendered = entity_view($entity, 'default');
-CODE_BEFORE
-                ,
+CODE_BEFORE,
                 <<<'CODE_AFTER'
 $rendered = \Drupal::entityTypeManager()->getViewBuilder($entity
   ->getEntityTypeId())->view($entity, 'default');

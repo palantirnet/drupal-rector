@@ -78,14 +78,12 @@ class WatchdogExceptionRector extends AbstractDrupalCoreRector
             new ConfiguredCodeSample(
                 <<<'CODE_BEFORE'
 watchdog_exception('update', $exception);
-CODE_BEFORE
-                ,
+CODE_BEFORE,
                 <<<'CODE_AFTER'
 use \Drupal\Core\Utility\Error;
 $logger = \Drupal::logger('update');
 Error::logException($logger, $exception);
-CODE_AFTER
-                ,
+CODE_AFTER,
                 [
                     new DrupalIntroducedVersionConfiguration('10.1.0'),
                 ]

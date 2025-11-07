@@ -41,8 +41,7 @@ final class DrupalURLRector extends AbstractRector
             new CodeSample(
                 <<<'CODE_BEFORE'
 \Drupal::url('user.login');
-CODE_BEFORE
-                ,
+CODE_BEFORE,
                 <<<'CODE_AFTER'
 \Drupal\Core\Url::fromRoute('user.login')->toString();
 CODE_AFTER

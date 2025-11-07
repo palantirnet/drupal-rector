@@ -96,8 +96,7 @@ use Drupal\Core\Session\AccountInterface;
  * )
  */
 class PublishAction extends EntityActionBase {
-CODE_SAMPLE
-            , <<<'CODE_SAMPLE'
+CODE_SAMPLE, <<<'CODE_SAMPLE'
 
 namespace Drupal\Core\Action\Plugin\Action;
 
@@ -115,8 +114,7 @@ use Drupal\Core\StringTranslation\TranslatableMarkup;
   deriver: EntityPublishedActionDeriver::class
 )]
 class PublishAction extends EntityActionBase {
-CODE_SAMPLE
-            ,
+CODE_SAMPLE,
             [
                 new AnnotationToAttributeConfiguration('10.2.0', '12.0.0', 'Action', 'Drupal\Core\Action\Attribute\Action'),
             ])]);

@@ -23,8 +23,7 @@ final class PassRector extends AbstractRector
                 <<<'CODE_BEFORE'
 // Check for pass
 $this->pass('The whole transaction is rolled back when a duplicate key insert occurs.');
-CODE_BEFORE
-                ,
+CODE_BEFORE,
                 <<<'CODE_AFTER'
 // Check for pass
 CODE_AFTER

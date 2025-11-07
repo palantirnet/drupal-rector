@@ -41,14 +41,12 @@ class FunctionToEntityTypeStorageMethod extends AbstractRector implements Config
         taxonomy_terms_static_reset();
 
         taxonomy_vocabulary_static_reset($vids);
-        CODE_BEFORE
-                    ,
+        CODE_BEFORE,
                     <<<'CODE_AFTER'
         \Drupal::entityTypeManager()->getStorage('taxonomy_term')->resetCache();
 
         \Drupal::entityTypeManager()->getStorage('taxonomy_vocabulary')->resetCache($vids);
-        CODE_AFTER
-                    ,
+        CODE_AFTER,
                     [
                         new FunctionToEntityTypeStorageConfiguration('taxonomy_terms_static_reset', 'taxonomy_term', 'resetCache'),
                         new FunctionToEntityTypeStorageConfiguration('taxonomy_vocabulary_static_reset', 'taxonomy_vocabulary', 'resetCache'),

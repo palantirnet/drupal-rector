@@ -47,14 +47,12 @@ class ClassConstantToClassConstantRector extends AbstractRector implements Confi
 $value = Symfony\Cmf\Component\Routing\RouteObjectInterface::ROUTE_NAME;
 $value2 = Symfony\Cmf\Component\Routing\RouteObjectInterface::ROUTE_OBJECT;
 $value3 = Symfony\Cmf\Component\Routing\RouteObjectInterface::CONTROLLER_NAME;
-CODE_BEFORE
-                ,
+CODE_BEFORE,
                 <<<'CODE_AFTER'
 $value = \Drupal\Core\Routing\RouteObjectInterface::ROUTE_NAME;
 $value2 = \Drupal\Core\Routing\RouteObjectInterface::ROUTE_OBJECT;
 $value3 = \Drupal\Core\Routing\RouteObjectInterface::CONTROLLER_NAME;
-CODE_AFTER
-                ,
+CODE_AFTER,
                 [
                     new ClassConstantToClassConstantConfiguration(
                         'Symfony\Cmf\Component\Routing\RouteObjectInterface',

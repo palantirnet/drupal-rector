@@ -74,13 +74,11 @@ class FunctionToServiceRector extends AbstractDrupalCoreRector
             new ConfiguredCodeSample(
                 <<<'CODE_BEFORE'
 $path = drupal_realpath($path);
-CODE_BEFORE
-                ,
+CODE_BEFORE,
                 <<<'CODE_AFTER'
 $path = \Drupal::service('file_system')
     ->realpath($path);
-CODE_AFTER
-                ,
+CODE_AFTER,
                 [
                     new FunctionToServiceConfiguration('8.0.0', 'drupal_realpath', 'file_system', 'realpath'),
                 ]
@@ -88,12 +86,10 @@ CODE_AFTER
             new ConfiguredCodeSample(
                 <<<'CODE_BEFORE'
 $result = drupal_render($elements);
-CODE_BEFORE
-                ,
+CODE_BEFORE,
                 <<<'CODE_AFTER'
 $result = \Drupal::service('renderer')->render($elements);
-CODE_AFTER
-                ,
+CODE_AFTER,
                 [
                     new FunctionToServiceConfiguration('8.0.0', 'drupal_render', 'renderer', 'render'),
                 ]
@@ -101,12 +97,10 @@ CODE_AFTER
             new ConfiguredCodeSample(
                 <<<'CODE_BEFORE'
 $result = drupal_render_root($elements);
-CODE_BEFORE
-                ,
+CODE_BEFORE,
                 <<<'CODE_AFTER'
 $result = \Drupal::service('renderer')->renderRoot($elements);
-CODE_AFTER
-                ,
+CODE_AFTER,
                 [
                     new FunctionToServiceConfiguration('8.0.0', 'drupal_render_root', 'renderer', 'renderRoot'),
                 ]
@@ -114,13 +108,11 @@ CODE_AFTER
             new ConfiguredCodeSample(
                 <<<'CODE_BEFORE'
 $display = entity_get_display($entity_type, $bundle, $view_mode)
-CODE_BEFORE
-                ,
+CODE_BEFORE,
                 <<<'CODE_AFTER'
 $display = \Drupal::service('entity_display.repository')
     ->getViewDisplay($entity_type, $bundle, $view_mode);
-CODE_AFTER
-                ,
+CODE_AFTER,
                 [
                     new FunctionToServiceConfiguration('8.8.0', 'entity_get_display', 'entity_display.repository', 'getViewDisplay'),
                 ]
@@ -128,13 +120,11 @@ CODE_AFTER
             new ConfiguredCodeSample(
                 <<<'CODE_BEFORE'
 $display = entity_get_form_display($entity_type, $bundle, $form_mode)
-CODE_BEFORE
-                ,
+CODE_BEFORE,
                 <<<'CODE_AFTER'
 $display = \Drupal::service('entity_display.repository')
     ->getFormDisplay($entity_type, $bundle, $form_mode);
-CODE_AFTER
-                ,
+CODE_AFTER,
                 [
                     new FunctionToServiceConfiguration('8.8.0', 'entity_get_form_display', 'entity_display.repository', 'getFormDisplay'),
                 ]
@@ -142,12 +132,10 @@ CODE_AFTER
             new ConfiguredCodeSample(
                 <<<'CODE_BEFORE'
 file_copy();
-CODE_BEFORE
-                ,
+CODE_BEFORE,
                 <<<'CODE_AFTER'
 \Drupal::service('file.repository')->copy();
-CODE_AFTER
-                ,
+CODE_AFTER,
                 [
                     new FunctionToServiceConfiguration('9.3.0', 'file_copy', 'file.repository', 'copy'),
                 ]
@@ -155,12 +143,10 @@ CODE_AFTER
             new ConfiguredCodeSample(
                 <<<'CODE_BEFORE'
 $dir = file_directory_temp();
-CODE_BEFORE
-                ,
+CODE_BEFORE,
                 <<<'CODE_AFTER'
 $dir = \Drupal::service('file_system')->getTempDirectory();
-CODE_AFTER
-                ,
+CODE_AFTER,
                 [
                     new FunctionToServiceConfiguration('8.0.0', 'file_directory_temp', 'file_system', 'getTempDirectory'),
                 ]
@@ -168,12 +154,10 @@ CODE_AFTER
             new ConfiguredCodeSample(
                 <<<'CODE_BEFORE'
 file_move();
-CODE_BEFORE
-                ,
+CODE_BEFORE,
                 <<<'CODE_AFTER'
 \Drupal::service('file.repository')->move();
-CODE_AFTER
-                ,
+CODE_AFTER,
                 [
                     new FunctionToServiceConfiguration('9.3.0', 'file_move', 'file.repository', 'move'),
                 ]
@@ -181,12 +165,10 @@ CODE_AFTER
             new ConfiguredCodeSample(
                 <<<'CODE_BEFORE'
 $result = file_prepare_directory($directory, $options);
-CODE_BEFORE
-                ,
+CODE_BEFORE,
                 <<<'CODE_AFTER'
 $result = \Drupal::service('file_system')->prepareDirectory($directory, $options);
-CODE_AFTER
-                ,
+CODE_AFTER,
                 [
                     new FunctionToServiceConfiguration('8.7.0', 'file_prepare_directory', 'file_system', 'prepareDirectory'),
                 ]
@@ -194,12 +176,10 @@ CODE_AFTER
             new ConfiguredCodeSample(
                 <<<'CODE_BEFORE'
 file_save_data($data);
-CODE_BEFORE
-                ,
+CODE_BEFORE,
                 <<<'CODE_AFTER'
 \Drupal::service('file.repository')->writeData($data);
-CODE_AFTER
-                ,
+CODE_AFTER,
                 [
                     new FunctionToServiceConfiguration('8.7.0', 'file_save_data', 'file.repository', 'writeData'),
                 ]
@@ -207,12 +187,10 @@ CODE_AFTER
             new ConfiguredCodeSample(
                 <<<'CODE_BEFORE'
 $files = file_scan_directory($directory);
-CODE_BEFORE
-                ,
+CODE_BEFORE,
                 <<<'CODE_AFTER'
 $files = \Drupal::service('file_system')->scanDirectory($directory);
-CODE_AFTER
-                ,
+CODE_AFTER,
                 [
                     new FunctionToServiceConfiguration('8.8.0', 'file_scan_directory', 'file_system', 'scanDirectory'),
                 ]
@@ -220,12 +198,10 @@ CODE_AFTER
             new ConfiguredCodeSample(
                 <<<'CODE_BEFORE'
 $result = file_unmanaged_save_data($data, $destination, $replace);
-CODE_BEFORE
-                ,
+CODE_BEFORE,
                 <<<'CODE_AFTER'
 $result = \Drupal::service('file_system')->saveData($data, $destination, $replace);
-CODE_AFTER
-                ,
+CODE_AFTER,
                 [
                     new FunctionToServiceConfiguration('9.3.0', 'file_unmanaged_save_data', 'file_system', 'saveData'),
                 ]
@@ -233,12 +209,10 @@ CODE_AFTER
             new ConfiguredCodeSample(
                 <<<'CODE_BEFORE'
 $result = file_uri_target($uri)
-CODE_BEFORE
-                ,
+CODE_BEFORE,
                 <<<'CODE_AFTER'
 $result = \Drupal::service('stream_wrapper_manager')->getTarget($uri);
-CODE_AFTER
-                ,
+CODE_AFTER,
                 [
                     new FunctionToServiceConfiguration('8.8.0', 'file_uri_target', 'stream_wrapper_manager', 'getTarget'),
                 ]
@@ -246,12 +220,10 @@ CODE_AFTER
             new ConfiguredCodeSample(
                 <<<'CODE_BEFORE'
 $date = format_date($timestamp, $type, $format, $timezone, $langcode);
-CODE_BEFORE
-                ,
+CODE_BEFORE,
                 <<<'CODE_AFTER'
 $date = \Drupal::service('date.formatter')->format($timestamp, $type, $format, $timezone, $langcode);
-CODE_AFTER
-                ,
+CODE_AFTER,
                 [
                     new FunctionToServiceConfiguration('8.0.0', 'format_date', 'date.formatter', 'format'),
                 ]
@@ -259,12 +231,10 @@ CODE_AFTER
             new ConfiguredCodeSample(
                 <<<'CODE_BEFORE'
 $date = format_date($timestamp, $type, $format, $timezone, $langcode);
-CODE_BEFORE
-                ,
+CODE_BEFORE,
                 <<<'CODE_AFTER'
 $date = \Drupal::service('date.formatter')->format($timestamp, $type, $format, $timezone, $langcode);
-CODE_AFTER
-                ,
+CODE_AFTER,
                 [
                     new FunctionToServiceConfiguration('8.0.0', 'format_date', 'date.formatter', 'format'),
                 ]
@@ -272,12 +242,10 @@ CODE_AFTER
             new ConfiguredCodeSample(
                 <<<'CODE_BEFORE'
 $output = render($build);
-CODE_BEFORE
-                ,
+CODE_BEFORE,
                 <<<'CODE_AFTER'
 $output = \Drupal::service('renderer')->render($build);
-CODE_AFTER
-                ,
+CODE_AFTER,
                 [
                     new FunctionToServiceConfiguration('9.3.0', 'render', 'renderer', 'render'),
                 ]

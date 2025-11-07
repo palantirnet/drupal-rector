@@ -64,12 +64,10 @@ class DrupalServiceRenameRector extends AbstractRector implements ConfigurableRe
             new ConfiguredCodeSample(
                 <<<'CODE_BEFORE'
 \Drupal::service('old')->foo();
-CODE_BEFORE
-                ,
+CODE_BEFORE,
                 <<<'CODE_AFTER'
 \Drupal::service('bar')->foo();
-CODE_AFTER
-                ,
+CODE_AFTER,
                 [
                     new DrupalServiceRenameConfiguration(
                         'old',

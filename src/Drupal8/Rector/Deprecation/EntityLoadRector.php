@@ -51,13 +51,11 @@ final class EntityLoadRector extends AbstractRector implements ConfigurableRecto
                 <<<'CODE_BEFORE'
 $entity = ENTITY_TYPE_load(123);
 $node = entity_load('node', 123);
-CODE_BEFORE
-                ,
+CODE_BEFORE,
                 <<<'CODE_AFTER'
 $entity = \Drupal::entityManager()->getStorage('ENTITY_TYPE')->load(123);
 $node = \Drupal::entityManager()->getStorage('node')->load(123);
-CODE_AFTER
-                ,
+CODE_AFTER,
                 [
                     new EntityLoadConfiguration('entity'),
                     new EntityLoadConfiguration('file'),
