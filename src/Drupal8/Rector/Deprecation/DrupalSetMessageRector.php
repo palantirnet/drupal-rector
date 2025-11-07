@@ -54,8 +54,7 @@ final class DrupalSetMessageRector extends AbstractRector
             new CodeSample(
                 <<<'CODE_BEFORE'
 drupal_set_message('example status', 'status');
-CODE_BEFORE
-                ,
+CODE_BEFORE,
                 <<<'CODE_AFTER'
 \Drupal::messenger()->addStatus('example status');
 CODE_AFTER

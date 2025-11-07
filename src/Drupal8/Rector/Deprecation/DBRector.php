@@ -244,12 +244,10 @@ class DBRector extends AbstractRector implements ConfigurableRectorInterface
             new ConfiguredCodeSample(
                 <<<'CODE_BEFORE'
 db_delete($table, $options);
-CODE_BEFORE
-                ,
+CODE_BEFORE,
                 <<<'CODE_AFTER'
 \Drupal::database()->delete($table, $options);
-CODE_AFTER
-                ,
+CODE_AFTER,
                 [
                     new DBConfiguration('db_delete', 2),
                 ]
@@ -257,12 +255,10 @@ CODE_AFTER
             new ConfiguredCodeSample(
                 <<<'CODE_BEFORE'
 db_insert($table, $options);
-CODE_BEFORE
-                ,
+CODE_BEFORE,
                 <<<'CODE_AFTER'
 \Drupal::database()->insert($table, $options);
-CODE_AFTER
-                ,
+CODE_AFTER,
                 [
                     new DBConfiguration('db_insert', 2),
                 ]
@@ -270,12 +266,10 @@ CODE_AFTER
             new ConfiguredCodeSample(
                 <<<'CODE_BEFORE'
 db_query($query, $args, $options);
-CODE_BEFORE
-                ,
+CODE_BEFORE,
                 <<<'CODE_AFTER'
 \Drupal::database()->query($query, $args, $options);
-CODE_AFTER
-                ,
+CODE_AFTER,
                 [
                     new DBConfiguration('db_query', 3),
                 ]
@@ -283,12 +277,10 @@ CODE_AFTER
             new ConfiguredCodeSample(
                 <<<'CODE_BEFORE'
 db_select($table, $alias, $options);
-CODE_BEFORE
-                ,
+CODE_BEFORE,
                 <<<'CODE_AFTER'
 \Drupal::database()->select($table, $alias, $options);
-CODE_AFTER
-                ,
+CODE_AFTER,
                 [
                     new DBConfiguration('db_select', 3),
                 ]
@@ -296,12 +288,10 @@ CODE_AFTER
             new ConfiguredCodeSample(
                 <<<'CODE_BEFORE'
 db_update($table, $options);
-CODE_BEFORE
-                ,
+CODE_BEFORE,
                 <<<'CODE_AFTER'
 \Drupal::database()->update($table, $options);
-CODE_AFTER
-                ,
+CODE_AFTER,
                 [
                     new DBConfiguration('db_update', 2),
                 ]

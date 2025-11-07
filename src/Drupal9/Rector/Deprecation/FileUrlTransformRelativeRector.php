@@ -17,8 +17,7 @@ final class FileUrlTransformRelativeRector extends AbstractRector
             new CodeSample(
                 <<<'CODE_BEFORE'
 file_url_transform_relative($uri);
-CODE_BEFORE
-                ,
+CODE_BEFORE,
                 <<<'CODE_AFTER'
 \Drupal::service('file_url_generator')->transformRelative($uri);
 CODE_AFTER

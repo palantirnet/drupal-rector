@@ -21,8 +21,7 @@ final class UserPasswordRector extends AbstractRector
                 <<<'CODE_BEFORE'
 $pass = user_password();
 $shorter_pass = user_password(8);
-CODE_BEFORE
-                ,
+CODE_BEFORE,
                 <<<'CODE_AFTER'
 $pass = \Drupal::service('password_generator')->generate();
 $shorter_pass = \Drupal::service('password_generator')->generate(8);

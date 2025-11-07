@@ -49,8 +49,7 @@ class RequestTimeConstRector extends AbstractRector
             new CodeSample(
                 <<<'CODE_BEFORE'
 $request_time = REQUEST_TIME;
-CODE_BEFORE
-                ,
+CODE_BEFORE,
                 <<<'CODE_AFTER'
 $request_time = \Drupal::time()->getRequestTime();
 CODE_AFTER

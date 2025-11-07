@@ -31,8 +31,7 @@ final class DrupalLRector extends AbstractRector
             new CodeSample(
                 <<<'CODE_BEFORE'
 \Drupal::l('User Login', \Drupal\Core\Url::fromRoute('user.login'));
-CODE_BEFORE
-                ,
+CODE_BEFORE,
                 <<<'CODE_AFTER'
 \Drupal\Core\Link::fromTextAndUrl('User Login', \Drupal\Core\Url::fromRoute('user.login'));
 CODE_AFTER
