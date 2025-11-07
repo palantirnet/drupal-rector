@@ -40,8 +40,7 @@ final class AssertNoFieldByNameRector extends AbstractRector
     $this->assertNoFieldByName('name', 'not the value');
     $this->assertNoFieldByName('notexisting');
     $this->assertNoFieldByName('notexisting', NULL);
-CODE_BEFORE
-                ,
+CODE_BEFORE,
                 <<<'CODE_AFTER'
     $this->assertSession()->fieldValueNotEquals('name', '');
     $this->assertSession()->fieldValueNotEquals('name', 'not the value');

@@ -32,8 +32,7 @@ final class EntityCreateRector extends AbstractRector
             new CodeSample(
                 <<<'CODE_BEFORE'
 entity_create('node', ['bundle' => 'page', 'title' => 'Hello world']);
-CODE_BEFORE
-                ,
+CODE_BEFORE,
                 <<<'CODE_AFTER'
 \Drupal::service('entity_type.manager)->getStorage('node')->create(['bundle' => 'page', 'title' => 'Hello world']);
 CODE_AFTER

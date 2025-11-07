@@ -20,8 +20,7 @@ final class ConstructFieldXpathRector extends AbstractRector
             new CodeSample(
                 <<<'CODE_BEFORE'
 $this->constructFieldXpath('id', 'edit-preferred-admin-langcode');
-CODE_BEFORE
-                ,
+CODE_BEFORE,
                 <<<'CODE_AFTER'
 $this->getSession()->getPage()->findField('edit-preferred-admin-langcode');
 CODE_AFTER

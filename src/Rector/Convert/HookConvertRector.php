@@ -86,8 +86,7 @@ function hookconvertrector_user_cancel($edit, UserInterface $account, $method) {
         'blue' => 'blue',
     ];
 }
-CODE_SAMPLE
-                ,
+CODE_SAMPLE,
                 <<<'CODE_SAMPLE'
 /**
  * Hook implementations for hookconvertrector.

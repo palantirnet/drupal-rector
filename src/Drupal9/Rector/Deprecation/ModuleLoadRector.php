@@ -57,8 +57,7 @@ $module = 'example';
 $name = 'name';
 module_load_include($type, $module, $name);
 module_load_include($type, $module);
-CODE_BEFORE
-                ,
+CODE_BEFORE,
                 <<<'CODE_AFTER'
 \Drupal::moduleHandler()->loadInclude('example', 'install');
 $type = 'install';

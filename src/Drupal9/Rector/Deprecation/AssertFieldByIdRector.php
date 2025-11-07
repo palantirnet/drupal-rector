@@ -21,8 +21,7 @@ final class AssertFieldByIdRector extends AbstractRector
     $this->assertFieldById('edit-name', 'Test name');
     $this->assertFieldById('edit-description', NULL);
     $this->assertFieldById('edit-description');
-CODE_BEFORE
-                ,
+CODE_BEFORE,
                 <<<'CODE_AFTER'
     $this->assertSession()->fieldExists('edit-name');
     $this->assertSession()->fieldValueEquals('edit-name', 'Test name');

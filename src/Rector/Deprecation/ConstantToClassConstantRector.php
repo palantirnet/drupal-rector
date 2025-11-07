@@ -44,12 +44,10 @@ class ConstantToClassConstantRector extends AbstractRector implements Configurab
             new ConfiguredCodeSample(
                 <<<'CODE_BEFORE'
 $result = file_unmanaged_copy($source, $destination, DEPRECATED_CONSTANT);
-CODE_BEFORE
-                ,
+CODE_BEFORE,
                 <<<'CODE_AFTER'
 $result = file_unmanaged_copy($source, $destination, \Drupal\MyClass::CONSTANT);
-CODE_AFTER
-                ,
+CODE_AFTER,
                 [
                     new ConstantToClassConfiguration(
                         'DEPRECATED_CONSTANT',

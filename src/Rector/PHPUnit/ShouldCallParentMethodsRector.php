@@ -20,9 +20,9 @@ class ShouldCallParentMethodsRector extends AbstractRector
     }
 
     /**
-     * @phpstan-param Node\Stmt\ClassMethod $node
-     *
      * @param Node $node
+     *
+     * @phpstan-param Node\Stmt\ClassMethod $node
      *
      * @return Node|null
      */
@@ -134,8 +134,7 @@ final class SetupVoidTest extends KernelTestBase {
     }
 
 }
-CODE_BEFORE
-                    ,
+CODE_BEFORE,
                     <<<'CODE_SAMPLE'
 namespace Drupal\Tests\Rector\Deprecation\PHPUnit\ShouldCallParentMethodsRector\fixture;
 

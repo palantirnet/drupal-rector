@@ -62,8 +62,7 @@ final class FileDefaultSchemeRector extends AbstractRector
             new CodeSample(
                 <<<'CODE_BEFORE'
 $file_default_scheme = file_default_scheme();
-CODE_BEFORE
-                ,
+CODE_BEFORE,
                 <<<'CODE_AFTER'
 $file_default_scheme = \Drupal::config('system.file')->get('default_scheme');
 CODE_AFTER
