@@ -240,17 +240,17 @@ CODE_SAMPLE
         if ($info = $this->getHookAndModuleName($node)) {
             ['hook' => $hook, 'module' => $implementsModule] = $info;
             $procOnly = [
-              'hook_info',
-              'install',
-              'install_tasks',
-              'install_tasks_alter',
-              'module_implements_alter',
-              'removed_post_updates',
-              'requirements',
-              'schema',
-              'uninstall',
-              'update_dependencies',
-              'update_last_removed',
+                'hook_info',
+                'install',
+                'install_tasks',
+                'install_tasks_alter',
+                'module_implements_alter',
+                'removed_post_updates',
+                'requirements',
+                'schema',
+                'uninstall',
+                'update_dependencies',
+                'update_last_removed',
             ];
             if (in_array($hook, $procOnly)) {
                 return null;
