@@ -322,25 +322,11 @@ CODE_SAMPLE
     {
         // If the doxygen contains "Implements hook_foo()" then parse the hook
         // name. A difficulty here is "Implements hook_form_FORM_ID_alter".
-        // Find these by looking for an optional part starting with an
-        // uppercase letter.
         if (preg_match('/^ \* Implements hook_([a-zA-Z0-9_]+)/m', (string) $node->getDocComment()?->getReformattedText(), $matches)) {
-            $parts = explode('_', $matches[1]);
-            $isUppercase = false;
-            foreach ($parts as &$part) {
-                if (!$part) {
-                    continue;
-                }
-                if ($part === strtoupper($part)) {
-                    if (!$isUppercase) {
-                        $isUppercase = true;
-                        $part = '[a-z0-9_]+';
-                    }
-                } else {
-                    $isUpperCase = false;
-                }
-            }
-            $hookRegex = implode('_', $parts);
+            // Replace sections that start and end with an uppercase character
+            // and contain any number of uppercase characters or underscores
+            // inbetween.
+            $hookRegex = preg_replace('/([A-Z][A-Z0-9_]*[A-Z0-9])/', '[a-zA-Z0-9_]+', $matches[1]);
             $hookRegex = "_(?<hook>$hookRegex)";
             $functionName = $node->name->toString();
             // And now find the module and the hook.
