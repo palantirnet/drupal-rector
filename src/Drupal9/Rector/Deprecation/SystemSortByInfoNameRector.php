@@ -47,8 +47,7 @@ class SystemSortByInfoNameRector extends AbstractRector
                 new CodeSample(
                     <<<'CODE_BEFORE'
 uasort($modules, 'system_sort_modules_by_info_name');
-CODE_BEFORE
-                    ,
+CODE_BEFORE,
                     <<<'CODE_AFTER'
 uasort($modules, [ModuleExtensionList::class, 'sortByName']);
 CODE_AFTER

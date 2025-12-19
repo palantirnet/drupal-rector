@@ -61,8 +61,7 @@ final class EntityManagerRector extends AbstractRector
                 new CodeSample(
                     <<<'CODE_BEFORE'
 $entity_manager = \Drupal::entityManager();
-CODE_BEFORE
-                    ,
+CODE_BEFORE,
                     <<<'CODE_AFTER'
 $entity_manager = \Drupal::entityTypeManager();
 CODE_AFTER
@@ -134,11 +133,11 @@ CODE_AFTER
      *
      * @see DrupalRector\Rector\Deprecation\Base\DBBase
      *
-     * @phpstan-param class-string<Node> $class
-     *
      * @param Node\Expr\Assign $assign
      * @param string           $class
      * @param string           $name
+     *
+     * @phpstan-param class-string<Node> $class
      *
      * @return Node|null
      */

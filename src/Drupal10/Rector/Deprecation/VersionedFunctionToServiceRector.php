@@ -69,12 +69,10 @@ class VersionedFunctionToServiceRector extends AbstractDrupalCoreRector
             new ConfiguredCodeSample(
                 <<<'CODE_BEFORE'
 _drupal_flush_css_js();
-CODE_BEFORE
-                ,
+CODE_BEFORE,
                 <<<'CODE_AFTER'
 \Drupal::service('asset.query_string')->reset();
-CODE_AFTER
-                ,
+CODE_AFTER,
                 [
                     new VersionedFunctionToServiceConfiguration('10.2.0', '_drupal_flush_css_js', 'asset.query_string', 'reset'),
                 ]

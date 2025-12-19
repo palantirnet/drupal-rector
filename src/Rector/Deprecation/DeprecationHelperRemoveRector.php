@@ -31,15 +31,13 @@ $filename = 'simple_filename.yaml';
 DeprecationHelper::backwardsCompatibleCall(\Drupal::VERSION, '9.1.0', fn() => new_function(), fn() => old_function());
 DeprecationHelper::backwardsCompatibleCall(\Drupal::VERSION, '10.5.0', fn() => SettingsEditor::rewrite($filename, $settings), fn() => drupal_rewrite_settings($settings, $filename));
 DeprecationHelper::backwardsCompatibleCall(\Drupal::VERSION, '11.1.0', fn() => new_function(), fn() => old_function());
-CODE_BEFORE
-                ,
+CODE_BEFORE,
                 <<<'CODE_AFTER'
 $settings = [];
 $filename = 'simple_filename.yaml';
 drupal_rewrite_settings($settings, $filename);
 DeprecationHelper::backwardsCompatibleCall(\Drupal::VERSION, '11.1.0', fn() => new_function(), fn() => old_function());
-CODE_AFTER
-                ,
+CODE_AFTER,
                 [
                     new DeprecationHelperRemoveConfiguration('10.5.0'),
                 ]

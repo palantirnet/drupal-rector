@@ -48,9 +48,7 @@ final class FunctionalTestDefaultThemePropertyRector extends AbstractRector
                 <<<'CODE_SAMPLE'
 class SomeClassTest {
 }
-CODE_SAMPLE
-
-                ,
+CODE_SAMPLE,
                 <<<'CODE_SAMPLE'
 class SomeClassTest {
   protected $defaultTheme = 'stark'

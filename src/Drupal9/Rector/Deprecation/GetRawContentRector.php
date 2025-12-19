@@ -31,8 +31,7 @@ final class GetRawContentRector extends AbstractRector
             new CodeSample(
                 <<<'CODE_BEFORE'
 $this->getRawContent();
-CODE_BEFORE
-                ,
+CODE_BEFORE,
                 <<<'CODE_AFTER'
 $this->getSession()->getPage()->getContent();
 CODE_AFTER

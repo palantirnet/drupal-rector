@@ -160,13 +160,11 @@ class MethodToMethodWithCheckRector extends AbstractRector implements Configurab
                 <<<'CODE_BEFORE'
 $metadata_bag = new \Drupal\Core\Session\MetadataBag(new \Drupal\Core\Site\Settings([]));
 $metadata_bag->clearCsrfTokenSeed();
-CODE_BEFORE
-                ,
+CODE_BEFORE,
                 <<<'CODE_AFTER'
 $metadata_bag = new \Drupal\Core\Session\MetadataBag(new \Drupal\Core\Site\Settings([]));
 $metadata_bag->stampNew();
-CODE_AFTER
-                ,
+CODE_AFTER,
                 [
                     new MethodToMethodWithCheckConfiguration(
                         'Drupal\Core\Session\MetadataBag',
@@ -178,12 +176,10 @@ CODE_AFTER
             new ConfiguredCodeSample(
                 <<<'CODE_BEFORE'
 $url = $entity->urlInfo();
-CODE_BEFORE
-                ,
+CODE_BEFORE,
                 <<<'CODE_AFTER'
 $url = $entity->toUrl();
-CODE_AFTER
-                ,
+CODE_AFTER,
                 [
                     new MethodToMethodWithCheckConfiguration('Drupal\Core\Entity\EntityInterface', 'urlInfo', 'toUrl'),
                 ]
@@ -194,15 +190,13 @@ CODE_AFTER
 $node = \Drupal::entityTypeManager()->getStorage('node')->load(123);
 $entity_type = $node->getEntityType();
 $entity_type->getLowercaseLabel();
-CODE_BEFORE
-                ,
+CODE_BEFORE,
                 <<<'CODE_AFTER'
 /* @var \Drupal\node\Entity\Node $node */
 $node = \Drupal::entityTypeManager()->getStorage('node')->load(123);
 $entity_type = $node->getEntityType();
 $entity_type->getSingularLabel();
-CODE_AFTER
-                ,
+CODE_AFTER,
                 [
                     new MethodToMethodWithCheckConfiguration('Drupal\Core\Entity\EntityTypeInterface', 'getLowercaseLabel', 'getSingularLabel'),
                 ]

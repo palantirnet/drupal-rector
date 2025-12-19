@@ -42,8 +42,7 @@ final class EntityInterfaceLinkRector extends AbstractRector
             new CodeSample(
                 <<<'CODE_BEFORE'
 $url = $entity->link();
-CODE_BEFORE
-                ,
+CODE_BEFORE,
                 <<<'CODE_AFTER'
 $url = $entity->toLink()->toString();
 CODE_AFTER

@@ -78,12 +78,10 @@ class FunctionToStaticRector extends AbstractDrupalCoreRector
             new ConfiguredCodeSample(
                 <<<'CODE_BEFORE'
 $dir = file_directory_os_temp();
-CODE_BEFORE
-                ,
+CODE_BEFORE,
                 <<<'CODE_AFTER'
 $dir = \Drupal\Component\FileSystem\FileSystem::getOsTemporaryDirectory();
-CODE_AFTER
-                ,
+CODE_AFTER,
                 [
                     new FunctionToStaticConfiguration('8.1.0', 'file_directory_os_temp', 'Drupal\Component\FileSystem\FileSystem', 'getOsTemporaryDirectory'),
                 ]
@@ -93,14 +91,12 @@ CODE_AFTER
 $settings = [];
 $filename = 'simple_filename.yaml';
 drupal_rewrite_settings($settings, $filename);
-CODE_BEFORE
-                ,
+CODE_BEFORE,
                 <<<'CODE_AFTER'
 $settings = [];
 $filename = 'simple_filename.yaml';
 SettingsEditor::rewrite($filename, $settings);
-CODE_AFTER
-                ,
+CODE_AFTER,
                 [
                     new FunctionToStaticConfiguration('10.1.0', 'drupal_rewrite_settings', 'Drupal\Core\Site\SettingsEditor', 'rewrite', [0 => 1, 1 => 0]),
                 ]
@@ -110,14 +106,12 @@ CODE_AFTER
 $settings = [];
 $filename = 'simple_filename.yaml';
 drupal_rewrite_settings($settings, $filename);
-CODE_BEFORE
-                ,
+CODE_BEFORE,
                 <<<'CODE_AFTER'
 $settings = [];
 $filename = 'simple_filename.yaml';
 SettingsEditor::rewrite($filename, $settings);
-CODE_AFTER
-                ,
+CODE_AFTER,
                 [
                     new FunctionToStaticConfiguration('10.1.0', 'drupal_rewrite_settings', 'Drupal\Core\Site\SettingsEditor', 'rewrite', [0 => 1, 1 => 0]),
                 ]

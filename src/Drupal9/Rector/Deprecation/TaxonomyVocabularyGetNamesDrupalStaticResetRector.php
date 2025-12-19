@@ -18,8 +18,7 @@ class TaxonomyVocabularyGetNamesDrupalStaticResetRector extends AbstractRector
                 new CodeSample(
                     <<<'CODE_BEFORE'
         drupal_static_reset('taxonomy_vocabulary_get_names');
-        CODE_BEFORE
-                    ,
+        CODE_BEFORE,
                     <<<'CODE_AFTER'
         \Drupal::entityTypeManager()->getStorage('taxonomy_vocabulary')->resetCache();
         CODE_AFTER

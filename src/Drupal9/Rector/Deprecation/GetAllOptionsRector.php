@@ -32,8 +32,7 @@ final class GetAllOptionsRector extends AbstractRector
                 <<<'CODE_BEFORE'
     $this->drupalGet('/form-test/select');
     $this->assertCount(6, $this->getAllOptions($this->cssSelect('select[name="opt_groups"]')[0]));
-CODE_BEFORE
-                ,
+CODE_BEFORE,
                 <<<'CODE_AFTER'
     $this->drupalGet('/form-test/select');
     $this->assertCount(6, $this->cssSelect('select[name="opt_groups"]')[0]->findAll('xpath', '//option'));

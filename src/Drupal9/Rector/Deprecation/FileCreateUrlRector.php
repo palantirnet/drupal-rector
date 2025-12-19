@@ -17,8 +17,7 @@ final class FileCreateUrlRector extends AbstractRector
             new CodeSample(
                 <<<'CODE_BEFORE'
 file_create_url($uri);
-CODE_BEFORE
-                ,
+CODE_BEFORE,
                 <<<'CODE_AFTER'
 \Drupal::service('file_url_generator')->generateAbsoluteString($uri);
 CODE_AFTER

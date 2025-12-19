@@ -17,8 +17,7 @@ final class AssertOptionSelectedRector extends AbstractRector
             new CodeSample(
                 <<<'CODE_BEFORE'
     $this->assertOptionSelected('options', 2);
-CODE_BEFORE
-                ,
+CODE_BEFORE,
                 <<<'CODE_AFTER'
     $this->assertTrue($this->assertSession()->optionExists('options', 2)->hasAttribute('selected'));
 CODE_AFTER

@@ -46,8 +46,7 @@ final class LinkGeneratorTraitLRector extends AbstractRector
             new CodeSample(
                 <<<'CODE_BEFORE'
 $this->l($text, $url);
-CODE_BEFORE
-                ,
+CODE_BEFORE,
                 <<<'CODE_AFTER'
 \Drupal\Core\Link::fromTextAndUrl($text, $url);
 CODE_AFTER

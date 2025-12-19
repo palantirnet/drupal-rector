@@ -21,8 +21,7 @@ final class AssertNoUniqueTextRector extends AbstractRector
             new CodeSample(
                 <<<'CODE_BEFORE'
 $this->assertNoUniqueText('Duplicated message');
-CODE_BEFORE
-                ,
+CODE_BEFORE,
                 <<<'CODE_AFTER'
 $page_text = $this->getSession()->getPage()->getText();
 $nr_found = substr_count($page_text, 'Duplicated message');

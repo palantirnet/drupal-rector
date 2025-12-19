@@ -22,8 +22,7 @@ $edit['action'] = 'action_goto_action';
 $this->drupalPostForm('admin/config/system/actions', $edit, 'Create');
 $edit['action'] = 'action_goto_action_1';
 $this->drupalPostForm(null, $edit, 'Edit');
-CODE_BEFORE
-                ,
+CODE_BEFORE,
                 <<<'CODE_AFTER'
 $edit = [];
 $edit['action'] = 'action_goto_action';

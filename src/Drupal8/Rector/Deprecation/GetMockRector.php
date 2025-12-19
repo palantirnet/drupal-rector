@@ -106,12 +106,10 @@ class GetMockRector extends AbstractRector implements ConfigurableRectorInterfac
             new ConfiguredCodeSample(
                 <<<'CODE_BEFORE'
 $this->entityTypeManager = $this->getMock(EntityTypeManagerInterface::class);
-CODE_BEFORE
-                ,
+CODE_BEFORE,
                 <<<'CODE_AFTER'
 $this->entityTypeManager = $this->createMock(EntityTypeManagerInterface::class);
-CODE_AFTER
-                ,
+CODE_AFTER,
                 [
                     new GetMockConfiguration('Drupal\Tests\BrowserTestBase'),
                     new GetMockConfiguration('Drupal\KernelTests\KernelTestBase'),

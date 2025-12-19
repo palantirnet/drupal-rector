@@ -21,8 +21,7 @@ final class FromUriRector extends AbstractRector
             new CodeSample(
                 <<<'CODE_BEFORE'
 \Drupal\Core\Url::fromUri(file_create_url($uri));
-CODE_BEFORE
-                ,
+CODE_BEFORE,
                 <<<'CODE_AFTER'
 \Drupal::service('file_url_generator')->generate($uri);
 CODE_AFTER

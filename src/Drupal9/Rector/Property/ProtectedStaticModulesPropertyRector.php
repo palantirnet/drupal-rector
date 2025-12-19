@@ -30,9 +30,7 @@ final class ProtectedStaticModulesPropertyRector extends AbstractRector
 class SomeClassTest {
   public static $modules = [];
 }
-CODE_SAMPLE
-
-                ,
+CODE_SAMPLE,
                 <<<'CODE_SAMPLE'
 class SomeClassTest {
   protected static $modules = [];

@@ -21,8 +21,7 @@ class TaxonomyTermLoadMultipleByNameRector extends AbstractRector
             'Foo',
             'topics'
         );
-        CODE_BEFORE
-                    ,
+        CODE_BEFORE,
                     <<<'CODE_AFTER'
         $terms = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->loadByProperties([
             'name' => 'Foo',

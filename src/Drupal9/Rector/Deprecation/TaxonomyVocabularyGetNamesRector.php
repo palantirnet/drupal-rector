@@ -18,8 +18,7 @@ class TaxonomyVocabularyGetNamesRector extends AbstractRector
                 new CodeSample(
                     <<<'CODE_BEFORE'
         $vids = taxonomy_vocabulary_get_names();
-        CODE_BEFORE
-                    ,
+        CODE_BEFORE,
                     <<<'CODE_AFTER'
         $vids = \Drupal::entityQuery('taxonomy_vocabulary')->execute();
         CODE_AFTER

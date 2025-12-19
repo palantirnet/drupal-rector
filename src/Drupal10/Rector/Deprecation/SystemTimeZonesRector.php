@@ -86,15 +86,13 @@ system_time_zones();
 system_time_zones(FALSE, TRUE);
 system_time_zones(NULL, FALSE);
 system_time_zones(TRUE, FALSE);
-CODE_BEFORE
-                ,
+CODE_BEFORE,
                 <<<'CODE_AFTER'
 \Drupal\Core\Datetime\TimeZoneFormHelper::getOptionsList();
 \Drupal\Core\Datetime\TimeZoneFormHelper::getOptionsListByRegion();
 \Drupal\Core\Datetime\TimeZoneFormHelper::getOptionsList(NULL);
 \Drupal\Core\Datetime\TimeZoneFormHelper::getOptionsList(TRUE);
-CODE_AFTER
-                ,
+CODE_AFTER,
                 [
                     new DrupalIntroducedVersionConfiguration('10.1.0'),
                 ]

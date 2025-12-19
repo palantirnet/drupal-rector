@@ -30,8 +30,7 @@ final class SafeMarkupFormatRector extends AbstractRector
             new CodeSample(
                 <<<'CODE_BEFORE'
 $safe_string_markup_object = \Drupal\Component\Utility\SafeMarkup::format('hello world');
-CODE_BEFORE
-                ,
+CODE_BEFORE,
                 <<<'CODE_AFTER'
 $safe_string_markup_object = new \Drupal\Component\Render\FormattableMarkup('hello world');
 CODE_AFTER
