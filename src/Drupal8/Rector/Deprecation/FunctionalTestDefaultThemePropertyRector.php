@@ -103,7 +103,7 @@ CODE_SAMPLE
         } else {
             $scope = $node->getAttribute('scope');
         }
-        $defaultThemeProperty = $classReflection->getProperty('defaultTheme', $scope);
+        $defaultThemeProperty = $classReflection->getInstanceProperty('defaultTheme', $scope);
         assert($defaultThemeProperty instanceof \PHPStan\Reflection\Php\PhpPropertyReflection);
 
         $reflectionProperty = $defaultThemeProperty->getNativeReflection();
