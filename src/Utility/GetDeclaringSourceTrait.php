@@ -41,11 +41,11 @@ trait GetDeclaringSourceTrait
                 return null;
             }
         } elseif ($expr instanceof Node\Expr\PropertyFetch) {
-            if (!$classReflection->hasInstanceProperty($name)) {
+            if (!$classReflection->hasProperty($name)) {
                 return null;
             }
 
-            $exprReflection = $classReflection->getInstanceProperty($name, $scope);
+            $exprReflection = $classReflection->getProperty($name, $scope);
         } else {
             throw new \InvalidArgumentException('Can only call getDeclaringSource on MethodCall or PropertyFetch. Received: '.get_class($expr));
         }
