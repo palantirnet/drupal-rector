@@ -5,7 +5,6 @@ declare(strict_types=1);
 use DrupalRector\Drupal10\Rector\Deprecation\VersionedClassConstantToClassConstantRector;
 use DrupalRector\Drupal10\Rector\ValueObject\VersionedClassConstantToClassConstantConfiguration;
 use DrupalRector\Rector\Deprecation\FunctionToStaticRector;
-use DrupalRector\Rector\ValueObject\ClassConstantToClassConstantConfiguration;
 use DrupalRector\Rector\ValueObject\FunctionToStaticConfiguration;
 use Rector\Config\RectorConfig;
 

@@ -16,5 +16,4 @@ return static function (RectorConfig $rectorConfig): void {
             'Replace',
         ),
     ]);
-
 };
