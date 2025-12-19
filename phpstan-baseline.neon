@@ -346,6 +346,15 @@ parameters:
 			path: src/Drupal8/Rector/Deprecation/FunctionalTestDefaultThemePropertyRector.php
 
 		-
+			message: '''
+				#^Call to deprecated method getProperty\(\) of class PHPStan\\Reflection\\ClassReflection\:
+				Use getInstanceProperty or getStaticProperty$#
+			'''
+			identifier: method.deprecated
+			count: 1
+			path: src/Drupal8/Rector/Deprecation/FunctionalTestDefaultThemePropertyRector.php
+
+		-
 			message: '#^Calling PHPStan\\Php\\PhpVersionFactory\:\:create\(\) is not covered by backward compatibility promise\. The method might change in a minor PHPStan version\.$#'
 			identifier: phpstanApi.method
 			count: 1
@@ -358,8 +367,44 @@ parameters:
 			path: src/Drupal9/Rector/Deprecation/AssertLegacyTraitRector.php
 
 		-
+			message: '''
+				#^Call to deprecated method getProperty\(\) of class PHPStan\\Reflection\\ClassReflection\:
+				Use getInstanceProperty or getStaticProperty$#
+			'''
+			identifier: method.deprecated
+			count: 1
+			path: src/Drupal9/Rector/Deprecation/AssertLegacyTraitRector.php
+
+		-
+			message: '''
+				#^Call to deprecated method hasProperty\(\) of class PHPStan\\Reflection\\ClassReflection\:
+				Use hasInstanceProperty or hasStaticProperty instead$#
+			'''
+			identifier: method.deprecated
+			count: 1
+			path: src/Drupal9/Rector/Deprecation/AssertLegacyTraitRector.php
+
+		-
 			message: '#^Although PHPStan\\Reflection\\Php\\PhpMethodReflection is covered by backward compatibility promise, this instanceof assumption might break because it''s not guaranteed to always stay the same\.$#'
 			identifier: phpstanApi.instanceofAssumption
+			count: 1
+			path: src/Drupal9/Rector/Deprecation/AssertNoFieldByNameRector.php
+
+		-
+			message: '''
+				#^Call to deprecated method getProperty\(\) of class PHPStan\\Reflection\\ClassReflection\:
+				Use getInstanceProperty or getStaticProperty$#
+			'''
+			identifier: method.deprecated
+			count: 1
+			path: src/Drupal9/Rector/Deprecation/AssertNoFieldByNameRector.php
+
+		-
+			message: '''
+				#^Call to deprecated method hasProperty\(\) of class PHPStan\\Reflection\\ClassReflection\:
+				Use hasInstanceProperty or hasStaticProperty instead$#
+			'''
+			identifier: method.deprecated
 			count: 1
 			path: src/Drupal9/Rector/Deprecation/AssertNoFieldByNameRector.php
 
@@ -370,8 +415,44 @@ parameters:
 			path: src/Drupal9/Rector/Deprecation/AssertNoUniqueTextRector.php
 
 		-
+			message: '''
+				#^Call to deprecated method getProperty\(\) of class PHPStan\\Reflection\\ClassReflection\:
+				Use getInstanceProperty or getStaticProperty$#
+			'''
+			identifier: method.deprecated
+			count: 1
+			path: src/Drupal9/Rector/Deprecation/AssertNoUniqueTextRector.php
+
+		-
+			message: '''
+				#^Call to deprecated method hasProperty\(\) of class PHPStan\\Reflection\\ClassReflection\:
+				Use hasInstanceProperty or hasStaticProperty instead$#
+			'''
+			identifier: method.deprecated
+			count: 1
+			path: src/Drupal9/Rector/Deprecation/AssertNoUniqueTextRector.php
+
+		-
 			message: '#^Although PHPStan\\Reflection\\Php\\PhpMethodReflection is covered by backward compatibility promise, this instanceof assumption might break because it''s not guaranteed to always stay the same\.$#'
 			identifier: phpstanApi.instanceofAssumption
+			count: 1
+			path: src/Drupal9/Rector/Deprecation/ConstructFieldXpathRector.php
+
+		-
+			message: '''
+				#^Call to deprecated method getProperty\(\) of class PHPStan\\Reflection\\ClassReflection\:
+				Use getInstanceProperty or getStaticProperty$#
+			'''
+			identifier: method.deprecated
+			count: 1
+			path: src/Drupal9/Rector/Deprecation/ConstructFieldXpathRector.php
+
+		-
+			message: '''
+				#^Call to deprecated method hasProperty\(\) of class PHPStan\\Reflection\\ClassReflection\:
+				Use hasInstanceProperty or hasStaticProperty instead$#
+			'''
+			identifier: method.deprecated
 			count: 1
 			path: src/Drupal9/Rector/Deprecation/ConstructFieldXpathRector.php
 
@@ -388,8 +469,44 @@ parameters:
 			path: src/Drupal9/Rector/Deprecation/FromUriRector.php
 
 		-
+			message: '''
+				#^Call to deprecated method getProperty\(\) of class PHPStan\\Reflection\\ClassReflection\:
+				Use getInstanceProperty or getStaticProperty$#
+			'''
+			identifier: method.deprecated
+			count: 1
+			path: src/Drupal9/Rector/Deprecation/FromUriRector.php
+
+		-
+			message: '''
+				#^Call to deprecated method hasProperty\(\) of class PHPStan\\Reflection\\ClassReflection\:
+				Use hasInstanceProperty or hasStaticProperty instead$#
+			'''
+			identifier: method.deprecated
+			count: 1
+			path: src/Drupal9/Rector/Deprecation/FromUriRector.php
+
+		-
 			message: '#^Although PHPStan\\Reflection\\Php\\PhpMethodReflection is covered by backward compatibility promise, this instanceof assumption might break because it''s not guaranteed to always stay the same\.$#'
 			identifier: phpstanApi.instanceofAssumption
+			count: 1
+			path: src/Drupal9/Rector/Deprecation/GetAllOptionsRector.php
+
+		-
+			message: '''
+				#^Call to deprecated method getProperty\(\) of class PHPStan\\Reflection\\ClassReflection\:
+				Use getInstanceProperty or getStaticProperty$#
+			'''
+			identifier: method.deprecated
+			count: 1
+			path: src/Drupal9/Rector/Deprecation/GetAllOptionsRector.php
+
+		-
+			message: '''
+				#^Call to deprecated method hasProperty\(\) of class PHPStan\\Reflection\\ClassReflection\:
+				Use hasInstanceProperty or hasStaticProperty instead$#
+			'''
+			identifier: method.deprecated
 			count: 1
 			path: src/Drupal9/Rector/Deprecation/GetAllOptionsRector.php
 
@@ -400,8 +517,44 @@ parameters:
 			path: src/Drupal9/Rector/Deprecation/GetRawContentRector.php
 
 		-
+			message: '''
+				#^Call to deprecated method getProperty\(\) of class PHPStan\\Reflection\\ClassReflection\:
+				Use getInstanceProperty or getStaticProperty$#
+			'''
+			identifier: method.deprecated
+			count: 1
+			path: src/Drupal9/Rector/Deprecation/GetRawContentRector.php
+
+		-
+			message: '''
+				#^Call to deprecated method hasProperty\(\) of class PHPStan\\Reflection\\ClassReflection\:
+				Use hasInstanceProperty or hasStaticProperty instead$#
+			'''
+			identifier: method.deprecated
+			count: 1
+			path: src/Drupal9/Rector/Deprecation/GetRawContentRector.php
+
+		-
 			message: '#^Although PHPStan\\Reflection\\Php\\PhpMethodReflection is covered by backward compatibility promise, this instanceof assumption might break because it''s not guaranteed to always stay the same\.$#'
 			identifier: phpstanApi.instanceofAssumption
+			count: 1
+			path: src/Drupal9/Rector/Deprecation/PassRector.php
+
+		-
+			message: '''
+				#^Call to deprecated method getProperty\(\) of class PHPStan\\Reflection\\ClassReflection\:
+				Use getInstanceProperty or getStaticProperty$#
+			'''
+			identifier: method.deprecated
+			count: 1
+			path: src/Drupal9/Rector/Deprecation/PassRector.php
+
+		-
+			message: '''
+				#^Call to deprecated method hasProperty\(\) of class PHPStan\\Reflection\\ClassReflection\:
+				Use hasInstanceProperty or hasStaticProperty instead$#
+			'''
+			identifier: method.deprecated
 			count: 1
 			path: src/Drupal9/Rector/Deprecation/PassRector.php
 
