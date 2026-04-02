@@ -129,7 +129,7 @@ CODE_SAMPLE
     {
         $filePath = $this->file->getFilePath();
         $ext = pathinfo($filePath, \PATHINFO_EXTENSION);
-        if (!in_array($ext, ['inc', 'module'])) {
+        if (!in_array($ext, ['inc', 'module', 'theme'])) {
             return null;
         }
         if ($filePath !== $this->inputFilename) {
