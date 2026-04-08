@@ -127,7 +127,9 @@ CODE_SAMPLE
 
     public function refactor(Node $node): Node|int|null
     {
-        $filePath = $this->file->getFilePath();
+        $filePath = method_exists($this, 'getFile')
+            ? $this->file->getFilePath()
+            : $this->getFile()->getFilePath();
         $ext = pathinfo($filePath, \PATHINFO_EXTENSION);
         if (!in_array($ext, ['inc', 'module'])) {
             return null;
@@ -181,7 +183,9 @@ CODE_SAMPLE
     protected function initializeHookClass(): void
     {
         $this->__destruct();
-        $this->moduleDir = $this->file->getFilePath();
+        $this->moduleDir = method_exists($this, 'getFile')
+            ? $this->file->getFilePath()
+            : $this->getFile()->getFilePath();
         $this->inputFilename = $this->moduleDir;
         // Find the relevant info.yml: it's either in the current directory or
         // one of the parents.
@@ -190,7 +194,7 @@ CODE_SAMPLE
         if (!empty($info)) {
             $infoFile = reset($info);
             $this->module = basename($infoFile, '.info.yml');
-            $filename = pathinfo($this->file->getFilePath(), \PATHINFO_FILENAME);
+            $filename = pathinfo(method_exists($this, 'getFile') ? $this->file->getFilePath() : $this->getFile()->getFilePath(), \PATHINFO_FILENAME);
             $hookClassName = ucfirst(CaseStringHelper::camelCase(str_replace('.', '_', $filename).'_hooks'));
             $counter = '';
             do {
