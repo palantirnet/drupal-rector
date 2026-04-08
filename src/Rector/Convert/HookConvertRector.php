@@ -13,6 +13,7 @@ use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\ClassMethod;
 use PhpParser\Node\Stmt\Function_;
 use PhpParser\Node\Stmt\Use_;
+use PhpParser\Node\UseItem;
 use PhpParser\NodeFinder;
 use PhpParser\NodeTraverser;
 use PhpParser\NodeVisitor;
@@ -221,7 +222,7 @@ CODE_SAMPLE
             $hookClassStmts = [
                 new Node\Stmt\Namespace_(new Node\Name($namespace)),
                 ...$this->useStmts,
-                new Use_([new Node\Stmt\UseUse(new Node\Name('Drupal\Core\Hook\Attribute\Hook'))]),
+                new Use_([new UseItem(new Node\Name('Drupal\Core\Hook\Attribute\Hook'))]),
                 $this->hookClass,
             ];
             $this->hookClass->setDocComment(new \PhpParser\Comment\Doc("/**\n * Hook implementations for $this->module.\n */"));
