@@ -120,9 +120,14 @@ preferred path — it avoids creating new classes for patterns that drupal-recto
 
 | Transformation pattern | Generic rector to use |
 |---|---|
+| Global function call removed entirely (no replacement) | `FunctionCallRemovalRector` |
 | Global function → static class method | `FunctionToStaticRector` |
 | Global function → `\Drupal::service('…')->method()` | `FunctionToServiceRector` |
+| Instance method renamed (with receiver type check) | `MethodToMethodWithCheckRector` |
 | Class constant → different class constant | `ClassConstantToClassConstantRector` |
+| Global constant → class constant | `ConstantToClassConstantRector` |
+| Class/interface/trait renamed or moved to new namespace | `RenameClassRector` (from Rector core) |
+| `DeprecationHelper::backwardsCompatibleCall()` wrapper removal | `DeprecationHelperRemoveRector` |
 | Anything else | Write a custom class (continue to Step 5) |
 
 **If a generic rector matches, do this instead of Steps 5–10:**
@@ -146,6 +151,9 @@ preferred path — it avoids creating new classes for patterns that drupal-recto
 **Configuration entry syntax by generic rector:**
 
 ```php
+// FunctionCallRemovalRector — removes the entire statement; no replacement
+new FunctionCallRemovalConfiguration('[deprecatedFunctionName]'),
+
 // FunctionToStaticRector
 new FunctionToStaticConfiguration('[introducedVersion]', '[deprecatedFunctionName]', '[ClassName]', '[methodName]'),
 // optional 5th arg: arg reorder map, e.g. [0 => 1, 1 => 0] to swap first two args
@@ -154,9 +162,23 @@ new FunctionToStaticConfiguration('[introducedVersion]', '[deprecatedFunctionNam
 new FunctionToServiceConfiguration('[introducedVersion]', '[deprecatedFunctionName]', '[ServiceName]', '[serviceMethodName]'),
 // ServiceName is a string literal: 'theme.registry' or 'Drupal\module\Hook\SomeHooks'
 
+// MethodToMethodWithCheckRector — receiver must be typed as the given interface/class
+new MethodToMethodWithCheckConfiguration('[ReceiverClass\\FQCN]', '[oldMethodName]', '[newMethodName]'),
+// no introducedVersion — applies unconditionally; no BC wrapping
+
 // ClassConstantToClassConstantRector
 new ClassConstantToClassConstantConfiguration('[OldClass\\FQCN]', '[OLD_CONST]', '[NewClass\\FQCN]', '[NewConst]'),
 // no introducedVersion — applies unconditionally; no BC wrapping
+
+// ConstantToClassConstantRector — replaces bare global constant (ConstFetch) with class constant
+new ConstantToClassConfiguration('[GLOBAL_CONSTANT_NAME]', '[TargetClass\\FQCN]', '[CONST_NAME]'),
+// no introducedVersion — applies unconditionally; no BC wrapping
+
+// RenameClassRector — pass an associative array directly, not a configuration object
+$rectorConfig->ruleWithConfiguration(RenameClassRector::class, [
+    '[Old\\Class\\FQCN]' => '[New\\Class\\FQCN]',
+]);
+// use Rector\Renaming\Rector\Name\RenameClassRector; at top of config file
 ```
 
 **If no generic rector matches, continue to Step 5 to generate a custom class.**
