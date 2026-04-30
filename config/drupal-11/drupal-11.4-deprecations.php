@@ -14,6 +14,10 @@ return static function (RectorConfig $rectorConfig): void {
     // https://www.drupal.org/node/3550054
     // CommentItemInterface::FORM_BELOW and FORM_SEPARATE_PAGE deprecated in 11.4.0,
     // removed in 13.0.0. Replaced by FormLocation enum cases.
+    // https://www.drupal.org/node/3574661
+    // CommentItemInterface::HIDDEN/CLOSED/OPEN and CommentInterface::ANONYMOUS_*
+    // deprecated in 11.4.0, removed in 13.0.0. Replaced by CommentingStatus and
+    // AnonymousContact enum cases.
     $rectorConfig->ruleWithConfiguration(ClassConstantToClassConstantRector::class, [
         new ClassConstantToClassConstantConfiguration(
             'Drupal\comment\Plugin\Field\FieldType\CommentItemInterface',
@@ -27,29 +31,114 @@ return static function (RectorConfig $rectorConfig): void {
             'Drupal\comment\FormLocation',
             'SeparatePage',
         ),
+        new ClassConstantToClassConstantConfiguration(
+            'Drupal\comment\Plugin\Field\FieldType\CommentItemInterface',
+            'HIDDEN',
+            'Drupal\comment\CommentingStatus',
+            'Hidden',
+        ),
+        new ClassConstantToClassConstantConfiguration(
+            'Drupal\comment\Plugin\Field\FieldType\CommentItemInterface',
+            'CLOSED',
+            'Drupal\comment\CommentingStatus',
+            'Closed',
+        ),
+        new ClassConstantToClassConstantConfiguration(
+            'Drupal\comment\Plugin\Field\FieldType\CommentItemInterface',
+            'OPEN',
+            'Drupal\comment\CommentingStatus',
+            'Open',
+        ),
+        new ClassConstantToClassConstantConfiguration(
+            'Drupal\comment\CommentInterface',
+            'ANONYMOUS_MAYNOT_CONTACT',
+            'Drupal\comment\AnonymousContact',
+            'Forbidden',
+        ),
+        new ClassConstantToClassConstantConfiguration(
+            'Drupal\comment\CommentInterface',
+            'ANONYMOUS_MAY_CONTACT',
+            'Drupal\comment\AnonymousContact',
+            'Allowed',
+        ),
+        new ClassConstantToClassConstantConfiguration(
+            'Drupal\comment\CommentInterface',
+            'ANONYMOUS_MUST_CONTACT',
+            'Drupal\comment\AnonymousContact',
+            'Required',
+        ),
     ]);
 
     // https://www.drupal.org/node/3574727
     // language_configuration_element_submit() deprecated in 11.4.0, removed in 13.0.0.
     // Replaced by LanguageConfiguration::submit().
-    $rectorConfig->ruleWithConfiguration(FunctionToStaticRector::class, [
-        new FunctionToStaticConfiguration(
-            '11.4.0',
-            'language_configuration_element_submit',
-            'Drupal\language\Element\LanguageConfiguration',
-            'submit'
-        ),
+    // language_process_language_select() deprecated in 11.4.0, removed in 12.0.0.
+    // Replaced by LanguageHooks::processLanguageSelect() via the service container.
+    // https://www.drupal.org/node/3566792
+    // ckeditor5_filter_format_edit_form_submit() and _update_ckeditor5_html_filter()
+    // deprecated in 11.4.0, removed in 12.0.0. Replaced by Ckeditor5Hooks service.
+    // https://www.drupal.org/node/3560398
+    // _dblog_get_message_types() and dblog_filters() deprecated in 11.4.0,
+    // removed in 13.0.0. Replaced by DbLogFilters service.
+    // https://www.drupal.org/node/3566888
+    // contact_user_profile_form_submit() and contact_form_user_admin_settings_submit()
+    // deprecated in 11.4.0, removed in 12.0.0. Replaced by ContactFormHooks service.
+    // https://www.drupal.org/node/3548571
+    // content_translation_* functions deprecated in 11.4.0, removed in 12.0.0/13.0.0.
+    // https://www.drupal.org/node/3572339
+    // locale_translation_batch_update_build() and locale_translation_batch_fetch_build()
+    // deprecated in 11.4.0, removed in 13.0.0. Replaced by LocaleFetch service.
+    // https://www.drupal.org/node/3569328
+    // locale.translation.inc functions deprecated in 11.4.0, removed in 13.0.0.
+    // https://www.drupal.org/node/3571400
+    // menu_ui.module procedural functions deprecated in 11.4.0, removed in 12.0.0/13.0.0.
+    // https://www.drupal.org/node/3568387
+    // text_summary() deprecated in 11.4.0, removed in 13.0.0. Replaced by TextSummary service.
+    // https://www.drupal.org/node/3582106
+    // user_form_process_password_confirm() deprecated in 11.4.0, removed in 13.0.0.
+    $rectorConfig->ruleWithConfiguration(FunctionToServiceRector::class, [
+        new FunctionToServiceConfiguration('11.4.0', 'language_process_language_select', 'Drupal\language\Hook\LanguageHooks', 'processLanguageSelect'),
+        new FunctionToServiceConfiguration('11.4.0', 'ckeditor5_filter_format_edit_form_submit', 'Drupal\ckeditor5\Hook\Ckeditor5Hooks', 'filterFormatEditFormSubmit'),
+        new FunctionToServiceConfiguration('11.4.0', '_update_ckeditor5_html_filter', 'Drupal\ckeditor5\Hook\Ckeditor5Hooks', 'updateCkeditor5HtmlFilter'),
+        new FunctionToServiceConfiguration('11.4.0', '_dblog_get_message_types', 'Drupal\dblog\DbLogFilters', 'getMessageTypes'),
+        new FunctionToServiceConfiguration('11.4.0', 'dblog_filters', 'Drupal\dblog\DbLogFilters', 'filters'),
+        new FunctionToServiceConfiguration('11.4.0', 'contact_user_profile_form_submit', 'Drupal\contact\Hook\ContactFormHooks', 'profileFormSubmit'),
+        new FunctionToServiceConfiguration('11.4.0', 'contact_form_user_admin_settings_submit', 'Drupal\contact\Hook\ContactFormHooks', 'userAdminSettingsSubmit'),
+        new FunctionToServiceConfiguration('11.4.0', 'content_translation_translate_access', 'content_translation.manager', 'access'),
+        new FunctionToServiceConfiguration('11.4.0', 'content_translation_enable_widget', 'Drupal\content_translation\ContentTranslationEnableTranslationPerBundle', 'getWidget'),
+        new FunctionToServiceConfiguration('11.4.0', 'content_translation_language_configuration_element_process', 'Drupal\content_translation\ContentTranslationEnableTranslationPerBundle', 'configElementProcess'),
+        new FunctionToServiceConfiguration('11.4.0', 'content_translation_language_configuration_element_validate', 'Drupal\content_translation\ContentTranslationEnableTranslationPerBundle', 'configElementValidate'),
+        new FunctionToServiceConfiguration('11.4.0', 'content_translation_language_configuration_element_submit', 'Drupal\content_translation\ContentTranslationEnableTranslationPerBundle', 'configElementSubmit'),
+        new FunctionToServiceConfiguration('11.4.0', '_content_translation_install_field_storage_definitions', 'Drupal\content_translation\Hook\ContentTranslationHooks', 'installFieldStorageDefinitions'),
+        new FunctionToServiceConfiguration('11.4.0', 'locale_translation_batch_update_build', 'Drupal\locale\LocaleFetch', 'batchUpdateBuild'),
+        new FunctionToServiceConfiguration('11.4.0', 'locale_translation_batch_fetch_build', 'Drupal\locale\LocaleFetch', 'batchFetchBuild'),
+        new FunctionToServiceConfiguration('11.4.0', 'locale_translation_get_projects', 'locale.project', 'getProjects'),
+        new FunctionToServiceConfiguration('11.4.0', 'locale_translation_clear_cache_projects', 'locale.project', 'resetCache'),
+        new FunctionToServiceConfiguration('11.4.0', 'locale_translation_load_sources', 'Drupal\locale\LocaleSource', 'loadSources'),
+        new FunctionToServiceConfiguration('11.4.0', 'locale_translation_build_sources', 'Drupal\locale\LocaleSource', 'buildSources'),
+        new FunctionToServiceConfiguration('11.4.0', 'locale_translation_source_check_file', 'Drupal\locale\LocaleSource', 'sourceCheckFile'),
+        new FunctionToServiceConfiguration('11.4.0', 'locale_translation_source_build', 'Drupal\locale\LocaleSource', 'sourceBuild'),
+        new FunctionToServiceConfiguration('11.4.0', 'locale_translation_build_server_pattern', 'Drupal\locale\LocaleSource', 'buildServerPattern'),
+        new FunctionToServiceConfiguration('11.4.0', '_menu_ui_node_save', 'Drupal\menu_ui\MenuUiUtility', 'menuUiNodeSave'),
+        new FunctionToServiceConfiguration('11.4.0', 'menu_ui_get_menu_link_defaults', 'Drupal\menu_ui\MenuUiUtility', 'getMenuLinkDefaults'),
+        new FunctionToServiceConfiguration('11.4.0', 'menu_ui_node_builder', 'Drupal\menu_ui\Hook\MenuUiHooks', 'nodeBuilder'),
+        new FunctionToServiceConfiguration('11.4.0', 'menu_ui_form_node_form_submit', 'Drupal\menu_ui\Hook\MenuUiHooks', 'formNodeFormSubmit'),
+        new FunctionToServiceConfiguration('11.4.0', 'menu_ui_form_node_type_form_validate', 'Drupal\menu_ui\Hook\MenuUiHooks', 'formNodeTypeFormValidate'),
+        new FunctionToServiceConfiguration('11.4.0', 'menu_ui_form_node_type_form_builder', 'Drupal\menu_ui\Hook\MenuUiHooks', 'formNodeTypeFormBuilder'),
+        new FunctionToServiceConfiguration('11.4.0', 'text_summary', 'Drupal\text\TextSummary', 'generate'),
+        new FunctionToServiceConfiguration('11.4.0', 'user_form_process_password_confirm', 'Drupal\user\Hook\UserThemeHooks', 'processPasswordConfirm'),
     ]);
 
     // https://www.drupal.org/node/3574727
-    // language_process_language_select() deprecated in 11.4.0, removed in 12.0.0.
-    // Replaced by LanguageHooks::processLanguageSelect() via the service container.
-    $rectorConfig->ruleWithConfiguration(FunctionToServiceRector::class, [
-        new FunctionToServiceConfiguration(
-            '11.4.0',
-            'language_process_language_select',
-            'Drupal\language\Hook\LanguageHooks',
-            'processLanguageSelect'
-        ),
+    // language_configuration_element_submit() deprecated in 11.4.0, removed in 13.0.0.
+    // Replaced by LanguageConfiguration::submit().
+    // https://www.drupal.org/node/3035340
+    // views_ui/admin.inc static trait functions deprecated in 11.4.0, removed in 13.0.0.
+    $rectorConfig->ruleWithConfiguration(FunctionToStaticRector::class, [
+        new FunctionToStaticConfiguration('11.4.0', 'language_configuration_element_submit', 'Drupal\language\Element\LanguageConfiguration', 'submit'),
+        new FunctionToStaticConfiguration('11.4.0', 'views_ui_form_button_was_clicked', 'Drupal\views\ViewsFormHelperTrait', 'formButtonWasClicked'),
+        new FunctionToStaticConfiguration('11.4.0', 'views_ui_add_limited_validation', 'Drupal\views\ViewsFormAjaxHelperTrait', 'addLimitedValidation'),
+        new FunctionToStaticConfiguration('11.4.0', 'views_ui_add_ajax_wrapper', 'Drupal\views\ViewsFormAjaxHelperTrait', 'addAjaxWrapper'),
+        new FunctionToStaticConfiguration('11.4.0', 'views_ui_nojs_submit', 'Drupal\views\ViewsFormAjaxHelperTrait', 'noJsSubmit'),
     ]);
 };
