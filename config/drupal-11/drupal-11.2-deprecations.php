@@ -5,6 +5,7 @@ declare(strict_types=1);
 use DrupalRector\Drupal11\Rector\Deprecation\RemoveModuleHandlerAddModuleCallsRector;
 use DrupalRector\Drupal11\Rector\Deprecation\RemoveTwigNodeTransTagArgumentRector;
 use DrupalRector\Drupal11\Rector\Deprecation\RenameStopProceduralHookScanRector;
+use DrupalRector\Drupal11\Rector\Deprecation\ReplaceEntityOriginalPropertyRector;
 use DrupalRector\Drupal11\Rector\Deprecation\ReplaceFileGetContentHeadersRector;
 use DrupalRector\Drupal11\Rector\Deprecation\ReplaceLocaleTranslationDefaultServerPatternRector;
 use DrupalRector\Drupal11\Rector\Deprecation\ReplaceSessionWritesWithRequestSessionRector;
@@ -133,6 +134,11 @@ return static function (RectorConfig $rectorConfig): void {
     // $_SESSION['key'] = $value deprecated in drupal:11.2.0.
     // Replaced by \Drupal::request()->getSession()->set('key', $value).
     $rectorConfig->rule(ReplaceSessionWritesWithRequestSessionRector::class);
+
+    // https://www.drupal.org/node/3571065
+    // $entity->original magic property deprecated in drupal:11.2.0, removed in drupal:12.0.0.
+    // Read access replaced by getOriginal(); write access replaced by setOriginal($value).
+    $rectorConfig->rule(ReplaceEntityOriginalPropertyRector::class);
 
     // https://www.drupal.org/node/3477277
     // LOCALE_TRANSLATION_DEFAULT_SERVER_PATTERN deprecated in drupal:11.2.0, removed in drupal:12.0.0.

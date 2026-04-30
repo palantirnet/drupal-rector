@@ -271,4 +271,12 @@ return static function (RectorConfig $rectorConfig): void {
         new FunctionToStaticConfiguration('11.4.0', 'views_ui_add_ajax_wrapper', 'Drupal\views\ViewsFormAjaxHelperTrait', 'addAjaxWrapper'),
         new FunctionToStaticConfiguration('11.4.0', 'views_ui_nojs_submit', 'Drupal\views\ViewsFormAjaxHelperTrait', 'noJsSubmit'),
     ]);
+
+    // https://www.drupal.org/node/3568087
+    // contextual_links_to_id() and contextual_id_to_links() deprecated in drupal:11.4.0, removed in drupal:13.0.0.
+    // Replaced by ContextualLinksSerializer service.
+    $rectorConfig->ruleWithConfiguration(FunctionToServiceRector::class, [
+        new FunctionToServiceConfiguration('11.4.0', 'contextual_links_to_id', 'Drupal\contextual\ContextualLinksSerializer', 'linksToId'),
+        new FunctionToServiceConfiguration('11.4.0', 'contextual_id_to_links', 'Drupal\contextual\ContextualLinksSerializer', 'idToLinks'),
+    ]);
 };

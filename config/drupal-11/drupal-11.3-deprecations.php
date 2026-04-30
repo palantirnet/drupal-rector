@@ -6,6 +6,7 @@ use DrupalRector\Drupal11\Rector\Deprecation\ErrorCurrentErrorHandlerRector;
 use DrupalRector\Drupal11\Rector\Deprecation\FileSystemBasenameToNativeRector;
 use DrupalRector\Drupal11\Rector\Deprecation\RemoveRootFromConvertDbUrlRector;
 use DrupalRector\Drupal11\Rector\Deprecation\LoadAllIncludesRector;
+use DrupalRector\Drupal11\Rector\Deprecation\ReplaceNodeAccessViewAllNodesRector;
 use DrupalRector\Drupal11\Rector\Deprecation\ReplaceNodeAddBodyFieldRector;
 use DrupalRector\Drupal11\Rector\Deprecation\ReplaceNodeModuleProceduralFunctionsRector;
 use DrupalRector\Drupal11\Rector\Deprecation\ReplaceThemeGetSettingRector;
@@ -64,6 +65,12 @@ return static function (RectorConfig $rectorConfig): void {
     // comment_uri($comment) deprecated in drupal:11.3.0, removed in drupal:12.0.0.
     // Replaced by $comment->permalink().
     $rectorConfig->rule(ReplaceCommentUriRector::class);
+
+    // https://www.drupal.org/node/3038908
+    // node_access_view_all_nodes() deprecated in drupal:11.3.0, removed in drupal:12.0.0.
+    // Replaced by entityTypeManager()->getAccessControlHandler('node')->checkAllGrants().
+    // drupal_static_reset('node_access_view_all_nodes') replaced by node.view_all_nodes_memory_cache->deleteAll().
+    $rectorConfig->rule(ReplaceNodeAccessViewAllNodesRector::class);
 
     // https://www.drupal.org/node/3489266
     // node_add_body_field() deprecated in drupal:11.3.0, removed in drupal:12.0.0.
