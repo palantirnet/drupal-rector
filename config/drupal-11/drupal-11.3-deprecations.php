@@ -5,8 +5,10 @@ declare(strict_types=1);
 use DrupalRector\Drupal11\Rector\Deprecation\LoadAllIncludesRector;
 use DrupalRector\Drupal11\Rector\Deprecation\NodeStorageDeprecatedMethodsRector;
 use DrupalRector\Drupal11\Rector\Deprecation\ReplaceCommentManagerGetCountNewCommentsRector;
+use DrupalRector\Rector\Deprecation\FunctionCallRemovalRector;
 use DrupalRector\Rector\Deprecation\FunctionToServiceRector;
 use DrupalRector\Rector\ValueObject\DrupalIntroducedVersionConfiguration;
+use DrupalRector\Rector\ValueObject\FunctionCallRemovalConfiguration;
 use DrupalRector\Rector\ValueObject\FunctionToServiceConfiguration;
 use Rector\Config\RectorConfig;
 
@@ -33,5 +35,12 @@ return static function (RectorConfig $rectorConfig): void {
     // Replaced by \Drupal\node\NodeBulkUpdate::process().
     $rectorConfig->ruleWithConfiguration(FunctionToServiceRector::class, [
         new FunctionToServiceConfiguration('11.3.0', 'node_mass_update', 'Drupal\node\NodeBulkUpdate', 'process'),
+    ]);
+
+    // https://www.drupal.org/node/3504005
+    // block_content_add_body_field() deprecated in drupal:11.3.0, removed in drupal:13.0.0.
+    // The body field is now added via config.
+    $rectorConfig->ruleWithConfiguration(FunctionCallRemovalRector::class, [
+        new FunctionCallRemovalConfiguration('block_content_add_body_field'),
     ]);
 };

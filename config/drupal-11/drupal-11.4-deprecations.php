@@ -2,13 +2,17 @@
 
 declare(strict_types=1);
 
+use DrupalRector\Drupal11\Rector\Deprecation\RemoveAutomatedCronSubmitHandlerRector;
+use DrupalRector\Drupal11\Rector\Deprecation\RemoveLinkWidgetValidateTitleElementRector;
 use DrupalRector\Drupal11\Rector\Deprecation\ReplaceSessionManagerDeleteRector;
 use DrupalRector\Drupal11\Rector\Deprecation\ViewsPluginHandlerManagerRector;
 use DrupalRector\Rector\Deprecation\ClassConstantToClassConstantRector;
+use DrupalRector\Rector\Deprecation\FunctionCallRemovalRector;
 use DrupalRector\Rector\Deprecation\FunctionToServiceRector;
 use DrupalRector\Rector\Deprecation\FunctionToStaticRector;
 use DrupalRector\Rector\ValueObject\ClassConstantToClassConstantConfiguration;
 use DrupalRector\Rector\ValueObject\DrupalIntroducedVersionConfiguration;
+use DrupalRector\Rector\ValueObject\FunctionCallRemovalConfiguration;
 use DrupalRector\Rector\ValueObject\FunctionToServiceConfiguration;
 use DrupalRector\Rector\ValueObject\FunctionToStaticConfiguration;
 use Rector\Config\RectorConfig;
@@ -143,6 +147,29 @@ return static function (RectorConfig $rectorConfig): void {
         new FunctionToServiceConfiguration('11.4.0', 'text_summary', 'Drupal\text\TextSummary', 'generate'),
         new FunctionToServiceConfiguration('11.4.0', 'user_form_process_password_confirm', 'Drupal\user\Hook\UserThemeHooks', 'processPasswordConfirm'),
     ]);
+
+    // https://www.drupal.org/node/3035340
+    // views_ui_contextual_links_suppress*() deprecated in drupal:11.4.0, removed in drupal:13.0.0.
+    // These are no-ops and can be removed.
+    // https://www.drupal.org/node/3566768
+    // automated_cron_settings_submit() deprecated in drupal:11.4.0, removed in drupal:13.0.0.
+    // Config saving is now handled automatically via #config_target on the interval element.
+    $rectorConfig->ruleWithConfiguration(FunctionCallRemovalRector::class, [
+        new FunctionCallRemovalConfiguration('views_ui_contextual_links_suppress'),
+        new FunctionCallRemovalConfiguration('views_ui_contextual_links_suppress_push'),
+        new FunctionCallRemovalConfiguration('views_ui_contextual_links_suppress_pop'),
+        new FunctionCallRemovalConfiguration('automated_cron_settings_submit'),
+    ]);
+
+    // https://www.drupal.org/node/3093118
+    // LinkWidget::validateTitleElement() deprecated in drupal:11.4.0, removed in drupal:12.0.0.
+    // Validation is now handled by LinkTitleRequiredConstraint on the LinkItem field type.
+    $rectorConfig->rule(RemoveLinkWidgetValidateTitleElementRector::class);
+
+    // https://www.drupal.org/node/3566768
+    // $form['#submit'][] = 'automated_cron_settings_submit' deprecated in drupal:11.4.0, removed in drupal:13.0.0.
+    // Config saving is now handled automatically via #config_target on the interval element.
+    $rectorConfig->rule(RemoveAutomatedCronSubmitHandlerRector::class);
 
     // https://www.drupal.org/node/3574727
     // language_configuration_element_submit() deprecated in 11.4.0, removed in 13.0.0.

@@ -2,11 +2,14 @@
 
 declare(strict_types=1);
 
+use DrupalRector\Drupal11\Rector\Deprecation\RemoveModuleHandlerAddModuleCallsRector;
 use DrupalRector\Drupal11\Rector\Deprecation\StatementPrefetchIteratorFetchColumnRector;
 use DrupalRector\Rector\Deprecation\ClassConstantToClassConstantRector;
+use DrupalRector\Rector\Deprecation\FunctionCallRemovalRector;
 use DrupalRector\Rector\Deprecation\FunctionToServiceRector;
 use DrupalRector\Rector\Deprecation\MethodToMethodWithCheckRector;
 use DrupalRector\Rector\ValueObject\ClassConstantToClassConstantConfiguration;
+use DrupalRector\Rector\ValueObject\FunctionCallRemovalConfiguration;
 use DrupalRector\Rector\ValueObject\FunctionToServiceConfiguration;
 use DrupalRector\Rector\ValueObject\MethodToMethodWithCheckConfiguration;
 use Rector\Config\RectorConfig;
@@ -36,6 +39,26 @@ return static function (RectorConfig $rectorConfig): void {
         new FunctionToServiceConfiguration('11.2.0', 'template_preprocess_html', 'Drupal\Core\Theme\ThemePreprocess', 'preprocessHtml'),
         new FunctionToServiceConfiguration('11.2.0', 'template_preprocess_page', 'Drupal\Core\Theme\ThemePreprocess', 'preprocessPage'),
     ]);
+
+    // https://www.drupal.org/node/3501136
+    // template_preprocess() deprecated in drupal:11.2.0, removed in drupal:12.0.0.
+    // https://www.drupal.org/node/3499559
+    // update_clear_update_disk_cache(), update_delete_file_if_stale(),
+    // _update_manager_cache_directory(), _update_manager_extract_directory(),
+    // and _update_manager_unique_identifier() deprecated in drupal:11.2.0, removed in drupal:13.0.0.
+    $rectorConfig->ruleWithConfiguration(FunctionCallRemovalRector::class, [
+        new FunctionCallRemovalConfiguration('template_preprocess'),
+        new FunctionCallRemovalConfiguration('update_clear_update_disk_cache'),
+        new FunctionCallRemovalConfiguration('update_delete_file_if_stale'),
+        new FunctionCallRemovalConfiguration('_update_manager_cache_directory'),
+        new FunctionCallRemovalConfiguration('_update_manager_extract_directory'),
+        new FunctionCallRemovalConfiguration('_update_manager_unique_identifier'),
+    ]);
+
+    // https://www.drupal.org/node/3528899
+    // ModuleHandlerInterface::addModule() and addProfile() deprecated in drupal:11.2.0, removed in drupal:12.0.0.
+    // These methods are no-ops and can be removed.
+    $rectorConfig->rule(RemoveModuleHandlerAddModuleCallsRector::class);
 
     // https://www.drupal.org/node/3575841
     // SystemManager::REQUIREMENT_* deprecated in drupal:11.2.0, removed in drupal:12.0.0.
