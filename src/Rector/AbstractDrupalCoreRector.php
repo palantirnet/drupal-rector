@@ -15,6 +15,8 @@ use Rector\Rector\AbstractRector;
 
 abstract class AbstractDrupalCoreRector extends AbstractRector implements ConfigurableRectorInterface
 {
+    private static ?string $versionOverride = null;
+
     /**
      * @var array|VersionedConfigurationInterface[]
      */
@@ -124,6 +126,11 @@ abstract class AbstractDrupalCoreRector extends AbstractRector implements Config
         return version_compare($this->installedDrupalVersion(), $configuration->getIntroducedVersion(), '>=');
     }
 
+    public static function setVersionOverride(?string $version): void
+    {
+        self::$versionOverride = $version;
+    }
+
     /**
      * @phpstan-return non-empty-string
      */
@@ -132,7 +139,7 @@ abstract class AbstractDrupalCoreRector extends AbstractRector implements Config
         return str_replace([
             '.x-dev',
             '-dev',
-        ], '.0', \Drupal::VERSION);
+        ], '.0', self::$versionOverride ?? \Drupal::VERSION);
     }
 
     /**

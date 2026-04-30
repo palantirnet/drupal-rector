@@ -499,19 +499,44 @@ DeprecationBase::addClass(MyRector::class, $rectorConfig, true);  // true = addN
 
 ---
 
-## 11. Test environment: Drupal VERSION stub
+## 11. Test environment: Drupal VERSION
 
-The stub at `stubs/Drupal/Drupal.php` provides the `\Drupal::VERSION` constant used by
-`AbstractDrupalCoreRector::rectorShouldApplyToDrupalVersion()`. The stub must be set to a version
-**at least as high as the highest introduced version** among the rules being tested.
+`AbstractDrupalCoreRector::installedDrupalVersion()` determines whether a rule fires. It resolves
+the version in this order:
 
-| Scenario | Required stub VERSION |
-|---|---|
-| Only Drupal 8/9/10 rules | `10.99.x-dev` (original default) |
-| Drupal 11.x rules | `11.99.x-dev` |
+1. **Static override** — `AbstractDrupalCoreRector::setVersionOverride($version)`, used in tests
+   that need to simulate a specific Drupal version.
+2. **Stub fallback** — `stubs/Drupal/Drupal.php` defines `\Drupal::VERSION = '11.99.x-dev'`,
+   used by all tests that do not set an override.
 
-The stub has been updated to `11.99.x-dev`. This value is safe for all existing Drupal 8/9/10
-tests — the BC logic only requires `installedVersion >= 10.1.0`, which `11.99.0` satisfies.
+### Standard conversions (happy-path tests)
 
-**Do not change the stub back to `10.99.x-dev`** — doing so will silently disable all Drupal11
-rules in the test suite (their `refactor()` won't fire, tests pass trivially).
+For typical digest-to-rector test classes, no version setup is needed. The stub default `11.99.x-dev`
+satisfies any `introducedVersion <= 11.x`, so the rule fires and the fixture transformation is verified.
+
+**Do not change the stub back to `10.99.x-dev`** — doing so will silently disable all Drupal 11
+rules in the test suite.
+
+### Version-specific tests (positive + negative cases)
+
+When a test needs to assert that a rule fires on one version but not another, use
+`setVersionOverride` in `setUp`/`tearDown`:
+
+```php
+use DrupalRector\Rector\AbstractDrupalCoreRector;
+
+protected function setUp(): void
+{
+    parent::setUp();
+    AbstractDrupalCoreRector::setVersionOverride('11.0.0');
+}
+
+protected function tearDown(): void
+{
+    AbstractDrupalCoreRector::setVersionOverride(null);  // always reset
+    parent::tearDown();
+}
+```
+
+Passing `null` resets to the stub fallback, so the override does not leak between test classes
+in the same PHPUnit run.

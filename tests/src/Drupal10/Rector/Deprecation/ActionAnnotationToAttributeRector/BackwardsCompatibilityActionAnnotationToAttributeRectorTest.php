@@ -4,16 +4,24 @@ declare(strict_types=1);
 
 namespace DrupalRector\Tests\Drupal10\Rector\Deprecation\ActionAnnotationToAttributeRector;
 
+use DrupalRector\Rector\AbstractDrupalCoreRector;
 use Iterator;
 use Rector\Testing\PHPUnit\AbstractRectorTestCase;
 
-class Drupal
-{
-    public const VERSION = '11.0.x-dev';
-}
-
 class BackwardsCompatibilityActionAnnotationToAttributeRectorTest extends AbstractRectorTestCase
 {
+    protected function setUp(): void
+    {
+        parent::setUp();
+        AbstractDrupalCoreRector::setVersionOverride('11.0.x-dev');
+    }
+
+    protected function tearDown(): void
+    {
+        AbstractDrupalCoreRector::setVersionOverride(null);
+        parent::tearDown();
+    }
+
     /**
      * @covers ::refactor
      *

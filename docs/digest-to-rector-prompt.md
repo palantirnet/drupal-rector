@@ -24,10 +24,15 @@ The following directories must exist (created by the scaffold in U1):
 
 If they are missing, run: `mkdir -p src/Drupal11/Rector/Deprecation tests/src/Drupal11/Rector/Deprecation`
 
-**Stub version:** The test stub at `stubs/Drupal/Drupal.php` must have a `VERSION` of `11.99.x-dev`
-(or any version >= the deprecation's introduced version). If it is at `10.99.x-dev` the Drupal11
-rules will never fire in tests because the version check in `AbstractDrupalCoreRector` fails.
-The stub has already been updated to `11.99.x-dev` — do not revert it.
+**Stub version:** The test stub at `stubs/Drupal/Drupal.php` has `VERSION = '11.99.x-dev'`. This
+is the default version used by `AbstractDrupalCoreRector::installedDrupalVersion()` for any test
+that does not set an explicit override. Do not revert it to `10.99.x-dev` — that would silently
+disable all Drupal 11 rules in the test suite.
+
+For tests that need to simulate a specific Drupal version (e.g., to verify a rule does NOT fire
+on an older version), use `AbstractDrupalCoreRector::setVersionOverride($version)` in `setUp()`
+and reset it with `setVersionOverride(null)` in `tearDown()`. Standard conversion tests do not
+need this — the stub default is sufficient.
 
 ---
 
