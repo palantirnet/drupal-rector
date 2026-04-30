@@ -15,3 +15,4 @@
 !/features/tmp/.placeholder
 
 /.phpunit.cache
+.worktrees/
