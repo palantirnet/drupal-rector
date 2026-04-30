@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use DrupalRector\Drupal11\Rector\Deprecation\RemoveAutomatedCronSubmitHandlerRector;
+use DrupalRector\Drupal11\Rector\Deprecation\ReplaceEntityReferenceRecursiveLimitRector;
 use DrupalRector\Drupal11\Rector\Deprecation\RemoveCacheExpireOverrideRector;
 use DrupalRector\Drupal11\Rector\Deprecation\RemoveConfigSaveTrustedDataArgRector;
 use DrupalRector\Drupal11\Rector\Deprecation\RemoveViewsRowCacheKeysRector;
@@ -297,4 +298,9 @@ return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->ruleWithConfiguration(ConstantToClassConstantRector::class, [
         new ConstantToClassConfiguration('IMAGE_DERIVATIVE_TOKEN', 'Drupal\image\ImageStyleInterface', 'TOKEN'),
     ]);
+
+    // https://www.drupal.org/node/2940605
+    // EntityReferenceEntityFormatter::RECURSIVE_RENDER_LIMIT deprecated in drupal:11.4.0, removed in drupal:13.0.0.
+    // Replaced by literal 20.
+    $rectorConfig->rule(ReplaceEntityReferenceRecursiveLimitRector::class);
 };
