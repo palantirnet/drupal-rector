@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use DrupalRector\Drupal11\Rector\Deprecation\RemoveModuleHandlerAddModuleCallsRector;
 use DrupalRector\Drupal11\Rector\Deprecation\ReplaceDateTimeRangeConstantsRector;
+use DrupalRector\Drupal11\Rector\Deprecation\ReplacePdoFetchConstantsRector;
 use DrupalRector\Drupal11\Rector\Deprecation\ReplaceRequirementSeverityConstantsRector;
 use DrupalRector\Drupal11\Rector\Deprecation\StatementPrefetchIteratorFetchColumnRector;
 use DrupalRector\Rector\Deprecation\ClassConstantToClassConstantRector;
@@ -87,6 +88,11 @@ return static function (RectorConfig $rectorConfig): void {
     // REQUIREMENT_INFO/OK/WARNING/ERROR global constants deprecated in drupal:11.2.0, removed in drupal:12.0.0.
     // Replaced by RequirementSeverity enum cases.
     $rectorConfig->rule(ReplaceRequirementSeverityConstantsRector::class);
+
+    // https://www.drupal.org/node/3525077
+    // PDO::FETCH_* constants deprecated in drupal:11.2.0, removed in drupal:12.0.0.
+    // Replaced by \Drupal\Core\Database\Statement\FetchAs enum cases.
+    $rectorConfig->rule(ReplacePdoFetchConstantsRector::class);
 
     // https://www.drupal.org/node/3574901
     // DateTimeRangeConstantsInterface::BOTH/START_DATE/END_DATE deprecated in drupal:11.2.0, removed in drupal:12.0.0.

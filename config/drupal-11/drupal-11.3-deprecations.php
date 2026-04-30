@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use DrupalRector\Drupal11\Rector\Deprecation\ErrorCurrentErrorHandlerRector;
 use DrupalRector\Drupal11\Rector\Deprecation\FileSystemBasenameToNativeRector;
+use DrupalRector\Drupal11\Rector\Deprecation\RemoveRootFromConvertDbUrlRector;
 use DrupalRector\Drupal11\Rector\Deprecation\LoadAllIncludesRector;
 use DrupalRector\Drupal11\Rector\Deprecation\ReplaceNodeModuleProceduralFunctionsRector;
 use DrupalRector\Drupal11\Rector\Deprecation\ReplaceThemeGetSettingRector;
@@ -99,4 +100,9 @@ return static function (RectorConfig $rectorConfig): void {
     // theme_get_setting() and _system_default_theme_features() deprecated in drupal:11.3.0, removed in drupal:13.0.0.
     // Replaced by ThemeSettingsProvider service.
     $rectorConfig->rule(ReplaceThemeGetSettingRector::class);
+
+    // https://www.drupal.org/node/3522513
+    // Database::convertDbUrlToConnectionInfo($url, $root, ...) deprecated in drupal:11.3.0, removed in drupal:12.0.0.
+    // The $root parameter is obsolete; remove it (shift any $include_test_drivers arg left).
+    $rectorConfig->rule(RemoveRootFromConvertDbUrlRector::class);
 };
