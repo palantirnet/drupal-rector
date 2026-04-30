@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use DrupalRector\Drupal11\Rector\Deprecation\RemoveAutomatedCronSubmitHandlerRector;
+use DrupalRector\Drupal11\Rector\Deprecation\RemoveCacheExpireOverrideRector;
 use DrupalRector\Drupal11\Rector\Deprecation\RemoveConfigSaveTrustedDataArgRector;
 use DrupalRector\Drupal11\Rector\Deprecation\RemoveLinkWidgetValidateTitleElementRector;
 use DrupalRector\Drupal11\Rector\Deprecation\RemoveSetUriCallbackRector;
@@ -178,6 +179,11 @@ return static function (RectorConfig $rectorConfig): void {
     // EntityTypeInterface::setUriCallback() deprecated in drupal:11.4.0, removed in drupal:13.0.0.
     // Use link templates or a route provider instead.
     $rectorConfig->rule(RemoveSetUriCallbackRector::class);
+
+    // https://www.drupal.org/node/3576556
+    // CachePluginBase::cacheExpire() deprecated in drupal:11.4.0, removed in drupal:13.0.0.
+    // Subclass overrides are dead code; remove them.
+    $rectorConfig->rule(RemoveCacheExpireOverrideRector::class);
 
     // https://www.drupal.org/node/3347842
     // trustData() deprecated in drupal:11.4.0, removed in drupal:13.0.0. Remove from fluent chains.

@@ -5,6 +5,8 @@ declare(strict_types=1);
 use DrupalRector\Drupal11\Rector\Deprecation\ErrorCurrentErrorHandlerRector;
 use DrupalRector\Drupal11\Rector\Deprecation\FileSystemBasenameToNativeRector;
 use DrupalRector\Drupal11\Rector\Deprecation\LoadAllIncludesRector;
+use DrupalRector\Drupal11\Rector\Deprecation\ReplaceNodeModuleProceduralFunctionsRector;
+use DrupalRector\Drupal11\Rector\Deprecation\ReplaceThemeGetSettingRector;
 use DrupalRector\Drupal11\Rector\Deprecation\NodeStorageDeprecatedMethodsRector;
 use DrupalRector\Drupal11\Rector\Deprecation\ReplaceCommentManagerGetCountNewCommentsRector;
 use DrupalRector\Drupal11\Rector\Deprecation\ReplaceCommentUriRector;
@@ -41,9 +43,12 @@ return static function (RectorConfig $rectorConfig): void {
     // https://www.drupal.org/node/3571623
     // node_mass_update() deprecated in drupal:11.3.0, removed in drupal:13.0.0.
     // Replaced by \Drupal\node\NodeBulkUpdate::process().
+    // node_type_get_names() and node_get_type_label() deprecated in drupal:11.3.0, removed in drupal:13.0.0.
     $rectorConfig->ruleWithConfiguration(FunctionToServiceRector::class, [
         new FunctionToServiceConfiguration('11.3.0', 'node_mass_update', 'Drupal\node\NodeBulkUpdate', 'process'),
+        new FunctionToServiceConfiguration('11.3.0', 'template_preprocess_layout', 'Drupal\layout_discovery\Hook\LayoutDiscoveryThemeHooks', 'preprocessLayout'),
     ]);
+    $rectorConfig->rule(ReplaceNodeModuleProceduralFunctionsRector::class);
 
     // https://www.drupal.org/node/3504005
     // block_content_add_body_field() deprecated in drupal:11.3.0, removed in drupal:13.0.0.
@@ -89,4 +94,9 @@ return static function (RectorConfig $rectorConfig): void {
     // Error::currentErrorHandler() deprecated in drupal:11.3.0, removed in drupal:13.0.0.
     // Replaced by PHP built-in get_error_handler().
     $rectorConfig->rule(ErrorCurrentErrorHandlerRector::class);
+
+    // https://www.drupal.org/node/3573896
+    // theme_get_setting() and _system_default_theme_features() deprecated in drupal:11.3.0, removed in drupal:13.0.0.
+    // Replaced by ThemeSettingsProvider service.
+    $rectorConfig->rule(ReplaceThemeGetSettingRector::class);
 };
