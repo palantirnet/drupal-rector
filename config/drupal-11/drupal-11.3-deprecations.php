@@ -5,6 +5,8 @@ declare(strict_types=1);
 use DrupalRector\Drupal11\Rector\Deprecation\LoadAllIncludesRector;
 use DrupalRector\Drupal11\Rector\Deprecation\NodeStorageDeprecatedMethodsRector;
 use DrupalRector\Drupal11\Rector\Deprecation\ReplaceCommentManagerGetCountNewCommentsRector;
+use DrupalRector\Drupal11\Rector\Deprecation\ReplaceJsonApiFilterConstantsRector;
+use DrupalRector\Drupal11\Rector\Deprecation\ReplaceNodeSetPreviewModeRector;
 use DrupalRector\Rector\Deprecation\FunctionCallRemovalRector;
 use DrupalRector\Rector\Deprecation\FunctionToServiceRector;
 use DrupalRector\Rector\ValueObject\DrupalIntroducedVersionConfiguration;
@@ -43,4 +45,15 @@ return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->ruleWithConfiguration(FunctionCallRemovalRector::class, [
         new FunctionCallRemovalConfiguration('block_content_add_body_field'),
     ]);
+
+    // https://www.drupal.org/node/3495600
+    // JSONAPI_FILTER_AMONG_* global constants deprecated in drupal:11.3.0, removed in drupal:13.0.0.
+    // Replaced by \Drupal\jsonapi\JsonApiFilter::AMONG_* class constants.
+    $rectorConfig->rule(ReplaceJsonApiFilterConstantsRector::class);
+
+    // https://www.drupal.org/node/3538277
+    // DRUPAL_DISABLED/OPTIONAL/REQUIRED constants (and integers 0/1/2) in setPreviewMode()
+    // deprecated in drupal:11.3.0, removed in drupal:13.0.0.
+    // Replaced by NodePreviewMode enum cases.
+    $rectorConfig->rule(ReplaceNodeSetPreviewModeRector::class);
 };

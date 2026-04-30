@@ -5,6 +5,8 @@ declare(strict_types=1);
 use DrupalRector\Drupal11\Rector\Deprecation\RemoveAutomatedCronSubmitHandlerRector;
 use DrupalRector\Drupal11\Rector\Deprecation\RemoveLinkWidgetValidateTitleElementRector;
 use DrupalRector\Drupal11\Rector\Deprecation\ReplaceSessionManagerDeleteRector;
+use DrupalRector\Drupal11\Rector\Deprecation\ReplaceViewsProceduralFunctionsRector;
+use DrupalRector\Drupal11\Rector\Deprecation\UseEntityTypeHasIntegerIdRector;
 use DrupalRector\Drupal11\Rector\Deprecation\ViewsPluginHandlerManagerRector;
 use DrupalRector\Rector\Deprecation\ClassConstantToClassConstantRector;
 use DrupalRector\Rector\Deprecation\FunctionCallRemovalRector;
@@ -170,6 +172,18 @@ return static function (RectorConfig $rectorConfig): void {
     // $form['#submit'][] = 'automated_cron_settings_submit' deprecated in drupal:11.4.0, removed in drupal:13.0.0.
     // Config saving is now handled automatically via #config_target on the interval element.
     $rectorConfig->rule(RemoveAutomatedCronSubmitHandlerRector::class);
+
+    // https://www.drupal.org/node/3572243
+    // views_view_is_enabled(), views_view_is_disabled(), views_enable_view(),
+    // views_disable_view(), views_get_view_result() deprecated in drupal:11.4.0, removed in drupal:13.0.0.
+    // Replaced by OO equivalents on the view object or Views::getViewResult().
+    $rectorConfig->rule(ReplaceViewsProceduralFunctionsRector::class);
+
+    // https://www.drupal.org/node/3566801
+    // getEntityTypeIdKeyType() === 'integer', entityTypeSupportsComments(), and hasIntegerId($entityType)
+    // deprecated in drupal:11.4.0, removed in drupal:13.0.0.
+    // Replaced by EntityTypeInterface::hasIntegerId() called on the entity type object.
+    $rectorConfig->rule(UseEntityTypeHasIntegerIdRector::class);
 
     // https://www.drupal.org/node/3574727
     // language_configuration_element_submit() deprecated in 11.4.0, removed in 13.0.0.
