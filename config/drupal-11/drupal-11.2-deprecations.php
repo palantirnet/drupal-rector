@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use DrupalRector\Drupal11\Rector\Deprecation\RemoveHandlerBaseDefineExtraOptionsRector;
 use DrupalRector\Drupal11\Rector\Deprecation\RemoveModuleHandlerAddModuleCallsRector;
 use DrupalRector\Drupal11\Rector\Deprecation\RemoveTwigNodeTransTagArgumentRector;
 use DrupalRector\Drupal11\Rector\Deprecation\RenameStopProceduralHookScanRector;
@@ -74,6 +75,11 @@ return static function (RectorConfig $rectorConfig): void {
     // ModuleHandlerInterface::addModule() and addProfile() deprecated in drupal:11.2.0, removed in drupal:12.0.0.
     // These methods are no-ops and can be removed.
     $rectorConfig->rule(RemoveModuleHandlerAddModuleCallsRector::class);
+
+    // https://www.drupal.org/node/3485084
+    // HandlerBase::defineExtraOptions() deprecated in drupal:11.2.0, removed in drupal:12.0.0.
+    // No replacement — Drupal core never called it; any override is dead code.
+    $rectorConfig->rule(RemoveHandlerBaseDefineExtraOptionsRector::class);
 
     // https://www.drupal.org/node/3410938
     // drupal_requirements_severity() deprecated in drupal:11.2.0, removed in drupal:12.0.0.
