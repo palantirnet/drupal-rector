@@ -5,6 +5,7 @@ declare(strict_types=1);
 use DrupalRector\Drupal11\Rector\Deprecation\RemoveAutomatedCronSubmitHandlerRector;
 use DrupalRector\Drupal11\Rector\Deprecation\RemoveCacheExpireOverrideRector;
 use DrupalRector\Drupal11\Rector\Deprecation\RemoveConfigSaveTrustedDataArgRector;
+use DrupalRector\Drupal11\Rector\Deprecation\RemoveViewsRowCacheKeysRector;
 use DrupalRector\Drupal11\Rector\Deprecation\ReplaceSystemPerformanceGzipKeyRector;
 use DrupalRector\Drupal11\Rector\Deprecation\RemoveLinkWidgetValidateTitleElementRector;
 use DrupalRector\Drupal11\Rector\Deprecation\RemoveSetUriCallbackRector;
@@ -185,6 +186,11 @@ return static function (RectorConfig $rectorConfig): void {
     // system.performance css.gzip and js.gzip config keys deprecated in drupal:11.4.0, removed in drupal:12.0.0.
     // Replaced by css.compress and js.compress.
     $rectorConfig->rule(ReplaceSystemPerformanceGzipKeyRector::class);
+
+    // https://www.drupal.org/node/3564937
+    // CachePluginBase::getRowCacheKeys() and getRowId() deprecated in drupal:11.4.0, removed in drupal:13.0.0.
+    // Remove array items whose value is one of these calls.
+    $rectorConfig->rule(RemoveViewsRowCacheKeysRector::class);
 
     // https://www.drupal.org/node/3576556
     // CachePluginBase::cacheExpire() deprecated in drupal:11.4.0, removed in drupal:13.0.0.

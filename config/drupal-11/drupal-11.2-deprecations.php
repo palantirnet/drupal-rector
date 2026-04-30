@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 use DrupalRector\Drupal11\Rector\Deprecation\RemoveModuleHandlerAddModuleCallsRector;
 use DrupalRector\Drupal11\Rector\Deprecation\ReplaceDateTimeRangeConstantsRector;
+use DrupalRector\Drupal11\Rector\Deprecation\ReplaceAlphadecimalToIntNullRector;
+use DrupalRector\Drupal11\Rector\Deprecation\ReplaceFieldgroupToFieldsetRector;
 use DrupalRector\Drupal11\Rector\Deprecation\ReplacePdoFetchConstantsRector;
 use DrupalRector\Drupal11\Rector\Deprecation\ReplaceRequirementSeverityConstantsRector;
 use DrupalRector\Drupal11\Rector\Deprecation\StatementPrefetchIteratorFetchColumnRector;
@@ -88,6 +90,16 @@ return static function (RectorConfig $rectorConfig): void {
     // REQUIREMENT_INFO/OK/WARNING/ERROR global constants deprecated in drupal:11.2.0, removed in drupal:12.0.0.
     // Replaced by RequirementSeverity enum cases.
     $rectorConfig->rule(ReplaceRequirementSeverityConstantsRector::class);
+
+    // https://www.drupal.org/node/3442810
+    // Number::alphadecimalToInt(null/'') deprecated in drupal:11.2.0, removed in drupal:12.0.0.
+    // Both arguments always produced 0; replaced with literal 0.
+    $rectorConfig->rule(ReplaceAlphadecimalToIntNullRector::class);
+
+    // https://www.drupal.org/node/3512254
+    // #type 'fieldgroup' deprecated in drupal:11.2.0, removed in drupal:12.0.0.
+    // Replaced by 'fieldset'.
+    $rectorConfig->rule(ReplaceFieldgroupToFieldsetRector::class);
 
     // https://www.drupal.org/node/3525077
     // PDO::FETCH_* constants deprecated in drupal:11.2.0, removed in drupal:12.0.0.
