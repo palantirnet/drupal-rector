@@ -3,20 +3,12 @@
 use Drupal\hookconvertrector\Hook\HookconvertrectorHooks;
 use Drupal\Core\Hook\Attribute\LegacyHook;
 
-/**
- * Implements hook_user_cancel().
- */
-#[LegacyHook]
-function hookconvertrector_user_cancel($edit, UserInterface $account, $method)
-{
-    \Drupal::service(HookconvertrectorHooks::class)->themeSuggestionsFormElementAlter($suggestions, $variables);
-}
 
 /**
  * Implements hook_user_add().
  */
 #[LegacyHook]
-function hookconvertrector_theme_suggestions_form_alter($edit, UserInterface $account, $method) {
+function hookconvertrector_theme_suggestions_form_alter(array &$attachments): void {
     $red = 'red';
     $method = [
         'red',
