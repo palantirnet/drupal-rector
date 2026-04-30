@@ -52,7 +52,7 @@ class GetMockRector extends AbstractRector implements ConfigurableRectorInterfac
     public function configure(array $configuration): void
     {
         foreach ($configuration as $value) {
-            if (!($value instanceof GetMockConfiguration)) {
+            if (!$value instanceof GetMockConfiguration) {
                 throw new \InvalidArgumentException(sprintf('Each configuration item must be an instance of "%s"', GetMockConfiguration::class));
             }
         }

@@ -78,7 +78,7 @@ CODE_AFTER
     public function refactor(Node $node): ?Node
     {
         assert($node instanceof Node\Stmt\Expression);
-        if (!($node->expr instanceof Node\Expr\FuncCall)) {
+        if (!$node->expr instanceof Node\Expr\FuncCall) {
             return null;
         }
 
