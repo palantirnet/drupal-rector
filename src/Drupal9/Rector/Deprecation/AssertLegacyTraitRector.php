@@ -37,7 +37,7 @@ class AssertLegacyTraitRector extends AbstractRector implements ConfigurableRect
     public function configure(array $configuration): void
     {
         foreach ($configuration as $value) {
-            if (!($value instanceof AssertLegacyTraitConfiguration)) {
+            if (!$value instanceof AssertLegacyTraitConfiguration) {
                 throw new \InvalidArgumentException(sprintf('Each configuration item must be an instance of "%s"', AssertLegacyTraitConfiguration::class));
             }
         }

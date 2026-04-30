@@ -30,7 +30,7 @@ class FunctionToServiceRector extends AbstractDrupalCoreRector
     public function configure(array $configuration): void
     {
         foreach ($configuration as $value) {
-            if (!($value instanceof FunctionToServiceConfiguration)) {
+            if (!$value instanceof FunctionToServiceConfiguration) {
                 throw new \InvalidArgumentException(sprintf('Each configuration item must be an instance of "%s"', FunctionToServiceConfiguration::class));
             }
         }

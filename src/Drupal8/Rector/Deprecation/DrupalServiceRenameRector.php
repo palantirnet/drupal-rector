@@ -21,7 +21,7 @@ class DrupalServiceRenameRector extends AbstractRector implements ConfigurableRe
     public function configure(array $configuration): void
     {
         foreach ($configuration as $value) {
-            if (!($value instanceof DrupalServiceRenameConfiguration)) {
+            if (!$value instanceof DrupalServiceRenameConfiguration) {
                 throw new \InvalidArgumentException(sprintf('Each configuration item must be an instance of "%s"', DrupalServiceRenameConfiguration::class));
             }
         }
