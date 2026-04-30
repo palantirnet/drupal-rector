@@ -3,9 +3,9 @@
 use Drupal\Core\Hook\Attribute\LegacyHook;
 
 /**
- * Implements hook_user_cancel().
+ * Implements hook_theme_suggestions_HOOK_alter().
  */
-function hookconvertrector_user_cancel($edit, UserInterface $account, $method) {
+function hookconvertrector_theme_suggestions_form_element_alter(&$suggestions, $variables) {
     $red = 'red';
     $method = ['red', 'green', 'blue'];
     $edit = [
@@ -20,7 +20,7 @@ function hookconvertrector_user_cancel($edit, UserInterface $account, $method) {
  * Implements hook_user_add().
  */
 #[LegacyHook]
-function hookconvertrector_user_add($edit, UserInterface $account, $method) {
+function hookconvertrector_theme_suggestions_form_alter(array &$attachments): void {
     $red = 'red';
     $method = [
         'red',
@@ -35,9 +35,9 @@ function hookconvertrector_user_add($edit, UserInterface $account, $method) {
 }
 
 /**
- * Implements hook_page_attachments().
+ * Implements hook_page_attachments_alter().
  */
-function hookconvertrector_page_attachments(array &$page) {
+function hookconvertrector_page_attachments_alter(array &$page) {
     // Routes that don't use BigPipe also don't need no-JS detection.
     if (\Drupal::routeMatch()->getRouteObject()->getOption('_no_big_pipe')) {
         return;
