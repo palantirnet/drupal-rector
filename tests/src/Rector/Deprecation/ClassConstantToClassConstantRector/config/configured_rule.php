@@ -9,6 +9,19 @@ use Rector\Config\RectorConfig;
 
 return static function (RectorConfig $rectorConfig): void {
     DeprecationBase::addClass(ClassConstantToClassConstantRector::class, $rectorConfig, false, [
+        // https://www.drupal.org/node/3550054 (Drupal 11.4)
+        new ClassConstantToClassConstantConfiguration(
+            'Drupal\comment\Plugin\Field\FieldType\CommentItemInterface',
+            'FORM_BELOW',
+            'Drupal\comment\FormLocation',
+            'Below',
+        ),
+        new ClassConstantToClassConstantConfiguration(
+            'Drupal\comment\Plugin\Field\FieldType\CommentItemInterface',
+            'FORM_SEPARATE_PAGE',
+            'Drupal\comment\FormLocation',
+            'SeparatePage',
+        ),
         new ClassConstantToClassConstantConfiguration(
             'Symfony\Cmf\Component\Routing\RouteObjectInterface',
             'ROUTE_NAME',

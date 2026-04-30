@@ -105,6 +105,59 @@ Answer these questions using the information gathered:
 
 ---
 
+## Step 4b — Check for existing generic rectors (BEFORE writing a custom class)
+
+Before generating a new PHP class, check whether the transformation can be expressed as a
+configuration entry for an existing generic rector in `src/Rector/Deprecation/`. This is the
+preferred path — it avoids creating new classes for patterns that drupal-rector already handles.
+
+**Check the decision table:**
+
+| Transformation pattern | Generic rector to use |
+|---|---|
+| Global function → static class method | `FunctionToStaticRector` |
+| Global function → `\Drupal::service('…')->method()` | `FunctionToServiceRector` |
+| Class constant → different class constant | `ClassConstantToClassConstantRector` |
+| Anything else | Write a custom class (continue to Step 5) |
+
+**If a generic rector matches, do this instead of Steps 5–10:**
+
+1. Add the configuration entry to `config/drupal-11/drupal-11.4-deprecations.php` (or the
+   appropriate versioned file), inside the matching `$rectorConfig->ruleWithConfiguration()` block.
+
+2. Add a fixture file to the existing generic rector's test directory:
+   `tests/src/Rector/Deprecation/[GenericRectorName]/fixture/[descriptive-name].php.inc`
+
+3. Add the configuration entry to the generic rector's test config:
+   `tests/src/Rector/Deprecation/[GenericRectorName]/config/configured_rule.php`
+
+4. Run the existing test suite:
+   ```bash
+   vendor/bin/phpunit tests/src/Rector/Deprecation/[GenericRectorName]/
+   ```
+
+5. Skip to Step 11 (fix-style) then Step 12 (phpstan) then Step 13 (test) then Step 14 (commit).
+
+**Configuration entry syntax by generic rector:**
+
+```php
+// FunctionToStaticRector
+new FunctionToStaticConfiguration('[introducedVersion]', '[deprecatedFunctionName]', '[ClassName]', '[methodName]'),
+// optional 5th arg: arg reorder map, e.g. [0 => 1, 1 => 0] to swap first two args
+
+// FunctionToServiceRector
+new FunctionToServiceConfiguration('[introducedVersion]', '[deprecatedFunctionName]', '[ServiceName]', '[serviceMethodName]'),
+// ServiceName is a string literal: 'theme.registry' or 'Drupal\module\Hook\SomeHooks'
+
+// ClassConstantToClassConstantRector
+new ClassConstantToClassConstantConfiguration('[OldClass\\FQCN]', '[OLD_CONST]', '[NewClass\\FQCN]', '[NewConst]'),
+// no introducedVersion — applies unconditionally; no BC wrapping
+```
+
+**If no generic rector matches, continue to Step 5 to generate a custom class.**
+
+---
+
 ## Step 5 — Derive the class name and file paths
 
 **Class name:**
@@ -439,13 +492,14 @@ Do not push — leave pushing to the human reviewer.
 
 Before marking a conversion complete, verify:
 
-- [ ] `declare(strict_types=1)` is present in the rule class
-- [ ] Namespace is `DrupalRector\Drupal11\Rector\Deprecation`
-- [ ] `final` keyword is removed
-- [ ] `use Rector\Config\RectorConfig` is NOT in the rule class
-- [ ] Base class matches the BC decision from Step 4
-- [ ] `getNodeTypes()` lists all node types from the original rule
+- [ ] Step 4b was checked — a generic rector was used if the pattern matched, custom class only if it didn't
+- [ ] (Custom class only) `declare(strict_types=1)` is present in the rule class
+- [ ] (Custom class only) Namespace is `DrupalRector\Drupal11\Rector\Deprecation`
+- [ ] (Custom class only) `final` keyword is removed
+- [ ] (Custom class only) `use Rector\Config\RectorConfig` is NOT in the rule class
+- [ ] (Custom class only) Base class matches the BC decision from Step 4
+- [ ] (Custom class only) `getNodeTypes()` lists all node types from the original rule
 - [ ] Fixture `-----` separator is on its own line
-- [ ] `vendor/bin/phpunit` passes for this rule's test directory
+- [ ] `vendor/bin/phpunit` passes for the relevant test directory
 - [ ] `ddev composer fix-style` has been run
-- [ ] `ddev composer phpstan` reports no errors for the new file
+- [ ] `ddev composer phpstan` reports no errors for new/modified files

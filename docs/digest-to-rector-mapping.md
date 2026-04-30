@@ -107,7 +107,101 @@ Does the rule transform a node type that is CallLike?
 
 ---
 
-## 3. BC wrapping — how it works
+## 3. Generic/configurable rectors — check these before writing a custom class
+
+drupal-rector ships several data-driven rectors in `src/Rector/Deprecation/` that handle common
+deprecation patterns with zero custom PHP. **Always check whether one of these covers the
+transformation before writing a new class.**
+
+### Available generic rectors
+
+#### `FunctionToStaticRector` — deprecated global function → static class call
+
+Config object: `FunctionToStaticConfiguration(introducedVersion, deprecatedFunctionName, className, methodName, [argReorder])`
+
+- Transforms `some_function($a, $b)` → `\ClassName::methodName($a, $b)`
+- Uses `AbstractDrupalCoreRector` → BC-wrapped automatically for `introducedVersion >= 10.1.0`
+- Optional `argReorder` map swaps argument positions: `[0 => 1, 1 => 0]` reverses two args
+
+```php
+new FunctionToStaticConfiguration('11.4.0', 'language_configuration_element_submit', 'Drupal\language\Element\LanguageConfiguration', 'submit'),
+```
+
+Fixture output (BC-wrapped):
+```php
+\Drupal\Component\Utility\DeprecationHelper::backwardsCompatibleCall(\Drupal::VERSION, '11.4.0', fn() => \Drupal\language\Element\LanguageConfiguration::submit($form, $form_state), fn() => language_configuration_element_submit($form, $form_state));
+```
+
+#### `FunctionToServiceRector` — deprecated global function → service method call
+
+Config object: `FunctionToServiceConfiguration(introducedVersion, deprecatedFunctionName, serviceName, serviceMethodName)`
+
+- Transforms `some_function($a)` → `\Drupal::service('service.name')->method($a)`
+- Uses `AbstractDrupalCoreRector` → BC-wrapped automatically for `introducedVersion >= 10.1.0`
+- **`serviceName` is a string literal** (e.g., `'theme.registry'`), not a class constant
+- If the service is a class-based service (e.g., `\Drupal\language\Hook\LanguageHooks`), pass the FQCN as a string
+
+```php
+new FunctionToServiceConfiguration('11.4.0', 'language_process_language_select', 'Drupal\language\Hook\LanguageHooks', 'processLanguageSelect'),
+```
+
+Fixture output (BC-wrapped):
+```php
+\Drupal\Component\Utility\DeprecationHelper::backwardsCompatibleCall(\Drupal::VERSION, '11.4.0', fn() => \Drupal::service('Drupal\language\Hook\LanguageHooks')->processLanguageSelect($element), fn() => language_process_language_select($element));
+```
+
+#### `ClassConstantToClassConstantRector` — deprecated class constant → new class constant
+
+Config object: `ClassConstantToClassConstantConfiguration(deprecatedClass, deprecatedConstant, newClass, newConstant)`
+
+- Transforms `OldClass::OLD_CONST` → `\NewClass::NewConst`
+- Uses `AbstractRector` → **no BC wrapping** (ClassConstFetch is not a CallLike node)
+- No `introducedVersion` parameter — applies unconditionally
+
+```php
+new ClassConstantToClassConstantConfiguration('Drupal\comment\Plugin\Field\FieldType\CommentItemInterface', 'FORM_BELOW', 'Drupal\comment\FormLocation', 'Below'),
+```
+
+Fixture output (no BC wrapping):
+```php
+$location = \Drupal\comment\FormLocation::Below;
+```
+
+### Where to add generic rector configurations
+
+New configurations for existing generic rectors go into the appropriate versioned config file under `config/drupal-11/`:
+
+```php
+// config/drupal-11/drupal-11.4-deprecations.php
+$rectorConfig->ruleWithConfiguration(ClassConstantToClassConstantRector::class, [
+    new ClassConstantToClassConstantConfiguration(...),
+]);
+$rectorConfig->ruleWithConfiguration(FunctionToStaticRector::class, [
+    new FunctionToStaticConfiguration('11.4.0', ...),
+]);
+$rectorConfig->ruleWithConfiguration(FunctionToServiceRector::class, [
+    new FunctionToServiceConfiguration('11.4.0', ...),
+]);
+```
+
+Test coverage for generic rectors lives in `tests/src/Rector/Deprecation/[RectorName]/` — add a
+new fixture file and a config entry there rather than creating a new test directory.
+
+### Decision: generic rector vs custom class
+
+| Pattern | Generic rector available? |
+|---|---|
+| Global function → static class method | `FunctionToStaticRector` ✓ |
+| Global function → `\Drupal::service(…)->method()` | `FunctionToServiceRector` ✓ |
+| Class constant → different class constant | `ClassConstantToClassConstantRector` ✓ |
+| Function with complex arg transformation | Custom class |
+| Constructor arg injection / `__construct` changes | Custom class |
+| Multiple node types with different base classes | Custom classes (split by type) |
+| Return type / property declaration changes | Custom class |
+
+---
+
+## 4. BC wrapping — how it works
 
 When using `AbstractDrupalCoreRector`, the base class `refactor()` method automatically wraps
 `CallLike → CallLike` transformations in `DeprecationHelper::backwardsCompatibleCall()`, allowing
@@ -194,7 +288,7 @@ class MyDeprecationRector extends AbstractDrupalCoreRector
 
 ---
 
-## 4. Fixture file format
+## 5. Fixture file format
 
 Test fixtures live at:
 ```
@@ -241,7 +335,7 @@ $other = \Drupal\comment\FormLocation::SeparatePage;
 
 ---
 
-## 5. Namespace and file placement
+## 6. Namespace and file placement
 
 All Drupal 11 deprecation rules go into:
 - **Rule class:** `src/Drupal11/Rector/Deprecation/[RuleName]Rector.php`
@@ -283,7 +377,7 @@ Use this to:
 
 ---
 
-## 6. Test config patterns
+## 7. Test config patterns
 
 ### Simple rule (no configuration, uses AbstractRector)
 
@@ -328,7 +422,7 @@ return static function (RectorConfig $rectorConfig): void {
 
 ---
 
-## 7. Test class template
+## 8. Test class template
 
 ```php
 // tests/src/Drupal11/Rector/Deprecation/[RuleName]/[RuleName]Test.php
@@ -365,7 +459,7 @@ class [RuleName]Test extends AbstractRectorTestCase
 
 ---
 
-## 8. Multi-node-type rules
+## 9. Multi-node-type rules
 
 Some drupal-digests rules handle two or more distinct node types in a single class
 (e.g., both `ClassConstFetch` and `FuncCall`). When converting:
@@ -378,7 +472,7 @@ Some drupal-digests rules handle two or more distinct node types in a single cla
 
 ---
 
-## 9. AddCommentService
+## 10. AddCommentService
 
 Some drupal-rector rules add a comment to the output code to prompt human review. When to use it:
 
@@ -405,7 +499,7 @@ DeprecationBase::addClass(MyRector::class, $rectorConfig, true);  // true = addN
 
 ---
 
-## 10. Test environment: Drupal VERSION stub
+## 11. Test environment: Drupal VERSION stub
 
 The stub at `stubs/Drupal/Drupal.php` provides the `\Drupal::VERSION` constant used by
 `AbstractDrupalCoreRector::rectorShouldApplyToDrupalVersion()`. The stub must be set to a version

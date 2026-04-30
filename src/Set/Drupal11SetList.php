@@ -7,4 +7,5 @@ namespace DrupalRector\Set;
 final class Drupal11SetList
 {
     public const DRUPAL_11 = __DIR__.'/../../config/drupal-11/drupal-11-all-deprecations.php';
+    public const DRUPAL_114 = __DIR__.'/../../config/drupal-11/drupal-11.4-deprecations.php';
 }
