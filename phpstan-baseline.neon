@@ -572,3 +572,9 @@ parameters:
 			identifier: property.deprecated
 			count: 3
 			path: src/Rector/Convert/HookConvertRector.php
+
+		-
+			message: '#^Call to function method_exists\(\) with \$this\(DrupalRector\\Rector\\Convert\\HookConvertRector\) and ''getFile'' will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 3
+			path: src/Rector/Convert/HookConvertRector.php

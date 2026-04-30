@@ -127,7 +127,9 @@ CODE_SAMPLE
 
     public function refactor(Node $node): Node|int|null
     {
-        $filePath = $this->file->getFilePath();
+        $filePath = method_exists($this, 'getFile')
+            ? $this->getFile()->getFilePath()
+            : $this->file->getFilePath();
         $ext = pathinfo($filePath, \PATHINFO_EXTENSION);
         if (!in_array($ext, ['inc', 'module'])) {
             return null;
@@ -181,7 +183,9 @@ CODE_SAMPLE
     protected function initializeHookClass(): void
     {
         $this->__destruct();
-        $this->moduleDir = $this->file->getFilePath();
+        $this->moduleDir = method_exists($this, 'getFile')
+            ? $this->getFile()->getFilePath()
+            : $this->file->getFilePath();
         $this->inputFilename = $this->moduleDir;
         // Find the relevant info.yml: it's either in the current directory or
         // one of the parents.
@@ -190,7 +194,7 @@ CODE_SAMPLE
         if (!empty($info)) {
             $infoFile = reset($info);
             $this->module = basename($infoFile, '.info.yml');
-            $filename = pathinfo($this->file->getFilePath(), \PATHINFO_FILENAME);
+            $filename = pathinfo(method_exists($this, 'getFile') ? $this->getFile()->getFilePath() : $this->file->getFilePath(), \PATHINFO_FILENAME);
             $hookClassName = ucfirst(CaseStringHelper::camelCase(str_replace('.', '_', $filename).'_hooks'));
             $counter = '';
             do {
@@ -217,7 +221,11 @@ CODE_SAMPLE
             $hookClassStmts = [
                 new Node\Stmt\Namespace_(new Node\Name($namespace)),
                 ...$this->useStmts,
-                new Use_([new Node\Stmt\UseUse(new Node\Name('Drupal\Core\Hook\Attribute\Hook'))]),
+                new Use_([
+                    class_exists('PhpParser\Node\UseItem')
+                    ? new Node\UseItem(new Node\Name('Drupal\Core\Hook\Attribute\Hook'))
+                    : new Node\Stmt\UseUse(new Node\Name('Drupal\Core\Hook\Attribute\Hook')),
+                ]),
                 $this->hookClass,
             ];
             $this->hookClass->setDocComment(new \PhpParser\Comment\Doc("/**\n * Hook implementations for $this->module.\n */"));
