@@ -47,7 +47,7 @@ jobs:
                         if [ -d "$d" ]; then
                             echo "Processing $d"
                             cp vendor/palantirnet/drupal-rector/tests/functional/$(basename ${d})/rector.php .
-                            vendor/bin/rector process $d -vvv --dry-run --debug || if (($? == 2)); then true; else exit 1; fi
+                            vendor/bin/rector process $d --dry-run --debug || if (($? == 2)); then true; else exit 1; fi
                         fi
                     done
             -   name: Run rector against Drupal
