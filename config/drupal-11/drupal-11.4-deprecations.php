@@ -16,10 +16,12 @@ use DrupalRector\Drupal11\Rector\Deprecation\ReplaceViewsProceduralFunctionsRect
 use DrupalRector\Drupal11\Rector\Deprecation\UseEntityTypeHasIntegerIdRector;
 use DrupalRector\Drupal11\Rector\Deprecation\ViewsPluginHandlerManagerRector;
 use DrupalRector\Rector\Deprecation\ClassConstantToClassConstantRector;
+use DrupalRector\Rector\Deprecation\ConstantToClassConstantRector;
 use DrupalRector\Rector\Deprecation\FunctionCallRemovalRector;
 use DrupalRector\Rector\Deprecation\FunctionToServiceRector;
 use DrupalRector\Rector\Deprecation\FunctionToStaticRector;
 use DrupalRector\Rector\ValueObject\ClassConstantToClassConstantConfiguration;
+use DrupalRector\Rector\ValueObject\ConstantToClassConfiguration;
 use DrupalRector\Rector\ValueObject\DrupalIntroducedVersionConfiguration;
 use DrupalRector\Rector\ValueObject\FunctionCallRemovalConfiguration;
 use DrupalRector\Rector\ValueObject\FunctionToServiceConfiguration;
@@ -275,8 +277,20 @@ return static function (RectorConfig $rectorConfig): void {
     // https://www.drupal.org/node/3568087
     // contextual_links_to_id() and contextual_id_to_links() deprecated in drupal:11.4.0, removed in drupal:13.0.0.
     // Replaced by ContextualLinksSerializer service.
+    // https://www.drupal.org/node/3567618
+    // image_path_flush() and image_style_options() deprecated in drupal:11.4.0, removed in drupal:13.0.0.
+    // Replaced by ImageDerivativeUtilities service.
     $rectorConfig->ruleWithConfiguration(FunctionToServiceRector::class, [
         new FunctionToServiceConfiguration('11.4.0', 'contextual_links_to_id', 'Drupal\contextual\ContextualLinksSerializer', 'linksToId'),
         new FunctionToServiceConfiguration('11.4.0', 'contextual_id_to_links', 'Drupal\contextual\ContextualLinksSerializer', 'idToLinks'),
+        new FunctionToServiceConfiguration('11.4.0', 'image_path_flush', 'Drupal\image\ImageDerivativeUtilities', 'pathFlush'),
+        new FunctionToServiceConfiguration('11.4.0', 'image_style_options', 'Drupal\image\ImageDerivativeUtilities', 'styleOptions'),
+    ]);
+
+    // https://www.drupal.org/node/3567618
+    // IMAGE_DERIVATIVE_TOKEN deprecated in drupal:11.4.0, removed in drupal:13.0.0.
+    // Replaced by \Drupal\image\ImageStyleInterface::TOKEN.
+    $rectorConfig->ruleWithConfiguration(ConstantToClassConstantRector::class, [
+        new ConstantToClassConfiguration('IMAGE_DERIVATIVE_TOKEN', 'Drupal\image\ImageStyleInterface', 'TOKEN'),
     ]);
 };
