@@ -24,7 +24,7 @@ class VersionedClassConstantToClassConstantRector extends AbstractDrupalCoreRect
     public function configure(array $configuration): void
     {
         foreach ($configuration as $value) {
-            if (!($value instanceof VersionedClassConstantToClassConstantConfiguration)) {
+            if (!$value instanceof VersionedClassConstantToClassConstantConfiguration) {
                 throw new \InvalidArgumentException(sprintf('Each configuration item must be an instance of "%s"', VersionedClassConstantToClassConstantConfiguration::class));
             }
         }
@@ -84,15 +84,13 @@ CODE_AFTER,
     }
 
     /**
-     * @param Node\Expr\FuncCall                                 $node
+     * @param Node\Expr\ClassConstFetch                          $node
      * @param VersionedClassConstantToClassConstantConfiguration $configuration
      *
      * @return Node|null
      */
     public function refactorWithConfiguration(Node $node, VersionedConfigurationInterface $configuration): ?Node
     {
-        assert($node instanceof Node\Expr\ClassConstFetch);
-
         if ($this->getName($node->name) === $configuration->getDeprecated() && $this->getName($node->class) === $configuration->getDeprecatedClass()) {
             // We add a fully qualified class name and the parameters in `rector.php` adds the use statement.
             $fully_qualified_class = new Node\Name\FullyQualified($configuration->getClass());
