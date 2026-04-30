@@ -3,14 +3,17 @@
 declare(strict_types=1);
 
 use DrupalRector\Drupal11\Rector\Deprecation\RemoveModuleHandlerAddModuleCallsRector;
+use DrupalRector\Drupal11\Rector\Deprecation\ReplaceRequirementSeverityConstantsRector;
 use DrupalRector\Drupal11\Rector\Deprecation\StatementPrefetchIteratorFetchColumnRector;
 use DrupalRector\Rector\Deprecation\ClassConstantToClassConstantRector;
 use DrupalRector\Rector\Deprecation\FunctionCallRemovalRector;
 use DrupalRector\Rector\Deprecation\FunctionToServiceRector;
+use DrupalRector\Rector\Deprecation\FunctionToStaticRector;
 use DrupalRector\Rector\Deprecation\MethodToMethodWithCheckRector;
 use DrupalRector\Rector\ValueObject\ClassConstantToClassConstantConfiguration;
 use DrupalRector\Rector\ValueObject\FunctionCallRemovalConfiguration;
 use DrupalRector\Rector\ValueObject\FunctionToServiceConfiguration;
+use DrupalRector\Rector\ValueObject\FunctionToStaticConfiguration;
 use DrupalRector\Rector\ValueObject\MethodToMethodWithCheckConfiguration;
 use Rector\Config\RectorConfig;
 
@@ -59,6 +62,30 @@ return static function (RectorConfig $rectorConfig): void {
     // ModuleHandlerInterface::addModule() and addProfile() deprecated in drupal:11.2.0, removed in drupal:12.0.0.
     // These methods are no-ops and can be removed.
     $rectorConfig->rule(RemoveModuleHandlerAddModuleCallsRector::class);
+
+    // https://www.drupal.org/node/3410938
+    // drupal_requirements_severity() deprecated in drupal:11.2.0, removed in drupal:12.0.0.
+    // Replaced by RequirementSeverity::maxSeverityFromRequirements().
+    $rectorConfig->ruleWithConfiguration(FunctionToStaticRector::class, [
+        new FunctionToStaticConfiguration('11.2.0', 'drupal_requirements_severity', 'Drupal\Core\Extension\Requirement\RequirementSeverity', 'maxSeverityFromRequirements'),
+    ]);
+
+    // https://www.drupal.org/node/3489415
+    // views_field_default_views_data() and _views_field_get_entity_type_storage() deprecated in drupal:11.2.0, removed in drupal:12.0.0.
+    // Replaced by views.field_data_provider service methods.
+    // https://www.drupal.org/node/3069442
+    // views_entity_field_label() deprecated in drupal:11.2.0, removed in drupal:12.0.0.
+    // Replaced by entity_field.manager::getFieldLabels().
+    $rectorConfig->ruleWithConfiguration(FunctionToServiceRector::class, [
+        new FunctionToServiceConfiguration('11.2.0', 'views_field_default_views_data', 'views.field_data_provider', 'defaultFieldImplementation'),
+        new FunctionToServiceConfiguration('11.2.0', '_views_field_get_entity_type_storage', 'views.field_data_provider', 'getSqlStorageForField'),
+        new FunctionToServiceConfiguration('11.2.0', 'views_entity_field_label', 'entity_field.manager', 'getFieldLabels'),
+    ]);
+
+    // https://www.drupal.org/node/3575841
+    // REQUIREMENT_INFO/OK/WARNING/ERROR global constants deprecated in drupal:11.2.0, removed in drupal:12.0.0.
+    // Replaced by RequirementSeverity enum cases.
+    $rectorConfig->rule(ReplaceRequirementSeverityConstantsRector::class);
 
     // https://www.drupal.org/node/3575841
     // SystemManager::REQUIREMENT_* deprecated in drupal:11.2.0, removed in drupal:12.0.0.

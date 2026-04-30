@@ -156,11 +156,15 @@ return static function (RectorConfig $rectorConfig): void {
     // https://www.drupal.org/node/3566768
     // automated_cron_settings_submit() deprecated in drupal:11.4.0, removed in drupal:13.0.0.
     // Config saving is now handled automatically via #config_target on the interval element.
+    // https://www.drupal.org/node/3566782
+    // block_theme_initialize() deprecated in drupal:11.4.0, removed in drupal:13.0.0.
+    // Logic moved to protected BlockHooks::themeInitialize(); external callers must drop the call.
     $rectorConfig->ruleWithConfiguration(FunctionCallRemovalRector::class, [
         new FunctionCallRemovalConfiguration('views_ui_contextual_links_suppress'),
         new FunctionCallRemovalConfiguration('views_ui_contextual_links_suppress_push'),
         new FunctionCallRemovalConfiguration('views_ui_contextual_links_suppress_pop'),
         new FunctionCallRemovalConfiguration('automated_cron_settings_submit'),
+        new FunctionCallRemovalConfiguration('block_theme_initialize'),
     ]);
 
     // https://www.drupal.org/node/3093118
@@ -184,6 +188,35 @@ return static function (RectorConfig $rectorConfig): void {
     // deprecated in drupal:11.4.0, removed in drupal:13.0.0.
     // Replaced by EntityTypeInterface::hasIntegerId() called on the entity type object.
     $rectorConfig->rule(UseEntityTypeHasIntegerIdRector::class);
+
+    // https://www.drupal.org/node/3568144
+    // editor_filter_xss() deprecated in drupal:11.4.0, removed in drupal:13.0.0.
+    // Replaced by \Drupal::service('element.editor')->filterXss().
+    // https://www.drupal.org/node/3570917
+    // editor_image_upload_settings_form() deprecated in drupal:11.4.0, removed in drupal:13.0.0.
+    // Replaced by \Drupal::service(EditorImageUploadSettings::class)->getForm().
+    // https://www.drupal.org/node/2907780
+    // field_purge_batch() deprecated in drupal:11.4.0, removed in drupal:13.0.0.
+    // Replaced by \Drupal::service(FieldPurger::class)->purgeBatch().
+    // https://www.drupal.org/node/3570839
+    // _media_library_media_type_form_submit() and _media_library_views_form_media_library_after_build()
+    // deprecated in drupal:11.4.0, removed in drupal:12.0.0. Replaced by MediaLibraryHooks service.
+    $rectorConfig->ruleWithConfiguration(FunctionToServiceRector::class, [
+        new FunctionToServiceConfiguration('11.4.0', 'editor_filter_xss', 'element.editor', 'filterXss'),
+        new FunctionToServiceConfiguration('11.4.0', 'editor_image_upload_settings_form', 'Drupal\editor\EditorImageUploadSettings', 'getForm'),
+        new FunctionToServiceConfiguration('11.4.0', 'field_purge_batch', 'Drupal\Core\Field\FieldPurger', 'purgeBatch'),
+        new FunctionToServiceConfiguration('11.4.0', '_media_library_media_type_form_submit', 'Drupal\media_library\Hook\MediaLibraryHooks', 'mediaTypeFormSubmit'),
+        new FunctionToServiceConfiguration('11.4.0', '_media_library_views_form_media_library_after_build', 'Drupal\media_library\Hook\MediaLibraryHooks', 'viewsFormAfterBuild'),
+    ]);
+
+    // https://www.drupal.org/node/3570839
+    // _media_library_configure_form_display() and _media_library_configure_view_display()
+    // deprecated in drupal:11.4.0, removed in drupal:12.0.0.
+    // Replaced by MediaLibraryDisplayManager static methods.
+    $rectorConfig->ruleWithConfiguration(FunctionToStaticRector::class, [
+        new FunctionToStaticConfiguration('11.4.0', '_media_library_configure_form_display', 'Drupal\media_library\MediaLibraryDisplayManager', 'configureFormDisplay'),
+        new FunctionToStaticConfiguration('11.4.0', '_media_library_configure_view_display', 'Drupal\media_library\MediaLibraryDisplayManager', 'configureViewDisplay'),
+    ]);
 
     // https://www.drupal.org/node/3574727
     // language_configuration_element_submit() deprecated in 11.4.0, removed in 13.0.0.
