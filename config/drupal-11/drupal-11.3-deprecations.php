@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use DrupalRector\Drupal11\Rector\Deprecation\LoadAllIncludesRector;
 use DrupalRector\Drupal11\Rector\Deprecation\NodeStorageDeprecatedMethodsRector;
 use DrupalRector\Drupal11\Rector\Deprecation\ReplaceCommentManagerGetCountNewCommentsRector;
 use DrupalRector\Rector\Deprecation\FunctionToServiceRector;
@@ -16,6 +17,11 @@ return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->ruleWithConfiguration(ReplaceCommentManagerGetCountNewCommentsRector::class, [
         new DrupalIntroducedVersionConfiguration('11.3.0'),
     ]);
+
+    // https://www.drupal.org/node/3536431
+    // ModuleHandler::loadAllIncludes() deprecated in drupal:11.3.0, removed in drupal:13.0.0.
+    // Replaced by an explicit foreach over getModuleList() + loadInclude().
+    $rectorConfig->rule(LoadAllIncludesRector::class);
 
     // https://www.drupal.org/node/3396062
     // NodeStorage::revisionIds() and userRevisionIds() deprecated in drupal:11.3.0, removed in drupal:13.0.0.
