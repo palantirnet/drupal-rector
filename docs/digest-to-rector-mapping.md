@@ -402,3 +402,22 @@ And in the test config:
 ```php
 DeprecationBase::addClass(MyRector::class, $rectorConfig, true);  // true = addNoticeConfig
 ```
+
+---
+
+## 10. Test environment: Drupal VERSION stub
+
+The stub at `stubs/Drupal/Drupal.php` provides the `\Drupal::VERSION` constant used by
+`AbstractDrupalCoreRector::rectorShouldApplyToDrupalVersion()`. The stub must be set to a version
+**at least as high as the highest introduced version** among the rules being tested.
+
+| Scenario | Required stub VERSION |
+|---|---|
+| Only Drupal 8/9/10 rules | `10.99.x-dev` (original default) |
+| Drupal 11.x rules | `11.99.x-dev` |
+
+The stub has been updated to `11.99.x-dev`. This value is safe for all existing Drupal 8/9/10
+tests — the BC logic only requires `installedVersion >= 10.1.0`, which `11.99.0` satisfies.
+
+**Do not change the stub back to `10.99.x-dev`** — doing so will silently disable all Drupal11
+rules in the test suite (their `refactor()` won't fire, tests pass trivially).
