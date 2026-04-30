@@ -28,7 +28,7 @@ class ClassConstantToClassConstantRector extends AbstractRector implements Confi
     public function configure(array $configuration): void
     {
         foreach ($configuration as $value) {
-            if (!($value instanceof ClassConstantToClassConstantConfiguration)) {
+            if (!$value instanceof ClassConstantToClassConstantConfiguration) {
                 throw new \InvalidArgumentException(sprintf('Each configuration item must be an instance of "%s"', ConstantToClassConfiguration::class));
             }
         }

@@ -31,7 +31,7 @@ class WatchdogExceptionRector extends AbstractDrupalCoreRector
     public function configure(array $configuration): void
     {
         foreach ($configuration as $value) {
-            if (!($value instanceof DrupalIntroducedVersionConfiguration)) {
+            if (!$value instanceof DrupalIntroducedVersionConfiguration) {
                 throw new \InvalidArgumentException(sprintf('Each configuration item must be an instance of "%s"', DrupalIntroducedVersionConfiguration::class));
             }
         }

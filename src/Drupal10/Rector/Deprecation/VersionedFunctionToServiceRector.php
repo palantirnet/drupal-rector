@@ -24,7 +24,7 @@ class VersionedFunctionToServiceRector extends AbstractDrupalCoreRector
     public function configure(array $configuration): void
     {
         foreach ($configuration as $value) {
-            if (!($value instanceof VersionedFunctionToServiceConfiguration)) {
+            if (!$value instanceof VersionedFunctionToServiceConfiguration) {
                 throw new \InvalidArgumentException(sprintf('Each configuration item must be an instance of "%s"', VersionedFunctionToServiceConfiguration::class));
             }
         }

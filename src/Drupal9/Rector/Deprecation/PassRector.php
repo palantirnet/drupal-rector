@@ -47,7 +47,7 @@ CODE_AFTER
     {
         assert($node instanceof Node\Stmt\Expression);
 
-        if (!($node->expr instanceof Node\Expr\MethodCall)) {
+        if (!$node->expr instanceof Node\Expr\MethodCall) {
             return null;
         }
 
@@ -58,10 +58,10 @@ CODE_AFTER
         if ($this->getDeclaringSource($node->expr) === 'Drupal\KernelTests\AssertLegacyTrait') {
             if (defined('\PhpParser\NodeVisitor::REMOVE_NODE')) {
                 return NodeVisitor::REMOVE_NODE;
-            } else {
-                /* @phpstan-ignore-next-line */
-                return NodeTraverser::REMOVE_NODE;
             }
+
+            /* @phpstan-ignore-next-line */
+            return NodeTraverser::REMOVE_NODE;
         }
 
         return $node;
