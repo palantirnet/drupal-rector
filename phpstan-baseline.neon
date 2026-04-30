@@ -2,136 +2,136 @@ parameters:
 	ignoreErrors:
 		-
 			message: '''
-				#^Fetching class constant SYMFONY_50 of deprecated class Rector\\Symfony\\Set\\SymfonySetList\:
+				#^Fetching deprecated class constant SYMFONY_50 of class Rector\\Symfony\\Set\\SymfonySetList\:
 				Set list are too generic and do not handle package differences\. Use \-\>withComposerBased\(symfony\: true\) instead$#
 			'''
-			identifier: classConstant.deprecatedClass
+			identifier: classConstant.deprecated
 			count: 1
 			path: config/drupal-10/drupal-10.0-deprecations.php
 
 		-
 			message: '''
-				#^Fetching class constant SYMFONY_51 of deprecated class Rector\\Symfony\\Set\\SymfonySetList\:
+				#^Fetching deprecated class constant SYMFONY_51 of class Rector\\Symfony\\Set\\SymfonySetList\:
 				Set list are too generic and do not handle package differences\. Use \-\>withComposerBased\(symfony\: true\) instead$#
 			'''
-			identifier: classConstant.deprecatedClass
+			identifier: classConstant.deprecated
 			count: 1
 			path: config/drupal-10/drupal-10.0-deprecations.php
 
 		-
 			message: '''
-				#^Fetching class constant SYMFONY_52 of deprecated class Rector\\Symfony\\Set\\SymfonySetList\:
+				#^Fetching deprecated class constant SYMFONY_52 of class Rector\\Symfony\\Set\\SymfonySetList\:
 				Set list are too generic and do not handle package differences\. Use \-\>withComposerBased\(symfony\: true\) instead$#
 			'''
-			identifier: classConstant.deprecatedClass
+			identifier: classConstant.deprecated
 			count: 1
 			path: config/drupal-10/drupal-10.0-deprecations.php
 
 		-
 			message: '''
-				#^Fetching class constant SYMFONY_53 of deprecated class Rector\\Symfony\\Set\\SymfonySetList\:
+				#^Fetching deprecated class constant SYMFONY_53 of class Rector\\Symfony\\Set\\SymfonySetList\:
 				Set list are too generic and do not handle package differences\. Use \-\>withComposerBased\(symfony\: true\) instead$#
 			'''
-			identifier: classConstant.deprecatedClass
+			identifier: classConstant.deprecated
 			count: 1
 			path: config/drupal-10/drupal-10.0-deprecations.php
 
 		-
 			message: '''
-				#^Fetching class constant SYMFONY_54 of deprecated class Rector\\Symfony\\Set\\SymfonySetList\:
+				#^Fetching deprecated class constant SYMFONY_54 of class Rector\\Symfony\\Set\\SymfonySetList\:
 				Set list are too generic and do not handle package differences\. Use \-\>withComposerBased\(symfony\: true\) instead$#
 			'''
-			identifier: classConstant.deprecatedClass
+			identifier: classConstant.deprecated
 			count: 1
 			path: config/drupal-10/drupal-10.0-deprecations.php
 
 		-
 			message: '''
-				#^Fetching class constant SYMFONY_60 of deprecated class Rector\\Symfony\\Set\\SymfonySetList\:
+				#^Fetching deprecated class constant SYMFONY_60 of class Rector\\Symfony\\Set\\SymfonySetList\:
 				Set list are too generic and do not handle package differences\. Use \-\>withComposerBased\(symfony\: true\) instead$#
 			'''
-			identifier: classConstant.deprecatedClass
+			identifier: classConstant.deprecated
 			count: 1
 			path: config/drupal-10/drupal-10.0-deprecations.php
 
 		-
 			message: '''
-				#^Fetching class constant SYMFONY_61 of deprecated class Rector\\Symfony\\Set\\SymfonySetList\:
+				#^Fetching deprecated class constant SYMFONY_61 of class Rector\\Symfony\\Set\\SymfonySetList\:
 				Set list are too generic and do not handle package differences\. Use \-\>withComposerBased\(symfony\: true\) instead$#
 			'''
-			identifier: classConstant.deprecatedClass
+			identifier: classConstant.deprecated
 			count: 1
 			path: config/drupal-10/drupal-10.0-deprecations.php
 
 		-
 			message: '''
-				#^Fetching class constant SYMFONY_62 of deprecated class Rector\\Symfony\\Set\\SymfonySetList\:
+				#^Fetching deprecated class constant SYMFONY_62 of class Rector\\Symfony\\Set\\SymfonySetList\:
 				Set list are too generic and do not handle package differences\. Use \-\>withComposerBased\(symfony\: true\) instead$#
 			'''
-			identifier: classConstant.deprecatedClass
+			identifier: classConstant.deprecated
 			count: 1
 			path: config/drupal-10/drupal-10.0-deprecations.php
 
 		-
 			message: '''
-				#^Fetching class constant SYMFONY_63 of deprecated class Rector\\Symfony\\Set\\SymfonySetList\:
+				#^Fetching deprecated class constant SYMFONY_63 of class Rector\\Symfony\\Set\\SymfonySetList\:
 				Set list are too generic and do not handle package differences\. Use \-\>withComposerBased\(symfony\: true\) instead$#
 			'''
-			identifier: classConstant.deprecatedClass
+			identifier: classConstant.deprecated
 			count: 1
 			path: config/drupal-10/drupal-10.1-deprecations.php
 
 		-
 			message: '''
-				#^Fetching class constant SYMFONY_64 of deprecated class Rector\\Symfony\\Set\\SymfonySetList\:
+				#^Fetching deprecated class constant SYMFONY_64 of class Rector\\Symfony\\Set\\SymfonySetList\:
 				Set list are too generic and do not handle package differences\. Use \-\>withComposerBased\(symfony\: true\) instead$#
 			'''
-			identifier: classConstant.deprecatedClass
+			identifier: classConstant.deprecated
 			count: 1
 			path: config/drupal-10/drupal-10.2-deprecations.php
 
 		-
 			message: '''
-				#^Fetching class constant SYMFONY_40 of deprecated class Rector\\Symfony\\Set\\SymfonySetList\:
+				#^Fetching deprecated class constant SYMFONY_40 of class Rector\\Symfony\\Set\\SymfonySetList\:
 				Set list are too generic and do not handle package differences\. Use \-\>withComposerBased\(symfony\: true\) instead$#
 			'''
-			identifier: classConstant.deprecatedClass
+			identifier: classConstant.deprecated
 			count: 1
 			path: config/drupal-9/drupal-9.0-deprecations.php
 
 		-
 			message: '''
-				#^Fetching class constant SYMFONY_41 of deprecated class Rector\\Symfony\\Set\\SymfonySetList\:
+				#^Fetching deprecated class constant SYMFONY_41 of class Rector\\Symfony\\Set\\SymfonySetList\:
 				Set list are too generic and do not handle package differences\. Use \-\>withComposerBased\(symfony\: true\) instead$#
 			'''
-			identifier: classConstant.deprecatedClass
+			identifier: classConstant.deprecated
 			count: 1
 			path: config/drupal-9/drupal-9.0-deprecations.php
 
 		-
 			message: '''
-				#^Fetching class constant SYMFONY_42 of deprecated class Rector\\Symfony\\Set\\SymfonySetList\:
+				#^Fetching deprecated class constant SYMFONY_42 of class Rector\\Symfony\\Set\\SymfonySetList\:
 				Set list are too generic and do not handle package differences\. Use \-\>withComposerBased\(symfony\: true\) instead$#
 			'''
-			identifier: classConstant.deprecatedClass
+			identifier: classConstant.deprecated
 			count: 1
 			path: config/drupal-9/drupal-9.0-deprecations.php
 
 		-
 			message: '''
-				#^Fetching class constant SYMFONY_43 of deprecated class Rector\\Symfony\\Set\\SymfonySetList\:
+				#^Fetching deprecated class constant SYMFONY_43 of class Rector\\Symfony\\Set\\SymfonySetList\:
 				Set list are too generic and do not handle package differences\. Use \-\>withComposerBased\(symfony\: true\) instead$#
 			'''
-			identifier: classConstant.deprecatedClass
+			identifier: classConstant.deprecated
 			count: 1
 			path: config/drupal-9/drupal-9.0-deprecations.php
 
 		-
 			message: '''
-				#^Fetching class constant SYMFONY_44 of deprecated class Rector\\Symfony\\Set\\SymfonySetList\:
+				#^Fetching deprecated class constant SYMFONY_44 of class Rector\\Symfony\\Set\\SymfonySetList\:
 				Set list are too generic and do not handle package differences\. Use \-\>withComposerBased\(symfony\: true\) instead$#
 			'''
-			identifier: classConstant.deprecatedClass
+			identifier: classConstant.deprecated
 			count: 1
 			path: config/drupal-9/drupal-9.0-deprecations.php
 
@@ -563,3 +563,12 @@ parameters:
 			identifier: argument.type
 			count: 1
 			path: src/Rector/AbstractDrupalCoreRector.php
+
+		-
+			message: '''
+				#^Access to deprecated property \$file of class Rector\\Rector\\AbstractRector\:
+				Use getFile\(\) instead\.$#
+			'''
+			identifier: property.deprecated
+			count: 3
+			path: src/Rector/Convert/HookConvertRector.php
