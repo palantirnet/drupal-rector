@@ -74,6 +74,14 @@ parameters:
 			path: rector.php
 
 		-
+			message: """
+				#^Instantiation of deprecated class PhpParser\\\\Node\\\\Expr\\\\ArrayItem\\:
+				use \\\\PhpParser\\\\Node\\\\ArrayItem instead\\.$#
+			"""
+			count: 1
+			path: src/Drupal10/Rector/Deprecation/WatchdogExceptionRector.php
+
+		-
 			message: "#^Access to an undefined property PhpParser\\\\Node\\\\Expr\\:\\:\\$value\\.$#"
 			count: 2
 			path: src/Drupal8/Rector/Deprecation/DBRector.php
@@ -144,6 +152,38 @@ parameters:
 			path: src/Drupal8/Rector/Deprecation/FunctionalTestDefaultThemePropertyRector.php
 
 		-
+			message: """
+				#^Instantiation of deprecated class PhpParser\\\\Node\\\\Scalar\\\\Encapsed\\:
+				use \\\\PhpParser\\\\Node\\\\Scalar\\\\InterpolatedString instead\\.$#
+			"""
+			count: 1
+			path: src/Drupal9/Rector/Deprecation/AssertNoUniqueTextRector.php
+
+		-
+			message: """
+				#^Instantiation of deprecated class PhpParser\\\\Node\\\\Scalar\\\\EncapsedStringPart\\:
+				use \\\\PhpParser\\\\Node\\\\InterpolatedStringPart instead\\.$#
+			"""
+			count: 3
+			path: src/Drupal9/Rector/Deprecation/AssertNoUniqueTextRector.php
+
+		-
+			message: """
+				#^Instantiation of deprecated class PhpParser\\\\Node\\\\Scalar\\\\LNumber\\:
+				use \\\\PhpParser\\\\Node\\\\Scalar\\\\Int_ instead\\.$#
+			"""
+			count: 1
+			path: src/Drupal9/Rector/Deprecation/AssertNoUniqueTextRector.php
+
+		-
 			message: "#^Call to an undefined method PHPStan\\\\Type\\\\Type\\:\\:getValue\\(\\)\\.$#"
 			count: 1
 			path: src/Drupal9/Rector/Deprecation/ExtensionPathRector.php
+
+		-
+			message: """
+				#^Instantiation of deprecated class PhpParser\\\\Node\\\\Stmt\\\\UseUse\\:
+				use \\\\PhpParser\\\\Node\\\\UseItem instead\\.$#
+			"""
+			count: 1
+			path: src/Rector/Convert/HookConvertRector.php
