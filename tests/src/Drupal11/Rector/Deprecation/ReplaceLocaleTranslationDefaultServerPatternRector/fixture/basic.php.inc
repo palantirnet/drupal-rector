@@ -1,0 +1,13 @@
+<?php
+
+$pattern = LOCALE_TRANSLATION_DEFAULT_SERVER_PATTERN;
+$other = OTHER_CONSTANT;
+
+?>
+-----
+<?php
+
+$pattern = \Drupal::TRANSLATION_DEFAULT_SERVER_PATTERN;
+$other = OTHER_CONSTANT;
+
+?>

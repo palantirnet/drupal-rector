@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 use DrupalRector\Drupal11\Rector\Deprecation\RemoveModuleHandlerAddModuleCallsRector;
 use DrupalRector\Drupal11\Rector\Deprecation\RemoveTwigNodeTransTagArgumentRector;
+use DrupalRector\Drupal11\Rector\Deprecation\RenameStopProceduralHookScanRector;
+use DrupalRector\Drupal11\Rector\Deprecation\ReplaceFileGetContentHeadersRector;
+use DrupalRector\Drupal11\Rector\Deprecation\ReplaceLocaleTranslationDefaultServerPatternRector;
+use DrupalRector\Drupal11\Rector\Deprecation\ReplaceSessionWritesWithRequestSessionRector;
 use DrupalRector\Drupal11\Rector\Deprecation\ReplaceDateTimeRangeConstantsRector;
 use DrupalRector\Drupal11\Rector\Deprecation\ReplaceAlphadecimalToIntNullRector;
 use DrupalRector\Drupal11\Rector\Deprecation\ReplaceFieldgroupToFieldsetRector;
@@ -12,6 +16,7 @@ use DrupalRector\Drupal11\Rector\Deprecation\ReplaceRequirementSeverityConstants
 use DrupalRector\Drupal11\Rector\Deprecation\StatementPrefetchIteratorFetchColumnRector;
 use DrupalRector\Rector\Deprecation\ClassConstantToClassConstantRector;
 use DrupalRector\Rector\Deprecation\FunctionCallRemovalRector;
+use Rector\Renaming\Rector\Name\RenameClassRector;
 use DrupalRector\Rector\Deprecation\FunctionToServiceRector;
 use DrupalRector\Rector\Deprecation\FunctionToStaticRector;
 use DrupalRector\Rector\Deprecation\MethodToMethodWithCheckRector;
@@ -118,6 +123,36 @@ return static function (RectorConfig $rectorConfig): void {
     // datetime_type_field_views_data_helper() deprecated in drupal:11.2.0, removed in drupal:12.0.0.
     // Replaced by \Drupal::service('datetime.views_helper')->buildViewsData().
     $rectorConfig->rule(ReplaceDateTimeRangeConstantsRector::class);
+
+    // https://www.drupal.org/node/3494126
+    // file_get_content_headers($file) deprecated in drupal:11.2.0, removed in drupal:12.0.0.
+    // Replaced by $file->getDownloadHeaders().
+    $rectorConfig->rule(ReplaceFileGetContentHeadersRector::class);
+
+    // https://www.drupal.org/node/3518527
+    // $_SESSION['key'] = $value deprecated in drupal:11.2.0.
+    // Replaced by \Drupal::request()->getSession()->set('key', $value).
+    $rectorConfig->rule(ReplaceSessionWritesWithRequestSessionRector::class);
+
+    // https://www.drupal.org/node/3477277
+    // LOCALE_TRANSLATION_DEFAULT_SERVER_PATTERN deprecated in drupal:11.2.0, removed in drupal:12.0.0.
+    // Replaced by \Drupal::TRANSLATION_DEFAULT_SERVER_PATTERN.
+    $rectorConfig->rule(ReplaceLocaleTranslationDefaultServerPatternRector::class);
+
+    // https://www.drupal.org/node/3495943
+    // #[StopProceduralHookScan] attribute renamed to #[ProceduralHookScanStop] in drupal:11.2.0.
+    $rectorConfig->rule(RenameStopProceduralHookScanRector::class);
+
+    // https://www.drupal.org/node/3488572
+    // Drupal\Core\Entity\Query\Sql\pgsql\* deprecated in drupal:11.2.0, removed in drupal:12.0.0.
+    // Moved to Drupal\pgsql\EntityQuery\*.
+    // https://www.drupal.org/node/3472008
+    // Drupal\jsonapi\EventSubscriber\ResourceResponseValidator moved to jsonapi_response_validator submodule.
+    $rectorConfig->ruleWithConfiguration(RenameClassRector::class, [
+        'Drupal\Core\Entity\Query\Sql\pgsql\QueryFactory' => 'Drupal\pgsql\EntityQuery\QueryFactory',
+        'Drupal\Core\Entity\Query\Sql\pgsql\Condition' => 'Drupal\pgsql\EntityQuery\Condition',
+        'Drupal\jsonapi\EventSubscriber\ResourceResponseValidator' => 'Drupal\jsonapi_response_validator\EventSubscriber\ResourceResponseValidator',
+    ]);
 
     // https://www.drupal.org/node/3575841
     // SystemManager::REQUIREMENT_* deprecated in drupal:11.2.0, removed in drupal:12.0.0.

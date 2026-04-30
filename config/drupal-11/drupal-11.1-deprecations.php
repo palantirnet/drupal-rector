@@ -8,6 +8,7 @@ use DrupalRector\Drupal11\Rector\Deprecation\ReplaceLocaleConfigBatchFunctionsRe
 use DrupalRector\Rector\Deprecation\MethodToMethodWithCheckRector;
 use DrupalRector\Rector\ValueObject\MethodToMethodWithCheckConfiguration;
 use Rector\Config\RectorConfig;
+use Rector\Renaming\Rector\Name\RenameClassRector;
 
 return static function (RectorConfig $rectorConfig): void {
     // https://www.drupal.org/node/3459533
@@ -16,8 +17,15 @@ return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->rule(PluginBaseIsConfigurableRector::class);
 
     // https://www.drupal.org/node/3151086
+    // AliasWhitelist and AliasWhitelistInterface deprecated in drupal:11.1.0, removed in drupal:12.0.0.
+    // Replaced by AliasPrefixList and AliasPrefixListInterface.
     // AliasManager::pathAliasWhitelistRebuild() deprecated in drupal:11.1.0, removed in drupal:12.0.0.
     // Replaced by pathAliasPrefixListRebuild().
+    $rectorConfig->ruleWithConfiguration(RenameClassRector::class, [
+        'Drupal\path_alias\AliasWhitelist' => 'Drupal\path_alias\AliasPrefixList',
+        'Drupal\path_alias\AliasWhitelistInterface' => 'Drupal\path_alias\AliasPrefixListInterface',
+        'Drupal\Core\Routing\MatchingRouteNotFoundException' => 'Symfony\Component\Routing\Exception\ResourceNotFoundException',
+    ]);
     $rectorConfig->ruleWithConfiguration(MethodToMethodWithCheckRector::class, [
         new MethodToMethodWithCheckConfiguration('Drupal\path_alias\AliasManager', 'pathAliasWhitelistRebuild', 'pathAliasPrefixListRebuild'),
     ]);

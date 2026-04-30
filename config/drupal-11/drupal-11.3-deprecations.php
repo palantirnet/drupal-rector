@@ -6,6 +6,7 @@ use DrupalRector\Drupal11\Rector\Deprecation\ErrorCurrentErrorHandlerRector;
 use DrupalRector\Drupal11\Rector\Deprecation\FileSystemBasenameToNativeRector;
 use DrupalRector\Drupal11\Rector\Deprecation\RemoveRootFromConvertDbUrlRector;
 use DrupalRector\Drupal11\Rector\Deprecation\LoadAllIncludesRector;
+use DrupalRector\Drupal11\Rector\Deprecation\ReplaceNodeAddBodyFieldRector;
 use DrupalRector\Drupal11\Rector\Deprecation\ReplaceNodeModuleProceduralFunctionsRector;
 use DrupalRector\Drupal11\Rector\Deprecation\ReplaceThemeGetSettingRector;
 use DrupalRector\Drupal11\Rector\Deprecation\NodeStorageDeprecatedMethodsRector;
@@ -22,6 +23,7 @@ use DrupalRector\Rector\ValueObject\FunctionCallRemovalConfiguration;
 use DrupalRector\Rector\ValueObject\FunctionToServiceConfiguration;
 use DrupalRector\Rector\ValueObject\FunctionToStaticConfiguration;
 use Rector\Config\RectorConfig;
+use Rector\Renaming\Rector\Name\RenameClassRector;
 
 return static function (RectorConfig $rectorConfig): void {
     // https://www.drupal.org/node/3543035
@@ -62,6 +64,11 @@ return static function (RectorConfig $rectorConfig): void {
     // comment_uri($comment) deprecated in drupal:11.3.0, removed in drupal:12.0.0.
     // Replaced by $comment->permalink().
     $rectorConfig->rule(ReplaceCommentUriRector::class);
+
+    // https://www.drupal.org/node/3489266
+    // node_add_body_field() deprecated in drupal:11.3.0, removed in drupal:12.0.0.
+    // Replaced by $this->createBodyField() from BodyFieldCreationTrait.
+    $rectorConfig->rule(ReplaceNodeAddBodyFieldRector::class);
 
     // https://www.drupal.org/node/3513856
     // UserSession::$name property read deprecated in drupal:11.3.0, removed in drupal:12.0.0.
@@ -105,4 +112,12 @@ return static function (RectorConfig $rectorConfig): void {
     // Database::convertDbUrlToConnectionInfo($url, $root, ...) deprecated in drupal:11.3.0, removed in drupal:12.0.0.
     // The $root parameter is obsolete; remove it (shift any $include_test_drivers arg left).
     $rectorConfig->rule(RemoveRootFromConvertDbUrlRector::class);
+
+    // https://www.drupal.org/node/3551446
+    // workspaces.association service and WorkspaceAssociationInterface renamed in drupal:11.3.0.
+    // Replaced by workspaces.tracker and WorkspaceTrackerInterface.
+    $rectorConfig->ruleWithConfiguration(RenameClassRector::class, [
+        'Drupal\workspaces\WorkspaceAssociationInterface' => 'Drupal\workspaces\WorkspaceTrackerInterface',
+        'Drupal\workspaces\WorkspaceAssociation' => 'Drupal\workspaces\WorkspaceTracker',
+    ]);
 };
