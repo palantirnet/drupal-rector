@@ -4,8 +4,11 @@ declare(strict_types=1);
 
 use DrupalRector\Drupal11\Rector\Deprecation\PluginBaseIsConfigurableRector;
 use DrupalRector\Drupal11\Rector\Deprecation\RemoveModuleHandlerDeprecatedMethodsRector;
+use DrupalRector\Drupal11\Rector\Deprecation\RemoveUpdaterPostInstallMethodsRector;
 use DrupalRector\Drupal11\Rector\Deprecation\ReplaceLocaleConfigBatchFunctionsRector;
+use DrupalRector\Rector\Deprecation\FunctionToStaticRector;
 use DrupalRector\Rector\Deprecation\MethodToMethodWithCheckRector;
+use DrupalRector\Rector\ValueObject\FunctionToStaticConfiguration;
 use DrupalRector\Rector\ValueObject\MethodToMethodWithCheckConfiguration;
 use Rector\Config\RectorConfig;
 use Rector\Renaming\Rector\Name\RenameClassRector;
@@ -40,4 +43,20 @@ return static function (RectorConfig $rectorConfig): void {
     // in drupal:11.1.0, removed in drupal:12.0.0. Renamed to update_default_config_langcodes
     // and update_config_translations respectively.
     $rectorConfig->rule(ReplaceLocaleConfigBatchFunctionsRector::class);
+
+    // https://www.drupal.org/node/3417136
+    // Updater::postInstall() and postInstallTasks() deprecated in drupal:11.1.0, removed in drupal:12.0.0.
+    // The entire install-via-URL flow was eliminated; overrides are dead code.
+    $rectorConfig->rule(RemoveUpdaterPostInstallMethodsRector::class);
+
+    // https://www.drupal.org/node/3488176
+    // drupal_common_theme() removed in drupal:11.1.0.
+    // Replaced by \Drupal\Core\Theme\ThemeCommonElements::commonElements().
+    // https://www.drupal.org/node/3574424
+    // image_filter_keyword() deprecated in drupal:11.1.0, removed in drupal:12.0.0.
+    // Replaced by \Drupal\Component\Utility\Image::getKeywordOffset().
+    $rectorConfig->ruleWithConfiguration(FunctionToStaticRector::class, [
+        new FunctionToStaticConfiguration('11.1.0', 'drupal_common_theme', 'Drupal\Core\Theme\ThemeCommonElements', 'commonElements'),
+        new FunctionToStaticConfiguration('11.1.0', 'image_filter_keyword', 'Drupal\Component\Utility\Image', 'getKeywordOffset'),
+    ]);
 };

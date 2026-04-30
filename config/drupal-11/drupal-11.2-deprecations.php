@@ -5,6 +5,7 @@ declare(strict_types=1);
 use DrupalRector\Drupal11\Rector\Deprecation\RemoveModuleHandlerAddModuleCallsRector;
 use DrupalRector\Drupal11\Rector\Deprecation\RemoveTwigNodeTransTagArgumentRector;
 use DrupalRector\Drupal11\Rector\Deprecation\RenameStopProceduralHookScanRector;
+use DrupalRector\Drupal11\Rector\Deprecation\ReplaceEditorLoadRector;
 use DrupalRector\Drupal11\Rector\Deprecation\ReplaceEntityOriginalPropertyRector;
 use DrupalRector\Drupal11\Rector\Deprecation\ReplaceFileGetContentHeadersRector;
 use DrupalRector\Drupal11\Rector\Deprecation\ReplaceLocaleTranslationDefaultServerPatternRector;
@@ -134,6 +135,11 @@ return static function (RectorConfig $rectorConfig): void {
     // $_SESSION['key'] = $value deprecated in drupal:11.2.0.
     // Replaced by \Drupal::request()->getSession()->set('key', $value).
     $rectorConfig->rule(ReplaceSessionWritesWithRequestSessionRector::class);
+
+    // https://www.drupal.org/node/3447794
+    // editor_load($format_id) deprecated in drupal:11.2.0, removed in drupal:12.0.0.
+    // Replaced by entityTypeManager()->getStorage('editor')->load($format_id).
+    $rectorConfig->rule(ReplaceEditorLoadRector::class);
 
     // https://www.drupal.org/node/3571065
     // $entity->original magic property deprecated in drupal:11.2.0, removed in drupal:12.0.0.

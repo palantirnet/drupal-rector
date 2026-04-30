@@ -72,6 +72,16 @@ return static function (RectorConfig $rectorConfig): void {
     // drupal_static_reset('node_access_view_all_nodes') replaced by node.view_all_nodes_memory_cache->deleteAll().
     $rectorConfig->rule(ReplaceNodeAccessViewAllNodesRector::class);
 
+    // https://www.drupal.org/node/3574424
+    // responsive_image_* functions deprecated in drupal:11.3.0, removed in drupal:12.0.0.
+    // Replaced by \Drupal::service(ResponsiveImageBuilder::class)->method() calls.
+    $rectorConfig->ruleWithConfiguration(FunctionToServiceRector::class, [
+        new FunctionToServiceConfiguration('11.3.0', '_responsive_image_build_source_attributes', 'Drupal\responsive_image\ResponsiveImageBuilder', 'buildSourceAttributes'),
+        new FunctionToServiceConfiguration('11.3.0', 'responsive_image_get_image_dimensions', 'Drupal\responsive_image\ResponsiveImageBuilder', 'getImageDimensions'),
+        new FunctionToServiceConfiguration('11.3.0', 'responsive_image_get_mime_type', 'Drupal\responsive_image\ResponsiveImageBuilder', 'getMimeType'),
+        new FunctionToServiceConfiguration('11.3.0', '_responsive_image_image_style_url', 'Drupal\responsive_image\ResponsiveImageBuilder', 'getImageStyleUrl'),
+    ]);
+
     // https://www.drupal.org/node/3489266
     // node_add_body_field() deprecated in drupal:11.3.0, removed in drupal:12.0.0.
     // Replaced by $this->createBodyField() from BodyFieldCreationTrait.
