@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use DrupalRector\Drupal10\Rector\Deprecation\ReplaceRequestTimeConstantRector;
+use DrupalRector\Drupal11\Rector\Deprecation\MigrateSqlGetMigrationPluginManagerRector;
 use DrupalRector\Drupal11\Rector\Deprecation\RemoveStateCacheSettingRector;
 use DrupalRector\Drupal11\Rector\Deprecation\StripMigrationDependenciesExpandArgRector;
 use Rector\Config\RectorConfig;
@@ -22,4 +23,9 @@ return static function (RectorConfig $rectorConfig): void {
     // getMigrationDependencies($expand) deprecated in drupal:11.0.0, removed in drupal:12.0.0.
     // The $expand boolean argument is removed; call without arguments.
     $rectorConfig->rule(StripMigrationDependenciesExpandArgRector::class);
+
+    // https://www.drupal.org/node/3439369
+    // Sql::getMigrationPluginManager() deprecated in drupal:9.5.0, removed in drupal:11.0.0.
+    // Replaced by $this->migrationPluginManager property access.
+    $rectorConfig->rule(MigrateSqlGetMigrationPluginManagerRector::class);
 };

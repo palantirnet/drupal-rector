@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use DrupalRector\Drupal11\Rector\Deprecation\RemoveModuleHandlerAddModuleCallsRector;
+use DrupalRector\Drupal11\Rector\Deprecation\RemoveTwigNodeTransTagArgumentRector;
 use DrupalRector\Drupal11\Rector\Deprecation\ReplaceDateTimeRangeConstantsRector;
 use DrupalRector\Drupal11\Rector\Deprecation\ReplaceAlphadecimalToIntNullRector;
 use DrupalRector\Drupal11\Rector\Deprecation\ReplaceFieldgroupToFieldsetRector;
@@ -90,6 +91,11 @@ return static function (RectorConfig $rectorConfig): void {
     // REQUIREMENT_INFO/OK/WARNING/ERROR global constants deprecated in drupal:11.2.0, removed in drupal:12.0.0.
     // Replaced by RequirementSeverity enum cases.
     $rectorConfig->rule(ReplaceRequirementSeverityConstantsRector::class);
+
+    // https://www.drupal.org/node/3473440
+    // TwigNodeTrans 6th $tag constructor argument deprecated in twig/twig 3.12, removed in drupal:11.2.0.
+    // Drop the argument.
+    $rectorConfig->rule(RemoveTwigNodeTransTagArgumentRector::class);
 
     // https://www.drupal.org/node/3442810
     // Number::alphadecimalToInt(null/'') deprecated in drupal:11.2.0, removed in drupal:12.0.0.

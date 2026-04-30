@@ -6,6 +6,7 @@ use DrupalRector\Drupal11\Rector\Deprecation\RemoveAutomatedCronSubmitHandlerRec
 use DrupalRector\Drupal11\Rector\Deprecation\RemoveCacheExpireOverrideRector;
 use DrupalRector\Drupal11\Rector\Deprecation\RemoveConfigSaveTrustedDataArgRector;
 use DrupalRector\Drupal11\Rector\Deprecation\RemoveViewsRowCacheKeysRector;
+use DrupalRector\Drupal11\Rector\Deprecation\ReplaceRecipeRunnerInstallModuleRector;
 use DrupalRector\Drupal11\Rector\Deprecation\ReplaceSystemPerformanceGzipKeyRector;
 use DrupalRector\Drupal11\Rector\Deprecation\RemoveLinkWidgetValidateTitleElementRector;
 use DrupalRector\Drupal11\Rector\Deprecation\RemoveSetUriCallbackRector;
@@ -181,6 +182,10 @@ return static function (RectorConfig $rectorConfig): void {
     // EntityTypeInterface::setUriCallback() deprecated in drupal:11.4.0, removed in drupal:13.0.0.
     // Use link templates or a route provider instead.
     $rectorConfig->rule(RemoveSetUriCallbackRector::class);
+
+    // https://www.drupal.org/node/3498026
+    // RecipeRunner::installModule() deprecated in drupal:11.4.0. Use installModules() with an array.
+    $rectorConfig->rule(ReplaceRecipeRunnerInstallModuleRector::class);
 
     // https://www.drupal.org/node/3184242
     // system.performance css.gzip and js.gzip config keys deprecated in drupal:11.4.0, removed in drupal:12.0.0.
