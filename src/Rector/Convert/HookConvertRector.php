@@ -224,7 +224,7 @@ CODE_SAMPLE
                 new Use_([
                     class_exists('PhpParser\Node\UseItem')
                     ? new Node\UseItem(new Node\Name('Drupal\Core\Hook\Attribute\Hook'))
-                    : new Node\Stmt\UseUse(new Node\Name('Drupal\Core\Hook\Attribute\Hook'))
+                    : new Node\Stmt\UseUse(new Node\Name('Drupal\Core\Hook\Attribute\Hook')),
                 ]),
                 $this->hookClass,
             ];
