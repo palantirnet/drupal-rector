@@ -43,7 +43,7 @@ class MethodToMethodWithCheckRector extends AbstractRector implements Configurab
     public function configure(array $configuration): void
     {
         foreach ($configuration as $value) {
-            if (!($value instanceof MethodToMethodWithCheckConfiguration)) {
+            if (!$value instanceof MethodToMethodWithCheckConfiguration) {
                 throw new \InvalidArgumentException(sprintf('Each configuration item must be an instance of "%s"', MethodToMethodWithCheckConfiguration::class));
             }
         }

@@ -4,8 +4,6 @@ parameters:
 		- config
 		- src
 		- rector.php
-	bootstrapFiles:
-	    - vendor/rector/rector/vendor/autoload.php
 	dynamicConstantNames:
 		- Drupal::VERSION
 includes:
