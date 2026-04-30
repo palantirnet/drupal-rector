@@ -85,6 +85,7 @@ final class RemoveRootFromConvertDbUrlRector extends AbstractRector
         }
 
         array_splice($node->args, 1, 1);
+
         return $node;
     }
 }

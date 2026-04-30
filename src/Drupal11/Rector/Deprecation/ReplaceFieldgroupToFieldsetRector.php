@@ -56,6 +56,7 @@ final class ReplaceFieldgroupToFieldsetRector extends AbstractRector
             $item->value = new String_('fieldset');
             $changed = true;
         }
+
         return $changed ? $node : null;
     }
 }

@@ -61,6 +61,7 @@ final class RemoveConfigSaveTrustedDataArgRector extends AbstractRector
             return null;
         }
         $node->args = [];
+
         return $node;
     }
 }

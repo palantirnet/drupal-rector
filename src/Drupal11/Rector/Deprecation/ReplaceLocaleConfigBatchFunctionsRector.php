@@ -23,7 +23,7 @@ final class ReplaceLocaleConfigBatchFunctionsRector extends AbstractRector
 {
     private const RENAME_MAP = [
         'locale_config_batch_set_config_langcodes' => 'locale_config_batch_update_default_config_langcodes',
-        'locale_config_batch_refresh_name'         => 'locale_config_batch_update_config_translations',
+        'locale_config_batch_refresh_name' => 'locale_config_batch_update_config_translations',
     ];
 
     public function getNodeTypes(): array
@@ -45,6 +45,7 @@ final class ReplaceLocaleConfigBatchFunctionsRector extends AbstractRector
         }
 
         $node->name = new Node\Name(self::RENAME_MAP[$name]);
+
         return $node;
     }
 

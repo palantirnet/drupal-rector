@@ -38,12 +38,12 @@ final class ReplaceViewsProceduralFunctionsRector extends AbstractRector
         }
 
         return match ($node->name->toString()) {
-            'views_view_is_enabled'  => $this->statusCall($node),
+            'views_view_is_enabled' => $this->statusCall($node),
             'views_view_is_disabled' => $this->negatedStatusCall($node),
-            'views_enable_view'      => $this->enableSaveCall($node),
-            'views_disable_view'     => $this->disableSaveCall($node),
-            'views_get_view_result'  => $this->staticGetViewResult($node),
-            default                  => null,
+            'views_enable_view' => $this->enableSaveCall($node),
+            'views_disable_view' => $this->disableSaveCall($node),
+            'views_get_view_result' => $this->staticGetViewResult($node),
+            default => null,
         };
     }
 
@@ -52,6 +52,7 @@ final class ReplaceViewsProceduralFunctionsRector extends AbstractRector
         if (count($node->args) < 1) {
             return null;
         }
+
         return new Node\Expr\MethodCall($node->args[0]->value, new Node\Identifier('status'));
     }
 
@@ -60,6 +61,7 @@ final class ReplaceViewsProceduralFunctionsRector extends AbstractRector
         if (count($node->args) < 1) {
             return null;
         }
+
         return new Node\Expr\BooleanNot(
             new Node\Expr\MethodCall($node->args[0]->value, new Node\Identifier('status'))
         );
@@ -71,6 +73,7 @@ final class ReplaceViewsProceduralFunctionsRector extends AbstractRector
             return null;
         }
         $enable = new Node\Expr\MethodCall($node->args[0]->value, new Node\Identifier('enable'));
+
         return new Node\Expr\MethodCall($enable, new Node\Identifier('save'));
     }
 
@@ -80,6 +83,7 @@ final class ReplaceViewsProceduralFunctionsRector extends AbstractRector
             return null;
         }
         $disable = new Node\Expr\MethodCall($node->args[0]->value, new Node\Identifier('disable'));
+
         return new Node\Expr\MethodCall($disable, new Node\Identifier('save'));
     }
 

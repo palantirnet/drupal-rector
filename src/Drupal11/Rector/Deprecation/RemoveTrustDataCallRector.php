@@ -44,6 +44,7 @@ final class RemoveTrustDataCallRector extends AbstractRector
         if (!$this->isName($node->name, 'trustData')) {
             return null;
         }
+
         return $node->var;
     }
 }

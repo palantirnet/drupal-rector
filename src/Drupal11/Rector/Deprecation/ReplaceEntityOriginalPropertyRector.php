@@ -37,6 +37,7 @@ final class ReplaceEntityOriginalPropertyRector extends AbstractRector
             if ($this->isName($node->name, 'original') && !$this->isThisVar($node->var)) {
                 return new MethodCall($node->var, 'getOriginal');
             }
+
             return null;
         }
 

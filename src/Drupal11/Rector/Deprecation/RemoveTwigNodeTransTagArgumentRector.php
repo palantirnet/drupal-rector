@@ -55,6 +55,7 @@ final class RemoveTwigNodeTransTagArgumentRector extends AbstractRector
             return null;
         }
         array_pop($node->args);
+
         return $node;
     }
 }

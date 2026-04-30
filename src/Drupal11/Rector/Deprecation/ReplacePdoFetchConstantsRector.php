@@ -25,17 +25,17 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 final class ReplacePdoFetchConstantsRector extends AbstractRector
 {
     private const FETCH_MAP = [
-        'FETCH_OBJ'    => 'Object',
-        'FETCH_ASSOC'  => 'Associative',
-        'FETCH_NUM'    => 'List',
+        'FETCH_OBJ' => 'Object',
+        'FETCH_ASSOC' => 'Associative',
+        'FETCH_NUM' => 'List',
         'FETCH_COLUMN' => 'Column',
-        'FETCH_CLASS'  => 'ClassObject',
+        'FETCH_CLASS' => 'ClassObject',
     ];
 
     private const DRUPAL_FETCH_METHODS = [
-        'setFetchMode'  => 0,
-        'fetch'         => 0,
-        'fetchAll'      => 0,
+        'setFetchMode' => 0,
+        'fetch' => 0,
+        'fetchAll' => 0,
         'fetchAllAssoc' => 1,
     ];
 
@@ -68,6 +68,7 @@ final class ReplacePdoFetchConstantsRector extends AbstractRector
         if ($node instanceof ArrayItem) {
             return $this->refactorArrayItem($node);
         }
+
         return null;
     }
 
@@ -115,6 +116,7 @@ final class ReplacePdoFetchConstantsRector extends AbstractRector
             return null;
         }
         $node->value = $replacement;
+
         return $node;
     }
 
@@ -131,6 +133,7 @@ final class ReplacePdoFetchConstantsRector extends AbstractRector
         if ($constName === null || !isset(self::FETCH_MAP[$constName])) {
             return null;
         }
+
         return new ClassConstFetch(
             new FullyQualified('Drupal\Core\Database\Statement\FetchAs'),
             self::FETCH_MAP[$constName]

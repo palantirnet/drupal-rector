@@ -28,7 +28,7 @@ final class ReplaceSystemPerformanceGzipKeyRector extends AbstractRector
     public function getRuleDefinition(): RuleDefinition
     {
         return new RuleDefinition(
-            "Replace deprecated system.performance css.gzip/js.gzip config keys with css.compress/js.compress",
+            'Replace deprecated system.performance css.gzip/js.gzip config keys with css.compress/js.compress',
             [
                 new CodeSample(
                     "\\Drupal::config('system.performance')->get('css.gzip');",
@@ -69,6 +69,7 @@ final class ReplaceSystemPerformanceGzipKeyRector extends AbstractRector
         }
         $newKey = ($key === 'css.gzip') ? 'css.compress' : 'js.compress';
         $node->args[0] = new Arg(new String_($newKey));
+
         return $node;
     }
 
@@ -94,6 +95,7 @@ final class ReplaceSystemPerformanceGzipKeyRector extends AbstractRector
                 }
             }
         }
+
         return false;
     }
 }

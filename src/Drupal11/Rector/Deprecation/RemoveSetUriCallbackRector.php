@@ -50,6 +50,7 @@ final class RemoveSetUriCallbackRector extends AbstractRector
             ) {
                 return NodeVisitor::REMOVE_NODE;
             }
+
             return null;
         }
 
@@ -59,6 +60,7 @@ final class RemoveSetUriCallbackRector extends AbstractRector
                 && $this->isName($node->var->name, 'setUriCallback')
             ) {
                 $node->var = $node->var->var;
+
                 return $node;
             }
         }

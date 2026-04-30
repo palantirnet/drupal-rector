@@ -62,6 +62,7 @@ final class RemoveUpdaterPostInstallMethodsRector extends AbstractRector
         }
 
         $node->stmts = $newStmts;
+
         return $node;
     }
 
@@ -69,8 +70,8 @@ final class RemoveUpdaterPostInstallMethodsRector extends AbstractRector
     {
         return new RuleDefinition('Remove deprecated Updater::postInstall() and postInstallTasks() method overrides (drupal:11.1.0)', [
             new CodeSample(
-                "class MyUpdater extends Updater { public function postInstallTasks() { return []; } }",
-                "class MyUpdater extends Updater { }"
+                'class MyUpdater extends Updater { public function postInstallTasks() { return []; } }',
+                'class MyUpdater extends Updater { }'
             ),
         ]);
     }

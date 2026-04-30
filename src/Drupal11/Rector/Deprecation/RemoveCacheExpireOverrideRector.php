@@ -75,7 +75,7 @@ final class RemoveCacheExpireOverrideRector extends AbstractRector
         }
 
         foreach (self::PARENT_SHORT_NAMES as $short) {
-            if ($parentName === $short || str_ends_with($parentName, '\\' . $short)) {
+            if ($parentName === $short || str_ends_with($parentName, '\\'.$short)) {
                 return true;
             }
         }

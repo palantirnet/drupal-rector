@@ -68,6 +68,7 @@ final class RemoveViewsRowCacheKeysRector extends AbstractRector
             return null;
         }
         $node->items = $newItems;
+
         return $node;
     }
 }

@@ -58,7 +58,7 @@ final class ReplaceNodeModuleProceduralFunctionsRector extends AbstractRector
         return match ($node->name->toString()) {
             'node_type_get_names' => $this->refactorNodeTypeGetNames(),
             'node_get_type_label' => $this->refactorNodeGetTypeLabel($node),
-            default               => null,
+            default => null,
         };
     }
 
@@ -69,6 +69,7 @@ final class ReplaceNodeModuleProceduralFunctionsRector extends AbstractRector
             'service',
             [new Arg(new String_('entity_type.bundle.info'))]
         );
+
         return new MethodCall($serviceCall, 'getBundleLabels', [new Arg(new String_('node'))]);
     }
 
@@ -78,6 +79,7 @@ final class ReplaceNodeModuleProceduralFunctionsRector extends AbstractRector
             return null;
         }
         $nodeArg = $node->args[0]->value;
+
         return new MethodCall(
             new MethodCall($nodeArg, 'getBundleEntity'),
             'label'

@@ -33,9 +33,9 @@ final class ReplaceDateTimeRangeConstantsRector extends AbstractRector
     private const DISPLAY_OPTIONS_ENUM = 'Drupal\datetime_range\DateTimeRangeDisplayOptions';
 
     private const CONST_MAP = [
-        'BOTH'       => 'Both',
+        'BOTH' => 'Both',
         'START_DATE' => 'StartDate',
-        'END_DATE'   => 'EndDate',
+        'END_DATE' => 'EndDate',
     ];
 
     public function getRuleDefinition(): RuleDefinition
@@ -69,6 +69,7 @@ final class ReplaceDateTimeRangeConstantsRector extends AbstractRector
         if ($node instanceof FuncCall) {
             return $this->refactorFuncCall($node);
         }
+
         return null;
     }
 
@@ -88,6 +89,7 @@ final class ReplaceDateTimeRangeConstantsRector extends AbstractRector
             new FullyQualified(self::DISPLAY_OPTIONS_ENUM),
             self::CONST_MAP[$constName]
         );
+
         return new PropertyFetch($enumCaseFetch, 'value');
     }
 
@@ -104,6 +106,7 @@ final class ReplaceDateTimeRangeConstantsRector extends AbstractRector
             'service',
             [new Arg(new String_('datetime.views_helper'))]
         );
+
         return new MethodCall($serviceCall, 'buildViewsData', $node->args);
     }
 }

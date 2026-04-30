@@ -6,19 +6,18 @@ use DrupalRector\Drupal11\Rector\Deprecation\RemoveHandlerBaseDefineExtraOptions
 use DrupalRector\Drupal11\Rector\Deprecation\RemoveModuleHandlerAddModuleCallsRector;
 use DrupalRector\Drupal11\Rector\Deprecation\RemoveTwigNodeTransTagArgumentRector;
 use DrupalRector\Drupal11\Rector\Deprecation\RenameStopProceduralHookScanRector;
+use DrupalRector\Drupal11\Rector\Deprecation\ReplaceAlphadecimalToIntNullRector;
+use DrupalRector\Drupal11\Rector\Deprecation\ReplaceDateTimeRangeConstantsRector;
 use DrupalRector\Drupal11\Rector\Deprecation\ReplaceEditorLoadRector;
 use DrupalRector\Drupal11\Rector\Deprecation\ReplaceEntityOriginalPropertyRector;
-use DrupalRector\Drupal11\Rector\Deprecation\ReplaceFileGetContentHeadersRector;
-use DrupalRector\Drupal11\Rector\Deprecation\ReplaceSessionWritesWithRequestSessionRector;
-use DrupalRector\Drupal11\Rector\Deprecation\ReplaceDateTimeRangeConstantsRector;
-use DrupalRector\Drupal11\Rector\Deprecation\ReplaceAlphadecimalToIntNullRector;
 use DrupalRector\Drupal11\Rector\Deprecation\ReplaceFieldgroupToFieldsetRector;
+use DrupalRector\Drupal11\Rector\Deprecation\ReplaceFileGetContentHeadersRector;
 use DrupalRector\Drupal11\Rector\Deprecation\ReplacePdoFetchConstantsRector;
+use DrupalRector\Drupal11\Rector\Deprecation\ReplaceSessionWritesWithRequestSessionRector;
 use DrupalRector\Drupal11\Rector\Deprecation\StatementPrefetchIteratorFetchColumnRector;
 use DrupalRector\Rector\Deprecation\ClassConstantToClassConstantRector;
 use DrupalRector\Rector\Deprecation\ConstantToClassConstantRector;
 use DrupalRector\Rector\Deprecation\FunctionCallRemovalRector;
-use Rector\Renaming\Rector\Name\RenameClassRector;
 use DrupalRector\Rector\Deprecation\FunctionToServiceRector;
 use DrupalRector\Rector\Deprecation\FunctionToStaticRector;
 use DrupalRector\Rector\Deprecation\MethodToMethodWithCheckRector;
@@ -29,6 +28,7 @@ use DrupalRector\Rector\ValueObject\FunctionToServiceConfiguration;
 use DrupalRector\Rector\ValueObject\FunctionToStaticConfiguration;
 use DrupalRector\Rector\ValueObject\MethodToMethodWithCheckConfiguration;
 use Rector\Config\RectorConfig;
+use Rector\Renaming\Rector\Name\RenameClassRector;
 
 return static function (RectorConfig $rectorConfig): void {
     // https://www.drupal.org/node/3490200
@@ -107,10 +107,10 @@ return static function (RectorConfig $rectorConfig): void {
     // LOCALE_TRANSLATION_DEFAULT_SERVER_PATTERN deprecated in drupal:11.2.0, removed in drupal:12.0.0.
     // Replaced by \Drupal::TRANSLATION_DEFAULT_SERVER_PATTERN.
     $rectorConfig->ruleWithConfiguration(ConstantToClassConstantRector::class, [
-        new ConstantToClassConfiguration('REQUIREMENT_INFO',    'Drupal\Core\Extension\Requirement\RequirementSeverity', 'Info'),
-        new ConstantToClassConfiguration('REQUIREMENT_OK',      'Drupal\Core\Extension\Requirement\RequirementSeverity', 'OK'),
+        new ConstantToClassConfiguration('REQUIREMENT_INFO', 'Drupal\Core\Extension\Requirement\RequirementSeverity', 'Info'),
+        new ConstantToClassConfiguration('REQUIREMENT_OK', 'Drupal\Core\Extension\Requirement\RequirementSeverity', 'OK'),
         new ConstantToClassConfiguration('REQUIREMENT_WARNING', 'Drupal\Core\Extension\Requirement\RequirementSeverity', 'Warning'),
-        new ConstantToClassConfiguration('REQUIREMENT_ERROR',   'Drupal\Core\Extension\Requirement\RequirementSeverity', 'Error'),
+        new ConstantToClassConfiguration('REQUIREMENT_ERROR', 'Drupal\Core\Extension\Requirement\RequirementSeverity', 'Error'),
         new ConstantToClassConfiguration('LOCALE_TRANSLATION_DEFAULT_SERVER_PATTERN', 'Drupal', 'TRANSLATION_DEFAULT_SERVER_PATTERN'),
     ]);
 

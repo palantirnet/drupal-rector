@@ -67,6 +67,7 @@ final class ReplaceThemeGetSettingRector extends AbstractRector
                     'class'
                 ))]
             );
+
             return new MethodCall($serviceCall, 'getSetting', $node->args);
         }
 

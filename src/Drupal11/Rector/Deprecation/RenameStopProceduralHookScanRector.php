@@ -36,8 +36,10 @@ final class RenameStopProceduralHookScanRector extends AbstractRector
         if ($node instanceof UseUse) {
             if ($node->name->toString() === self::OLD_FQCN) {
                 $node->name = new Name(explode('\\', self::NEW_FQCN));
+
                 return $node;
             }
+
             return null;
         }
 
@@ -45,6 +47,7 @@ final class RenameStopProceduralHookScanRector extends AbstractRector
 
         if ($node->name instanceof FullyQualified && $node->name->toString() === self::OLD_FQCN) {
             $node->name = new Name(self::NEW_SHORT);
+
             return $node;
         }
 

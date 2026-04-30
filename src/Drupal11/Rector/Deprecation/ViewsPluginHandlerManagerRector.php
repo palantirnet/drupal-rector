@@ -52,7 +52,7 @@ final class ViewsPluginHandlerManagerRector extends AbstractRector
             return new Node\Expr\StaticCall(
                 $drupalClass,
                 'service',
-                [new Node\Arg(new Node\Scalar\String_('plugin.manager.views.' . $typeExpr->value))]
+                [new Node\Arg(new Node\Scalar\String_('plugin.manager.views.'.$typeExpr->value))]
             );
         }
 

@@ -49,6 +49,7 @@ final class ErrorCurrentErrorHandlerRector extends AbstractRector
         if (!$this->isObjectType($node->class, new ObjectType('Drupal\Core\Utility\Error'))) {
             return null;
         }
+
         return new FuncCall(new Name('get_error_handler'), []);
     }
 }

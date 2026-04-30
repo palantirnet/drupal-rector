@@ -37,6 +37,7 @@ final class UseEntityTypeHasIntegerIdRector extends AbstractRector
         }
 
         assert($node instanceof Node\Expr\MethodCall);
+
         return $this->refactorMethodCall($node);
     }
 
@@ -88,6 +89,7 @@ final class UseEntityTypeHasIntegerIdRector extends AbstractRector
         if ($node->right instanceof Node\Expr\MethodCall && $node->left instanceof Node\Scalar\String_) {
             return [$node->right, $node->left];
         }
+
         return [null, null];
     }
 
@@ -96,6 +98,7 @@ final class UseEntityTypeHasIntegerIdRector extends AbstractRector
         if (!$node->var instanceof Node\Expr\Variable || $node->var->name !== 'this') {
             return false;
         }
+
         return $this->isName($node->name, $methodName);
     }
 

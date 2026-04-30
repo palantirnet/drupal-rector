@@ -57,6 +57,7 @@ final class MigrateSqlGetMigrationPluginManagerRector extends AbstractRector
         if ($this->isObjectType($node->var, new ObjectType('Drupal\migrate\Plugin\Migration'))) {
             return null;
         }
+
         return new PropertyFetch(new Variable('this'), 'migrationPluginManager');
     }
 }

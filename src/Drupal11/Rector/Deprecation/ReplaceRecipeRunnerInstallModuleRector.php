@@ -49,7 +49,7 @@ final class ReplaceRecipeRunnerInstallModuleRector extends AbstractRector
         if (!$this->isName($node->name, 'installModule')) {
             return null;
         }
-        if (!($node->class instanceof Name)) {
+        if (!$node->class instanceof Name) {
             return null;
         }
         $className = $this->getName($node->class);
@@ -65,12 +65,13 @@ final class ReplaceRecipeRunnerInstallModuleRector extends AbstractRector
             return null;
         }
         $firstArg = $node->args[0];
-        if (!($firstArg instanceof Arg)) {
+        if (!$firstArg instanceof Arg) {
             return null;
         }
         $wrappedArray = new Array_([new ArrayItem($firstArg->value)]);
         $node->name = new Identifier('installModules');
         $node->args = array_merge([new Arg($wrappedArray)], array_slice($node->args, 1));
+
         return $node;
     }
 }

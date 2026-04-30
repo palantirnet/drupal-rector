@@ -41,6 +41,7 @@ final class StripMigrationDependenciesExpandArgRector extends AbstractRector
         }
 
         $node->args = [];
+
         return $node;
     }
 
