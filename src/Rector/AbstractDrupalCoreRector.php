@@ -86,9 +86,8 @@ abstract class AbstractDrupalCoreRector extends AbstractRector implements Config
                 return $result;
             }
 
-            // Create a backwards compatible call if the node is a call-like expression.
-            if ($node instanceof Node\Expr\CallLike && $result instanceof Node\Expr\CallLike) {
-                return $this->createBcCallOnCallLike($node, $result, $configuration->getIntroducedVersion());
+            if ($node instanceof Node\Expr && $result instanceof Node\Expr) {
+                return $this->createBcCallOnExpr($node, $result, $configuration->getIntroducedVersion());
             }
 
             return $result;
@@ -104,7 +103,7 @@ abstract class AbstractDrupalCoreRector extends AbstractRector implements Config
      */
     abstract protected function refactorWithConfiguration(Node $node, VersionedConfigurationInterface $configuration);
 
-    private function createBcCallOnCallLike(Node\Expr\CallLike $node, Node\Expr\CallLike $result, string $introducedVersion): Node\Expr\StaticCall
+    private function createBcCallOnExpr(Node\Expr $node, Node\Expr $result, string $introducedVersion): Node\Expr\StaticCall
     {
         $clonedNode = clone $node;
 
