@@ -280,11 +280,15 @@ return static function (RectorConfig $rectorConfig): void {
     // https://www.drupal.org/node/3567618
     // image_path_flush() and image_style_options() deprecated in drupal:11.4.0, removed in drupal:13.0.0.
     // Replaced by ImageDerivativeUtilities service.
+    // https://www.drupal.org/node/3577671
+    // locale_translate_get_interface_translation_files() deprecated in drupal:11.4.0, removed in drupal:13.0.0.
+    // Replaced by LocaleFileManager::getInterfaceTranslationFiles().
     $rectorConfig->ruleWithConfiguration(FunctionToServiceRector::class, [
         new FunctionToServiceConfiguration('11.4.0', 'contextual_links_to_id', 'Drupal\contextual\ContextualLinksSerializer', 'linksToId'),
         new FunctionToServiceConfiguration('11.4.0', 'contextual_id_to_links', 'Drupal\contextual\ContextualLinksSerializer', 'idToLinks'),
         new FunctionToServiceConfiguration('11.4.0', 'image_path_flush', 'Drupal\image\ImageDerivativeUtilities', 'pathFlush'),
         new FunctionToServiceConfiguration('11.4.0', 'image_style_options', 'Drupal\image\ImageDerivativeUtilities', 'styleOptions'),
+        new FunctionToServiceConfiguration('11.4.0', 'locale_translate_get_interface_translation_files', 'Drupal\locale\File\LocaleFileManager', 'getInterfaceTranslationFiles'),
     ]);
 
     // https://www.drupal.org/node/3567618

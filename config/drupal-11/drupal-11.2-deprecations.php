@@ -160,10 +160,15 @@ return static function (RectorConfig $rectorConfig): void {
     // Moved to Drupal\pgsql\EntityQuery\*.
     // https://www.drupal.org/node/3472008
     // Drupal\jsonapi\EventSubscriber\ResourceResponseValidator moved to jsonapi_response_validator submodule.
+    // https://www.drupal.org/node/3498915
+    // Drupal\migrate_drupal\Plugin\migrate\source\ContentEntity/ContentEntityDeriver deprecated in drupal:11.2.0,
+    // removed in drupal:12.0.0. Moved to Drupal\migrate namespace.
     $rectorConfig->ruleWithConfiguration(RenameClassRector::class, [
         'Drupal\Core\Entity\Query\Sql\pgsql\QueryFactory' => 'Drupal\pgsql\EntityQuery\QueryFactory',
         'Drupal\Core\Entity\Query\Sql\pgsql\Condition' => 'Drupal\pgsql\EntityQuery\Condition',
         'Drupal\jsonapi\EventSubscriber\ResourceResponseValidator' => 'Drupal\jsonapi_response_validator\EventSubscriber\ResourceResponseValidator',
+        'Drupal\migrate_drupal\Plugin\migrate\source\ContentEntity' => 'Drupal\migrate\Plugin\migrate\source\ContentEntity',
+        'Drupal\migrate_drupal\Plugin\migrate\source\ContentEntityDeriver' => 'Drupal\migrate\Plugin\migrate\source\ContentEntityDeriver',
     ]);
 
     // https://www.drupal.org/node/3575841
