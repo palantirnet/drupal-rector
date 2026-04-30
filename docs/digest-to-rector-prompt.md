@@ -94,10 +94,10 @@ Answer these questions using the information gathered:
 - List each type from `getNodeTypes()`.
 
 **Q2: Is there a CallLike → CallLike transformation?**
-- Old node is CallLike if: `FuncCall`, `MethodCall`, `StaticCall`.
-- New node (what `refactor()` returns) is CallLike if: `StaticCall`, `MethodCall`, `FuncCall`.
+- Old node is CallLike if: `FuncCall`, `MethodCall`, `StaticCall`, `NullsafeMethodCall`, `New_`.
+- New node (what `refactor()` returns) is CallLike if: `FuncCall`, `MethodCall`, `StaticCall`, `NullsafeMethodCall`, `New_`.
 - If both are CallLike → BC wrapping is **eligible**.
-- If either is NOT CallLike (e.g., `ClassConstFetch`, `New_`, `Class_`) → BC wrapping is **not applicable**.
+- If either is NOT CallLike (e.g., `ClassConstFetch`, `Class_`) → BC wrapping is **not applicable**.
 
 **Q3: Was the deprecation introduced in Drupal >= 10.1.0?**
 - Compare the introduced version from Step 2 against `10.1.0`.
