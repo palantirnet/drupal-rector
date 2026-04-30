@@ -3,6 +3,13 @@
 use Drupal\hookconvertrector\Hook\HookconvertrectorHooks;
 use Drupal\Core\Hook\Attribute\LegacyHook;
 
+/**
+ * Implements hook_theme_suggestions_HOOK_alter().
+ */
+function hookconvertrector_theme_suggestions_form_element_alter(&$suggestions, $variables) {
+    \Drupal::service(HookconvertrectorHooks1::class)->themeSuggestionsFormElementAlter($suggestions, $variables);
+}
+
 
 /**
  * Implements hook_user_add().
@@ -23,7 +30,7 @@ function hookconvertrector_theme_suggestions_form_alter(array &$attachments): vo
 }
 
 /**
- * Implements hook_page_attachments().
+ * Implements hook_page_attachments_alter().
  */
 #[LegacyHook]
 function hookconvertrector_page_attachments(array &$page)
