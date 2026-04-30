@@ -4,11 +4,20 @@ declare(strict_types=1);
 
 use DrupalRector\Rector\Deprecation\ClassConstantToClassConstantRector;
 use DrupalRector\Rector\Deprecation\FunctionToServiceRector;
+use DrupalRector\Rector\Deprecation\MethodToMethodWithCheckRector;
 use DrupalRector\Rector\ValueObject\ClassConstantToClassConstantConfiguration;
 use DrupalRector\Rector\ValueObject\FunctionToServiceConfiguration;
+use DrupalRector\Rector\ValueObject\MethodToMethodWithCheckConfiguration;
 use Rector\Config\RectorConfig;
 
 return static function (RectorConfig $rectorConfig): void {
+    // https://www.drupal.org/node/3498947
+    // CacheBackendInterface::invalidateAll() deprecated in drupal:11.2.0, removed in drupal:12.0.0.
+    // Replaced by deleteAll().
+    $rectorConfig->ruleWithConfiguration(MethodToMethodWithCheckRector::class, [
+        new MethodToMethodWithCheckConfiguration('Drupal\Core\Cache\CacheBackendInterface', 'invalidateAll', 'deleteAll'),
+    ]);
+
     // https://www.drupal.org/node/3501136
     // template_preprocess_*() functions deprecated in drupal:11.2.0, removed in drupal:12.0.0.
     // Replaced by ThemePreprocess and DatePreprocess service methods.
