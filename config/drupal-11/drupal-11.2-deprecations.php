@@ -9,21 +9,21 @@ use DrupalRector\Drupal11\Rector\Deprecation\RenameStopProceduralHookScanRector;
 use DrupalRector\Drupal11\Rector\Deprecation\ReplaceEditorLoadRector;
 use DrupalRector\Drupal11\Rector\Deprecation\ReplaceEntityOriginalPropertyRector;
 use DrupalRector\Drupal11\Rector\Deprecation\ReplaceFileGetContentHeadersRector;
-use DrupalRector\Drupal11\Rector\Deprecation\ReplaceLocaleTranslationDefaultServerPatternRector;
 use DrupalRector\Drupal11\Rector\Deprecation\ReplaceSessionWritesWithRequestSessionRector;
 use DrupalRector\Drupal11\Rector\Deprecation\ReplaceDateTimeRangeConstantsRector;
 use DrupalRector\Drupal11\Rector\Deprecation\ReplaceAlphadecimalToIntNullRector;
 use DrupalRector\Drupal11\Rector\Deprecation\ReplaceFieldgroupToFieldsetRector;
 use DrupalRector\Drupal11\Rector\Deprecation\ReplacePdoFetchConstantsRector;
-use DrupalRector\Drupal11\Rector\Deprecation\ReplaceRequirementSeverityConstantsRector;
 use DrupalRector\Drupal11\Rector\Deprecation\StatementPrefetchIteratorFetchColumnRector;
 use DrupalRector\Rector\Deprecation\ClassConstantToClassConstantRector;
+use DrupalRector\Rector\Deprecation\ConstantToClassConstantRector;
 use DrupalRector\Rector\Deprecation\FunctionCallRemovalRector;
 use Rector\Renaming\Rector\Name\RenameClassRector;
 use DrupalRector\Rector\Deprecation\FunctionToServiceRector;
 use DrupalRector\Rector\Deprecation\FunctionToStaticRector;
 use DrupalRector\Rector\Deprecation\MethodToMethodWithCheckRector;
 use DrupalRector\Rector\ValueObject\ClassConstantToClassConstantConfiguration;
+use DrupalRector\Rector\ValueObject\ConstantToClassConfiguration;
 use DrupalRector\Rector\ValueObject\FunctionCallRemovalConfiguration;
 use DrupalRector\Rector\ValueObject\FunctionToServiceConfiguration;
 use DrupalRector\Rector\ValueObject\FunctionToStaticConfiguration;
@@ -103,7 +103,16 @@ return static function (RectorConfig $rectorConfig): void {
     // https://www.drupal.org/node/3575841
     // REQUIREMENT_INFO/OK/WARNING/ERROR global constants deprecated in drupal:11.2.0, removed in drupal:12.0.0.
     // Replaced by RequirementSeverity enum cases.
-    $rectorConfig->rule(ReplaceRequirementSeverityConstantsRector::class);
+    // https://www.drupal.org/node/3477277
+    // LOCALE_TRANSLATION_DEFAULT_SERVER_PATTERN deprecated in drupal:11.2.0, removed in drupal:12.0.0.
+    // Replaced by \Drupal::TRANSLATION_DEFAULT_SERVER_PATTERN.
+    $rectorConfig->ruleWithConfiguration(ConstantToClassConstantRector::class, [
+        new ConstantToClassConfiguration('REQUIREMENT_INFO',    'Drupal\Core\Extension\Requirement\RequirementSeverity', 'Info'),
+        new ConstantToClassConfiguration('REQUIREMENT_OK',      'Drupal\Core\Extension\Requirement\RequirementSeverity', 'OK'),
+        new ConstantToClassConfiguration('REQUIREMENT_WARNING', 'Drupal\Core\Extension\Requirement\RequirementSeverity', 'Warning'),
+        new ConstantToClassConfiguration('REQUIREMENT_ERROR',   'Drupal\Core\Extension\Requirement\RequirementSeverity', 'Error'),
+        new ConstantToClassConfiguration('LOCALE_TRANSLATION_DEFAULT_SERVER_PATTERN', 'Drupal', 'TRANSLATION_DEFAULT_SERVER_PATTERN'),
+    ]);
 
     // https://www.drupal.org/node/3473440
     // TwigNodeTrans 6th $tag constructor argument deprecated in twig/twig 3.12, removed in drupal:11.2.0.
@@ -151,11 +160,6 @@ return static function (RectorConfig $rectorConfig): void {
     // $entity->original magic property deprecated in drupal:11.2.0, removed in drupal:12.0.0.
     // Read access replaced by getOriginal(); write access replaced by setOriginal($value).
     $rectorConfig->rule(ReplaceEntityOriginalPropertyRector::class);
-
-    // https://www.drupal.org/node/3477277
-    // LOCALE_TRANSLATION_DEFAULT_SERVER_PATTERN deprecated in drupal:11.2.0, removed in drupal:12.0.0.
-    // Replaced by \Drupal::TRANSLATION_DEFAULT_SERVER_PATTERN.
-    $rectorConfig->rule(ReplaceLocaleTranslationDefaultServerPatternRector::class);
 
     // https://www.drupal.org/node/3495943
     // #[StopProceduralHookScan] attribute renamed to #[ProceduralHookScanStop] in drupal:11.2.0.

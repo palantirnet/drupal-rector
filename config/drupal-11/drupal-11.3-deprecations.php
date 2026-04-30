@@ -13,12 +13,13 @@ use DrupalRector\Drupal11\Rector\Deprecation\ReplaceThemeGetSettingRector;
 use DrupalRector\Drupal11\Rector\Deprecation\NodeStorageDeprecatedMethodsRector;
 use DrupalRector\Drupal11\Rector\Deprecation\ReplaceCommentManagerGetCountNewCommentsRector;
 use DrupalRector\Drupal11\Rector\Deprecation\ReplaceCommentUriRector;
-use DrupalRector\Drupal11\Rector\Deprecation\ReplaceJsonApiFilterConstantsRector;
 use DrupalRector\Drupal11\Rector\Deprecation\ReplaceNodeSetPreviewModeRector;
 use DrupalRector\Drupal11\Rector\Deprecation\ReplaceUserSessionNamePropertyRector;
+use DrupalRector\Rector\Deprecation\ConstantToClassConstantRector;
 use DrupalRector\Rector\Deprecation\FunctionCallRemovalRector;
 use DrupalRector\Rector\Deprecation\FunctionToServiceRector;
 use DrupalRector\Rector\Deprecation\FunctionToStaticRector;
+use DrupalRector\Rector\ValueObject\ConstantToClassConfiguration;
 use DrupalRector\Rector\ValueObject\DrupalIntroducedVersionConfiguration;
 use DrupalRector\Rector\ValueObject\FunctionCallRemovalConfiguration;
 use DrupalRector\Rector\ValueObject\FunctionToServiceConfiguration;
@@ -102,7 +103,12 @@ return static function (RectorConfig $rectorConfig): void {
     // https://www.drupal.org/node/3495600
     // JSONAPI_FILTER_AMONG_* global constants deprecated in drupal:11.3.0, removed in drupal:13.0.0.
     // Replaced by \Drupal\jsonapi\JsonApiFilter::AMONG_* class constants.
-    $rectorConfig->rule(ReplaceJsonApiFilterConstantsRector::class);
+    $rectorConfig->ruleWithConfiguration(ConstantToClassConstantRector::class, [
+        new ConstantToClassConfiguration('JSONAPI_FILTER_AMONG_ALL',       'Drupal\jsonapi\JsonApiFilter', 'AMONG_ALL'),
+        new ConstantToClassConfiguration('JSONAPI_FILTER_AMONG_PUBLISHED', 'Drupal\jsonapi\JsonApiFilter', 'AMONG_PUBLISHED'),
+        new ConstantToClassConfiguration('JSONAPI_FILTER_AMONG_ENABLED',   'Drupal\jsonapi\JsonApiFilter', 'AMONG_ENABLED'),
+        new ConstantToClassConfiguration('JSONAPI_FILTER_AMONG_OWN',       'Drupal\jsonapi\JsonApiFilter', 'AMONG_OWN'),
+    ]);
 
     // https://www.drupal.org/node/3538277
     // DRUPAL_DISABLED/OPTIONAL/REQUIRED constants (and integers 0/1/2) in setPreviewMode()
