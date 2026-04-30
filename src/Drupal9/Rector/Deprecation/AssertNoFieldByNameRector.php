@@ -62,7 +62,7 @@ CODE_AFTER
     {
         assert($node instanceof Node\Stmt\Expression);
 
-        if (!($node->expr instanceof Node\Expr\MethodCall)) {
+        if (!$node->expr instanceof Node\Expr\MethodCall) {
             return null;
         }
 

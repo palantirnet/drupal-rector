@@ -73,7 +73,7 @@ class DBRector extends AbstractRector implements ConfigurableRectorInterface
     public function configure(array $configuration): void
     {
         foreach ($configuration as $value) {
-            if (!($value instanceof DBConfiguration)) {
+            if (!$value instanceof DBConfiguration) {
                 throw new \InvalidArgumentException(sprintf('Each configuration item must be an instance of "%s"', DBConfiguration::class));
             }
         }

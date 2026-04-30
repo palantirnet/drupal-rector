@@ -37,7 +37,7 @@ class StaticToFunctionRector extends AbstractRector implements ConfigurableRecto
     public function configure(array $configuration): void
     {
         foreach ($configuration as $value) {
-            if (!($value instanceof StaticToFunctionConfiguration)) {
+            if (!$value instanceof StaticToFunctionConfiguration) {
                 throw new \InvalidArgumentException(sprintf('Each configuration item must be an instance of "%s"', StaticToFunctionConfiguration::class));
             }
         }

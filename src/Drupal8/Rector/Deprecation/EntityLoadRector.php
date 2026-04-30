@@ -69,7 +69,7 @@ CODE_AFTER,
     public function configure(array $configuration): void
     {
         foreach ($configuration as $value) {
-            if (!($value instanceof EntityLoadConfiguration)) {
+            if (!$value instanceof EntityLoadConfiguration) {
                 throw new \InvalidArgumentException(sprintf('Each configuration item must be an instance of "%s"', EntityLoadConfiguration::class));
             }
         }

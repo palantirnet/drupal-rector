@@ -48,7 +48,7 @@ CODE_AFTER,
     public function configure(array $configuration): void
     {
         foreach ($configuration as $value) {
-            if (!($value instanceof DeprecationHelperRemoveConfiguration)) {
+            if (!$value instanceof DeprecationHelperRemoveConfiguration) {
                 throw new \InvalidArgumentException(sprintf('Each configuration item must be an instance of "%s"', DeprecationHelperRemoveConfiguration::class));
             }
         }
