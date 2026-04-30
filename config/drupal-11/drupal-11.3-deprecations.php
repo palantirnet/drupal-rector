@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+use DrupalRector\Drupal11\Rector\Deprecation\ErrorCurrentErrorHandlerRector;
+use DrupalRector\Drupal11\Rector\Deprecation\FileSystemBasenameToNativeRector;
 use DrupalRector\Drupal11\Rector\Deprecation\LoadAllIncludesRector;
 use DrupalRector\Drupal11\Rector\Deprecation\NodeStorageDeprecatedMethodsRector;
 use DrupalRector\Drupal11\Rector\Deprecation\ReplaceCommentManagerGetCountNewCommentsRector;
@@ -77,4 +79,14 @@ return static function (RectorConfig $rectorConfig): void {
     // deprecated in drupal:11.3.0, removed in drupal:13.0.0.
     // Replaced by NodePreviewMode enum cases.
     $rectorConfig->rule(ReplaceNodeSetPreviewModeRector::class);
+
+    // https://www.drupal.org/node/3530461
+    // FileSystemInterface::basename() deprecated in drupal:11.3.0, removed in drupal:13.0.0.
+    // Replaced by PHP native basename().
+    $rectorConfig->rule(FileSystemBasenameToNativeRector::class);
+
+    // https://www.drupal.org/node/3526515
+    // Error::currentErrorHandler() deprecated in drupal:11.3.0, removed in drupal:13.0.0.
+    // Replaced by PHP built-in get_error_handler().
+    $rectorConfig->rule(ErrorCurrentErrorHandlerRector::class);
 };

@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use DrupalRector\Drupal11\Rector\Deprecation\RemoveModuleHandlerAddModuleCallsRector;
+use DrupalRector\Drupal11\Rector\Deprecation\ReplaceDateTimeRangeConstantsRector;
 use DrupalRector\Drupal11\Rector\Deprecation\ReplaceRequirementSeverityConstantsRector;
 use DrupalRector\Drupal11\Rector\Deprecation\StatementPrefetchIteratorFetchColumnRector;
 use DrupalRector\Rector\Deprecation\ClassConstantToClassConstantRector;
@@ -86,6 +87,13 @@ return static function (RectorConfig $rectorConfig): void {
     // REQUIREMENT_INFO/OK/WARNING/ERROR global constants deprecated in drupal:11.2.0, removed in drupal:12.0.0.
     // Replaced by RequirementSeverity enum cases.
     $rectorConfig->rule(ReplaceRequirementSeverityConstantsRector::class);
+
+    // https://www.drupal.org/node/3574901
+    // DateTimeRangeConstantsInterface::BOTH/START_DATE/END_DATE deprecated in drupal:11.2.0, removed in drupal:12.0.0.
+    // Replaced by DateTimeRangeDisplayOptions enum cases (->value).
+    // datetime_type_field_views_data_helper() deprecated in drupal:11.2.0, removed in drupal:12.0.0.
+    // Replaced by \Drupal::service('datetime.views_helper')->buildViewsData().
+    $rectorConfig->rule(ReplaceDateTimeRangeConstantsRector::class);
 
     // https://www.drupal.org/node/3575841
     // SystemManager::REQUIREMENT_* deprecated in drupal:11.2.0, removed in drupal:12.0.0.

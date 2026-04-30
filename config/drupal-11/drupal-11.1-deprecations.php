@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use DrupalRector\Drupal11\Rector\Deprecation\PluginBaseIsConfigurableRector;
+use DrupalRector\Drupal11\Rector\Deprecation\RemoveModuleHandlerDeprecatedMethodsRector;
 use DrupalRector\Drupal11\Rector\Deprecation\ReplaceLocaleConfigBatchFunctionsRector;
 use DrupalRector\Rector\Deprecation\MethodToMethodWithCheckRector;
 use DrupalRector\Rector\ValueObject\MethodToMethodWithCheckConfiguration;
@@ -20,6 +21,11 @@ return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->ruleWithConfiguration(MethodToMethodWithCheckRector::class, [
         new MethodToMethodWithCheckConfiguration('Drupal\path_alias\AliasManager', 'pathAliasWhitelistRebuild', 'pathAliasPrefixListRebuild'),
     ]);
+
+    // https://www.drupal.org/node/3442009
+    // ModuleHandlerInterface::writeCache() deprecated in drupal:11.1.0, removed in drupal:12.0.0. No replacement needed.
+    // ModuleHandlerInterface::getHookInfo() deprecated in drupal:11.1.0, removed in drupal:12.0.0. Replaced by [].
+    $rectorConfig->rule(RemoveModuleHandlerDeprecatedMethodsRector::class);
 
     // https://www.drupal.org/node/3575254
     // locale_config_batch_set_config_langcodes() and locale_config_batch_refresh_name() deprecated

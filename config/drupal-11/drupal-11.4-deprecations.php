@@ -3,7 +3,10 @@
 declare(strict_types=1);
 
 use DrupalRector\Drupal11\Rector\Deprecation\RemoveAutomatedCronSubmitHandlerRector;
+use DrupalRector\Drupal11\Rector\Deprecation\RemoveConfigSaveTrustedDataArgRector;
 use DrupalRector\Drupal11\Rector\Deprecation\RemoveLinkWidgetValidateTitleElementRector;
+use DrupalRector\Drupal11\Rector\Deprecation\RemoveSetUriCallbackRector;
+use DrupalRector\Drupal11\Rector\Deprecation\RemoveTrustDataCallRector;
 use DrupalRector\Drupal11\Rector\Deprecation\ReplaceSessionManagerDeleteRector;
 use DrupalRector\Drupal11\Rector\Deprecation\ReplaceViewsProceduralFunctionsRector;
 use DrupalRector\Drupal11\Rector\Deprecation\UseEntityTypeHasIntegerIdRector;
@@ -165,7 +168,22 @@ return static function (RectorConfig $rectorConfig): void {
         new FunctionCallRemovalConfiguration('views_ui_contextual_links_suppress_pop'),
         new FunctionCallRemovalConfiguration('automated_cron_settings_submit'),
         new FunctionCallRemovalConfiguration('block_theme_initialize'),
+        new FunctionCallRemovalConfiguration('syslog_facility_list'),
+        new FunctionCallRemovalConfiguration('syslog_logging_settings_submit'),
+        new FunctionCallRemovalConfiguration('taxonomy_build_node_index'),
+        new FunctionCallRemovalConfiguration('taxonomy_delete_node_index'),
     ]);
+
+    // https://www.drupal.org/node/2667040
+    // EntityTypeInterface::setUriCallback() deprecated in drupal:11.4.0, removed in drupal:13.0.0.
+    // Use link templates or a route provider instead.
+    $rectorConfig->rule(RemoveSetUriCallbackRector::class);
+
+    // https://www.drupal.org/node/3347842
+    // trustData() deprecated in drupal:11.4.0, removed in drupal:13.0.0. Remove from fluent chains.
+    // Config::save($has_trusted_data) boolean arg deprecated in drupal:11.4.0, removed in drupal:13.0.0.
+    $rectorConfig->rule(RemoveTrustDataCallRector::class);
+    $rectorConfig->rule(RemoveConfigSaveTrustedDataArgRector::class);
 
     // https://www.drupal.org/node/3093118
     // LinkWidget::validateTitleElement() deprecated in drupal:11.4.0, removed in drupal:12.0.0.
