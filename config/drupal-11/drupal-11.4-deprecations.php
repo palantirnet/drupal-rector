@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use DrupalRector\Drupal11\Rector\Deprecation\ReplaceSessionManagerDeleteRector;
+use DrupalRector\Drupal11\Rector\Deprecation\ViewsPluginHandlerManagerRector;
 use DrupalRector\Rector\Deprecation\ClassConstantToClassConstantRector;
 use DrupalRector\Rector\Deprecation\FunctionToServiceRector;
 use DrupalRector\Rector\Deprecation\FunctionToStaticRector;
@@ -13,6 +14,11 @@ use DrupalRector\Rector\ValueObject\FunctionToStaticConfiguration;
 use Rector\Config\RectorConfig;
 
 return static function (RectorConfig $rectorConfig): void {
+    // https://www.drupal.org/node/3566424
+    // Views::pluginManager() and Views::handlerManager() deprecated in drupal:11.4.0, removed in drupal:13.0.0.
+    // Replaced by \Drupal::service('plugin.manager.views.*') or views.plugin_managers service.
+    $rectorConfig->rule(ViewsPluginHandlerManagerRector::class);
+
     // https://www.drupal.org/node/3577376
     // SessionManager::delete() deprecated in drupal:11.4.0, removed in drupal:12.0.0.
     // Replaced by \Drupal\Core\Session\UserSessionRepositoryInterface::deleteAll().

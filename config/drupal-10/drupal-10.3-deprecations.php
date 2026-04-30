@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use DrupalRector\Drupal10\Rector\Deprecation\ReplaceModuleHandlerGetNameRector;
+use DrupalRector\Drupal10\Rector\Deprecation\ReplaceRebuildThemeDataRector;
 use DrupalRector\Rector\Deprecation\ClassConstantToClassConstantRector;
 use DrupalRector\Rector\Deprecation\FunctionToStaticRector;
 use DrupalRector\Rector\ValueObject\ClassConstantToClassConstantConfiguration;
@@ -15,6 +16,13 @@ return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->ruleWithConfiguration(FunctionToStaticRector::class, [
         new FunctionToStaticConfiguration('10.3.0', 'file_icon_class', 'Drupal\file\IconMimeTypes', 'getIconClass'),
         new FunctionToStaticConfiguration('10.3.0', 'file_icon_map', 'Drupal\file\IconMimeTypes', 'getGenericMimeType'),
+    ]);
+
+    // https://www.drupal.org/node/3571068
+    // ThemeHandlerInterface::rebuildThemeData() deprecated in drupal:10.3.0, removed in drupal:12.0.0.
+    // Replaced by \Drupal::service('extension.list.theme')->reset()->getList().
+    $rectorConfig->ruleWithConfiguration(ReplaceRebuildThemeDataRector::class, [
+        new DrupalIntroducedVersionConfiguration('10.3.0'),
     ]);
 
     // https://www.drupal.org/node/3571063
