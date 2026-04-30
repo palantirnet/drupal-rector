@@ -2,15 +2,24 @@
 
 declare(strict_types=1);
 
+use DrupalRector\Drupal11\Rector\Deprecation\ReplaceSessionManagerDeleteRector;
 use DrupalRector\Rector\Deprecation\ClassConstantToClassConstantRector;
 use DrupalRector\Rector\Deprecation\FunctionToServiceRector;
 use DrupalRector\Rector\Deprecation\FunctionToStaticRector;
 use DrupalRector\Rector\ValueObject\ClassConstantToClassConstantConfiguration;
+use DrupalRector\Rector\ValueObject\DrupalIntroducedVersionConfiguration;
 use DrupalRector\Rector\ValueObject\FunctionToServiceConfiguration;
 use DrupalRector\Rector\ValueObject\FunctionToStaticConfiguration;
 use Rector\Config\RectorConfig;
 
 return static function (RectorConfig $rectorConfig): void {
+    // https://www.drupal.org/node/3577376
+    // SessionManager::delete() deprecated in drupal:11.4.0, removed in drupal:12.0.0.
+    // Replaced by \Drupal\Core\Session\UserSessionRepositoryInterface::deleteAll().
+    $rectorConfig->ruleWithConfiguration(ReplaceSessionManagerDeleteRector::class, [
+        new DrupalIntroducedVersionConfiguration('11.4.0'),
+    ]);
+
     // https://www.drupal.org/node/3550054
     // CommentItemInterface::FORM_BELOW and FORM_SEPARATE_PAGE deprecated in 11.4.0,
     // removed in 13.0.0. Replaced by FormLocation enum cases.
