@@ -532,9 +532,9 @@ Tasks:
 - Change record: https://www.drupal.org/node/3574901
 
 Tasks:
-- [ ] **Analyze** — compare rector against drupal-digest source and change record; confirm all three constants (`BOTH`, `START_DATE`, `END_DATE`) and the function `datetime_type_field_views_data_helper()` are handled
-- [ ] **Coverage** — add fixture pairs for all three constants; add fixture for the function replacement
-- [ ] **Edge cases** — test: `self::BOTH`, `static::START_DATE` within an implementor of `DateTimeRangeConstantsInterface`; constants used in match arms
+- [x] **Analyze** — all three constants (`BOTH` → `Both`, `START_DATE` → `StartDate`, `END_DATE` → `EndDate`) and `datetime_type_field_views_data_helper()` are handled; rector and digest are logically identical; `@see` URL (`node/3574901`), deprecation version (`drupal:11.2.0`), and removal version (`drupal:12.0.0`) are all correct per `DateTimeRangeConstantsInterface.php` in core; no gaps in change record coverage
+- [x] **Coverage** — `basic.php.inc` already covers all three constants and the function in one fixture; added `fixture/function_replacement.php.inc`: standalone and assigned-result forms of `datetime_type_field_views_data_helper()` → `\Drupal::service('datetime.views_helper')->buildViewsData()`; added `fixture/match_arm.php.inc`: all three constants in `match` arm conditions → correctly transformed; 4 tests pass
+- [x] **Edge cases** — added `fixture/self_static_in_implementor.php.inc`: `self::BOTH` and `static::START_DATE` inside a class implementing `DateTimeRangeConstantsInterface` — **correctly NOT transformed** (same limitation as `ReplaceEntityReferenceRecursiveLimitRector`: `isName()` on a `self`/`static` `Name` node returns the keyword itself, not the resolved FQCN); this is a known Rector limitation when there is no PHPStan scope to resolve `self`; `match_arm.php.inc` confirms FQCN-qualified constants in match arms work correctly; 4 tests pass
 
 ---
 
@@ -558,9 +558,9 @@ Tasks:
 - Change record: https://www.drupal.org/node/3571065
 
 Tasks:
-- [ ] **Analyze** — compare rector against drupal-digest source and change record; confirm both read (`->original`) and write (`->original = $value`) are handled
-- [ ] **Coverage** — add fixture for: read access `$entity->original`; write access `$entity->original = $other`; null-safe `$entity?->original`
-- [ ] **Edge cases** — test: `->original` on an unrelated class not typed as `ContentEntityInterface` (type guard check); `$entity->original->id()` chain; write assignment where right-hand side is a complex expression
+- [x] **Analyze** — both read (`->original` → `getOriginal()`) and write (`->original = $x` → `setOriginal($x)`) handled; no type guard (intentional, same as digest — only `$this->original` is skipped to avoid false positives on non-entity classes like `EntityTypeEvent`); `@see` in rector points to node/3571065 (change record) while the Drupal core deprecation message cites node/3295826 — minor discrepancy, both valid; deprecation version (11.2.0) and removal version (12.0.0) match core; rector did not originally handle `NullsafePropertyFetch` — gap fixed (see Coverage)
+- [x] **Coverage** — basic fixture already covered read and write; added `fixture/nullsafe.php.inc` (`$entity?->original` → `$entity?->getOriginal()`, required updating rector to include `NullsafePropertyFetch` → `NullsafeMethodCall`); all 5 tests pass
+- [x] **Edge cases** — added `fixture/chain.php.inc` (`$entity->original->id()` → `$entity->getOriginal()->id()`) and `fixture/write_complex_rhs.php.inc` (write with method-call RHS); added `fixture/no_change_this_original.php.inc` (no type guard — any `$var->original` is transformed, but `$this->original` is correctly skipped); all 5 tests pass
 
 ---
 
