@@ -50,6 +50,9 @@
         },
         "classmap": [
             "stubs"
+        ],
+        "exclude-from-classmap": [
+            "**/fixture/**"
         ]
     },
     "config": {
