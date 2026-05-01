@@ -585,9 +585,9 @@ Tasks:
 - `static::$recursiveRenderDepth` static property — the entire counter pattern should be deleted; only the constant is replaced
 
 Tasks:
-- [ ] **Analyze** — fetch the correct change record at node/3316878 (not 2940605 which is the original bug); confirm both deprecated items (`RECURSIVE_RENDER_LIMIT` constant AND `$recursiveRenderDepth` static property) are documented; note that the canonical fix is to delete counter code, not just replace the constant
-- [ ] **Coverage** — add fixture for: FQCN `EntityReferenceEntityFormatter::RECURSIVE_RENDER_LIMIT`; used in a ternary; used as a function argument
-- [ ] **Edge cases** — test: `self::RECURSIVE_RENDER_LIMIT` inside a subclass body (currently not matched); `static::RECURSIVE_RENDER_LIMIT` inside a subclass body; aliased import `use EntityReferenceEntityFormatter as Formatter; Formatter::RECURSIVE_RENDER_LIMIT`; `parent::RECURSIVE_RENDER_LIMIT` in a subclass override
+- [x] **Analyze** — `RECURSIVE_RENDER_LIMIT = 20` confirmed in Drupal core 11.x; `$recursiveRenderDepth` static property is also deprecated (removed in 13.0.0) but NOT handled by this rector (known gap — no PHPStan scope to detect subclass property usage); `@see` URL corrected from `2940605` to `3316878` in the rector source; removal version `drupal:13.0.0` is correct; the constant value `20` is correct
+- [x] **Coverage** — added `fixture/in_ternary.php.inc` (true and false branch of ternary) and `fixture/in_function_call.php.inc` (as first and second function argument); basic fixture already covered FQCN in `if` condition and assignment; 6 tests pass
+- [x] **Edge cases** — added `fixture/no_change_self_static_in_subclass.php.inc` (`self::` and `static::` in subclass body — correctly NOT transformed, known limitation); `fixture/no_change_parent_in_subclass.php.inc` (`parent::` — correctly NOT transformed); `fixture/aliased_import.php.inc` (`use ... as Formatter; Formatter::RECURSIVE_RENDER_LIMIT` — Rector resolves the alias to FQCN and DOES transform it correctly); all 6 tests pass
 
 ---
 
@@ -639,9 +639,9 @@ Tasks:
 - Change record: https://www.drupal.org/node/3038908
 
 Tasks:
-- [ ] **Analyze** — compare rector against drupal-digest source and change record; confirm both the function call AND the `drupal_static_reset()` variant are handled
-- [ ] **Coverage** — add fixture for: `node_access_view_all_nodes()` call; `drupal_static_reset('node_access_view_all_nodes')` call; result used in a condition
-- [ ] **Edge cases** — test: `drupal_static_reset` with a different argument (should NOT be touched); `node_access_view_all_nodes()` with an argument (should not be touched if signature changed)
+- [x] **Analyze** — rector and drupal-digest are logically identical; both transformations confirmed: `node_access_view_all_nodes()` → `\Drupal::entityTypeManager()->getAccessControlHandler('node')->checkAllGrants(account)`, and `drupal_static_reset('node_access_view_all_nodes')` → `\Drupal::service('node.view_all_nodes_memory_cache')->deleteAll()`; `@see` URL in rector points to `node/3038908` while Drupal core's deprecation notice says `node/3038909` — minor discrepancy; deprecation version (`drupal:11.3.0`) and removal version (`drupal:12.0.0`) confirmed correct in `node.module:344`; function signature is `node_access_view_all_nodes($account = NULL)` — rector correctly handles both 0-arg (falls back to `\Drupal::currentUser()`) and 1-arg (passes `$account` through) forms; no gaps
+- [x] **Coverage** — `basic.php.inc` already covered: no-arg call, 1-arg call, `drupal_static_reset` match, `drupal_static_reset` no-change; added `fixture/in_condition.php.inc`: no-arg and 1-arg form used as `if`-condition — both transformed correctly; 2 tests pass
+- [x] **Edge cases** — `drupal_static_reset('other_function')` not touched (already in `basic.php.inc` — `String_::value !== 'node_access_view_all_nodes'` guard works); `node_access_view_all_nodes($account)` with an argument IS correctly transformed (passes arg through to `checkAllGrants($account)`) — this is the intended behavior per `node.module`'s own implementation
 
 ---
 
