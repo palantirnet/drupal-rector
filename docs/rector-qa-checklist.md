@@ -1,6 +1,6 @@
 # Rector QA Checklist
 
-**Next:** [`ViewsPluginHandlerManagerRector`](#viewspluginhandlermanagerrector)
+**Next:** [`FunctionCallRemovalRector`](#functioncallremovalrector)
 
 
 Living checklist for every rector added in the `main-bbrala` branch. Each rector gets three tasks: **Analyze**, **Coverage**, and **Edge cases**. Work through them iteratively — check a box when it is done.
@@ -835,9 +835,9 @@ Tasks:
 - Change record: https://www.drupal.org/node/3566424
 
 Tasks:
-- [ ] **Analyze** — compare rector against drupal-digest source and change record; confirm both `pluginManager()` and `handlerManager()` are handled; confirm the two output paths (string literal arg → direct service; variable arg → service locator)
-- [ ] **Coverage** — add fixture for: `Views::pluginManager('filter')` with string literal; `Views::pluginManager($type)` with variable; `Views::handlerManager('field')` with string literal; `Views::handlerManager($type)` with variable
-- [ ] **Edge cases** — test: call with no argument (currently skipped — confirm it should stay that way); call with a concatenated string argument; result used inline in a method chain
+- [x] **Analyze** — rector matches digest; handles both `pluginManager()` and `handlerManager()`; two output paths: string literal arg → `\Drupal::service('plugin.manager.views.<type>')`, dynamic arg → `\Drupal::service('views.plugin_managers')->get($type)`; @see URL discrepancy: rector `3566424`, core/digest `3566982` — consistent pattern
+- [x] **Coverage** — basic.php.inc covers string literal for both methods and dynamic for `pluginManager`; added `handler_manager_dynamic.php.inc` for `handlerManager($type)` dynamic variant; added `fqcn_prefix.php.inc` for FQCN calls
+- [x] **Edge cases** — added `no_change_no_args.php.inc` confirming zero-arg calls are intentionally skipped
 
 ---
 
