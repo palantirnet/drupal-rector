@@ -1,6 +1,6 @@
 # Rector QA Checklist
 
-**Next:** [`ReplaceSessionManagerDeleteRector`](#replacesessionmanagerdeleterector)
+**Next:** [`ReplaceSessionWritesWithRequestSessionRector`](#replacesessionwriteswithrequestsessionrector)
 
 
 Living checklist for every rector added in the `main-bbrala` branch. Each rector gets three tasks: **Analyze**, **Coverage**, and **Edge cases**. Work through them iteratively — check a box when it is done.
@@ -718,9 +718,9 @@ Tasks:
 - Change record: https://www.drupal.org/node/3577376
 
 Tasks:
-- [ ] **Analyze** — compare rector against drupal-digest source and change record; document gaps
-- [ ] **Coverage** — add fixture pairs for all transformation variants in the change record
-- [ ] **Edge cases** — test: `delete()` on an unrelated class is not touched; receiver typed as concrete vs interface; fluent chain after deletion
+- [x] **Analyze** — rector and digest are logically identical; both use `ObjectType('SessionManager')` type guard (concrete class, not interface); `SessionManagerInterface::delete()` is also deprecated in drupal:11.4.0 but variables typed as the interface are NOT transformed — known limitation consistent with the digest; `@see node/3577376` matches; BC-wrap via `AbstractDrupalCoreRector` with version `11.4.0` — correct; versions correct (`drupal:11.4.0` / `drupal:12.0.0`); single deprecated method — no other items in change record
+- [x] **Coverage** — `basic.php.inc` already covered the main form with `@var SessionManager` annotation; added `fixture/class_property.php.inc`: `$this->sessionManager->delete($uid)` on a constructor-injected `SessionManager` typed property → BC-wrapped; all 4 tests pass
+- [x] **Edge cases** — added `fixture/no_change_unrelated_class.php.inc`: `$manager->delete($uid)` on `SomeManager`-typed var → not transformed; added `fixture/no_change_interface.php.inc`: `$sessionManager->delete($uid)` on `SessionManagerInterface`-typed var → not transformed (known limitation documented); fluent chain not added — `delete()` returns `void` so no fluent pattern exists; all 4 tests pass
 
 ---
 
