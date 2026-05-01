@@ -1,6 +1,6 @@
 # Rector QA Checklist
 
-**Next:** [`ReplacePdoFetchConstantsRector`](#replacepdofetchconstantsrector)
+**Next:** [`ReplaceRecipeRunnerInstallModuleRector`](#replacereciperunnerinstallmodulerector)
 
 Living checklist for every rector added in the `main-bbrala` branch. Each rector gets three tasks: **Analyze**, **Coverage**, and **Edge cases**. Work through them iteratively — check a box when it is done.
 
@@ -691,9 +691,9 @@ Tasks:
 - Change record: https://www.drupal.org/node/3525077
 
 Tasks:
-- [ ] **Analyze** — compare rector against drupal-digest source and change record; list all `PDO::FETCH_*` constants and confirm each has a mapping
-- [ ] **Coverage** — add fixture pair for each `PDO::FETCH_*` constant that does not yet have a dedicated fixture
-- [ ] **Edge cases** — test: constant used as a default parameter value in a function signature; constant used in a ternary; `PDO::FETCH_*` constant used directly on a native PDO object that is not Drupal's wrapper (type guard check)
+- [x] **Analyze** — rector and digest are logically identical; minor `@see` discrepancy: rector uses `node/3525077` (CR), digest uses `node/3488338` — rector's reference is the change record (correct); all 5 `PDO::FETCH_*` constants are in `FETCH_MAP` (`FETCH_OBJ`, `FETCH_ASSOC`, `FETCH_NUM`, `FETCH_COLUMN`, `FETCH_CLASS`); all 4 Drupal statement methods covered; `getClientStatement`/`getClientConnection` guard correctly excludes raw PDO object; no type guard on receiver — native `PDOStatement` calls are also transformed (known limitation — intentional, same design as other rectors); versions correct (`drupal:11.2.0` / `drupal:12.0.0`)
+- [x] **Coverage** — `basic.php.inc` covered `FETCH_ASSOC`, `FETCH_OBJ`, `FETCH_NUM`, plus `getClientStatement` no-change; added `fixture/fetch_column_and_class.php.inc`: `FETCH_COLUMN` → `FetchAs::Column`, `FETCH_CLASS` → `FetchAs::ClassObject` (both previously untested); all 4 tests pass
+- [x] **Edge cases** — added `fixture/no_change_outside_method.php.inc`: bare `PDO::FETCH_*` assignment, ternary, and function default parameter — correctly not transformed (rector only targets `MethodCall` and `ArrayItem` nodes); added `fixture/no_type_guard_native_pdo.php.inc`: `$pdoStatement->fetchAll(\PDO::FETCH_ASSOC)` IS transformed — documented as known limitation (no type check on receiver); all 4 tests pass
 
 ---
 
