@@ -1,6 +1,6 @@
 # Rector QA Checklist
 
-**Next:** [`ReplaceNodeSetPreviewModeRector`](#replacenodesetpreviewmoderector)
+**Next:** [`ReplacePdoFetchConstantsRector`](#replacepdofetchconstantsrector)
 
 Living checklist for every rector added in the `main-bbrala` branch. Each rector gets three tasks: **Analyze**, **Coverage**, and **Edge cases**. Work through them iteratively — check a box when it is done.
 
@@ -677,15 +677,10 @@ Tasks:
 - Drupal-digest: `replace-deprecated-constants-with-nodepreviewmode-enum-in-3538277.php`
 - Change record: https://www.drupal.org/node/3538277
 
-**Known gaps from analysis:**
-- `getPreviewMode() === DRUPAL_DISABLED` comparison — not handled; should become `getPreviewMode() === NodePreviewMode::Disabled`
-- `getPreviewMode(TRUE)` with the deprecated `$returnAsInt` argument — not handled
-- No receiver type guard on `setPreviewMode()`: any class with a `setPreviewMode()` method is modified, not just `NodeTypeInterface` implementors
-
 Tasks:
-- [ ] **Analyze** — fetch the change record at node/3538277; confirm the `getPreviewMode()` read-side deprecation and `$returnAsInt` argument removal are documented; assess whether the missing type guard is a correctness risk
-- [ ] **Coverage** — add fixture for: `getPreviewMode() === DRUPAL_DISABLED`; `getPreviewMode() === DRUPAL_OPTIONAL`; `getPreviewMode() === DRUPAL_REQUIRED`; `getPreviewMode(TRUE)` argument removal
-- [ ] **Edge cases** — test: `setPreviewMode(DRUPAL_DISABLED)` on a non-NodeTypeInterface class (should ideally be guarded); `DRUPAL_DISABLED` constant used in a `switch`/`match` on the result of `getPreviewMode()`; integer `3` passed (not in map, should not be changed); integer `0` outside `setPreviewMode()` context
+- [x] **Analyze** — rector and digest are logically identical; `@see node/3538277` is correct; both deprecated constants (`DRUPAL_DISABLED/OPTIONAL/REQUIRED`) and integer values (0/1/2) are handled for `setPreviewMode()` — fully matching the change record; `getPreviewMode($returnAsInt)` deprecation (`@see node/3539662`) is a separate issue — out of scope for this rector; `getPreviewMode() === DRUPAL_DISABLED` comparison replacement is likewise out of scope (would require a broader ConstFetch rector); no type guard — intentional, same design as `ReplaceRebuildThemeDataRector`; versions correct (`drupal:11.3.0` / `drupal:13.0.0`)
+- [x] **Coverage** — `basic.php.inc` already covers all 6 transformation variants (3 constants + 3 integers); added `fixture/no_change_getpreviewmode.php.inc`: documents that `getPreviewMode() === DRUPAL_DISABLED` and `getPreviewMode(TRUE)` are NOT transformed by this rector (out of scope); all 4 tests pass
+- [x] **Edge cases** — added `fixture/no_change_unknown_int.php.inc`: `setPreviewMode(3)` and `setPreviewMode(-1)` correctly not transformed (not in `INT_TO_ENUM` map); added `fixture/no_type_guard.php.inc`: `$anyObject->setPreviewMode(DRUPAL_DISABLED)` IS transformed (no type guard — documented as intentional); all 4 tests pass
 
 ---
 
