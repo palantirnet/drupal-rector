@@ -16,7 +16,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  *
  * Deprecated in drupal:11.4.0, removed in drupal:13.0.0.
  *
- * @see https://www.drupal.org/node/2940605
+ * @see https://www.drupal.org/node/3316878
  */
 final class ReplaceEntityReferenceRecursiveLimitRector extends AbstractRector
 {

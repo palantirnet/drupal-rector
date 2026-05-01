@@ -626,9 +626,9 @@ Tasks:
 **Note:** This rector is a candidate for replacement with Rector core's `RenameFunctionRector` — see the generic rector extraction todo.
 
 Tasks:
-- [ ] **Analyze** — compare rector against drupal-digest source and change record; confirm both function renames are correct
-- [ ] **Coverage** — add fixture for `locale_config_batch_refresh_name()` call; result used in various expression positions
-- [ ] **Edge cases** — test: call with different argument counts (pass-through); FQCN-prefixed call `\locale_config_batch_set_config_langcodes()`
+- [x] **Analyze** — both renames confirmed correct against Drupal core source (`locale.bulk.inc`); `@see` points to change record node/3575254 (Drupal source uses issue node/3475054 — consistent with other rectors using the CR URL); version `drupal:11.1.0` / removal `drupal:12.0.0` match; both functions are pure renames with argument pass-through; no gaps between drupal-digest and drupal-rector implementations
+- [x] **Coverage** — added `fixture/expression_positions.php.inc`: `locale_config_batch_refresh_name()` used as statement, assignment RHS, `if` condition, and array push; all 3 tests pass
+- [x] **Edge cases** — added `fixture/fqcn_prefix.php.inc`: `\locale_config_batch_set_config_langcodes()` and `\locale_config_batch_refresh_name()` with FQCN backslash prefix are correctly renamed (FullyQualified extends Name so the `instanceof Node\Name` check catches them); argument pass-through already covered by existing `basic.php.inc` and `expression_positions.php.inc` with varying arg counts; all 3 tests pass
 
 ---
 
