@@ -1,6 +1,7 @@
 # Rector QA Checklist
 
-**Next:** [`ReplaceRecipeRunnerInstallModuleRector`](#replacereciperunnerinstallmodulerector)
+**Next:** [`ReplaceSessionManagerDeleteRector`](#replacesessionmanagerdeleterector)
+
 
 Living checklist for every rector added in the `main-bbrala` branch. Each rector gets three tasks: **Analyze**, **Coverage**, and **Edge cases**. Work through them iteratively — check a box when it is done.
 
@@ -704,9 +705,9 @@ Tasks:
 - Change record: https://www.drupal.org/node/3498026
 
 Tasks:
-- [ ] **Analyze** — compare rector against drupal-digest source and change record; document gaps
-- [ ] **Coverage** — add fixture pairs for all transformation variants in the change record
-- [ ] **Edge cases** — test: static call vs method call; result used inline; call with different argument types
+- [x] **Analyze** — rector and digest are logically identical; `@see node/3498026` is in both rector and digest; Drupal core's own deprecation trigger in `RecipeRunner.php:278` references `node/3579527` — minor discrepancy; versions correct (`drupal:11.4.0` / `drupal:13.0.0`); class guards cover FQCN, short name `RecipeRunner`, `static`, and `self` — full coverage; rector targets only `StaticCall` nodes — method-call form is correctly excluded; only `installModule` is deprecated, `installModules` is the replacement — no other deprecated items
+- [x] **Coverage** — `basic.php.inc` covered short-name static call with `use` import; added `fixture/fqcn.php.inc`: `\Drupal\Core\Recipe\RecipeRunner::installModule(...)` FQCN form correctly rewritten; added `fixture/self_static.php.inc`: `self::installModule()` and `static::installModule()` inside a subclass → both rewritten; all 5 tests pass
+- [x] **Edge cases** — added `fixture/no_change_method_call.php.inc`: `$runner->installModule(...)` (instance method call, not `StaticCall` node) → correctly not transformed; added `fixture/no_change_unrelated_class.php.inc`: `SomeOtherRunner::installModule(...)` → not transformed (class name guard); all 5 tests pass
 
 ---
 
