@@ -1,6 +1,6 @@
 # Rector QA Checklist
 
-**Next:** [`ReplaceThemeGetSettingRector`](#replacethemegetsettingrector)
+**Next:** [`ReplaceUserSessionNamePropertyRector`](#replaceusersessionnamepropertyrector)
 
 
 Living checklist for every rector added in the `main-bbrala` branch. Each rector gets three tasks: **Analyze**, **Coverage**, and **Edge cases**. Work through them iteratively — check a box when it is done.
@@ -757,9 +757,9 @@ Tasks:
 - Change record: https://www.drupal.org/node/3573896
 
 Tasks:
-- [ ] **Analyze** — compare rector against drupal-digest source and change record; confirm both `theme_get_setting()` and `_system_default_theme_features()` are handled
-- [ ] **Coverage** — add fixture for `_system_default_theme_features()` replacement; fixture for various argument combinations of `theme_get_setting()`
-- [ ] **Edge cases** — test: call with one argument vs two arguments (`$theme_name` parameter); result used inline vs assigned; `theme_get_setting()` with a variable key (should it still be transformed?)
+- [x] **Analyze** — rector and digest are logically identical; both `theme_get_setting()` and `_system_default_theme_features()` are handled; all args passed through for `theme_get_setting()` (no arg-count guard — 0, 1, or 2 args all work); `@see node/3573896` in both rector and digest; core's actual deprecation triggers reference `node/3035289` (theme_get_setting) and `node/3554127` (_system_default_theme_features) — minor discrepancy; versions correct (`drupal:11.3.0` / `drupal:13.0.0`)
+- [x] **Coverage** — `basic.php.inc` already covered 1-arg `theme_get_setting`, 2-arg form, and `_system_default_theme_features`; added `fixture/inline_usage.php.inc`: result in `if` condition, with variable `$theme_name` arg, and `_system_default_theme_features()` as argument to `array_keys()`; added `fixture/variable_key.php.inc`: variable `$setting_name` first arg is transformed (no String_ guard); all 4 tests pass
+- [x] **Edge cases** — added `fixture/fqcn_prefix.php.inc`: `\theme_get_setting()` and `\_system_default_theme_features()` with backslash prefix — `isName()` resolves the FQCN so both are correctly transformed; all 4 tests pass
 
 ---
 
