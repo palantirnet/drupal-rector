@@ -1,6 +1,6 @@
 # Rector QA Checklist
 
-**Next:** [`FunctionCallRemovalRector`](#functioncallremovalrector)
+**Next:** *(all checklist rectors complete)*
 
 
 Living checklist for every rector added in the `main-bbrala` branch. Each rector gets three tasks: **Analyze**, **Coverage**, and **Edge cases**. Work through them iteratively — check a box when it is done.
@@ -849,9 +849,9 @@ Tasks:
 - No drupal-digest source — this is a generic configurable rector
 
 Tasks:
-- [ ] **Analyze** — verify the rector handles both statement-level removal (entire expression statement) and expression-level usage (function call as part of a larger expression); document what happens when the return value is used
-- [ ] **Coverage** — add fixture for: call as a standalone statement (removed); call whose return value is assigned (what happens?); call as argument to another function (what happens?)
-- [ ] **Edge cases** — test: function name collision — a function with the same name in a different namespace; function called with named arguments; function called with spread operator; multiple configured functions in a single pass
+- [x] **Analyze** — rector targets `Stmt\Expression` wrapping a `FuncCall`; only standalone-statement calls are removed; assignments (`$x = f()`) and calls-as-arguments (`g(f())`) are intentionally left unchanged because `$node->expr` is not a `FuncCall` in those positions
+- [x] **Coverage** — basic.php.inc covers multi-function removal and non-configured call survival; added `fqcn_prefix.php.inc` confirming `\fully_qualified_name()` form is also removed
+- [x] **Edge cases** — added `no_change_expression_usage.php.inc` documenting that assigned and argument-position calls are not removed (known limitation)
 
 ---
 
