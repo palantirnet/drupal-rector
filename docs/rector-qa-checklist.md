@@ -598,9 +598,9 @@ Tasks:
 - Change record: https://www.drupal.org/node/3512254
 
 Tasks:
-- [ ] **Analyze** — compare rector against drupal-digest source and change record; document gaps
-- [ ] **Coverage** — add fixture pairs for all transformation variants in the change record
-- [ ] **Edge cases** — test: `'#type' => 'fieldgroup'` in a deeply nested array; assignment via variable `$type = 'fieldgroup'; $form['#type'] = $type` (should NOT be touched — only string literal); the key `'#type'` vs just `'type'`
+- [x] **Analyze** — rector and drupal-digest are functionally identical (both iterate `Array_` items checking for `String_('#type')` key and `String_('fieldgroup')` value, replacing value with `String_('fieldset')`); `@see` URL is `node/3512254` (correct change record); deprecation version `drupal:11.2.0` and removal version `drupal:12.0.0` match core `Fieldgroup.php`; note: the digest `@see` says `node/3515272` (a different node) while the rector uses `node/3512254` — rector is consistent with the change record header; one known limitation per the digest comment: if code relied on the `fieldgroup` CSS class or `core/drupal.fieldgroup` library being auto-attached, those must be added manually — out of scope for the rector
+- [x] **Coverage** — `basic.php.inc` already covers the main transformation (fieldgroup → fieldset, including an already-correct fieldset entry left unchanged); added `deeply_nested.php.inc`: `'#type' => 'fieldgroup'` inside a deeply nested assignment (`$form['wrapper']['group']['settings']`) → correctly transformed; 4 tests pass
+- [x] **Edge cases** — added `no_change_variable_assignment.php.inc`: `$type = 'fieldgroup'; $form['account']['#type'] = $type` — variable value, not inside an `Array_` item with a String_ value, correctly not touched by the rector; added `no_change_type_without_hash.php.inc`: `['type' => 'fieldgroup']` (key without `#`) — key check requires exact `String_('#type')` match so this is correctly not transformed; all 4 tests pass
 
 ---
 
