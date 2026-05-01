@@ -19,7 +19,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  * Both methods are deprecated in drupal:11.4.0 and removed in drupal:13.0.0
  * with no replacement.
  *
- * @see https://www.drupal.org/node/3564937
+ * @see https://www.drupal.org/node/3564958
  */
 final class RemoveViewsRowCacheKeysRector extends AbstractRector
 {

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace DrupalRector\Drupal11\Rector\Deprecation;
 
 use PhpParser\Node;
+use PhpParser\NodeVisitor;
 use PHPStan\Type\ObjectType;
 use Rector\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
@@ -19,14 +20,27 @@ final class NodeStorageDeprecatedMethodsRector extends AbstractRector
 {
     public function getNodeTypes(): array
     {
-        return [Node\Expr\MethodCall::class];
+        return [Node\Expr\MethodCall::class, Node\Stmt\Expression::class];
     }
 
-    public function refactor(Node $node): ?Node
+    public function refactor(Node $node): mixed
     {
-        if (!$node instanceof Node\Expr\MethodCall) {
-            return null;
+        if ($node instanceof Node\Stmt\Expression) {
+            if (!$node->expr instanceof Node\Expr\MethodCall) {
+                return null;
+            }
+            $methodCall = $node->expr;
+            if ($this->getName($methodCall->name) !== 'countDefaultLanguageRevisions') {
+                return null;
+            }
+            if (!$this->isObjectType($methodCall->var, new ObjectType('Drupal\node\NodeStorageInterface'))) {
+                return null;
+            }
+
+            return NodeVisitor::REMOVE_NODE;
         }
+
+        assert($node instanceof Node\Expr\MethodCall);
 
         if (!$this->isObjectType($node->var, new ObjectType('Drupal\node\NodeStorageInterface'))) {
             return null;
@@ -81,7 +95,7 @@ final class NodeStorageDeprecatedMethodsRector extends AbstractRector
 
     public function getRuleDefinition(): RuleDefinition
     {
-        return new RuleDefinition('Replaces deprecated NodeStorage::revisionIds() and userRevisionIds() with entity queries', [
+        return new RuleDefinition('Replaces deprecated NodeStorage::revisionIds() and userRevisionIds() with entity queries; removes countDefaultLanguageRevisions() (no replacement)', [
             new CodeSample(
                 '$storage->revisionIds($node);',
                 "array_keys(\$storage->getQuery()->allRevisions()->condition('nid', \$node->id())->accessCheck(FALSE)->execute());"
@@ -89,6 +103,10 @@ final class NodeStorageDeprecatedMethodsRector extends AbstractRector
             new CodeSample(
                 '$storage->userRevisionIds($account);',
                 "array_keys(\$storage->getQuery()->allRevisions()->accessCheck(FALSE)->condition('uid', \$account->id())->execute());"
+            ),
+            new CodeSample(
+                '$storage->countDefaultLanguageRevisions($node);',
+                ''
             ),
         ]);
     }

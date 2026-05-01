@@ -39,7 +39,14 @@ final class RemoveModuleHandlerAddModuleCallsRector extends AbstractRector
             return null;
         }
 
-        if (!$this->isObjectType($methodCall->var, new ObjectType('Drupal\Core\Extension\ModuleHandlerInterface'))) {
+        $isModuleHandler = false;
+        foreach (['Drupal\Core\Extension\ModuleHandlerInterface', 'Drupal\Core\Extension\ModuleHandler'] as $class) {
+            if ($this->isObjectType($methodCall->var, new ObjectType($class))) {
+                $isModuleHandler = true;
+                break;
+            }
+        }
+        if (!$isModuleHandler) {
             return null;
         }
 
