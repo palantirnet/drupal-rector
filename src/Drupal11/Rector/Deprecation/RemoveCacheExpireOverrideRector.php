@@ -26,6 +26,13 @@ final class RemoveCacheExpireOverrideRector extends AbstractRector
 
     private const PARENT_SHORT_NAMES = ['CachePluginBase', 'Time', 'Tag', 'None'];
 
+    private const PARENT_FQCNS = [
+        'Drupal\views\Plugin\views\cache\CachePluginBase',
+        'Drupal\views\Plugin\views\cache\Time',
+        'Drupal\views\Plugin\views\cache\Tag',
+        'Drupal\views\Plugin\views\cache\None',
+    ];
+
     public function getRuleDefinition(): RuleDefinition
     {
         return new RuleDefinition(
@@ -70,13 +77,19 @@ final class RemoveCacheExpireOverrideRector extends AbstractRector
 
         $parentName = $node->extends->toString();
 
-        if ($parentName === self::CACHE_PLUGIN_BASE_FQCN) {
-            return true;
+        // Match fully-qualified names (Rector resolves `use` aliases before calling refactor).
+        foreach (self::PARENT_FQCNS as $fqcn) {
+            if ($parentName === $fqcn) {
+                return true;
+            }
         }
 
-        foreach (self::PARENT_SHORT_NAMES as $short) {
-            if ($parentName === $short || str_ends_with($parentName, '\\'.$short)) {
-                return true;
+        // Match unqualified short names (no `use` statement, global-namespace usage).
+        if (!str_contains($parentName, '\\')) {
+            foreach (self::PARENT_SHORT_NAMES as $short) {
+                if ($parentName === $short) {
+                    return true;
+                }
             }
         }
 
