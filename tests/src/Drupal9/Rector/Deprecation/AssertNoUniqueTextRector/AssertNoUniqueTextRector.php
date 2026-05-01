@@ -7,13 +7,15 @@ namespace Drupal9\Rector\Deprecation\AssertNoUniqueTextRector;
 use Iterator;
 use Rector\Testing\PHPUnit\AbstractRectorTestCase;
 
+#[\PHPUnit\Framework\Attributes\CoversFunction('refactor')]
 class AssertNoUniqueTextRector extends AbstractRectorTestCase
 {
-    /**
-     * @covers ::refactor
-     *
-     * @dataProvider provideData
-     */
+    public function __construct()
+    {
+        parent::__construct(static::class);
+    }
+
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideData')]
     public function test(string $filePath): void
     {
         $this->doTestFile($filePath);

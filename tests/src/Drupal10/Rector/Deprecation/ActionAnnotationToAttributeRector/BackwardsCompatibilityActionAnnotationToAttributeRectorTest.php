@@ -12,13 +12,10 @@ class Drupal
     public const VERSION = '11.0.x-dev';
 }
 
+#[\PHPUnit\Framework\Attributes\CoversFunction('refactor')]
 class BackwardsCompatibilityActionAnnotationToAttributeRectorTest extends AbstractRectorTestCase
 {
-    /**
-     * @covers ::refactor
-     *
-     * @dataProvider provideData
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideData')]
     public function test(string $filePath): void
     {
         $this->doTestFile($filePath);

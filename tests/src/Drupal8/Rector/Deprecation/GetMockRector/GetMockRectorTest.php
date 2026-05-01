@@ -9,9 +9,7 @@ use Rector\Testing\PHPUnit\AbstractRectorTestCase;
 
 class GetMockRectorTest extends AbstractRectorTestCase
 {
-    /**
-     * @dataProvider provideData
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideData')]
     public function test(string $filePath): void
     {
         $this->doTestFile($filePath);

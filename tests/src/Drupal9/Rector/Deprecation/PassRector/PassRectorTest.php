@@ -7,13 +7,10 @@ namespace Drupal9\Rector\Deprecation\PassRector;
 use Iterator;
 use Rector\Testing\PHPUnit\AbstractRectorTestCase;
 
+#[\PHPUnit\Framework\Attributes\CoversFunction('refactor')]
 class PassRectorTest extends AbstractRectorTestCase
 {
-    /**
-     * @covers ::refactor
-     *
-     * @dataProvider provideData
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideData')]
     public function test(string $filePath): void
     {
         if (str_contains($filePath, 'skip') && method_exists($this, 'doTestFileExpectingWarningAboutRuleApplied')) {
