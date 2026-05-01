@@ -514,9 +514,14 @@ Tasks:
 - Change record: https://www.drupal.org/node/2010202
 
 Tasks:
-- [ ] **Analyze** — compare rector against drupal-digest source and change record; document gaps
-- [ ] **Coverage** — add fixture for result used inline (not assigned); result used as argument to another function
-- [ ] **Edge cases** — test: call with zero args (should NOT be touched — currently no guard against this); the `$comment` argument being a complex expression (`$this->getComment()`) → becomes `$this->getComment()->permalink()`
+- [x] **Analyze** — gaps found:
+  - Rector and digest are functionally identical in logic; one deprecated item (`comment_uri()`), fully handled
+  - Zero-arg guard exists (`count($node->args) < 1`) — contrary to the task note, it IS already guarded
+  - `@see` URL in rector uses `node/2010202`; Drupal core's actual deprecation notice (in `CommentUriDeprecationTest.php`) says `node/3384294` — minor discrepancy, both refer to the same change
+  - Deprecation version (`drupal:11.3.0`) and removal version (`drupal:12.0.0`) are correct per core source
+  - No type guard — any function named `comment_uri` with at least one arg is transformed; acceptable given the function name is unique to Drupal's comment module
+- [x] **Coverage** — added `fixture/inline_usage.php.inc` (`print comment_uri($comment)` → `print $comment->permalink()`); added `fixture/as_argument.php.inc` (result as argument to another function); all 5 tests pass
+- [x] **Edge cases** — added `fixture/no_change_zero_args.php.inc` (zero-arg call correctly not touched — guard confirmed working); added `fixture/complex_expression.php.inc` (`comment_uri($this->getComment())` → `$this->getComment()->permalink()`); all 5 tests pass
 
 ---
 
