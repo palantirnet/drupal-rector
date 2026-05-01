@@ -1,6 +1,6 @@
 # Rector QA Checklist
 
-**Next:** [`ReplaceUserSessionNamePropertyRector`](#replaceusersessionnamepropertyrector)
+**Next:** [`ReplaceViewsProceduralFunctionsRector`](#replaceviewsproceduralrector)
 
 
 Living checklist for every rector added in the `main-bbrala` branch. Each rector gets three tasks: **Analyze**, **Coverage**, and **Edge cases**. Work through them iteratively — check a box when it is done.
@@ -770,9 +770,9 @@ Tasks:
 - Change record: https://www.drupal.org/node/3513856
 
 Tasks:
-- [ ] **Analyze** — compare rector against drupal-digest source and change record; document gaps
-- [ ] **Coverage** — add fixture for: `$session->name` used in a string; used as a method argument; used in a comparison
-- [ ] **Edge cases** — test: `->name` on an unrelated class not typed as `UserSession` (type guard check); write access `$session->name = 'value'` (should NOT be changed — only read access is deprecated); null-safe `$session?->name`
+- [x] **Analyze** — **gap fixed**: digest has a `$this->name` guard (to prevent infinite recursion if run inside `UserSession::getAccountName()` which reads `$this->name`); rector was missing this guard — added `if ($node->var instanceof Variable && getName($node->var) === 'this') { return null; }`; `@see node/3513856` matches both rector and digest; only read access (`PropertyFetch`) handled — `PropertyAssign` is write access via a different node type (`Assign`); versions correct (`drupal:11.3.0` / `drupal:12.0.0`)
+- [x] **Coverage** — `basic.php.inc` covered `@var`-annotated local variable; added `fixture/inline_usage.php.inc`: `$session->name` in `if` condition, return statement, and string concatenation; all 4 tests pass
+- [x] **Edge cases** — added `fixture/no_change_this.php.inc`: `$this->name` inside a `UserSession` subclass → correctly not transformed (guard prevents infinite recursion); added `fixture/nullsafe.php.inc`: `$session?->name` → `NullsafePropertyFetch` is a different node type from `PropertyFetch` — not handled by this rector (documents known limitation); write access `$session->name = $v` is `Assign` not `PropertyFetch` so naturally not targeted; all 4 tests pass
 
 ---
 
