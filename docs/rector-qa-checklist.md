@@ -1,6 +1,6 @@
 # Rector QA Checklist
 
-**Next:** [`ReplaceSessionWritesWithRequestSessionRector`](#replacesessionwriteswithrequestsessionrector)
+**Next:** [`ReplaceSystemPerformanceGzipKeyRector`](#replacesystemperformancegzipkeyrector)
 
 
 Living checklist for every rector added in the `main-bbrala` branch. Each rector gets three tasks: **Analyze**, **Coverage**, and **Edge cases**. Work through them iteratively — check a box when it is done.
@@ -731,9 +731,9 @@ Tasks:
 - Change record: https://www.drupal.org/node/3518527
 
 Tasks:
-- [ ] **Analyze** — compare rector against drupal-digest source and change record; confirm all `$_SESSION` write operations (set, unset, clear) are handled
-- [ ] **Coverage** — add fixture for: `$_SESSION['key'] = $value`; `unset($_SESSION['key'])`; `$_SESSION = []`; `$_SESSION['nested']['key'] = $value`
-- [ ] **Edge cases** — test: `$_SESSION['key']` read access (should NOT be changed, only writes); `$_SESSION` passed by reference; `$_SESSION` in a global scope vs inside a function
+- [x] **Analyze** — rector and digest are logically identical; only `$_SESSION['key'] = $value` writes are handled (Assign node); `unset($_SESSION['key'])` (Unset_ node) and `$_SESSION = []` (plain Variable, not ArrayDimFetch) are out of scope — known limitations; `$_SESSION['outer']['inner'] = $v` nested writes not handled (guard requires `$arrayDimFetch->var` to be a `Variable`, not another `ArrayDimFetch`); `@see node/3518527` correct; version `drupal:11.2.0` correct; no removal version in docblock (deprecated, not removed, as of 11.2.0)
+- [x] **Coverage** — `basic.php.inc` covered string literal and dynamic key forms; added `fixture/in_function.php.inc`: writes inside a function body and with concatenated key; all 4 tests pass
+- [x] **Edge cases** — added `fixture/no_change_read_access.php.inc`: `$value = $_SESSION['key']`, `isset()`, and `echo` on `$_SESSION` → all correctly not transformed; added `fixture/no_change_nested_and_clear.php.inc`: nested write, bare `$_SESSION = []`, and `unset()` → all not transformed; known limitations documented inline; all 4 tests pass
 
 ---
 
