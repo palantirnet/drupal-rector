@@ -8,6 +8,8 @@ use PhpParser\Node;
 use PhpParser\Node\Arg;
 use PhpParser\Node\Expr\Assign;
 use PhpParser\Node\Expr\MethodCall;
+use PhpParser\Node\Expr\NullsafeMethodCall;
+use PhpParser\Node\Expr\NullsafePropertyFetch;
 use PhpParser\Node\Expr\PropertyFetch;
 use PhpParser\Node\Expr\Variable;
 use Rector\Rector\AbstractRector;
@@ -26,16 +28,25 @@ final class ReplaceEntityOriginalPropertyRector extends AbstractRector
 {
     public function getNodeTypes(): array
     {
-        return [PropertyFetch::class, Assign::class];
+        return [PropertyFetch::class, NullsafePropertyFetch::class, Assign::class];
     }
 
     public function refactor(Node $node): mixed
     {
-        // Step 1: $entity->original → $entity->getOriginal()
+        // Step 1a: $entity->original → $entity->getOriginal()
         // (skip $this->original — non-entity classes have a legitimate $original property)
         if ($node instanceof PropertyFetch) {
             if ($this->isName($node->name, 'original') && !$this->isThisVar($node->var)) {
                 return new MethodCall($node->var, 'getOriginal');
+            }
+
+            return null;
+        }
+
+        // Step 1b: $entity?->original → $entity?->getOriginal()
+        if ($node instanceof NullsafePropertyFetch) {
+            if ($this->isName($node->name, 'original') && !$this->isThisVar($node->var)) {
+                return new NullsafeMethodCall($node->var, 'getOriginal');
             }
 
             return null;
