@@ -1,15 +1,16 @@
 <?php
 
-$this->moduleHandler->loadAllIncludes('install');
-$this->moduleHandler->loadAllIncludes('inc', 'admin');
+/** @var \Drupal\Core\Extension\ModuleHandlerInterface $moduleHandler */
+$moduleHandler->loadAllIncludes('install');
+$moduleHandler->loadAllIncludes('inc', 'admin');
 ?>
 -----
 <?php
 
-foreach ($this->moduleHandler->getModuleList() as $module => $filename) {
-    $this->moduleHandler->loadInclude($module, 'install');
+foreach ($moduleHandler->getModuleList() as $module => $filename) {
+    $moduleHandler->loadInclude($module, 'install');
 }
-foreach ($this->moduleHandler->getModuleList() as $module => $filename) {
-    $this->moduleHandler->loadInclude($module, 'inc', 'admin');
+foreach ($moduleHandler->getModuleList() as $module => $filename) {
+    $moduleHandler->loadInclude($module, 'inc', 'admin');
 }
 ?>

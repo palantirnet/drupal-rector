@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace DrupalRector\Drupal11\Rector\Deprecation;
 
 use PhpParser\Node;
+use PHPStan\Type\ObjectType;
 use Rector\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
@@ -34,6 +35,10 @@ final class LoadAllIncludesRector extends AbstractRector
         $methodCall = $node->expr;
 
         if (!$this->isName($methodCall->name, 'loadAllIncludes')) {
+            return null;
+        }
+
+        if (!$this->isObjectType($methodCall->var, new ObjectType('Drupal\Core\Extension\ModuleHandlerInterface'))) {
             return null;
         }
 
