@@ -1,6 +1,6 @@
 # Rector QA Checklist
 
-**Next:** [`ReplaceCommentManagerGetCountNewCommentsRector`](#replacecommentmanagergetcountnewcommentsrector)
+**Next:** [`ReplaceEntityReferenceRecursiveLimitRector`](#replaceentityreferencerecursivelimitrector)
 
 Living checklist for every rector added in the `main-bbrala` branch. Each rector gets three tasks: **Analyze**, **Coverage**, and **Edge cases**. Work through them iteratively — check a box when it is done.
 
