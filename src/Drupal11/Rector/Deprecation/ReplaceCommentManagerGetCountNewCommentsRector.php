@@ -15,7 +15,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 /**
  * Replaces deprecated CommentManagerInterface::getCountNewComments() calls.
  *
- * @see https://www.drupal.org/node/3543035
+ * @see https://www.drupal.org/node/3551729
  */
 final class ReplaceCommentManagerGetCountNewCommentsRector extends AbstractDrupalCoreRector
 {
