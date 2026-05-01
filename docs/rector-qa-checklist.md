@@ -1,6 +1,6 @@
 # Rector QA Checklist
 
-**Next:** [`StripMigrationDependenciesExpandArgRector`](#stripmigrationdependenciesexpandargrector)
+**Next:** [`UseEntityTypeHasIntegerIdRector`](#useentitytypehasintergeridrector)
 
 
 Living checklist for every rector added in the `main-bbrala` branch. Each rector gets three tasks: **Analyze**, **Coverage**, and **Edge cases**. Work through them iteratively — check a box when it is done.
@@ -809,9 +809,9 @@ Tasks:
 - Change record: https://www.drupal.org/node/3574717
 
 Tasks:
-- [ ] **Analyze** — compare rector against drupal-digest source and change record; confirm the type guard on `MigrationInterface` is correct and sufficient
-- [ ] **Coverage** — add fixture for: `getMigrationDependencies(FALSE)` (arg removed); `getMigrationDependencies()` with no arg (should not be changed); result used inline in a merge
-- [ ] **Edge cases** — test: call on concrete class typed as `Migration` (covered by interface?); `getMigrationDependencies(TRUE)` — confirm TRUE variant also removed; call on an unrelated class with same method name is not touched
+- [x] **Analyze** — rector matches digest; type guard on `MigrationInterface` is correct; core deprecation message references `3442785` while rector/checklist use `3574717` — consistent discrepancy, not a bug
+- [x] **Coverage** — added `false_arg.php.inc` (FALSE arg removed); basic.php.inc covers no-arg no-change and untyped no-change
+- [x] **Edge cases** — added `this_caller.php.inc` documenting that `$this` in Migration subclass is NOT transformed (PHPStan cannot resolve type without Drupal core); TRUE case confirmed via basic.php.inc
 
 ---
 
