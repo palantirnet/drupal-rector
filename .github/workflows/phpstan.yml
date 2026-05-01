@@ -20,9 +20,6 @@ jobs:
             matrix:
                 include:
                     - php-version: "8.2"
-                      rector: "^1"
-                      phpstan-config: phpstan-1.neon
-                    - php-version: "8.2"
                       rector: "^2"
                       phpstan-config: phpstan.neon
         steps:
