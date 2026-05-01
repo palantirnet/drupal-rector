@@ -26,7 +26,7 @@ final class UseEntityTypeHasIntegerIdRector extends AbstractRector
 {
     private const METHOD_OWNER_CLASS = [
         'entityTypeSupportsComments' => 'Drupal\comment\CommentTypeForm',
-        'hasIntegerId'               => 'Drupal\layout_builder\Plugin\SectionStorage\OverridesSectionStorage',
+        'hasIntegerId' => 'Drupal\layout_builder\Plugin\SectionStorage\OverridesSectionStorage',
     ];
 
     private const GET_ENTITY_TYPE_ID_KEY_TYPE_CLASS = 'Drupal\Core\Entity\Routing\DefaultHtmlRouteProvider';
