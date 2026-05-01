@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace DrupalRector\Drupal11\Rector\Deprecation;
 
 use PhpParser\Node;
+use PHPStan\Type\ObjectType;
 use Rector\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
@@ -40,6 +41,10 @@ final class PluginBaseIsConfigurableRector extends AbstractRector
         }
 
         if ($this->getName($node->var) !== 'this') {
+            return null;
+        }
+
+        if (!$this->isObjectType($node->var, new ObjectType('Drupal\Component\Plugin\PluginBase'))) {
             return null;
         }
 

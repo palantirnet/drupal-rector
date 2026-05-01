@@ -8,6 +8,7 @@ use PhpParser\Node;
 use PhpParser\Node\Arg;
 use PhpParser\Node\Expr\ConstFetch;
 use PhpParser\Node\Expr\MethodCall;
+use PHPStan\Type\ObjectType;
 use Rector\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
@@ -44,6 +45,9 @@ final class RemoveConfigSaveTrustedDataArgRector extends AbstractRector
     public function refactor(Node $node): ?Node
     {
         if (!$this->isName($node->name, 'save')) {
+            return null;
+        }
+        if (!$this->isObjectType($node->var, new ObjectType('Drupal\Core\Config\Config'))) {
             return null;
         }
         if (count($node->args) !== 1) {

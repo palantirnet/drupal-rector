@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace DrupalRector\Drupal11\Rector\Deprecation;
 
 use PhpParser\Node;
+use PHPStan\Type\ObjectType;
 use Rector\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
@@ -23,7 +24,12 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  */
 final class UseEntityTypeHasIntegerIdRector extends AbstractRector
 {
-    private const SIMPLE_METHODS = ['entityTypeSupportsComments', 'hasIntegerId'];
+    private const METHOD_OWNER_CLASS = [
+        'entityTypeSupportsComments' => 'Drupal\comment\CommentTypeForm',
+        'hasIntegerId'               => 'Drupal\layout_builder\Plugin\SectionStorage\OverridesSectionStorage',
+    ];
+
+    private const GET_ENTITY_TYPE_ID_KEY_TYPE_CLASS = 'Drupal\Core\Entity\Routing\DefaultHtmlRouteProvider';
 
     public function getNodeTypes(): array
     {
@@ -53,6 +59,10 @@ final class UseEntityTypeHasIntegerIdRector extends AbstractRector
             return null;
         }
 
+        if (!$this->isObjectType($methodCall->var, new ObjectType(self::GET_ENTITY_TYPE_ID_KEY_TYPE_CLASS))) {
+            return null;
+        }
+
         if ($string->value !== 'integer' || count($methodCall->args) !== 1) {
             return null;
         }
@@ -67,7 +77,11 @@ final class UseEntityTypeHasIntegerIdRector extends AbstractRector
         }
 
         $name = $this->getName($node->name);
-        if ($name === null || !in_array($name, self::SIMPLE_METHODS, true)) {
+        if ($name === null || !isset(self::METHOD_OWNER_CLASS[$name])) {
+            return null;
+        }
+
+        if (!$this->isObjectType($node->var, new ObjectType(self::METHOD_OWNER_CLASS[$name]))) {
             return null;
         }
 

@@ -8,6 +8,7 @@ use DrupalRector\Contract\VersionedConfigurationInterface;
 use DrupalRector\Rector\AbstractDrupalCoreRector;
 use DrupalRector\Rector\ValueObject\DrupalIntroducedVersionConfiguration;
 use PhpParser\Node;
+use PHPStan\Type\ObjectType;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\ConfiguredCodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
@@ -46,6 +47,10 @@ final class ReplaceRebuildThemeDataRector extends AbstractDrupalCoreRector
         }
 
         if (!$this->isName($node->name, 'rebuildThemeData')) {
+            return null;
+        }
+
+        if (!$this->isObjectType($node->var, new ObjectType('Drupal\Core\Extension\ThemeHandlerInterface'))) {
             return null;
         }
 

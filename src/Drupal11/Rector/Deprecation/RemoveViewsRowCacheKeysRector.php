@@ -9,6 +9,7 @@ use PhpParser\Node\Expr\Array_;
 use PhpParser\Node\Expr\ArrayItem;
 use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Identifier;
+use PHPStan\Type\ObjectType;
 use Rector\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
@@ -57,6 +58,7 @@ final class RemoveViewsRowCacheKeysRector extends AbstractRector
             if ($item->value instanceof MethodCall
                 && $item->value->name instanceof Identifier
                 && in_array($item->value->name->toString(), self::DEPRECATED_METHODS, true)
+                && $this->isObjectType($item->value->var, new ObjectType('Drupal\views\Plugin\views\cache\CachePluginBase'))
             ) {
                 $modified = true;
                 continue;

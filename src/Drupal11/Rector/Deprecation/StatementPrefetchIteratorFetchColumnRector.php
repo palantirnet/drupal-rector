@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace DrupalRector\Drupal11\Rector\Deprecation;
 
 use PhpParser\Node;
+use PHPStan\Type\ObjectType;
 use Rector\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
@@ -31,11 +32,8 @@ final class StatementPrefetchIteratorFetchColumnRector extends AbstractRector
             return null;
         }
 
-        // Skip PDO's native fetchColumn() called on $this->clientStatement.
-        if ($node->var instanceof Node\Expr\PropertyFetch) {
-            if ($this->getName($node->var->name) === 'clientStatement') {
-                return null;
-            }
+        if (!$this->isObjectType($node->var, new ObjectType('Drupal\Core\Database\StatementPrefetchIterator'))) {
+            return null;
         }
 
         $node->name = new Node\Identifier('fetchField');

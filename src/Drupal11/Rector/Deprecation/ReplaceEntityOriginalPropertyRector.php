@@ -12,6 +12,7 @@ use PhpParser\Node\Expr\NullsafeMethodCall;
 use PhpParser\Node\Expr\NullsafePropertyFetch;
 use PhpParser\Node\Expr\PropertyFetch;
 use PhpParser\Node\Expr\Variable;
+use PHPStan\Type\ObjectType;
 use Rector\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
@@ -36,7 +37,10 @@ final class ReplaceEntityOriginalPropertyRector extends AbstractRector
         // Step 1a: $entity->original → $entity->getOriginal()
         // (skip $this->original — non-entity classes have a legitimate $original property)
         if ($node instanceof PropertyFetch) {
-            if ($this->isName($node->name, 'original') && !$this->isThisVar($node->var)) {
+            if ($this->isName($node->name, 'original')
+                && !$this->isThisVar($node->var)
+                && $this->isObjectType($node->var, new ObjectType('Drupal\Core\Entity\EntityInterface'))
+            ) {
                 return new MethodCall($node->var, 'getOriginal');
             }
 
@@ -45,7 +49,10 @@ final class ReplaceEntityOriginalPropertyRector extends AbstractRector
 
         // Step 1b: $entity?->original → $entity?->getOriginal()
         if ($node instanceof NullsafePropertyFetch) {
-            if ($this->isName($node->name, 'original') && !$this->isThisVar($node->var)) {
+            if ($this->isName($node->name, 'original')
+                && !$this->isThisVar($node->var)
+                && $this->isObjectType($node->var, new ObjectType('Drupal\Core\Entity\EntityInterface'))
+            ) {
                 return new NullsafeMethodCall($node->var, 'getOriginal');
             }
 
