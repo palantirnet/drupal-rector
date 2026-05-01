@@ -611,9 +611,9 @@ Tasks:
 - Change record: https://www.drupal.org/node/3494126
 
 Tasks:
-- [ ] **Analyze** — compare rector against drupal-digest source and change record; document gaps
-- [ ] **Coverage** — add fixture for: result used as argument to another function; result used inline in an array; the `$file` argument being a method call expression
-- [ ] **Edge cases** — test: call with zero arguments (should not be touched); call with additional arguments beyond one (should not be touched if the original function only took one)
+- [x] **Analyze** — rector and drupal-digest are functionally identical; `count($node->args) !== 1` guard correctly handles zero-arg and multi-arg cases; `@see` URL (`node/3494126`), deprecation version (`drupal:11.2.0`), and removal version (`drupal:12.0.0`) all correct; no type guard needed — `file_get_content_headers` is unique to Drupal's file module; no gaps
+- [x] **Coverage** — added `fixture/as_argument.php.inc` (result as function argument); `fixture/inline_in_array.php.inc` (result as array value); `fixture/method_call_as_arg.php.inc` (`$this->getFile()` as argument → `$this->getFile()->getDownloadHeaders()`); all 6 tests pass
+- [x] **Edge cases** — added `fixture/no_change_zero_args.php.inc` (zero-arg call not touched — guard confirmed); added `fixture/no_change_multiple_args.php.inc` (two-arg call not touched — guard confirmed); all 6 tests pass
 
 ---
 
