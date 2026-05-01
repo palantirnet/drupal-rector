@@ -1,6 +1,8 @@
 <?php
 
-class MyIdMap
+use Drupal\migrate\Plugin\migrate\id_map\Sql;
+
+class MyIdMap extends Sql
 {
     public function doSomething(array $requirements): array
     {
@@ -12,7 +14,9 @@ class MyIdMap
 -----
 <?php
 
-class MyIdMap
+use Drupal\migrate\Plugin\migrate\id_map\Sql;
+
+class MyIdMap extends Sql
 {
     public function doSomething(array $requirements): array
     {

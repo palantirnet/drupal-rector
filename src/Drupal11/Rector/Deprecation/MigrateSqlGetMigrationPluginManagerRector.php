@@ -53,8 +53,7 @@ final class MigrateSqlGetMigrationPluginManagerRector extends AbstractRector
         if ($node->args !== []) {
             return null;
         }
-        // Migration::getMigrationPluginManager() is NOT deprecated; skip it.
-        if ($this->isObjectType($node->var, new ObjectType('Drupal\migrate\Plugin\Migration'))) {
+        if (!$this->isObjectType($node->var, new ObjectType('Drupal\migrate\Plugin\migrate\id_map\Sql'))) {
             return null;
         }
 
