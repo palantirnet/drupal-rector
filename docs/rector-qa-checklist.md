@@ -1,6 +1,6 @@
 # Rector QA Checklist
 
-**Next:** [`StatementPrefetchIteratorFetchColumnRector`](#statementprefetchiteratorfetchcolumnrector)
+**Next:** [`StripMigrationDependenciesExpandArgRector`](#stripmigrationdependenciesexpandargrector)
 
 
 Living checklist for every rector added in the `main-bbrala` branch. Each rector gets three tasks: **Analyze**, **Coverage**, and **Edge cases**. Work through them iteratively — check a box when it is done.
@@ -796,9 +796,9 @@ Tasks:
 - Change record: https://www.drupal.org/node/3490200
 
 Tasks:
-- [ ] **Analyze** — compare rector against drupal-digest source and change record; confirm the `$this->clientStatement` exclusion guard is correct
-- [ ] **Coverage** — add fixture for: `fetchColumn()` called on `$this->clientStatement` (should NOT be renamed); `fetchColumn()` with an explicit column index argument; `fetchColumn()` with no argument
-- [ ] **Edge cases** — test: `fetchColumn()` on a native `\PDO` object (should NOT be renamed); `fetchColumn()` on any other property fetch that is not `clientStatement` (should be renamed)
+- [x] **Analyze** — rector matches digest exactly; `$this->clientStatement` exclusion guard is correct; @see URL is `3490200` (change record) while core deprecation message references `3490312` — consistent discrepancy, not a bug
+- [x] **Coverage** — added `no_arg.php.inc` (zero-arg call), `chained_call.php.inc` (method-chain receiver); basic.php.inc covers explicit index and clientStatement skip
+- [x] **Edge cases** — added `property_not_client_statement.php.inc` confirming `$this->statement` / `$this->stmt` (non-clientStatement) IS transformed; `$this->clientStatement` stays unchanged (basic.php.inc)
 
 ---
 
