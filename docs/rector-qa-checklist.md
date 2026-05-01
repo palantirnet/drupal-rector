@@ -1,6 +1,6 @@
 # Rector QA Checklist
 
-**Next:** [`UseEntityTypeHasIntegerIdRector`](#useentitytypehasintergeridrector)
+**Next:** [`ViewsPluginHandlerManagerRector`](#viewspluginhandlermanagerrector)
 
 
 Living checklist for every rector added in the `main-bbrala` branch. Each rector gets three tasks: **Analyze**, **Coverage**, and **Edge cases**. Work through them iteratively — check a box when it is done.
@@ -822,9 +822,9 @@ Tasks:
 - Change record: https://www.drupal.org/node/3566801
 
 Tasks:
-- [ ] **Analyze** — compare rector against drupal-digest source and change record; document gaps
-- [ ] **Coverage** — add fixture pairs for all transformation variants in the change record
-- [ ] **Edge cases** — test: function/method used in a boolean context; result negated (`!entityTypeHasIntegerId(...)`); call on different receiver types
+- [x] **Analyze** — rector matches digest; handles all three patterns (`getEntityTypeIdKeyType` === 'integer', `entityTypeSupportsComments`, `hasIntegerId`); both orderings of Identical handled via `extractPair`
+- [x] **Coverage** — basic.php.inc covers all three patterns; added `string_reversed.php.inc` for `'integer' === $this->getEntityTypeIdKeyType(...)` (string on left)
+- [x] **Edge cases** — added `no_change.php.inc` for: non-'integer' string value, non-`$this` receiver on `getEntityTypeIdKeyType`, non-`$this` `entityTypeSupportsComments`
 
 ---
 
