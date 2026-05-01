@@ -1,6 +1,6 @@
 # Rector QA Checklist
 
-**Next:** [`ReplaceSystemPerformanceGzipKeyRector`](#replacesystemperformancegzipkeyrector)
+**Next:** [`ReplaceThemeGetSettingRector`](#replacethemegetsettingrector)
 
 
 Living checklist for every rector added in the `main-bbrala` branch. Each rector gets three tasks: **Analyze**, **Coverage**, and **Edge cases**. Work through them iteratively — check a box when it is done.
@@ -744,9 +744,9 @@ Tasks:
 - Change record: https://www.drupal.org/node/3184242
 
 Tasks:
-- [ ] **Analyze** — compare rector against drupal-digest source and change record; document gaps
-- [ ] **Coverage** — add fixture pairs for all transformation variants in the change record
-- [ ] **Edge cases** — test: the config key used in array access vs `get()`/`set()` method calls; nested config key patterns; unrelated config keys with similar names not touched
+- [x] **Analyze** — rector and digest are logically identical; minor `@see` discrepancy: rector uses `node/3184242` (change record), digest uses `node/3526344`; both handle `get()` and `set()` on the `system.performance` config via a receiver-chain walk that matches `\Drupal::config()`, `\Drupal::configFactory()->get()`/`getEditable()`, and `$this->config()` patterns; exact string key guard (`'css.gzip'` / `'js.gzip'`); variable keys and other config names correctly excluded; versions correct (`drupal:11.4.0` / `drupal:12.0.0`)
+- [x] **Coverage** — `basic.php.inc` covered `get('css.gzip')`, `get('js.gzip')`, `set('css.gzip', ...)`, and unrelated config no-change; added `fixture/set_js_gzip.php.inc`: `set('js.gzip', ...)` forms correctly rewritten; added `fixture/this_config.php.inc`: `$this->config('system.performance')->get/set()` method-chain form; all 4 tests pass
+- [x] **Edge cases** — added `fixture/no_change_unrelated_keys.php.inc`: `'gzip'`, `'css'`, `'css.preprocess'` — exact key guard prevents transformation; variable key `$key` — `String_` node guard prevents transformation; all 4 tests pass
 
 ---
 
