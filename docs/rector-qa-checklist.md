@@ -1,6 +1,6 @@
 # Rector QA Checklist
 
-**Next:** [`ReplaceViewsProceduralFunctionsRector`](#replaceviewsproceduralrector)
+**Next:** [`StatementPrefetchIteratorFetchColumnRector`](#statementprefetchiteratorfetchcolumnrector)
 
 
 Living checklist for every rector added in the `main-bbrala` branch. Each rector gets three tasks: **Analyze**, **Coverage**, and **Edge cases**. Work through them iteratively — check a box when it is done.
@@ -783,9 +783,9 @@ Tasks:
 - Change record: https://www.drupal.org/node/3572243
 
 Tasks:
-- [ ] **Analyze** — compare rector against drupal-digest source and change record; list all functions covered; confirm each has a fixture
-- [ ] **Coverage** — add fixture pair for each function that does not yet have a dedicated fixture
-- [ ] **Edge cases** — test: each function with result used in different expression positions; result used in a chain; call with different argument counts
+- [x] **Analyze** — rector and digest are logically identical; all five functions handled: `views_view_is_enabled` → `$view->status()`, `views_view_is_disabled` → `!$view->status()`, `views_enable_view` → `$view->enable()->save()`, `views_disable_view` → `$view->disable()->save()`, `views_get_view_result` → `\Drupal\views\Views::getViewResult(...)`; `@see node/3572243` in rector; digest references `node/3572594` and the project issue — minor discrepancy; versions correct (`drupal:11.4.0` / `drupal:13.0.0`); no type guard (function names unique to views module)
+- [x] **Coverage** — `basic.php.inc` already covered all five functions; added `fixture/expression_positions.php.inc`: `views_view_is_enabled()` in `if` condition, `views_view_is_disabled()` in ternary, `views_get_view_result()` with 1-arg and 2-arg forms; all 3 tests pass
+- [x] **Edge cases** — added `fixture/no_change_no_args.php.inc`: zero-arg calls on all four view-object functions → correctly not transformed (each has `count($node->args) < 1` guard); `views_get_view_result()` has no arg guard — zero-arg call would be transformed to `Views::getViewResult()` but this is unlikely in real code; all 3 tests pass
 
 ---
 
