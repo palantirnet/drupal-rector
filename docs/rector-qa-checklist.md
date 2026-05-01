@@ -1,6 +1,6 @@
 # Rector QA Checklist
 
-**Next:** [`ReplaceNodeAddBodyFieldRector`](#replacenodeaddbodyfieldrector)
+**Next:** [`ReplaceNodeModuleProceduralFunctionsRector`](#replacenodemoduleproceduralrector)
 
 Living checklist for every rector added in the `main-bbrala` branch. Each rector gets three tasks: **Analyze**, **Coverage**, and **Edge cases**. Work through them iteratively — check a box when it is done.
 
@@ -652,9 +652,9 @@ Tasks:
 - Change record: https://www.drupal.org/node/3489266
 
 Tasks:
-- [ ] **Analyze** — compare rector against drupal-digest source and change record; document gaps
-- [ ] **Coverage** — add fixture pairs for all transformation variants in the change record
-- [ ] **Edge cases** — test: call with multiple arguments; call in a context where the trait import needs to be added (if the rector handles this); call result used inline
+- [x] **Analyze** — rector and digest are logically identical; `@see node/3489266` is the change record (matches digest); both 1-arg and 2-arg forms handled; `node_add_body_field` is fully removed from Drupal 11.x core; rector intentionally does not add `BodyFieldCreationTrait` to the calling class — that is a manual step; no other deprecated items in this change record; versions correct (`drupal:11.3.0` / `drupal:12.0.0`)
+- [x] **Coverage** — `basic.php.inc` already covered 1-arg and 2-arg forms; added `fixture/fqcn_prefix.php.inc`: backslash-prefixed `\node_add_body_field()` — `isName()` resolves the FQCN so both forms are transformed; added `fixture/method_call_arg.php.inc`: first arg is a method call (`$this->getNodeType()`) — `->id()` is correctly applied; all 4 tests pass
+- [x] **Edge cases** — added `fixture/no_change_no_args.php.inc`: zero-arg call correctly not transformed (`empty($node->args)` guard confirmed); rector does not add `BodyFieldCreationTrait` — manual step documented above; all 4 tests pass
 
 ---
 
