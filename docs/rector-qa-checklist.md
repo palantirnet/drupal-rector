@@ -501,9 +501,14 @@ Tasks:
 - Change record: https://www.drupal.org/node/3543035
 
 Tasks:
-- [ ] **Analyze** — compare rector against drupal-digest source and change record; document gaps
-- [ ] **Coverage** — add fixture pairs for all transformation variants in the change record
-- [ ] **Edge cases** — test: call on `$this->commentManager`; call via `\Drupal::service('comment.manager')`; receiver typed as concrete class vs interface
+- [x] **Analyze** — gaps found:
+  - `@see` in rector docblock pointed to `node/3543035` (the drupal-digests issue); the actual Drupal core deprecation notice in `CommentManagerInterface.php` references `node/3551729` — **fixed** to use the correct change record URL
+  - Both rector and drupal-digest use `isObjectType(CommentManagerInterface)` as a type guard — consistent
+  - Single deprecated item (`getCountNewComments()`), fully handled; all arguments passed through via `$node->args`
+  - BC-wrap via `AbstractDrupalCoreRector::createBcCallOnExpr()` with version `11.3.0` — correct (deprecated in drupal:11.3.0, removed in drupal:12.0.0)
+  - Rector and digest are functionally identical; no missing items
+- [x] **Coverage** — added `fixture/class_property.php.inc`: `$this->commentManager->getCountNewComments($entity)` with interface-typed property → BC-wrapped; added `fixture/multiple_args.php.inc`: all three arguments (`$entity, 'comment', 0`) passed through correctly; 3 tests pass
+- [x] **Edge cases** — added `fixture/no_change_service_call.php.inc`: `\Drupal::service('comment.manager')->getCountNewComments($entity)` — `service()` returns mixed, type guard does not fire, correctly not transformed; added `fixture/concrete_class.php.inc`: receiver typed as `\Drupal\comment\CommentManager` — PHPStan does not resolve the implements-interface relationship without full class loading, so this is a no-change case (documented as known limitation); added `fixture/no_change_unrelated.php.inc`: `getCountNewComments()` on an `UnrelatedManager`-typed var → correctly not transformed; 6/6 tests pass
 
 ---
 
@@ -545,9 +550,14 @@ Tasks:
 - Change record: https://www.drupal.org/node/3447794
 
 Tasks:
-- [ ] **Analyze** — compare rector against drupal-digest source and change record; document gaps
-- [ ] **Coverage** — add fixture for result used inline (not assigned); result used as argument
-- [ ] **Edge cases** — test: call with no argument (should not be touched); call with multiple arguments (should not be touched if the function signature changed); unrelated `editor_load()` in a different namespace context
+- [x] **Analyze** — gaps found:
+  - `@see` in rector (node/3447794) matches the drupal-digest source; Drupal core's `editor_load()` deprecation notice in `editor.module:87` links to `node/3509245` — same change, minor discrepancy
+  - Rector and drupal-digest are logically equivalent; both produce `\Drupal::entityTypeManager()->getStorage('editor')->load($format_id)`
+  - **Gap fixed**: rector had no argument-count guard — `editor_load()` (0 args) and `editor_load($a, $b)` (2 args) would have been transformed incorrectly; added `count($node->args) !== 1` guard
+  - No type guard needed — `editor_load` is a global function unique to Drupal's editor module; false-positive risk is negligible
+  - Versions correct: deprecated in drupal:11.2.0, removed in drupal:12.0.0
+- [x] **Coverage** — added `fixture/inline_usage.php.inc` (`print editor_load($format_id)` → `print \Drupal::entityTypeManager()->getStorage('editor')->load($format_id)`); added `fixture/as_argument.php.inc` (result passed to another function); all 6 tests pass
+- [x] **Edge cases** — added `fixture/no_change_no_arg.php.inc` (0-arg call not touched — guard confirmed); added `fixture/no_change_multiple_args.php.inc` (2-arg call not touched — guard confirmed); added `fixture/no_change_method_call.php.inc` (`$this->editor_load()` method call on a class — not a `FuncCall` node, correctly not transformed); all 6 tests pass
 
 ---
 

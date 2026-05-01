@@ -34,6 +34,10 @@ final class ReplaceEditorLoadRector extends AbstractRector
             return null;
         }
 
+        if (count($node->args) !== 1) {
+            return null;
+        }
+
         $entityTypeManager = $this->nodeFactory->createStaticCall('Drupal', 'entityTypeManager');
         $getStorage = $this->nodeFactory->createMethodCall($entityTypeManager, 'getStorage', [new String_('editor')]);
 
