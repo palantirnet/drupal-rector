@@ -6,6 +6,7 @@ namespace DrupalRector\Drupal11\Rector\Deprecation;
 
 use PhpParser\Node;
 use PhpParser\Node\Arg;
+use PhpParser\Node\Expr\ClassConstFetch;
 use PhpParser\Node\Expr\FuncCall;
 use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\StaticCall;
@@ -19,8 +20,8 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 /**
  * Replaces deprecated Node module procedural functions with their successors.
  *
- * node_type_get_names() and node_get_type_label() are deprecated in
- * drupal:11.3.0 and removed in drupal:13.0.0.
+ * node_type_get_names(), node_get_type_label(), and node_mass_update() are
+ * deprecated in drupal:11.3.0 and removed in drupal:13.0.0.
  *
  * @see https://www.drupal.org/node/3571623
  */
@@ -39,6 +40,10 @@ final class ReplaceNodeModuleProceduralFunctionsRector extends AbstractRector
                     'node_get_type_label($node);',
                     '$node->getBundleEntity()->label();'
                 ),
+                new CodeSample(
+                    'node_mass_update($nids, $updates, NULL, TRUE);',
+                    '\\Drupal::service(\\Drupal\\node\\NodeBulkUpdate::class)->process($nids, $updates, NULL, TRUE);'
+                ),
             ]
         );
     }
@@ -51,6 +56,8 @@ final class ReplaceNodeModuleProceduralFunctionsRector extends AbstractRector
 
     public function refactor(Node $node): ?Node
     {
+        assert($node instanceof FuncCall);
+
         if (!$node->name instanceof Name) {
             return null;
         }
@@ -58,6 +65,7 @@ final class ReplaceNodeModuleProceduralFunctionsRector extends AbstractRector
         return match ($node->name->toString()) {
             'node_type_get_names' => $this->refactorNodeTypeGetNames(),
             'node_get_type_label' => $this->refactorNodeGetTypeLabel($node),
+            'node_mass_update' => $this->refactorNodeMassUpdate($node),
             default => null,
         };
     }
@@ -84,5 +92,23 @@ final class ReplaceNodeModuleProceduralFunctionsRector extends AbstractRector
             new MethodCall($nodeArg, 'getBundleEntity'),
             'label'
         );
+    }
+
+    private function refactorNodeMassUpdate(FuncCall $node): ?Node
+    {
+        if (count($node->args) < 2) {
+            return null;
+        }
+
+        $serviceCall = new StaticCall(
+            new FullyQualified('Drupal'),
+            'service',
+            [new Arg(new ClassConstFetch(
+                new FullyQualified('Drupal\node\NodeBulkUpdate'),
+                'class'
+            ))]
+        );
+
+        return new MethodCall($serviceCall, 'process', $node->args);
     }
 }

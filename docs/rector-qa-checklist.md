@@ -1,6 +1,6 @@
 # Rector QA Checklist
 
-**Next:** [`ReplaceNodeModuleProceduralFunctionsRector`](#replacenodemoduleproceduralrector)
+**Next:** [`ReplaceNodeSetPreviewModeRector`](#replacenodesetpreviewmoderector)
 
 Living checklist for every rector added in the `main-bbrala` branch. Each rector gets three tasks: **Analyze**, **Coverage**, and **Edge cases**. Work through them iteratively — check a box when it is done.
 
@@ -665,9 +665,9 @@ Tasks:
 - Change record: https://www.drupal.org/node/3571623
 
 Tasks:
-- [ ] **Analyze** — compare rector against drupal-digest source and change record; list all functions covered; confirm each has a fixture
-- [ ] **Coverage** — add fixture pair for each function that does not yet have a dedicated fixture
-- [ ] **Edge cases** — test: each function with result used in different expression positions; each function with different argument types/counts
+- [x] **Analyze** — digest handles 3 functions; rector originally only handled 2 — **gap fixed**: added `node_mass_update()` → `\Drupal::service(\Drupal\node\NodeBulkUpdate::class)->process(...)` handling; `node_type_get_names()` and `node_get_type_label()` were already correct; `@see node/3571623` matches; all three functions fully removed from Drupal 11.x core; fixed pre-existing PHPStan error (missing `assert($node instanceof FuncCall)` in `refactor()`); versions correct (`drupal:11.3.0` / `drupal:13.0.0`)
+- [x] **Coverage** — added `fixture/node_mass_update.php.inc`: 2-arg and 5-arg forms of `node_mass_update()` correctly transformed; added `fixture/expression_positions.php.inc`: `node_type_get_names()` as assignment RHS and `if` condition; `node_get_type_label()` with method-call arg; all 4 tests pass
+- [x] **Edge cases** — added `fixture/no_change_mass_update_too_few_args.php.inc`: `node_mass_update($nids)` with only 1 arg → correctly not transformed (guard: `count($node->args) < 2`); all 4 tests pass
 
 ---
 
