@@ -1,357 +1,554 @@
-# Digest vs Rector Comparison Report (Fresh)
+# Drupal Digest → Drupal Rector Comparison Report (Fresh Digest)
 
-Generated: 2026-05-02
-Branch: feature/digest-rectors
-Digest source: ~/projects/drupal-digest-fresh/rector/
+Compares each rector added in branch `feature/digest-rectors` against its source in
+[drupal-digest-fresh](https://github.com/dbuytaert/drupal-digests) (regenerated with improved prompt).
+
+**Total rectors compared:** 50
+**Significant changes:** 28
+**Minimal changes:** 22
+**Split from one digest file:** 1 pair (`RemoveTrustDataCallRector` + `RemoveConfigSaveTrustedDataArgRector`)
 
 ---
 
 ## Overview Table
 
-| Rector | Issue | Digest File | Rector File | Notable Changes | Status |
+> Paths are relative to each repo root. Digest paths are relative to `drupal-digest-fresh/`.
+> `†` = rector `@see` issue number differs from the digest filename — see [Notes](#notes-on-digest-file-mapping).
+
+| Rector | Ver | Changes | Issue | Digest source | Rector destination |
 |---|---|---|---|---|---|
-| ReplaceModuleHandlerGetNameRector | [#3571063](https://drupal.org/i/3571063) | `rules/replace-removed-modulehandlerinterface-getname-with-3571063.php` | `src/Drupal10/Rector/Deprecation/ReplaceModuleHandlerGetNameRector.php` | Integrated into drupal-rector framework (AbstractDrupalCoreRector, DrupalIntroducedVersionConfiguration, ConfiguredCodeSample); namespace added; class name preserved | Substantial |
-| ReplaceRebuildThemeDataRector | [#3571068](https://drupal.org/i/3571068) | `rules/replace-removed-themehandlerinterface-rebuildthemedata-with-3571068.php` | `src/Drupal10/Rector/Deprecation/ReplaceRebuildThemeDataRector.php` | Integrated into framework (AbstractDrupalCoreRector, versioned configuration); namespace added; type check added; class name preserved | Substantial |
-| ReplaceRequestTimeConstantRector | [#3395986](https://drupal.org/i/3395986) | `rules/add-timeinterface-time-argument-to-plugin-constructor-3395986.php` | `src/Drupal10/Rector/Deprecation/ReplaceRequestTimeConstantRector.php` | **Completely different rule**: digest adds `?TimeInterface $time` constructor arguments to plugin subclasses; rector replaces `REQUEST_TIME` constant with `\Drupal::time()->getRequestTime()`. Same issue ID, entirely different transformation. | Substantial |
-| ErrorCurrentErrorHandlerRector | [#3526515](https://drupal.org/i/3526515) | `rules/replace-error-currenterrorhandler-with-get-error-handler-3526515.php` | `src/Drupal11/Rector/Deprecation/ErrorCurrentErrorHandlerRector.php` | Namespace added; type check uses `ObjectType` import (rector) vs inline `new \PHPStan\Type\ObjectType` (digest); `@param StaticCall $node` doc comment dropped; logic identical | Minor/Style-only |
-| FileSystemBasenameToNativeRector | [#3530461](https://drupal.org/i/3530461) | `rules/replace-filesysteminterface-basename-with-native-basename-3530461.php` | `src/Drupal11/Rector/Deprecation/FileSystemBasenameToNativeRector.php` | Namespace added; type-check strategy changed: rector uses `$this->isObjectType()` (both classes checked in loop) whereas digest calls `$callerType->isSuperTypeOf()` (the PHPStan direction differs); logic semantically equivalent | Minor/Style-only |
-| LoadAllIncludesRector | [#3536431](https://drupal.org/i/3536431) | `rules/replace-deprecated-modulehandler-loadallincludes-with-3536431.php` | `src/Drupal11/Rector/Deprecation/LoadAllIncludesRector.php` | Namespace added; rector adds `ModuleHandlerInterface` type guard (digest omits it); minor import cleanup | Substantial |
-| MigrateSqlGetMigrationPluginManagerRector | [#3439369](https://drupal.org/i/3439369) | `rules/replace-deprecated-sql-getmigrationpluginmanager-with-3439369.php` | `src/Drupal11/Rector/Deprecation/MigrateSqlGetMigrationPluginManagerRector.php` | Namespace added; rector uses `isObjectType(new ObjectType('Drupal\migrate\Plugin\migrate\id_map\Sql'))` to whitelist; digest uses an explicit exclusion of `Migration::getMigrationPluginManager()` instead. Logic direction inverted but functionally similar. | Substantial |
-| NodeStorageDeprecatedMethodsRector | [#3396062](https://drupal.org/i/3396062) | `rules/replace-deprecated-nodestorage-revisionids-and-3396062.php` | `src/Drupal11/Rector/Deprecation/NodeStorageDeprecatedMethodsRector.php` | Namespace added; rector adds `countDefaultLanguageRevisions` removal (removes the whole statement via `NodeVisitor::REMOVE_NODE`); digest does not handle `countDefaultLanguageRevisions`; rector also registers `Expression::class` in `getNodeTypes()` for this removal | Substantial |
-| PluginBaseIsConfigurableRector | [#3459533](https://drupal.org/i/3459533) | `rules/replace-deprecated-pluginbase-isconfigurable-with-3459533.php` | `src/Drupal11/Rector/Deprecation/PluginBaseIsConfigurableRector.php` | Namespace added; rector adds a `PluginBase` `ObjectType` check (not in digest); digest targets `$this->isConfigurable()` by restricting to `Variable` + name=`this` only (no type check), rector adds both that restriction AND a `PluginBase` type guard | Substantial |
-| RemoveAutomatedCronSubmitHandlerRector | [#3566768](https://drupal.org/i/3566768) | `rules/remove-deprecated-automated-cron-settings-submit-calls-and-3566768.php` | `src/Drupal11/Rector/Deprecation/RemoveAutomatedCronSubmitHandlerRector.php` | Namespace added; class renamed from `RemoveAutomatedCronSettingsSubmitHandlerRector` to `RemoveAutomatedCronSubmitHandlerRector`; rector also drops the `Rector\Removing\Rector\FuncCall\RemoveFuncCallRector` dependency in the digest (digest relied on a second built-in rector for direct function calls; rector omits that); logic for `$form['#submit'][]` removal is identical | Substantial |
-| RemoveCacheExpireOverrideRector | [#3576556](https://drupal.org/i/3576556) | `rules/remove-deprecated-cacheexpire-overrides-from-views-3576556.php` | `src/Drupal11/Rector/Deprecation/RemoveCacheExpireOverrideRector.php` | Namespace added; rector adds a `PARENT_FQCNS` constant and `isObjectType` fallback for deeper class hierarchies; digest uses only string matching plus a weaker `isSuperTypeOf` check; rector's isCachePluginBaseSubclass also catches `None` in its short-name list | Substantial |
-| RemoveConfigSaveTrustedDataArgRector | [#3347842](https://drupal.org/i/3347842) | `rules/remove-deprecated-trusted-data-concept-from-drupal-config-3347842.php` | `src/Drupal11/Rector/Deprecation/RemoveConfigSaveTrustedDataArgRector.php` | **Split from digest**: digest handles both patterns (save arg removal + trustData chain) in one class; rector splits into two separate classes. `RemoveConfigSaveTrustedDataArgRector` handles only `Config::save(TRUE/FALSE)` pattern; adds `Config` ObjectType check (missing from digest) | Substantial |
-| RemoveHandlerBaseDefineExtraOptionsRector | [#3485084](https://drupal.org/i/3485084) | `rules/remove-overrides-of-deprecated-handlerbase-3485084.php` | `src/Drupal11/Rector/Deprecation/RemoveHandlerBaseDefineExtraOptionsRector.php` | Namespace added; class renamed from `RemoveDefineExtraOptionsOverrideRector`; rector adds a `PARENT_SHORT_NAMES` constant with additional handler subclasses; rector adds `isObjectType` fallback; digest guards against modifying `HandlerBase` itself, rector uses a different approach (checking FQCNs/short names instead) | Substantial |
-| RemoveLinkWidgetValidateTitleElementRector | [#3093118](https://drupal.org/i/3093118) | `rules/remove-deprecated-linkwidget-validatetitleelement-calls-3093118.php` | `src/Drupal11/Rector/Deprecation/RemoveLinkWidgetValidateTitleElementRector.php` | Namespace added; class name preserved; no logic changes; minor wording differences in `getRuleDefinition()` | Minor/Style-only |
-| RemoveModuleHandlerAddModuleCallsRector | [#3528899](https://drupal.org/i/3528899) | `rules/remove-deprecated-modulehandlerinterface-addmodule-and-3528899.php` | `src/Drupal11/Rector/Deprecation/RemoveModuleHandlerAddModuleCallsRector.php` | Namespace added; rector adds `ModuleHandler` (concrete class) to the ObjectType check in addition to `ModuleHandlerInterface` (digest checks only the interface); return type hint changed from `?int` to `mixed` | Substantial |
-| RemoveModuleHandlerDeprecatedMethodsRector | [#3442009](https://drupal.org/i/3442009) | `rules/remove-deprecated-modulehandlerinterface-writecache-and-3442009.php` | `src/Drupal11/Rector/Deprecation/RemoveModuleHandlerDeprecatedMethodsRector.php` | Namespace added; rector also removes standalone `getHookInfo()` expression statements (digest leaves them as bare `[]` expressions); rector refactors private helper method to improve readability | Substantial |
-| RemoveRootFromConvertDbUrlRector | [#3522513](https://drupal.org/i/3522513) | `rules/remove-deprecated-string-root-from-database-3522513.php` | `src/Drupal11/Rector/Deprecation/RemoveRootFromConvertDbUrlRector.php` | Namespace added; class renamed from `RemoveRootFromConvertDbUrlToConnectionInfoRector`; rector adds `StaticPropertyFetch` and `MethodCall` to recognized second-argument types (digest does not); logic largely equivalent | Substantial |
-| RemoveSetUriCallbackRector | [#2667040](https://drupal.org/i/2667040) | `rules/remove-deprecated-entitytypeinterface-seturicallback-calls-2667040.php` | `src/Drupal11/Rector/Deprecation/RemoveSetUriCallbackRector.php` | Namespace added; rector adds `EntityTypeInterface` ObjectType check (digest has none); class name preserved | Substantial |
-| RemoveStateCacheSettingRector | [#3436954](https://drupal.org/i/3436954) | `rules/remove-deprecated-settings-state-cache-assignment-3436954.php` | `src/Drupal11/Rector/Deprecation/RemoveStateCacheSettingRector.php` | Namespace added; class name preserved; logic identical | Minor/Style-only |
-| RemoveTrustDataCallRector | [#3347842](https://drupal.org/i/3347842) | `rules/remove-deprecated-trusted-data-concept-from-drupal-config-3347842.php` | `src/Drupal11/Rector/Deprecation/RemoveTrustDataCallRector.php` | **Split from digest**: rector splits second pattern (trustData chain removal) into its own class; adds `ConfigEntityInterface` ObjectType check (missing from digest's combined class) | Substantial |
-| RemoveTwigNodeTransTagArgumentRector | [#3473440](https://drupal.org/i/3473440) | `rules/remove-deprecated-tag-argument-from-twignodetrans-3473440.php` | `src/Drupal11/Rector/Deprecation/RemoveTwigNodeTransTagArgumentRector.php` | Namespace added; class renamed from `RemoveTwigNodeTransTagArgRector`; rector checks 6 args exactly and uses `array_pop`; digest uses `array_splice($node->args, 5)` (removes from index 5 onward, potentially handles more args); rector also matches short class name `TwigNodeTrans` in addition to FQCN | Substantial |
-| RemoveUpdaterPostInstallMethodsRector | [#3417136](https://drupal.org/i/3417136) | `rules/remove-deprecated-updater-postinstall-postinstalltasks-3417136.php` | `src/Drupal11/Rector/Deprecation/RemoveUpdaterPostInstallMethodsRector.php` | Namespace added; class name preserved; rector uses `toString()` for parent name comparison (digest uses same approach); UPDATER_BASE_CLASSES constant uses unescaped backslash strings (rector) vs double-escaped (digest); logic identical | Minor/Style-only |
-| RemoveViewsRowCacheKeysRector | [#3564958](https://drupal.org/i/3564958) | `rules/remove-deprecated-cachepluginbase-getrowcachekeys-and-3564937.php` (issue 3564937 in filename, covers same deprecation) | `src/Drupal11/Rector/Deprecation/RemoveViewsRowCacheKeysRector.php` | Namespace added; rector adds `CachePluginBase` ObjectType check on the MethodCall; digest has no type guard, matches any `getRowCacheKeys`/`getRowId` call. Rector is more conservative/accurate. | Substantial |
-| RenameStopProceduralHookScanRector | [#3495943](https://drupal.org/i/3495943) | `rules/rename-stopproceduralhookscan-attribute-to-3495943.php` | `src/Drupal11/Rector/Deprecation/RenameStopProceduralHookScanRector.php` | **Completely different implementation**: digest is a config-only snippet using built-in `RenameClassRector`; rector implements a custom rule handling both `UseUse` and `Attribute` AST nodes directly for precise class/use-statement renaming | Substantial |
-| ReplaceAlphadecimalToIntNullRector | [#3442810](https://drupal.org/i/3442810) | `rules/replace-deprecated-number-alphadecimaltoint-null-calls-with-3442810.php` | `src/Drupal11/Rector/Deprecation/ReplaceAlphadecimalToIntNullRector.php` | Namespace added; class renamed from `AlphadecimalToIntNullOrEmptyRector`; logic identical; minor import style differences | Minor/Style-only |
-| ReplaceCommentManagerGetCountNewCommentsRector | [#3551729](https://drupal.org/i/3551729) | `rules/replace-deprecated-commentmanagerinterface-3543035.php` (issue 3543035 in filename — closest match; issue 3551729 not found as separate file) | `src/Drupal11/Rector/Deprecation/ReplaceCommentManagerGetCountNewCommentsRector.php` | Rector integrates into AbstractDrupalCoreRector framework with versioned configuration; digest is a standalone AbstractRector; logic nearly identical but rector wraps in DrupalIntroducedVersionConfiguration | Substantial |
-| ReplaceCommentUriRector | [#2010202](https://drupal.org/i/2010202) | `rules/replace-deprecated-comment-uri-with-comment-permalink-2010202.php` | `src/Drupal11/Rector/Deprecation/ReplaceCommentUriRector.php` | Namespace added; class renamed from `CommentUriToPermalinkRector`; rector allows `< 1` args (digest requires exactly 1); minor logic difference | Minor/Style-only |
-| ReplaceDateTimeRangeConstantsRector | [#3574901](https://drupal.org/i/3574901) | `rules/replace-removed-datetimerangeconstantsinterface-constants-3574901.php` | `src/Drupal11/Rector/Deprecation/ReplaceDateTimeRangeConstantsRector.php` | Namespace added; class renamed from `ReplaceDatetimeDeprecatedApisRector`; logic identical; CONST_MAP indentation difference | Minor/Style-only |
-| ReplaceEditorLoadRector | [#3447794](https://drupal.org/i/3447794) | `rules/replace-deprecated-editor-load-with-entity-storage-load-3447794.php` | `src/Drupal11/Rector/Deprecation/ReplaceEditorLoadRector.php` | Namespace added; class renamed from `EditorLoadDeprecationRector`; rector uses `$this->nodeFactory` helper methods for cleaner AST construction; digest does inline construction; rector checks `count($node->args) !== 1` while digest does not have arg count guard; logic equivalent | Substantial |
-| ReplaceEntityOriginalPropertyRector | [#3571065](https://drupal.org/i/3571065) | `rules/replace-deprecated-entity-original-magic-property-with-3571065.php` | `src/Drupal11/Rector/Deprecation/ReplaceEntityOriginalPropertyRector.php` | Namespace added; class renamed from `EntityOriginalPropertyToMethodRector`; rector handles `NullsafePropertyFetch` (nullsafe `?->` operator) — digest omits this; rector adds `EntityInterface` type guard on `PropertyFetch`; rector also registers `NullsafePropertyFetch` in `getNodeTypes()` | Substantial |
-| ReplaceEntityReferenceRecursiveLimitRector | [#3316878](https://drupal.org/i/3316878) | `rules/replace-deprecated-entityreferenceentityformatter-recursive-2940605.php` (different issue # 2940605 in filename, same pattern) | `src/Drupal11/Rector/Deprecation/ReplaceEntityReferenceRecursiveLimitRector.php` | Namespace added; class name preserved; logic identical; both replace `RECURSIVE_RENDER_LIMIT` with `20` | Minor/Style-only |
-| ReplaceFieldgroupToFieldsetRector | [#3512254](https://drupal.org/i/3512254) | `rules/replace-deprecated-type-fieldgroup-with-type-fieldset-3512254.php` | `src/Drupal11/Rector/Deprecation/ReplaceFieldgroupToFieldsetRector.php` | Namespace added; class renamed from `FieldgroupToFieldsetRector`; logic identical | Minor/Style-only |
-| ReplaceFileGetContentHeadersRector | [#3494126](https://drupal.org/i/3494126) | `rules/replace-file-get-content-headers-with-fileinterface-3494126.php` | `src/Drupal11/Rector/Deprecation/ReplaceFileGetContentHeadersRector.php` | Namespace added; class renamed from `FileGetContentHeadersRector`; rector uses `assert()` + `$node->args[0]->value` directly; digest guards `$node->name instanceof Name` explicitly; logic equivalent | Minor/Style-only |
-| ReplaceLocaleConfigBatchFunctionsRector | [#3575254](https://drupal.org/i/3575254) | `rules/replace-deprecated-locale-batch-functions-with-their-3575254.php` | `src/Drupal11/Rector/Deprecation/ReplaceLocaleConfigBatchFunctionsRector.php` | **Completely different implementation**: digest is a config-only snippet using built-in `RenameFunctionRector`; rector implements a custom `FuncCall`-visiting rule with a `RENAME_MAP` constant | Substantial |
-| ReplaceNodeAccessViewAllNodesRector | [#3038908](https://drupal.org/i/3038908) | `rules/replace-deprecated-node-access-view-all-nodes-with-oo-3038908.php` | `src/Drupal11/Rector/Deprecation/ReplaceNodeAccessViewAllNodesRector.php` | Namespace added; class renamed from `NodeAccessViewAllNodesRector`; rector uses `$this->nodeFactory` helpers; logic identical | Minor/Style-only |
-| ReplaceNodeAddBodyFieldRector | [#3489266](https://drupal.org/i/3489266) | `rules/replace-deprecated-node-add-body-field-with-createbodyfield-3489266.php` | `src/Drupal11/Rector/Deprecation/ReplaceNodeAddBodyFieldRector.php` | Namespace added; class renamed from `NodeAddBodyFieldRector`; logic identical | Minor/Style-only |
-| ReplaceNodeModuleProceduralFunctionsRector | [#3571623](https://drupal.org/i/3571623) | `rules/replace-deprecated-node-module-procedural-functions-with-oo-3571623.php` | `src/Drupal11/Rector/Deprecation/ReplaceNodeModuleProceduralFunctionsRector.php` | Namespace added; class renamed from `ReplaceDeprecatedNodeFunctionsRector`; both have identical logic; minor difference: digest has named private constants (`ENTITY_BUNDLE_INFO_SERVICE`, `NODE_BULK_UPDATE_CLASS`), rector inlines strings | Minor/Style-only |
-| ReplaceNodeSetPreviewModeRector | [#3538277](https://drupal.org/i/3538277) | `rules/replace-deprecated-constants-with-nodepreviewmode-enum-in-3538277.php` | `src/Drupal11/Rector/Deprecation/ReplaceNodeSetPreviewModeRector.php` | Namespace added; class renamed from `NodeSetPreviewModeRector`; rector adds `NodeTypeInterface` ObjectType check (digest has none); logic otherwise identical | Substantial |
-| ReplacePdoFetchConstantsRector | [#3525077](https://drupal.org/i/3525077) | `rules/replace-removed-mysql-pgsql-sqlite-driver-query-subclass-3525077.php` | `src/Drupal11/Rector/Deprecation/ReplacePdoFetchConstantsRector.php` | **Completely different rule**: digest is a config-only snippet for `RenameClassRector` removing deprecated driver subclasses; rector implements a full custom rule replacing `PDO::FETCH_*` constants with `FetchAs` enum cases in Database API calls. Same issue ID, entirely different transformation. | Substantial |
-| ReplaceRecipeRunnerInstallModuleRector | [#3498026](https://drupal.org/i/3498026) | `rules/replace-deprecated-reciperunner-installmodule-with-3498026.php` | `src/Drupal11/Rector/Deprecation/ReplaceRecipeRunnerInstallModuleRector.php` | Namespace added; class renamed from `RecipeRunnerInstallModuleRector`; logic identical | Minor/Style-only |
-| ReplaceSessionManagerDeleteRector | [#3577376](https://drupal.org/i/3577376) | `rules/replace-deprecated-sessionmanager-delete-with-3577376.php` | `src/Drupal11/Rector/Deprecation/ReplaceSessionManagerDeleteRector.php` | Rector integrates into AbstractDrupalCoreRector with versioned configuration; digest is a standalone AbstractRector; type-check strategy changed from `isSuperTypeOf().yes()` to `isObjectType()` | Substantial |
-| ReplaceSessionWritesWithRequestSessionRector | [#3518527](https://drupal.org/i/3518527) | `rules/replace-deprecated-session-writes-with-drupal-request-3518527.php` | `src/Drupal11/Rector/Deprecation/ReplaceSessionWritesWithRequestSessionRector.php` | Namespace added; class renamed from `SessionSuperGlobalToRequestSessionRector`; logic identical | Minor/Style-only |
-| ReplaceSystemPerformanceGzipKeyRector | [#3184242](https://drupal.org/i/3184242) | `rules/replace-deprecated-system-performance-css-gzip-js-gzip-3184242.php` | `src/Drupal11/Rector/Deprecation/ReplaceSystemPerformanceGzipKeyRector.php` | Namespace added; class renamed from `SystemPerformanceGzipToCompressRector`; logic identical | Minor/Style-only |
-| ReplaceThemeGetSettingRector | [#3573896](https://drupal.org/i/3573896) | `rules/replace-deprecated-theme-get-setting-and-system-default-3573896.php` | `src/Drupal11/Rector/Deprecation/ReplaceThemeGetSettingRector.php` | Namespace added; class name preserved; rector inlines the theme_get_setting logic rather than extracting a private method; logic identical | Minor/Style-only |
-| ReplaceUserSessionNamePropertyRector | [#3513856](https://drupal.org/i/3513856) | `rules/replace-deprecated-usersession-name-property-read-with-3513856.php` | `src/Drupal11/Rector/Deprecation/ReplaceUserSessionNamePropertyRector.php` | Namespace added; class renamed from `UserSessionNamePropertyToGetAccountNameRector`; rector adds `UserSession` ObjectType check; logic identical | Minor/Style-only |
-| ReplaceViewsProceduralFunctionsRector | [#3572243](https://drupal.org/i/3572243) | `rules/replace-deprecated-views-procedural-functions-with-oo-3572243.php` | `src/Drupal11/Rector/Deprecation/ReplaceViewsProceduralFunctionsRector.php` | Namespace added; class renamed from `ReplaceDeprecatedViewsFunctionsRector`; logic identical; minor: rector uses `Node\Expr\*` fully-qualified in private methods while digest uses imported classes | Minor/Style-only |
-| StatementPrefetchIteratorFetchColumnRector | [#3490200](https://drupal.org/i/3490200) | `rules/replace-deprecated-statementprefetchiterator-fetchcolumn-3490200.php` | `src/Drupal11/Rector/Deprecation/StatementPrefetchIteratorFetchColumnRector.php` | **Completely different implementation**: digest is a config-only snippet using built-in `RenameMethodRector`; rector implements a custom `MethodCall`-visiting rule with `StatementPrefetchIterator` ObjectType check | Substantial |
-| StripMigrationDependenciesExpandArgRector | [#3574717](https://drupal.org/i/3574717) | `rules/strip-removed-expand-argument-from-getmigrationdependencies-3574717.php` | `src/Drupal11/Rector/Deprecation/StripMigrationDependenciesExpandArgRector.php` | Namespace added; class renamed from `RemoveMigrationDependenciesExpandArgRector`; type-check strategy: rector uses `isObjectType(new ObjectType(...))` directly; digest uses `$callerType->isSuperTypeOf(...).yes()`. Functionally identical. | Minor/Style-only |
-| UseEntityTypeHasIntegerIdRector | [#3566801](https://drupal.org/i/3566801) | `rules/replace-deprecated-entity-type-integer-id-helpers-with-3566801.php` | `src/Drupal11/Rector/Deprecation/UseEntityTypeHasIntegerIdRector.php` | Namespace added; class name preserved; rector uses class constants `METHOD_OWNER_CLASS` (map) and `GET_ENTITY_TYPE_ID_KEY_TYPE_CLASS` with ObjectType checks; digest uses `SIMPLE_METHOD_NAMES` and no type-checking. Rector is significantly more type-safe. | Substantial |
-| ViewsPluginHandlerManagerRector | [#3566424](https://drupal.org/i/3566424) | `rules/replace-deprecated-views-pluginmanager-and-views-3566424.php` | `src/Drupal11/Rector/Deprecation/ViewsPluginHandlerManagerRector.php` | Namespace added; class name preserved; rector uses `isName()` for class check; digest uses `isObjectType()`. Logic otherwise identical. | Minor/Style-only |
+| `ReplaceModuleHandlerGetNameRector` | D10 | **Significant** | [#3571063](https://www.drupal.org/node/3571063) | `rector/rules/replace-removed-modulehandlerinterface-getname-with-3571063.php` | `src/Drupal10/Rector/Deprecation/ReplaceModuleHandlerGetNameRector.php` |
+| `ReplaceRebuildThemeDataRector` | D10 | **Significant** | [#3571068](https://www.drupal.org/node/3571068) | `rector/rules/replace-removed-themehandlerinterface-rebuildthemedata-with-3571068.php` | `src/Drupal10/Rector/Deprecation/ReplaceRebuildThemeDataRector.php` |
+| `ReplaceRequestTimeConstantRector` | D10 | **Significant** | [#3395986](https://www.drupal.org/node/3395986) | `rector/rules/add-timeinterface-time-argument-to-plugin-constructor-3395986.php` | `src/Drupal10/Rector/Deprecation/ReplaceRequestTimeConstantRector.php` |
+| `ErrorCurrentErrorHandlerRector` | D11 | Minimal | [#3526515](https://www.drupal.org/node/3526515) | `rector/rules/replace-error-currenterrorhandler-with-get-error-handler-3526515.php` | `src/Drupal11/Rector/Deprecation/ErrorCurrentErrorHandlerRector.php` |
+| `FileSystemBasenameToNativeRector` | D11 | Minimal | [#3530461](https://www.drupal.org/node/3530461) | `rector/rules/replace-filesysteminterface-basename-with-native-basename-3530461.php` | `src/Drupal11/Rector/Deprecation/FileSystemBasenameToNativeRector.php` |
+| `LoadAllIncludesRector` | D11 | **Significant** | [#3536431](https://www.drupal.org/node/3536431) | `rector/rules/replace-deprecated-modulehandler-loadallincludes-with-3536431.php` | `src/Drupal11/Rector/Deprecation/LoadAllIncludesRector.php` |
+| `MigrateSqlGetMigrationPluginManagerRector` | D11 | **Significant** | [#3439369](https://www.drupal.org/node/3439369) | `rector/rules/replace-deprecated-sql-getmigrationpluginmanager-with-3439369.php` | `src/Drupal11/Rector/Deprecation/MigrateSqlGetMigrationPluginManagerRector.php` |
+| `NodeStorageDeprecatedMethodsRector` | D11 | **Significant** | [#3396062](https://www.drupal.org/node/3396062) | `rector/rules/replace-deprecated-nodestorage-revisionids-and-3396062.php` | `src/Drupal11/Rector/Deprecation/NodeStorageDeprecatedMethodsRector.php` |
+| `PluginBaseIsConfigurableRector` | D11 | **Significant** | [#3459533](https://www.drupal.org/node/3459533) | `rector/rules/replace-deprecated-pluginbase-isconfigurable-with-3459533.php` | `src/Drupal11/Rector/Deprecation/PluginBaseIsConfigurableRector.php` |
+| `RemoveAutomatedCronSubmitHandlerRector` | D11 | **Significant** | [#3566768](https://www.drupal.org/node/3566768) | `rector/rules/remove-deprecated-automated-cron-settings-submit-calls-and-3566768.php` | `src/Drupal11/Rector/Deprecation/RemoveAutomatedCronSubmitHandlerRector.php` |
+| `RemoveCacheExpireOverrideRector` | D11 | **Significant** | [#3576556](https://www.drupal.org/node/3576556) | `rector/rules/remove-deprecated-cacheexpire-overrides-from-views-3576556.php` | `src/Drupal11/Rector/Deprecation/RemoveCacheExpireOverrideRector.php` |
+| `RemoveConfigSaveTrustedDataArgRector` | D11 | **Significant** | [#3347842](https://www.drupal.org/node/3347842) | `rector/rules/remove-deprecated-trusted-data-concept-from-drupal-config-3347842.php` *(split)* | `src/Drupal11/Rector/Deprecation/RemoveConfigSaveTrustedDataArgRector.php` |
+| `RemoveHandlerBaseDefineExtraOptionsRector` | D11 | **Significant** | [#3485084](https://www.drupal.org/node/3485084) | `rector/rules/remove-overrides-of-deprecated-handlerbase-3485084.php` | `src/Drupal11/Rector/Deprecation/RemoveHandlerBaseDefineExtraOptionsRector.php` |
+| `RemoveLinkWidgetValidateTitleElementRector` | D11 | Minimal | [#3093118](https://www.drupal.org/node/3093118) | `rector/rules/remove-deprecated-linkwidget-validatetitleelement-calls-3093118.php` | `src/Drupal11/Rector/Deprecation/RemoveLinkWidgetValidateTitleElementRector.php` |
+| `RemoveModuleHandlerAddModuleCallsRector` | D11 | **Significant** | [#3528899](https://www.drupal.org/node/3528899) | `rector/rules/remove-deprecated-modulehandlerinterface-addmodule-and-3528899.php` | `src/Drupal11/Rector/Deprecation/RemoveModuleHandlerAddModuleCallsRector.php` |
+| `RemoveModuleHandlerDeprecatedMethodsRector` | D11 | **Significant** | [#3442009](https://www.drupal.org/node/3442009) | `rector/rules/remove-deprecated-modulehandlerinterface-writecache-and-3442009.php` | `src/Drupal11/Rector/Deprecation/RemoveModuleHandlerDeprecatedMethodsRector.php` |
+| `RemoveRootFromConvertDbUrlRector` | D11 | **Significant** | [#3522513](https://www.drupal.org/node/3522513) | `rector/rules/remove-deprecated-string-root-from-database-3522513.php` | `src/Drupal11/Rector/Deprecation/RemoveRootFromConvertDbUrlRector.php` |
+| `RemoveSetUriCallbackRector` | D11 | **Significant** | [#2667040](https://www.drupal.org/node/2667040) | `rector/rules/remove-deprecated-entitytypeinterface-seturicallback-calls-2667040.php` | `src/Drupal11/Rector/Deprecation/RemoveSetUriCallbackRector.php` |
+| `RemoveStateCacheSettingRector` | D11 | Minimal | [#3436954](https://www.drupal.org/node/3436954) | `rector/rules/remove-deprecated-settings-state-cache-assignment-3436954.php` | `src/Drupal11/Rector/Deprecation/RemoveStateCacheSettingRector.php` |
+| `RemoveTrustDataCallRector` | D11 | **Significant** | [#3347842](https://www.drupal.org/node/3347842) | `rector/rules/remove-deprecated-trusted-data-concept-from-drupal-config-3347842.php` *(split)* | `src/Drupal11/Rector/Deprecation/RemoveTrustDataCallRector.php` |
+| `RemoveTwigNodeTransTagArgumentRector` | D11 | **Significant** | [#3473440](https://www.drupal.org/node/3473440) | `rector/rules/remove-deprecated-tag-argument-from-twignodetrans-3473440.php` | `src/Drupal11/Rector/Deprecation/RemoveTwigNodeTransTagArgumentRector.php` |
+| `RemoveUpdaterPostInstallMethodsRector` | D11 | Minimal | [#3417136](https://www.drupal.org/node/3417136) | `rector/rules/remove-deprecated-updater-postinstall-postinstalltasks-3417136.php` | `src/Drupal11/Rector/Deprecation/RemoveUpdaterPostInstallMethodsRector.php` |
+| `RemoveViewsRowCacheKeysRector` | D11 | **Significant** | [#3564958](https://www.drupal.org/node/3564958) † | `rector/rules/remove-deprecated-cachepluginbase-getrowcachekeys-and-3564937.php` | `src/Drupal11/Rector/Deprecation/RemoveViewsRowCacheKeysRector.php` |
+| `RenameStopProceduralHookScanRector` | D11 | **Significant** | [#3495943](https://www.drupal.org/node/3495943) | `rector/rules/rename-stopproceduralhookscan-attribute-to-3495943.php` | `src/Drupal11/Rector/Deprecation/RenameStopProceduralHookScanRector.php` |
+| `ReplaceAlphadecimalToIntNullRector` | D11 | Minimal | [#3442810](https://www.drupal.org/node/3442810) | `rector/rules/replace-deprecated-number-alphadecimaltoint-null-calls-with-3442810.php` | `src/Drupal11/Rector/Deprecation/ReplaceAlphadecimalToIntNullRector.php` |
+| `ReplaceCommentManagerGetCountNewCommentsRector` | D11 | **Significant** | [#3551729](https://www.drupal.org/node/3551729) † | `rector/rules/replace-deprecated-commentmanagerinterface-3543035.php` | `src/Drupal11/Rector/Deprecation/ReplaceCommentManagerGetCountNewCommentsRector.php` |
+| `ReplaceCommentUriRector` | D11 | Minimal | [#2010202](https://www.drupal.org/node/2010202) | `rector/rules/replace-deprecated-comment-uri-with-comment-permalink-2010202.php` | `src/Drupal11/Rector/Deprecation/ReplaceCommentUriRector.php` |
+| `ReplaceDateTimeRangeConstantsRector` | D11 | Minimal | [#3574901](https://www.drupal.org/node/3574901) | `rector/rules/replace-removed-datetimerangeconstantsinterface-constants-3574901.php` | `src/Drupal11/Rector/Deprecation/ReplaceDateTimeRangeConstantsRector.php` |
+| `ReplaceEditorLoadRector` | D11 | **Significant** | [#3447794](https://www.drupal.org/node/3447794) | `rector/rules/replace-deprecated-editor-load-with-entity-storage-load-3447794.php` | `src/Drupal11/Rector/Deprecation/ReplaceEditorLoadRector.php` |
+| `ReplaceEntityOriginalPropertyRector` | D11 | **Significant** | [#3571065](https://www.drupal.org/node/3571065) | `rector/rules/replace-deprecated-entity-original-magic-property-with-3571065.php` | `src/Drupal11/Rector/Deprecation/ReplaceEntityOriginalPropertyRector.php` |
+| `ReplaceEntityReferenceRecursiveLimitRector` | D11 | Minimal | [#3316878](https://www.drupal.org/node/3316878) † | `rector/rules/replace-deprecated-entityreferenceentityformatter-recursive-2940605.php` | `src/Drupal11/Rector/Deprecation/ReplaceEntityReferenceRecursiveLimitRector.php` |
+| `ReplaceFieldgroupToFieldsetRector` | D11 | Minimal | [#3512254](https://www.drupal.org/node/3512254) | `rector/rules/replace-deprecated-type-fieldgroup-with-type-fieldset-3512254.php` | `src/Drupal11/Rector/Deprecation/ReplaceFieldgroupToFieldsetRector.php` |
+| `ReplaceFileGetContentHeadersRector` | D11 | Minimal | [#3494126](https://www.drupal.org/node/3494126) | `rector/rules/replace-file-get-content-headers-with-fileinterface-3494126.php` | `src/Drupal11/Rector/Deprecation/ReplaceFileGetContentHeadersRector.php` |
+| `ReplaceLocaleConfigBatchFunctionsRector` | D11 | **Significant** | [#3575254](https://www.drupal.org/node/3575254) | `rector/rules/replace-deprecated-locale-batch-functions-with-their-3575254.php` | `src/Drupal11/Rector/Deprecation/ReplaceLocaleConfigBatchFunctionsRector.php` |
+| `ReplaceNodeAccessViewAllNodesRector` | D11 | Minimal | [#3038908](https://www.drupal.org/node/3038908) | `rector/rules/replace-deprecated-node-access-view-all-nodes-with-oo-3038908.php` | `src/Drupal11/Rector/Deprecation/ReplaceNodeAccessViewAllNodesRector.php` |
+| `ReplaceNodeAddBodyFieldRector` | D11 | Minimal | [#3489266](https://www.drupal.org/node/3489266) | `rector/rules/replace-deprecated-node-add-body-field-with-createbodyfield-3489266.php` | `src/Drupal11/Rector/Deprecation/ReplaceNodeAddBodyFieldRector.php` |
+| `ReplaceNodeModuleProceduralFunctionsRector` | D11 | Minimal | [#3571623](https://www.drupal.org/node/3571623) | `rector/rules/replace-deprecated-node-module-procedural-functions-with-oo-3571623.php` | `src/Drupal11/Rector/Deprecation/ReplaceNodeModuleProceduralFunctionsRector.php` |
+| `ReplaceNodeSetPreviewModeRector` | D11 | **Significant** | [#3538277](https://www.drupal.org/node/3538277) | `rector/rules/replace-deprecated-constants-with-nodepreviewmode-enum-in-3538277.php` | `src/Drupal11/Rector/Deprecation/ReplaceNodeSetPreviewModeRector.php` |
+| `ReplacePdoFetchConstantsRector` | D11 | **Significant** | [#3525077](https://www.drupal.org/node/3525077) | `rector/rules/replace-removed-mysql-pgsql-sqlite-driver-query-subclass-3525077.php` | `src/Drupal11/Rector/Deprecation/ReplacePdoFetchConstantsRector.php` |
+| `ReplaceRecipeRunnerInstallModuleRector` | D11 | Minimal | [#3498026](https://www.drupal.org/node/3498026) | `rector/rules/replace-deprecated-reciperunner-installmodule-with-3498026.php` | `src/Drupal11/Rector/Deprecation/ReplaceRecipeRunnerInstallModuleRector.php` |
+| `ReplaceSessionManagerDeleteRector` | D11 | **Significant** | [#3577376](https://www.drupal.org/node/3577376) | `rector/rules/replace-deprecated-sessionmanager-delete-with-3577376.php` | `src/Drupal11/Rector/Deprecation/ReplaceSessionManagerDeleteRector.php` |
+| `ReplaceSessionWritesWithRequestSessionRector` | D11 | Minimal | [#3518527](https://www.drupal.org/node/3518527) | `rector/rules/replace-deprecated-session-writes-with-drupal-request-3518527.php` | `src/Drupal11/Rector/Deprecation/ReplaceSessionWritesWithRequestSessionRector.php` |
+| `ReplaceSystemPerformanceGzipKeyRector` | D11 | Minimal | [#3184242](https://www.drupal.org/node/3184242) | `rector/rules/replace-deprecated-system-performance-css-gzip-js-gzip-3184242.php` | `src/Drupal11/Rector/Deprecation/ReplaceSystemPerformanceGzipKeyRector.php` |
+| `ReplaceThemeGetSettingRector` | D11 | Minimal | [#3573896](https://www.drupal.org/node/3573896) | `rector/rules/replace-deprecated-theme-get-setting-and-system-default-3573896.php` | `src/Drupal11/Rector/Deprecation/ReplaceThemeGetSettingRector.php` |
+| `ReplaceUserSessionNamePropertyRector` | D11 | Minimal | [#3513856](https://www.drupal.org/node/3513856) | `rector/rules/replace-deprecated-usersession-name-property-read-with-3513856.php` | `src/Drupal11/Rector/Deprecation/ReplaceUserSessionNamePropertyRector.php` |
+| `ReplaceViewsProceduralFunctionsRector` | D11 | Minimal | [#3572243](https://www.drupal.org/node/3572243) | `rector/rules/replace-deprecated-views-procedural-functions-with-oo-3572243.php` | `src/Drupal11/Rector/Deprecation/ReplaceViewsProceduralFunctionsRector.php` |
+| `StatementPrefetchIteratorFetchColumnRector` | D11 | **Significant** | [#3490200](https://www.drupal.org/node/3490200) | `rector/rules/replace-deprecated-statementprefetchiterator-fetchcolumn-3490200.php` | `src/Drupal11/Rector/Deprecation/StatementPrefetchIteratorFetchColumnRector.php` |
+| `StripMigrationDependenciesExpandArgRector` | D11 | Minimal | [#3574717](https://www.drupal.org/node/3574717) | `rector/rules/strip-removed-expand-argument-from-getmigrationdependencies-3574717.php` | `src/Drupal11/Rector/Deprecation/StripMigrationDependenciesExpandArgRector.php` |
+| `UseEntityTypeHasIntegerIdRector` | D11 | **Significant** | [#3566801](https://www.drupal.org/node/3566801) | `rector/rules/replace-deprecated-entity-type-integer-id-helpers-with-3566801.php` | `src/Drupal11/Rector/Deprecation/UseEntityTypeHasIntegerIdRector.php` |
+| `ViewsPluginHandlerManagerRector` | D11 | Minimal | [#3566424](https://www.drupal.org/node/3566424) | `rector/rules/replace-deprecated-views-pluginmanager-and-views-3566424.php` | `src/Drupal11/Rector/Deprecation/ViewsPluginHandlerManagerRector.php` |
 
 ---
 
-## Notable Changes
+## Significant Changes
 
-### ReplaceRequestTimeConstantRector
-- **Source (digest):** `rules/add-timeinterface-time-argument-to-plugin-constructor-3395986.php`
-- **Destination (rector):** `src/Drupal10/Rector/Deprecation/ReplaceRequestTimeConstantRector.php`
-- **Drupal issue:** https://drupal.org/i/3395986
-- **Summary:** The issue ID is shared but the two rules address entirely different parts of the deprecation. The digest adds `?TimeInterface $time` to `__construct()` overrides in six plugin subclasses. The rector instead replaces the `REQUEST_TIME` constant with `\Drupal::time()->getRequestTime()`.
-- **Changes:**
-  - Digest: Class-level AST transformation of constructor signatures across 6 named Drupal plugin parent classes
-  - Rector: Simple `ConstFetch` → `StaticCall->MethodCall` replacement, a completely different rule written from scratch
-  - No code from the digest was reused
+### 1. `ReplaceModuleHandlerGetNameRector` (Drupal10)
 
-### RemoveModuleHandlerDeprecatedMethodsRector
-- **Source (digest):** `rules/remove-deprecated-modulehandlerinterface-writecache-and-3442009.php`
-- **Destination (rector):** `src/Drupal11/Rector/Deprecation/RemoveModuleHandlerDeprecatedMethodsRector.php`
-- **Drupal issue:** https://drupal.org/i/3442009
-- **Summary:** Both remove `writeCache()` and replace `getHookInfo()` with `[]`, but the rector is more thorough.
-- **Changes:**
-  - Rector also removes standalone `getHookInfo()` expression statements (not just replaces the value with `[]` when used in assignment)
-  - Digest leaves bare `[];` statements after `writeCache` removal; rector removes the whole statement
-  - Rector factored into a private helper `isModuleHandlerMethodCall()`
+**Digest file:** `replace-removed-modulehandlerinterface-getname-with-3571063.php`
 
-### RemoveConfigSaveTrustedDataArgRector + RemoveTrustDataCallRector
-- **Source (digest):** `rules/remove-deprecated-trusted-data-concept-from-drupal-config-3347842.php`
-- **Destination (rector):** `src/Drupal11/Rector/Deprecation/RemoveConfigSaveTrustedDataArgRector.php` + `RemoveTrustDataCallRector.php`
-- **Drupal issue:** https://drupal.org/i/3347842
-- **Summary:** One digest class (`RemoveTrustedDataConceptRector`) covering both patterns was split into two focused rectors.
-- **Changes:**
-  - `RemoveConfigSaveTrustedDataArgRector` handles only `Config::save(TRUE/FALSE)` — adds `Drupal\Core\Config\Config` ObjectType check absent from digest
-  - `RemoveTrustDataCallRector` handles only `trustData()` chain removal — adds `ConfigEntityInterface` ObjectType check absent from digest
-  - Both rectors are more type-safe than the combined digest
-
-### RemoveAutomatedCronSubmitHandlerRector
-- **Source (digest):** `rules/remove-deprecated-automated-cron-settings-submit-calls-and-3566768.php`
-- **Destination (rector):** `src/Drupal11/Rector/Deprecation/RemoveAutomatedCronSubmitHandlerRector.php`
-- **Drupal issue:** https://drupal.org/i/3566768
-- **Summary:** Digest registered two rules: a custom class for `$form['#submit'][]` and `RemoveFuncCallRector` for direct function calls. Rector only implements the array-append removal.
-- **Changes:**
-  - Class renamed from `RemoveAutomatedCronSettingsSubmitHandlerRector`
-  - Direct `automated_cron_settings_submit($form, $form_state)` function call removal (via `RemoveFuncCallRector`) is not ported into the rector
-
-### RemoveCacheExpireOverrideRector
-- **Source (digest):** `rules/remove-deprecated-cacheexpire-overrides-from-views-3576556.php`
-- **Destination (rector):** `src/Drupal11/Rector/Deprecation/RemoveCacheExpireOverrideRector.php`
-- **Drupal issue:** https://drupal.org/i/3576556
-- **Summary:** Rector significantly improves the class-hierarchy detection logic compared to the digest.
-- **Changes:**
-  - Rector adds `PARENT_FQCNS` constant listing fully-qualified class names (all four known parent classes)
-  - Rector adds `'None'` to `PARENT_SHORT_NAMES`
-  - Rector uses `str_ends_with($parentName, '\\' . $short)` for namespace-relative names
-  - Rector's PHPStan fallback constructs `isSuperTypeOf($extendsType)` correctly with both operands as ObjectType; digest uses `$objectType->isSuperTypeOf($extendsType)` with only one side properly typed
-
-### RemoveHandlerBaseDefineExtraOptionsRector
-- **Source (digest):** `rules/remove-overrides-of-deprecated-handlerbase-3485084.php`
-- **Destination (rector):** `src/Drupal11/Rector/Deprecation/RemoveHandlerBaseDefineExtraOptionsRector.php`
-- **Drupal issue:** https://drupal.org/i/3485084
-- **Summary:** Rector broadens detection to five additional short class names not in the digest, and uses a different exclusion approach for the base class itself.
-- **Changes:**
-  - Rector adds `PARENT_SHORT_NAMES = ['HandlerBase', 'FieldHandlerBase', 'FilterPluginBase', 'SortPluginBase', 'ArgumentPluginBase', 'RelationshipPluginBase']`
-  - Digest used `Identifier` check to avoid modifying `HandlerBase` itself; rector uses FQCN/short-name matching instead
-  - Rector adds `isObjectType` PHPStan fallback
-
-### LoadAllIncludesRector
-- **Source (digest):** `rules/replace-deprecated-modulehandler-loadallincludes-with-3536431.php`
-- **Destination (rector):** `src/Drupal11/Rector/Deprecation/LoadAllIncludesRector.php`
-- **Drupal issue:** https://drupal.org/i/3536431
-- **Summary:** Rector adds a `ModuleHandlerInterface` type guard that was missing from the digest.
-- **Changes:**
-  - Rector calls `$this->isObjectType($methodCall->var, new ObjectType('Drupal\Core\Extension\ModuleHandlerInterface'))` before rewriting
-  - Digest skips this type check, rewriting any `loadAllIncludes()` call
-
-### MigrateSqlGetMigrationPluginManagerRector
-- **Source (digest):** `rules/replace-deprecated-sql-getmigrationpluginmanager-with-3439369.php`
-- **Destination (rector):** `src/Drupal11/Rector/Deprecation/MigrateSqlGetMigrationPluginManagerRector.php`
-- **Drupal issue:** https://drupal.org/i/3439369
-- **Summary:** The type-check approach is inverted: rector whitelists `Sql` class; digest blacklists `Migration` class.
-- **Changes:**
-  - Rector checks `isObjectType($node->var, new ObjectType('Drupal\migrate\Plugin\migrate\id_map\Sql'))` — only rewrites if caller is `Sql`
-  - Digest excludes `Migration` via `isObjectType(Migration::class)` check but allows any other caller
-  - Rector approach is more restrictive and precise
-
-### NodeStorageDeprecatedMethodsRector
-- **Source (digest):** `rules/replace-deprecated-nodestorage-revisionids-and-3396062.php`
-- **Destination (rector):** `src/Drupal11/Rector/Deprecation/NodeStorageDeprecatedMethodsRector.php`
-- **Drupal issue:** https://drupal.org/i/3396062
-- **Summary:** Rector adds `countDefaultLanguageRevisions` removal not present in the digest.
-- **Changes:**
-  - Rector registers `Expression::class` in `getNodeTypes()` to catch statement-level calls
-  - Rector removes `countDefaultLanguageRevisions()` expression statements entirely via `NodeVisitor::REMOVE_NODE`
-  - Digest only handled `revisionIds` and `userRevisionIds`
-
-### PluginBaseIsConfigurableRector
-- **Source (digest):** `rules/replace-deprecated-pluginbase-isconfigurable-with-3459533.php`
-- **Destination (rector):** `src/Drupal11/Rector/Deprecation/PluginBaseIsConfigurableRector.php`
-- **Drupal issue:** https://drupal.org/i/3459533
-- **Summary:** Rector adds a `PluginBase` ObjectType guard; digest relies only on the `$this->isConfigurable()` pattern.
-- **Changes:**
-  - Rector calls `$this->isObjectType($node->var, new ObjectType('Drupal\Component\Plugin\PluginBase'))` in addition to variable/name checks
-  - Digest never verifies the object type, so it could rewrite `$this->isConfigurable()` in any class with that method
-
-### RemoveModuleHandlerAddModuleCallsRector
-- **Source (digest):** `rules/remove-deprecated-modulehandlerinterface-addmodule-and-3528899.php`
-- **Destination (rector):** `src/Drupal11/Rector/Deprecation/RemoveModuleHandlerAddModuleCallsRector.php`
-- **Drupal issue:** https://drupal.org/i/3528899
-- **Summary:** Rector also checks against the concrete `ModuleHandler` class in addition to the interface.
-- **Changes:**
-  - Rector iterates over both `ModuleHandlerInterface` and `ModuleHandler` in the ObjectType check
-  - Digest only checks `ModuleHandlerInterface`
-
-### RemoveRootFromConvertDbUrlRector
-- **Source (digest):** `rules/remove-deprecated-string-root-from-database-3522513.php`
-- **Destination (rector):** `src/Drupal11/Rector/Deprecation/RemoveRootFromConvertDbUrlRector.php`
-- **Drupal issue:** https://drupal.org/i/3522513
-- **Summary:** Rector recognizes more expression types as valid `$root` arguments to remove.
-- **Changes:**
-  - Rector adds `StaticPropertyFetch` and `MethodCall` to the recognized second-arg forms (digest omits these two)
-  - Rector imports those types explicitly at the top of the file
-
-### RemoveSetUriCallbackRector
-- **Source (digest):** `rules/remove-deprecated-entitytypeinterface-seturicallback-calls-2667040.php`
-- **Destination (rector):** `src/Drupal11/Rector/Deprecation/RemoveSetUriCallbackRector.php`
-- **Drupal issue:** https://drupal.org/i/2667040
-- **Summary:** Rector adds `EntityTypeInterface` type guard throughout; digest has none.
-- **Changes:**
-  - Rector calls `isObjectType($node->expr->var, new ObjectType('Drupal\Core\Entity\EntityTypeInterface'))` in both the standalone and fluent-chain cases
-  - Digest matches any `setUriCallback()` call on any object
-
-### RemoveTwigNodeTransTagArgumentRector
-- **Source (digest):** `rules/remove-deprecated-tag-argument-from-twignodetrans-3473440.php`
-- **Destination (rector):** `src/Drupal11/Rector/Deprecation/RemoveTwigNodeTransTagArgumentRector.php`
-- **Drupal issue:** https://drupal.org/i/3473440
-- **Summary:** Different strategies for arg removal and class matching.
-- **Changes:**
-  - Rector checks `count($node->args) === 6` exactly and uses `array_pop()`; digest uses `isset($node->args[5])` and `array_splice($node->args, 5)` (removes from index 5 onward — handles extra args too)
-  - Rector also matches the short class name `TwigNodeTrans` without namespace
-
-### ReplaceEditorLoadRector
-- **Source (digest):** `rules/replace-deprecated-editor-load-with-entity-storage-load-3447794.php`
-- **Destination (rector):** `src/Drupal11/Rector/Deprecation/ReplaceEditorLoadRector.php`
-- **Drupal issue:** https://drupal.org/i/3447794
-- **Summary:** Rector uses framework helpers (`$this->nodeFactory`) for cleaner code; adds arg count guard.
-- **Changes:**
-  - Rector adds `count($node->args) !== 1` guard (digest does not)
-  - Rector uses `$this->nodeFactory->createStaticCall()` and `createMethodCall()` instead of manual AST construction
-
-### ReplaceEntityOriginalPropertyRector
-- **Source (digest):** `rules/replace-deprecated-entity-original-magic-property-with-3571065.php`
-- **Destination (rector):** `src/Drupal11/Rector/Deprecation/ReplaceEntityOriginalPropertyRector.php`
-- **Drupal issue:** https://drupal.org/i/3571065
-- **Summary:** Rector adds nullsafe property fetch support and EntityInterface type check — both missing from digest.
-- **Changes:**
-  - Rector registers `NullsafePropertyFetch::class` in `getNodeTypes()` and handles `$entity?->original` → `$entity?->getOriginal()`
-  - Rector adds `EntityInterface` ObjectType check on `PropertyFetch` (digest has no type check)
-  - Digest would rewrite any `->original` property on any object; rector only rewrites on `EntityInterface` instances
-
-### ReplaceNodeSetPreviewModeRector
-- **Source (digest):** `rules/replace-deprecated-constants-with-nodepreviewmode-enum-in-3538277.php`
-- **Destination (rector):** `src/Drupal11/Rector/Deprecation/ReplaceNodeSetPreviewModeRector.php`
-- **Drupal issue:** https://drupal.org/i/3538277
-- **Summary:** Rector adds `NodeTypeInterface` type guard; digest has none.
-- **Changes:**
-  - Rector calls `isObjectType($node->var, new ObjectType('Drupal\node\NodeTypeInterface'))`
-  - Digest rewrites `setPreviewMode(DRUPAL_DISABLED/0/1/2)` on any object
-
-### ReplacePdoFetchConstantsRector
-- **Source (digest):** `rules/replace-removed-mysql-pgsql-sqlite-driver-query-subclass-3525077.php`
-- **Destination (rector):** `src/Drupal11/Rector/Deprecation/ReplacePdoFetchConstantsRector.php`
-- **Drupal issue:** https://drupal.org/i/3525077
-- **Summary:** The issue ID is shared but the two rules handle entirely different aspects of this Drupal issue.
-- **Changes:**
-  - Digest: config snippet using `RenameClassRector` to repoint nine empty driver-specific query subclasses to `Drupal\Core\Database\Query\*`
-  - Rector: custom rule converting `PDO::FETCH_*` constants to `FetchAs` enum cases in `setFetchMode`/`fetch`/`fetchAll`/`fetchAllAssoc` calls plus `'fetch'` array keys
-  - Completely different rule written from scratch
-
-### RenameStopProceduralHookScanRector
-- **Source (digest):** `rules/rename-stopproceduralhookscan-attribute-to-3495943.php`
-- **Destination (rector):** `src/Drupal11/Rector/Deprecation/RenameStopProceduralHookScanRector.php`
-- **Drupal issue:** https://drupal.org/i/3495943
-- **Summary:** Digest is a trivial config snippet; rector is a full custom implementation.
-- **Changes:**
-  - Digest uses `RenameClassRector` configuration (2 lines of real logic)
-  - Rector implements `UseUse` and `Attribute` node visiting to rename both the `use` statement and the attribute usage site, preserving correct formatting
-  - Rector approach avoids the risk of `RenameClassRector` rewriting class body references unexpectedly
-
-### ReplaceLocaleConfigBatchFunctionsRector
-- **Source (digest):** `rules/replace-deprecated-locale-batch-functions-with-their-3575254.php`
-- **Destination (rector):** `src/Drupal11/Rector/Deprecation/ReplaceLocaleConfigBatchFunctionsRector.php`
-- **Drupal issue:** https://drupal.org/i/3575254
-- **Summary:** Digest is a config snippet; rector is a full custom rule.
-- **Changes:**
-  - Digest uses `RenameFunctionRector` configuration
-  - Rector implements `FuncCall` node visiting with a `RENAME_MAP` constant, providing more control and testability
-
-### StatementPrefetchIteratorFetchColumnRector
-- **Source (digest):** `rules/replace-deprecated-statementprefetchiterator-fetchcolumn-3490200.php`
-- **Destination (rector):** `src/Drupal11/Rector/Deprecation/StatementPrefetchIteratorFetchColumnRector.php`
-- **Drupal issue:** https://drupal.org/i/3490200
-- **Summary:** Digest is a config snippet; rector adds full type-safe implementation.
-- **Changes:**
-  - Digest uses `RenameMethodRector` configuration (renames `fetchColumn` → `fetchField` on `StatementPrefetchIterator`)
-  - Rector implements `MethodCall` node visiting with a `StatementPrefetchIterator` ObjectType check
-  - Rector approach is equivalent but written as testable custom rule
-
-### ReplaceCommentManagerGetCountNewCommentsRector
-- **Source (digest):** `rules/replace-deprecated-commentmanagerinterface-3543035.php` (issue 3543035; rector maps to issue 3551729 — closest available match)
-- **Destination (rector):** `src/Drupal11/Rector/Deprecation/ReplaceCommentManagerGetCountNewCommentsRector.php`
-- **Drupal issue:** https://drupal.org/i/3551729
-- **Summary:** Rector integrates into the versioned configuration framework; digest is a plain AbstractRector.
-- **Changes:**
-  - Rector extends `AbstractDrupalCoreRector` with `DrupalIntroducedVersionConfiguration('11.3.0')`
-  - Rector uses `refactorWithConfiguration()` instead of `refactor()`
-  - Digest uses `AbstractRector` directly; logic otherwise identical
-
-### ReplaceSessionManagerDeleteRector
-- **Source (digest):** `rules/replace-deprecated-sessionmanager-delete-with-3577376.php`
-- **Destination (rector):** `src/Drupal11/Rector/Deprecation/ReplaceSessionManagerDeleteRector.php`
-- **Drupal issue:** https://drupal.org/i/3577376
-- **Summary:** Rector integrates into versioned configuration framework; digest is standalone.
-- **Changes:**
-  - Rector extends `AbstractDrupalCoreRector` with `DrupalIntroducedVersionConfiguration`
-  - Rector uses `isObjectType()` for type check; digest uses `$sessionManagerType->isSuperTypeOf($callerType)->yes()`
-  - Logic otherwise identical
-
-### UseEntityTypeHasIntegerIdRector
-- **Source (digest):** `rules/replace-deprecated-entity-type-integer-id-helpers-with-3566801.php`
-- **Destination (rector):** `src/Drupal11/Rector/Deprecation/UseEntityTypeHasIntegerIdRector.php`
-- **Drupal issue:** https://drupal.org/i/3566801
-- **Summary:** Rector adds per-class ObjectType type guards absent from the digest.
-- **Changes:**
-  - Rector defines `METHOD_OWNER_CLASS` map: `entityTypeSupportsComments` → `CommentTypeForm`, `hasIntegerId` → `OverridesSectionStorage`
-  - Rector adds `GET_ENTITY_TYPE_ID_KEY_TYPE_CLASS = 'DefaultHtmlRouteProvider'` constant with ObjectType check
-  - Digest uses `SIMPLE_METHOD_NAMES` with no type checks — would rewrite any `$this->entityTypeSupportsComments()` or `$this->hasIntegerId()` call on any class
-  - Rector is significantly safer against false positives
-
-### RemoveViewsRowCacheKeysRector
-- **Source (digest):** `rules/remove-deprecated-cachepluginbase-getrowcachekeys-and-3564937.php`
-- **Destination (rector):** `src/Drupal11/Rector/Deprecation/RemoveViewsRowCacheKeysRector.php`
-- **Drupal issue:** https://drupal.org/i/3564958
-- **Summary:** Rector adds CachePluginBase ObjectType guard absent from digest.
-- **Changes:**
-  - Rector calls `isObjectType($item->value->var, new ObjectType('Drupal\views\Plugin\views\cache\CachePluginBase'))` before removing the array item
-  - Digest matches any `getRowCacheKeys`/`getRowId` method call on any object
-  - Rector avoids false positives on unrelated classes with the same method names
-
-### ReplaceModuleHandlerGetNameRector
-- **Source (digest):** `rules/replace-removed-modulehandlerinterface-getname-with-3571063.php`
-- **Destination (rector):** `src/Drupal10/Rector/Deprecation/ReplaceModuleHandlerGetNameRector.php`
-- **Drupal issue:** https://drupal.org/i/3571063
-- **Summary:** Rector integrates into AbstractDrupalCoreRector framework with versioned configuration.
-- **Changes:**
-  - Rector extends `AbstractDrupalCoreRector` and uses `DrupalIntroducedVersionConfiguration`
-  - Rector uses `refactorWithConfiguration()` instead of `refactor()`
-  - Digest uses plain `AbstractRector` — same transformation logic otherwise
-
-### ReplaceRebuildThemeDataRector
-- **Source (digest):** `rules/replace-removed-themehandlerinterface-rebuildthemedata-with-3571068.php`
-- **Destination (rector):** `src/Drupal10/Rector/Deprecation/ReplaceRebuildThemeDataRector.php`
-- **Drupal issue:** https://drupal.org/i/3571068
-- **Summary:** Rector integrates into AbstractDrupalCoreRector framework with versioned configuration.
-- **Changes:**
-  - Rector extends `AbstractDrupalCoreRector` and uses `DrupalIntroducedVersionConfiguration`
-  - Rector adds `ThemeHandlerInterface` ObjectType check (digest lacks this)
-  - Logic otherwise identical
+**Change:** The fresh digest used a plain `AbstractRector` with a simple `refactor()` method. The rector integrates into the `AbstractDrupalCoreRector` framework with `DrupalIntroducedVersionConfiguration('10.3.0')`, using `refactorWithConfiguration()` and `ConfiguredCodeSample` in `getRuleDefinition()`. The transformation logic is otherwise identical.
 
 ---
 
-## Style-only / Minimal Changes
+### 2. `ReplaceRebuildThemeDataRector` (Drupal10)
 
-These rectors show only namespace addition, class renaming, minor import reorganization, or trivial wording differences in doc blocks/rule descriptions. The core transformation logic is identical to the digest.
+**Digest file:** `replace-removed-themehandlerinterface-rebuildthemedata-with-3571068.php`
 
-- `ErrorCurrentErrorHandlerRector` — source: `rules/replace-error-currenterrorhandler-with-get-error-handler-3526515.php`, dest: `src/Drupal11/Rector/Deprecation/ErrorCurrentErrorHandlerRector.php`
-- `FileSystemBasenameToNativeRector` — source: `rules/replace-filesysteminterface-basename-with-native-basename-3530461.php`, dest: `src/Drupal11/Rector/Deprecation/FileSystemBasenameToNativeRector.php`
-- `RemoveLinkWidgetValidateTitleElementRector` — source: `rules/remove-deprecated-linkwidget-validatetitleelement-calls-3093118.php`, dest: `src/Drupal11/Rector/Deprecation/RemoveLinkWidgetValidateTitleElementRector.php`
-- `RemoveStateCacheSettingRector` — source: `rules/remove-deprecated-settings-state-cache-assignment-3436954.php`, dest: `src/Drupal11/Rector/Deprecation/RemoveStateCacheSettingRector.php`
-- `RemoveUpdaterPostInstallMethodsRector` — source: `rules/remove-deprecated-updater-postinstall-postinstalltasks-3417136.php`, dest: `src/Drupal11/Rector/Deprecation/RemoveUpdaterPostInstallMethodsRector.php`
-- `ReplaceAlphadecimalToIntNullRector` — source: `rules/replace-deprecated-number-alphadecimaltoint-null-calls-with-3442810.php`, dest: `src/Drupal11/Rector/Deprecation/ReplaceAlphadecimalToIntNullRector.php`
-- `ReplaceCommentUriRector` — source: `rules/replace-deprecated-comment-uri-with-comment-permalink-2010202.php`, dest: `src/Drupal11/Rector/Deprecation/ReplaceCommentUriRector.php`
-- `ReplaceDateTimeRangeConstantsRector` — source: `rules/replace-removed-datetimerangeconstantsinterface-constants-3574901.php`, dest: `src/Drupal11/Rector/Deprecation/ReplaceDateTimeRangeConstantsRector.php`
-- `ReplaceEntityReferenceRecursiveLimitRector` — source: `rules/replace-deprecated-entityreferenceentityformatter-recursive-2940605.php`, dest: `src/Drupal11/Rector/Deprecation/ReplaceEntityReferenceRecursiveLimitRector.php`
-- `ReplaceFieldgroupToFieldsetRector` — source: `rules/replace-deprecated-type-fieldgroup-with-type-fieldset-3512254.php`, dest: `src/Drupal11/Rector/Deprecation/ReplaceFieldgroupToFieldsetRector.php`
-- `ReplaceFileGetContentHeadersRector` — source: `rules/replace-file-get-content-headers-with-fileinterface-3494126.php`, dest: `src/Drupal11/Rector/Deprecation/ReplaceFileGetContentHeadersRector.php`
-- `ReplaceNodeAccessViewAllNodesRector` — source: `rules/replace-deprecated-node-access-view-all-nodes-with-oo-3038908.php`, dest: `src/Drupal11/Rector/Deprecation/ReplaceNodeAccessViewAllNodesRector.php`
-- `ReplaceNodeAddBodyFieldRector` — source: `rules/replace-deprecated-node-add-body-field-with-createbodyfield-3489266.php`, dest: `src/Drupal11/Rector/Deprecation/ReplaceNodeAddBodyFieldRector.php`
-- `ReplaceNodeModuleProceduralFunctionsRector` — source: `rules/replace-deprecated-node-module-procedural-functions-with-oo-3571623.php`, dest: `src/Drupal11/Rector/Deprecation/ReplaceNodeModuleProceduralFunctionsRector.php`
-- `ReplaceRecipeRunnerInstallModuleRector` — source: `rules/replace-deprecated-reciperunner-installmodule-with-3498026.php`, dest: `src/Drupal11/Rector/Deprecation/ReplaceRecipeRunnerInstallModuleRector.php`
-- `ReplaceSessionWritesWithRequestSessionRector` — source: `rules/replace-deprecated-session-writes-with-drupal-request-3518527.php`, dest: `src/Drupal11/Rector/Deprecation/ReplaceSessionWritesWithRequestSessionRector.php`
-- `ReplaceSystemPerformanceGzipKeyRector` — source: `rules/replace-deprecated-system-performance-css-gzip-js-gzip-3184242.php`, dest: `src/Drupal11/Rector/Deprecation/ReplaceSystemPerformanceGzipKeyRector.php`
-- `ReplaceThemeGetSettingRector` — source: `rules/replace-deprecated-theme-get-setting-and-system-default-3573896.php`, dest: `src/Drupal11/Rector/Deprecation/ReplaceThemeGetSettingRector.php`
-- `ReplaceUserSessionNamePropertyRector` — source: `rules/replace-deprecated-usersession-name-property-read-with-3513856.php`, dest: `src/Drupal11/Rector/Deprecation/ReplaceUserSessionNamePropertyRector.php`
-- `ReplaceViewsProceduralFunctionsRector` — source: `rules/replace-deprecated-views-procedural-functions-with-oo-3572243.php`, dest: `src/Drupal11/Rector/Deprecation/ReplaceViewsProceduralFunctionsRector.php`
-- `StripMigrationDependenciesExpandArgRector` — source: `rules/strip-removed-expand-argument-from-getmigrationdependencies-3574717.php`, dest: `src/Drupal11/Rector/Deprecation/StripMigrationDependenciesExpandArgRector.php`
-- `ViewsPluginHandlerManagerRector` — source: `rules/replace-deprecated-views-pluginmanager-and-views-3566424.php`, dest: `src/Drupal11/Rector/Deprecation/ViewsPluginHandlerManagerRector.php`
+**Change:** Like `ReplaceModuleHandlerGetNameRector`, the rector wraps the logic in `AbstractDrupalCoreRector` with `DrupalIntroducedVersionConfiguration('10.3.0')`. Additionally, the rector adds a `ThemeHandlerInterface` ObjectType check that was missing from the fresh digest.
+
+```php
+// Fresh digest — no type guard
+if (!$this->isName($node->name, 'rebuildThemeData')) {
+    return null;
+}
+
+// Rector — adds ThemeHandlerInterface type guard
+if (!$this->isObjectType($node->var, new ObjectType('Drupal\Core\Extension\ThemeHandlerInterface'))) {
+    return null;
+}
+```
+
+---
+
+### 3. `ReplaceRequestTimeConstantRector` (Drupal10)
+
+**Digest file:** `add-timeinterface-time-argument-to-plugin-constructor-3395986.php`
+
+**Change:** The issue ID is shared but the two rules address entirely different deprecations. The fresh digest adds a `?TimeInterface $time` argument to `__construct()` overrides across six Drupal plugin parent classes. The rector instead replaces the `REQUEST_TIME` constant with `\Drupal::time()->getRequestTime()`. No code from the digest was reused — the rector is a completely independent implementation.
+
+---
+
+### 4. `LoadAllIncludesRector` (Drupal11)
+
+**Digest file:** `replace-deprecated-modulehandler-loadallincludes-with-3536431.php`
+
+**Change:** The fresh digest had no type guard — it rewrote any `loadAllIncludes()` call regardless of object type. The rector adds a `ModuleHandlerInterface` ObjectType check before rewriting.
+
+```php
+// Fresh digest — no type guard
+if (!$this->isName($methodCall->name, 'loadAllIncludes')) {
+    return null;
+}
+
+// Rector — requires ModuleHandlerInterface
+if (!$this->isObjectType($methodCall->var, new ObjectType('Drupal\Core\Extension\ModuleHandlerInterface'))) {
+    return null;
+}
+```
+
+---
+
+### 5. `MigrateSqlGetMigrationPluginManagerRector` (Drupal11)
+
+**Digest file:** `replace-deprecated-sql-getmigrationpluginmanager-with-3439369.php`
+
+**Change:** The type-check approach is inverted. The fresh digest used a negative guard — skip if the caller is a `Migration` instance, allowing any other caller through. The rector uses a positive guard — only proceed if the caller is specifically a `Sql` instance. The rector's approach is more restrictive and precise.
+
+```php
+// Fresh digest — negative guard (exclude Migration)
+if ($this->isObjectType($node->var, new ObjectType('Drupal\migrate\Plugin\Migration'))) {
+    return null;
+}
+
+// Rector — positive guard (require Sql)
+if (!$this->isObjectType($node->var, new ObjectType('Drupal\migrate\Plugin\migrate\id_map\Sql'))) {
+    return null;
+}
+```
+
+---
+
+### 6. `NodeStorageDeprecatedMethodsRector` (Drupal11)
+
+**Digest file:** `replace-deprecated-nodestorage-revisionids-and-3396062.php`
+
+**Change:** The fresh digest handled only `revisionIds()` and `userRevisionIds()`. The rector adds handling for `countDefaultLanguageRevisions()`, which has no replacement and must be removed entirely. This requires registering `Expression::class` as an additional node type and using `NodeVisitor::REMOVE_NODE`.
+
+```php
+// Rector — additional node type and removal handling
+public function getNodeTypes(): array
+{
+    return [Node\Expr\MethodCall::class, Node\Stmt\Expression::class];
+}
+
+// Removes countDefaultLanguageRevisions() entirely
+if ($node instanceof Node\Stmt\Expression) {
+    if ($this->getName($methodCall->name) === 'countDefaultLanguageRevisions') {
+        return NodeVisitor::REMOVE_NODE;
+    }
+}
+```
+
+---
+
+### 7. `PluginBaseIsConfigurableRector` (Drupal11)
+
+**Digest file:** `replace-deprecated-pluginbase-isconfigurable-with-3459533.php`
+
+**Change:** The fresh digest relied solely on detecting `$this->isConfigurable()` (variable named `this`, no args) without any type guard. The rector adds an explicit `isObjectType($node->var, new ObjectType('Drupal\Component\Plugin\PluginBase'))` check, preventing false positives on any other class that may have an `isConfigurable()` method.
+
+```php
+// Fresh digest — $this check only, no type guard
+if ($this->getName($node->var) !== 'this') {
+    return null;
+}
+
+// Rector — adds PluginBase type guard
+if ($this->getName($node->var) !== 'this') {
+    return null;
+}
+if (!$this->isObjectType($node->var, new ObjectType('Drupal\Component\Plugin\PluginBase'))) {
+    return null;
+}
+```
+
+---
+
+### 8. `RemoveAutomatedCronSubmitHandlerRector` (Drupal11)
+
+**Digest file:** `remove-deprecated-automated-cron-settings-submit-calls-and-3566768.php`
+
+**Change:** The fresh digest registered two rules: a custom class for `$form['#submit'][]` array-append removal, and `RemoveFuncCallRector` (a built-in Rector rule) for direct `automated_cron_settings_submit()` function calls. The rector implements only the array-append removal, omitting the direct function-call case. The class was also renamed from `RemoveAutomatedCronSettingsSubmitHandlerRector` to `RemoveAutomatedCronSubmitHandlerRector`.
+
+---
+
+### 9. `RemoveCacheExpireOverrideRector` (Drupal11)
+
+**Digest file:** `remove-deprecated-cacheexpire-overrides-from-views-3576556.php`
+
+**Change:** The rector significantly improves the class-hierarchy detection logic. It adds a `PARENT_FQCNS` constant listing all four known fully-qualified parent class names (`CachePluginBase`, `Time`, `Tag`, `None`), adds `'None'` to `PARENT_SHORT_NAMES`, and uses `str_ends_with($parentName, '\\' . $short)` for namespace-relative names to prevent false matches on partial namespace strings.
+
+```php
+// Rector — adds PARENT_FQCNS constant
+private const PARENT_FQCNS = [
+    'Drupal\views\Plugin\views\cache\CachePluginBase',
+    'Drupal\views\Plugin\views\cache\Time',
+    'Drupal\views\Plugin\views\cache\Tag',
+    'Drupal\views\Plugin\views\cache\None',
+];
+// Matches FQCNs first, then restricts short-name check to unqualified names
+if (!str_contains($parentName, '\\')) {
+    foreach (self::PARENT_SHORT_NAMES as $short) {
+```
+
+---
+
+### 10. `RemoveConfigSaveTrustedDataArgRector` + `RemoveTrustDataCallRector` (Drupal11)
+
+**Digest file:** `remove-deprecated-trusted-data-concept-from-drupal-config-3347842.php` (one file, split into two rector classes)
+
+**Change:** The fresh digest defined a single class covering both patterns. The rector splits them into two focused files. `RemoveConfigSaveTrustedDataArgRector` handles only `Config::save(TRUE/FALSE)` and adds a `Drupal\Core\Config\Config` ObjectType check. `RemoveTrustDataCallRector` handles only `->trustData()` chain removal and adds a `ConfigEntityInterface` ObjectType check. Both additions prevent false positives that the combined digest class was susceptible to.
+
+```php
+// RemoveConfigSaveTrustedDataArgRector — adds Config type guard
+if (!$this->isObjectType($node->var, new ObjectType('Drupal\Core\Config\Config'))) {
+    return null;
+}
+
+// RemoveTrustDataCallRector — adds ConfigEntityInterface type guard
+if (!$this->isObjectType($node->var, new ObjectType('Drupal\Core\Config\Entity\ConfigEntityInterface'))) {
+    return null;
+}
+```
+
+---
+
+### 11. `RemoveHandlerBaseDefineExtraOptionsRector` (Drupal11)
+
+**Digest file:** `remove-overrides-of-deprecated-handlerbase-3485084.php`
+
+**Change:** The fresh digest's `PARENT_SHORT_NAMES` covered only `HandlerBase`. The rector expands it to cover five additional handler base classes: `FieldHandlerBase`, `FilterPluginBase`, `SortPluginBase`, `ArgumentPluginBase`, and `RelationshipPluginBase`. The rector also adds an `isObjectType` PHPStan fallback and uses a different approach for the exclusion of the `HandlerBase` class itself.
+
+```php
+// Fresh digest
+private const PARENT_SHORT_NAMES = ['HandlerBase'];
+
+// Rector
+private const PARENT_SHORT_NAMES = [
+    'HandlerBase',
+    'FieldHandlerBase',
+    'FilterPluginBase',
+    'SortPluginBase',
+    'ArgumentPluginBase',
+    'RelationshipPluginBase',
+];
+```
+
+---
+
+### 12. `RemoveModuleHandlerAddModuleCallsRector` (Drupal11)
+
+**Digest file:** `remove-deprecated-modulehandlerinterface-addmodule-and-3528899.php`
+
+**Change:** The fresh digest checked only `ModuleHandlerInterface`. The rector also checks the concrete `ModuleHandler` class, covering cases where the variable is typed as the implementation rather than the interface.
+
+```php
+// Fresh digest — interface only
+if ($this->isObjectType($methodCall->var, new ObjectType('Drupal\\Core\\Extension\\ModuleHandlerInterface'))) {
+
+// Rector — interface + concrete class
+foreach (['Drupal\Core\Extension\ModuleHandlerInterface', 'Drupal\Core\Extension\ModuleHandler'] as $class) {
+    if ($this->isObjectType($methodCall->var, new ObjectType($class))) {
+        $isModuleHandler = true;
+        break;
+    }
+}
+```
+
+---
+
+### 13. `RemoveModuleHandlerDeprecatedMethodsRector` (Drupal11)
+
+**Digest file:** `remove-deprecated-modulehandlerinterface-writecache-and-3442009.php`
+
+**Change:** Both rules remove `writeCache()` and replace `getHookInfo()` with `[]`. The rector goes further: it removes standalone `getHookInfo()` expression statements entirely (via `NodeVisitor::REMOVE_NODE`) rather than leaving bare `[];` statements behind, as the digest did. The rector also refactors detection into a private `isModuleHandlerMethodCall()` helper.
+
+---
+
+### 14. `RemoveRootFromConvertDbUrlRector` (Drupal11)
+
+**Digest file:** `remove-deprecated-string-root-from-database-3522513.php`
+
+**Change:** The rector recognizes more expression types as valid second-argument forms to strip. It adds `StaticPropertyFetch` and `MethodCall` to the recognized node types (the fresh digest handled only `Variable`, `String_`, and `ClassConstFetch`). The class was also renamed from `RemoveRootFromConvertDbUrlToConnectionInfoRector`.
+
+---
+
+### 15. `RemoveSetUriCallbackRector` (Drupal11)
+
+**Digest file:** `remove-deprecated-entitytypeinterface-seturicallback-calls-2667040.php`
+
+**Change:** The fresh digest had no type guard — it removed any `setUriCallback()` call by method name alone. The rector adds `isObjectType($node->expr->var, new ObjectType('Drupal\Core\Entity\EntityTypeInterface'))` checks on both the standalone-statement case and the fluent-chain case.
+
+```php
+// Fresh digest — no type guard
+if ($node->expr instanceof MethodCall && $this->isName($node->expr->name, 'setUriCallback')) {
+    return NodeVisitor::REMOVE_NODE;
+}
+
+// Rector — type-guarded
+if ($node->expr instanceof MethodCall
+    && $this->isName($node->expr->name, 'setUriCallback')
+    && $this->isObjectType($node->expr->var, new ObjectType('Drupal\Core\Entity\EntityTypeInterface'))
+) {
+    return NodeVisitor::REMOVE_NODE;
+}
+```
+
+---
+
+### 16. `RemoveTwigNodeTransTagArgumentRector` (Drupal11)
+
+**Digest file:** `remove-deprecated-tag-argument-from-twignodetrans-3473440.php`
+
+**Change:** The strategies for argument removal and class matching both differ. The rector checks `count($node->args) === 6` exactly and uses `array_pop()` to remove the last argument. The fresh digest used `isset($node->args[5])` and `array_splice($node->args, 5)`, which would also handle cases with more than six arguments. The rector additionally matches the short class name `TwigNodeTrans` (without namespace) in addition to the FQCN. The class was renamed from `RemoveTwigNodeTransTagArgRector`.
+
+---
+
+### 17. `RemoveViewsRowCacheKeysRector` (Drupal11)
+
+**Digest file:** `remove-deprecated-cachepluginbase-getrowcachekeys-and-3564937.php`
+
+**Note:** The rector's `@see` references issue `#3564958`; the digest file uses `#3564937`. Both numbers refer to the same deprecation — `3564958` is the change record and `3564937` is the original issue.
+
+**Change:** The fresh digest removed array items whose value was a call to `getRowCacheKeys()` or `getRowId()` by method name alone, with no type guard. The rector adds `isObjectType($item->value->var, new ObjectType('Drupal\views\Plugin\views\cache\CachePluginBase'))`, preventing false positives when another class has methods with the same names.
+
+```php
+// Fresh digest — no type guard
+if ($item->value instanceof MethodCall && $this->isDeprecatedMethodCall($item->value)) {
+
+// Rector — type-guarded
+if ($item->value instanceof MethodCall
+    && $item->value->name instanceof Identifier
+    && in_array($item->value->name->toString(), self::DEPRECATED_METHODS, true)
+    && $this->isObjectType($item->value->var, new ObjectType('Drupal\views\Plugin\views\cache\CachePluginBase'))
+) {
+```
+
+---
+
+### 18. `RenameStopProceduralHookScanRector` (Drupal11)
+
+**Digest file:** `rename-stopproceduralhookscan-attribute-to-3495943.php`
+
+**Change:** The fresh digest was a trivial config snippet (two lines of real logic) using the built-in `RenameClassRector`. The rector implements a full custom rule visiting both `UseUse` and `Attribute` AST nodes to rename the use-statement and the attribute usage site independently, preserving correct formatting and avoiding the risk of `RenameClassRector` rewriting unrelated class body references.
+
+---
+
+### 19. `ReplaceCommentManagerGetCountNewCommentsRector` (Drupal11)
+
+**Digest file:** `replace-deprecated-commentmanagerinterface-3543035.php`
+
+**Note:** The rector's `@see` references issue `#3551729`; the digest file uses `#3543035`. Both reference the same deprecation — `#3543035` is the original issue, `#3551729` is the related change record.
+
+**Change:** The fresh digest extended `AbstractRector` directly with a plain `refactor()` method. The rector extends `AbstractDrupalCoreRector` and wraps the logic in `refactorWithConfiguration()`, enabling version-gated activation via `DrupalIntroducedVersionConfiguration('11.3.0')`.
+
+```php
+// Fresh digest
+final class CommentManagerGetCountNewCommentsRector extends AbstractRector
+{
+    public function refactor(Node $node): ?Node { ... }
+
+// Rector
+final class ReplaceCommentManagerGetCountNewCommentsRector extends AbstractDrupalCoreRector
+{
+    public function refactorWithConfiguration(Node $node, VersionedConfigurationInterface $configuration): ?Node { ... }
+    // getRuleDefinition() uses ConfiguredCodeSample with DrupalIntroducedVersionConfiguration('11.3.0')
+```
+
+---
+
+### 20. `ReplaceEditorLoadRector` (Drupal11)
+
+**Digest file:** `replace-deprecated-editor-load-with-entity-storage-load-3447794.php`
+
+**Change:** The rector uses `$this->nodeFactory->createStaticCall()` and `createMethodCall()` helpers from Rector's `NodeFactory` for cleaner AST construction, replacing the fresh digest's inline manual node construction. The rector also adds a `count($node->args) !== 1` guard that the digest lacked. The class was renamed from `EditorLoadDeprecationRector`.
+
+---
+
+### 21. `ReplaceEntityOriginalPropertyRector` (Drupal11)
+
+**Digest file:** `replace-deprecated-entity-original-magic-property-with-3571065.php`
+
+**Change:** The fresh digest handled `PropertyFetch` and `Assign` nodes only, with no type guard on read accesses. The rector adds `NullsafePropertyFetch` as a third node type, rewriting `$entity?->original` to `$entity?->getOriginal()` via `NullsafeMethodCall`. It also adds an `EntityInterface` ObjectType check on the `PropertyFetch` branch. The class was renamed from `EntityOriginalPropertyToMethodRector`.
+
+```php
+// Fresh digest — only PropertyFetch and Assign
+public function getNodeTypes(): array
+{
+    return [PropertyFetch::class, Assign::class];
+}
+// No isObjectType check on the PropertyFetch branch
+
+// Rector — adds NullsafePropertyFetch and EntityInterface type guard
+public function getNodeTypes(): array
+{
+    return [PropertyFetch::class, NullsafePropertyFetch::class, Assign::class];
+}
+if ($this->isObjectType($node->var, new ObjectType('Drupal\Core\Entity\EntityInterface'))) {
+    return new MethodCall($node->var, 'getOriginal');
+}
+```
+
+---
+
+### 22. `ReplaceLocaleConfigBatchFunctionsRector` (Drupal11)
+
+**Digest file:** `replace-deprecated-locale-batch-functions-with-their-3575254.php`
+
+**Change:** The fresh digest was a config snippet using the built-in `RenameFunctionRector`. The rector implements a full custom `FuncCall`-visiting rule with a `RENAME_MAP` constant, providing type-safety, testability, and more control over the transformation.
+
+---
+
+### 23. `ReplaceNodeSetPreviewModeRector` (Drupal11)
+
+**Digest file:** `replace-deprecated-constants-with-nodepreviewmode-enum-in-3538277.php`
+
+**Change:** The fresh digest had no type guard on `setPreviewMode()` — it would rewrite the call on any object. The rector adds `isObjectType($node->var, new ObjectType('Drupal\node\NodeTypeInterface'))`, preventing false positives on unrelated classes with the same method name. The class was renamed from `NodeSetPreviewModeRector`.
+
+```php
+// Fresh digest — no type guard
+if (!$this->isName($node->name, 'setPreviewMode')) { return null; }
+
+// Rector — NodeTypeInterface guard
+if (!$this->isObjectType($node->var, new ObjectType('Drupal\node\NodeTypeInterface'))) {
+    return null;
+}
+```
+
+---
+
+### 24. `ReplacePdoFetchConstantsRector` (Drupal11)
+
+**Digest file:** `replace-removed-mysql-pgsql-sqlite-driver-query-subclass-3525077.php`
+
+**Change:** The issue ID is shared but the two rules address entirely different aspects of the same deprecation. The fresh digest was a config snippet using `RenameClassRector` to repoint nine deprecated driver-specific query subclasses to their `Drupal\Core\Database\Query\*` equivalents. The rector is a full custom rule converting `PDO::FETCH_*` constants to `FetchAs` enum cases across `setFetchMode()`, `fetch()`, `fetchAll()`, `fetchAllAssoc()`, and `'fetch'` array keys. No code from the digest was reused.
+
+---
+
+### 25. `ReplaceSessionManagerDeleteRector` (Drupal11)
+
+**Digest file:** `replace-deprecated-sessionmanager-delete-with-3577376.php`
+
+**Change:** The fresh digest extended `AbstractRector` directly with a plain `refactor()` method. The rector extends `AbstractDrupalCoreRector` and uses `refactorWithConfiguration()` with `DrupalIntroducedVersionConfiguration('11.4.0')`. The type-check strategy was also changed from the PHPStan `$sessionManagerType->isSuperTypeOf($callerType)->yes()` pattern to the standard Rector `$this->isObjectType()` API.
+
+```php
+// Fresh digest
+final class ReplaceSessionManagerDeleteRector extends AbstractRector
+{
+    public function refactor(Node $node): ?Node { ... }
+
+// Rector
+final class ReplaceSessionManagerDeleteRector extends AbstractDrupalCoreRector
+{
+    public function refactorWithConfiguration(Node $node, VersionedConfigurationInterface $configuration): ?Node { ... }
+```
+
+---
+
+### 26. `StatementPrefetchIteratorFetchColumnRector` (Drupal11)
+
+**Digest file:** `replace-deprecated-statementprefetchiterator-fetchcolumn-3490200.php`
+
+**Change:** The fresh digest was a config snippet using `RenameMethodRector` to rename `fetchColumn` → `fetchField` on `StatementPrefetchIterator`. The rector implements a full custom `MethodCall`-visiting rule with an explicit `StatementPrefetchIterator` ObjectType check, making the transformation testable and precise.
+
+---
+
+### 27. `UseEntityTypeHasIntegerIdRector` (Drupal11)
+
+**Digest file:** `replace-deprecated-entity-type-integer-id-helpers-with-3566801.php`
+
+**Change:** The fresh digest treated `entityTypeSupportsComments()` and `hasIntegerId()` as simple `$this->method()` rewrites with no type guard — any class with those method names would be transformed. The rector adds a `METHOD_OWNER_CLASS` constant that maps each method to its declaring class FQCN and calls `isObjectType()` before transforming, preventing false positives entirely.
+
+```php
+// Fresh digest — no type guard
+private const SIMPLE_METHOD_NAMES = ['entityTypeSupportsComments'];
+if (in_array($methodName, self::SIMPLE_METHOD_NAMES, true) && count($node->args) === 1) {
+    return new MethodCall($node->args[0]->value, 'hasIntegerId');
+}
+
+// Rector — type-guarded via METHOD_OWNER_CLASS
+private const METHOD_OWNER_CLASS = [
+    'entityTypeSupportsComments' => 'Drupal\comment\CommentTypeForm',
+    'hasIntegerId' => 'Drupal\layout_builder\Plugin\SectionStorage\OverridesSectionStorage',
+];
+if (!$this->isObjectType($node->var, new ObjectType(self::METHOD_OWNER_CLASS[$name]))) {
+    return null;
+}
+```
+
+---
+
+## Minimal Changes
+
+These rectors are functionally identical to their fresh-digest counterparts. Differences are limited to: namespace declarations, proper `use` imports (replacing inline backslash-prefixed FQCNs), `declare(strict_types=1)` placement, class renaming to match drupal-rector naming conventions, and minor wording in `getRuleDefinition()`.
+
+| Rector class | Notable structural differences from digest |
+|---|---|
+| `ErrorCurrentErrorHandlerRector` | Namespace + imports only; `ObjectType` imported vs inline `\PHPStan\Type\ObjectType` |
+| `FileSystemBasenameToNativeRector` | Namespace + imports only; type-check API changed from `isSuperTypeOf()->yes()` to `isObjectType()` (semantically equivalent) |
+| `RemoveLinkWidgetValidateTitleElementRector` | Namespace + imports only |
+| `RemoveStateCacheSettingRector` | Namespace + imports only |
+| `RemoveUpdaterPostInstallMethodsRector` | Namespace + imports only; backslash escaping in `UPDATER_BASE_CLASSES` normalized |
+| `ReplaceAlphadecimalToIntNullRector` | Namespace + imports only; class renamed from `AlphadecimalToIntNullOrEmptyRector` |
+| `ReplaceCommentUriRector` | Namespace + imports only; class renamed from `CommentUriToPermalinkRector`; arg count check changed from `!== 1` to `< 1` |
+| `ReplaceDateTimeRangeConstantsRector` | Namespace + imports only; class renamed from `ReplaceDatetimeDeprecatedApisRector` |
+| `ReplaceEntityReferenceRecursiveLimitRector` | Namespace + imports only; class name preserved; logic identical |
+| `ReplaceFieldgroupToFieldsetRector` | Namespace + imports only; class renamed from `FieldgroupToFieldsetRector` |
+| `ReplaceFileGetContentHeadersRector` | Namespace + imports only; class renamed from `FileGetContentHeadersRector` |
+| `ReplaceNodeAccessViewAllNodesRector` | Namespace + imports only; class renamed from `NodeAccessViewAllNodesRector` |
+| `ReplaceNodeAddBodyFieldRector` | Namespace + imports only; class renamed from `NodeAddBodyFieldRector` |
+| `ReplaceNodeModuleProceduralFunctionsRector` | Namespace + imports only; class renamed from `ReplaceDeprecatedNodeFunctionsRector`; private constants replaced with inline strings |
+| `ReplaceRecipeRunnerInstallModuleRector` | Namespace + imports only; class renamed from `RecipeRunnerInstallModuleRector` |
+| `ReplaceSessionWritesWithRequestSessionRector` | Namespace + imports only; class renamed from `SessionSuperGlobalToRequestSessionRector` |
+| `ReplaceSystemPerformanceGzipKeyRector` | Namespace + imports only; class renamed from `SystemPerformanceGzipToCompressRector` |
+| `ReplaceThemeGetSettingRector` | Namespace + imports only |
+| `ReplaceUserSessionNamePropertyRector` | Namespace + imports only; class renamed from `UserSessionNamePropertyToGetAccountNameRector`; adds `UserSession` ObjectType check |
+| `ReplaceViewsProceduralFunctionsRector` | Namespace + imports only; class renamed from `ReplaceDeprecatedViewsFunctionsRector` |
+| `StripMigrationDependenciesExpandArgRector` | Namespace + imports only; class renamed from `RemoveMigrationDependenciesExpandArgRector`; type-check API changed from `isSuperTypeOf()->yes()` to `isObjectType()` (semantically equivalent) |
+| `ViewsPluginHandlerManagerRector` | Namespace + imports only; class-name check changed from `isObjectType()` to `isName()` (correct for static call class nodes) |
+
+---
+
+## Notes on Digest File Mapping
+
+### One digest file → two rector files
+`remove-deprecated-trusted-data-concept-from-drupal-config-3347842.php` defined two classes in a single file: a combined handler for both `save(TRUE)` and `->trustData()` patterns. The rector project splits these into two separate class files — `RemoveConfigSaveTrustedDataArgRector` and `RemoveTrustDataCallRector` — consistent with the project's one-class-per-file convention.
+
+### Issue number mismatches
+Three rectors reference a different `@see` issue number than the digest filename's suffix. In each case the transformation is the same; the numbers refer to different nodes in the same deprecation issue thread:
+
+| Rector | Rector `@see` | Digest filename issue | Notes |
+|---|---|---|---|
+| `RemoveViewsRowCacheKeysRector` | `#3564958` | `#3564937` | `3564958` is the change record; `3564937` is the original issue |
+| `ReplaceCommentManagerGetCountNewCommentsRector` | `#3551729` | `#3543035` | `3543035` is the original issue; `3551729` is the related change record |
+| `ReplaceEntityReferenceRecursiveLimitRector` | `#3316878` | `#2940605` | `2940605` is the older issue; `3316878` is the more recent change record |
