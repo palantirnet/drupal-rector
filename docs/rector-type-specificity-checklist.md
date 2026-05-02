@@ -85,17 +85,17 @@ Use `/rector-type-check-review <RectorClassName>` to fix an AT-RISK rector inter
 
 All 12 AT-RISK rectors have been fixed. ✅
 
-| # | Rector | Guard added | Drupal class/interface used |
-|---|--------|------------|------------------------------|
-| 1 | `ReplaceRebuildThemeDataRector` | `isObjectType` on `->rebuildThemeData()` caller | `Drupal\Core\Extension\ThemeHandlerInterface` |
-| 2 | `PluginBaseIsConfigurableRector` | `isObjectType` on `$this` | `Drupal\Component\Plugin\PluginBase` |
-| 3 | `RemoveConfigSaveTrustedDataArgRector` | `isObjectType` on `->save()` caller | `Drupal\Core\Config\Config` |
-| 4 | `RemoveSetUriCallbackRector` | `isObjectType` on `->setUriCallback()` caller | `Drupal\Core\Entity\EntityTypeInterface` |
-| 5 | `RemoveTrustDataCallRector` | `isObjectType` on `->trustData()` caller | `Drupal\Core\Config\Entity\ConfigEntityInterface` |
-| 6 | `RemoveViewsRowCacheKeysRector` | `isObjectType` on method-call receiver inside array item | `Drupal\views\Plugin\views\cache\CachePluginBase` |
-| 7 | `ReplaceEntityOriginalPropertyRector` | `isObjectType` on `->original` variable | `Drupal\Core\Entity\EntityInterface` |
-| 8 | `ReplaceNodeSetPreviewModeRector` | `isObjectType` on `->setPreviewMode()` caller | `Drupal\node\NodeTypeInterface` |
-| 9 | `StatementPrefetchIteratorFetchColumnRector` | `isObjectType` on `->fetchColumn()` caller | `Drupal\Core\Database\StatementPrefetchIterator` |
-| 10 | `UseEntityTypeHasIntegerIdRector` | per-method `isObjectType` via `METHOD_OWNER_CLASS` map | `DefaultHtmlRouteProvider`, `CommentTypeForm`, `OverridesSectionStorage` |
-| 11 | `LoadAllIncludesRector` | `isObjectType` on `->loadAllIncludes()` caller | `Drupal\Core\Extension\ModuleHandlerInterface` |
-| 12 | `RemoveCacheExpireOverrideRector` | replaced broad `str_ends_with` with exact FQCN list; added `isObjectType(CachePluginBase)` fallback | `Drupal\views\Plugin\views\cache\CachePluginBase` |
+| # | Rector | Guard added | Drupal class/interface used | Issue | Change Record |
+|---|--------|------------|------------------------------|-------|---------------|
+| 1 | `ReplaceRebuildThemeDataRector` | `isObjectType` on `->rebuildThemeData()` caller | `Drupal\Core\Extension\ThemeHandlerInterface` | 3571068 | — |
+| 2 | `PluginBaseIsConfigurableRector` | `isObjectType` on `$this` | `Drupal\Component\Plugin\PluginBase` | 3459533 | 3459535 |
+| 3 | `RemoveConfigSaveTrustedDataArgRector` | `isObjectType` on `->save()` caller | `Drupal\Core\Config\Config` | 3347842 | 3348180 |
+| 4 | `RemoveSetUriCallbackRector` | `isObjectType` on `->setUriCallback()` caller | `Drupal\Core\Entity\EntityTypeInterface` | 2667040 | 3575062 |
+| 5 | `RemoveTrustDataCallRector` | `isObjectType` on `->trustData()` caller | `Drupal\Core\Config\Entity\ConfigEntityInterface` | 3347842 | 3348180 |
+| 6 | `RemoveViewsRowCacheKeysRector` | `isObjectType` on method-call receiver inside array item | `Drupal\views\Plugin\views\cache\CachePluginBase` | 3564937 | 3564958 |
+| 7 | `ReplaceEntityOriginalPropertyRector` | `isObjectType` on `->original` variable | `Drupal\Core\Entity\EntityInterface` | 3571065 | — |
+| 8 | `ReplaceNodeSetPreviewModeRector` | `isObjectType` on `->setPreviewMode()` caller | `Drupal\node\NodeTypeInterface` | 3538277 | 3538666 |
+| 9 | `StatementPrefetchIteratorFetchColumnRector` | `isObjectType` on `->fetchColumn()` caller | `Drupal\Core\Database\StatementPrefetchIterator` | 3490200 | 3490312 |
+| 10 | `UseEntityTypeHasIntegerIdRector` | per-method `isObjectType` via `METHOD_OWNER_CLASS` map | `DefaultHtmlRouteProvider`, `CommentTypeForm`, `OverridesSectionStorage` | 3566801 | 3566814 |
+| 11 | `LoadAllIncludesRector` | `isObjectType` on `->loadAllIncludes()` caller | `Drupal\Core\Extension\ModuleHandlerInterface` | 3536431 | 3536432 |
+| 12 | `RemoveCacheExpireOverrideRector` | replaced broad `str_ends_with` with exact FQCN list; added `isObjectType(CachePluginBase)` fallback | `Drupal\views\Plugin\views\cache\CachePluginBase` | 3576556 | 3576855 |
