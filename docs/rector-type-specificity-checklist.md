@@ -83,7 +83,7 @@ Use `/rector-type-check-review <RectorClassName>` to fix an AT-RISK rector inter
 
 ## AT-RISK Summary
 
-All 16 AT-RISK rectors have been fixed. ✅
+All 19 AT-RISK rectors have been fixed. ✅
 
 | # | Rector | Guard added | Drupal class/interface used | Issue | Change Record |
 |---|--------|------------|------------------------------|-------|---------------|
@@ -103,3 +103,6 @@ All 16 AT-RISK rectors have been fixed. ✅
 | 14 | `ReplaceNodeModuleProceduralFunctionsRector` | added `$node->name instanceof Name` guard to skip variable/dynamic function calls | n/a — targets global functions | 3571623 | — |
 | 15 | `ReplaceEditorLoadRector` | added `count($node->args) !== 1` guard to skip argument-less calls | n/a — targets global function | 3447794 | 3509245 |
 | 16 | `ReplaceEntityOriginalPropertyRector` | `isObjectType(EntityInterface)` on `->original` variable; also added `NullsafePropertyFetch` branch missing from original | `Drupal\Core\Entity\EntityInterface` | 3571065 | — |
+| 17 | `NodeStorageDeprecatedMethodsRector` | `isObjectType(NodeStorageInterface)` promoted to top-level guard; added `countDefaultLanguageRevisions()` removal branch absent from original | `Drupal\node\NodeStorageInterface` | 3396062 | 3519187 |
+| 18 | `RemoveModuleHandlerAddModuleCallsRector` | extended `isObjectType` check to cover concrete `ModuleHandler` in addition to `ModuleHandlerInterface` | `Drupal\Core\Extension\ModuleHandlerInterface` + `ModuleHandler` | 3528899 | 3550193 |
+| 19 | `RemoveViewsRowCacheKeysRector` | `isObjectType(CachePluginBase)` on array item receiver — original had no type guard at all | `Drupal\views\Plugin\views\cache\CachePluginBase` | 3564937 | 3564958 |
