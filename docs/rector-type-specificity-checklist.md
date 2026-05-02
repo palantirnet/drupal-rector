@@ -32,12 +32,12 @@ Use `/rector-type-check-review <RectorClassName>` to fix an AT-RISK rector inter
 |--------|---------|-------|---------|-------|---------------|-------|
 | `ErrorCurrentErrorHandlerRector` | `Error::currentErrorHandler()` static | `isObjectType(Error)` | ✅ SAFE | 3526515 | 3529500 | |
 | `FileSystemBasenameToNativeRector` | `->basename()` | `isObjectType(FileSystemInterface\|FileSystem)` | ✅ SAFE | 3530461 | 3530869 | |
-| `LoadAllIncludesRector` | `->loadAllIncludes()` | `isObjectType(ModuleHandlerInterface)` | ✅ SAFE | 3536431 | 3536432 | |
+| `LoadAllIncludesRector` | `->loadAllIncludes()` | `isObjectType(ModuleHandlerInterface)` | ✅ SAFE | 3536431 | 3536432 | Fixed |
 | `MigrateSqlGetMigrationPluginManagerRector` | `$this->getMigrationPluginManager()` | `isObjectType(Sql)` | ✅ SAFE | 3439369 | 3442785 | |
 | `NodeStorageDeprecatedMethodsRector` | `->revisionIds()` etc. | `isObjectType(NodeStorageInterface)` | ✅ SAFE | 3396062 | 3519187 | |
 | `PluginBaseIsConfigurableRector` | `$this->isConfigurable()` | `isObjectType(PluginBase)` | ✅ SAFE | 3459533 | 3459535 | Fixed |
 | `RemoveAutomatedCronSubmitHandlerRector` | `$form['#submit'][]` string literal | n/a | ✅ SAFE | 3566768 | 3566774 | Matches specific string value, not a class member |
-| `RemoveCacheExpireOverrideRector` | `cacheExpire()` method declaration | `extends` + `isObjectType` fallback on `Class_` | 🔵 EXEMPT | 3576556 | 3576855 | |
+| `RemoveCacheExpireOverrideRector` | `cacheExpire()` method declaration | exact FQCN list + `isObjectType` fallback on `Class_` | 🔵 EXEMPT | 3576556 | 3576855 | Fixed |
 | `RemoveConfigSaveTrustedDataArgRector` | `->save(TRUE\|FALSE)` | `isObjectType(Config)` | ✅ SAFE | 3347842 | 3348180 | Fixed |
 | `RemoveHandlerBaseDefineExtraOptionsRector` | `defineExtraOptions()` declaration | `extends` check on `Class_` | 🔵 EXEMPT | 3485084 | 3486781 | |
 | `RemoveLinkWidgetValidateTitleElementRector` | `LinkWidget::validateTitleElement()` static | `isName(LinkWidget)` | ✅ SAFE | 3093118 | 3554139 | |
@@ -83,7 +83,7 @@ Use `/rector-type-check-review <RectorClassName>` to fix an AT-RISK rector inter
 
 ## AT-RISK Summary
 
-All 10 AT-RISK rectors have been fixed. ✅
+All 12 AT-RISK rectors have been fixed. ✅
 
 | # | Rector | Guard added | Drupal class/interface used |
 |---|--------|------------|------------------------------|
@@ -97,3 +97,5 @@ All 10 AT-RISK rectors have been fixed. ✅
 | 8 | `ReplaceNodeSetPreviewModeRector` | `isObjectType` on `->setPreviewMode()` caller | `Drupal\node\NodeTypeInterface` |
 | 9 | `StatementPrefetchIteratorFetchColumnRector` | `isObjectType` on `->fetchColumn()` caller | `Drupal\Core\Database\StatementPrefetchIterator` |
 | 10 | `UseEntityTypeHasIntegerIdRector` | per-method `isObjectType` via `METHOD_OWNER_CLASS` map | `DefaultHtmlRouteProvider`, `CommentTypeForm`, `OverridesSectionStorage` |
+| 11 | `LoadAllIncludesRector` | `isObjectType` on `->loadAllIncludes()` caller | `Drupal\Core\Extension\ModuleHandlerInterface` |
+| 12 | `RemoveCacheExpireOverrideRector` | replaced broad `str_ends_with` with exact FQCN list; added `isObjectType(CachePluginBase)` fallback | `Drupal\views\Plugin\views\cache\CachePluginBase` |
