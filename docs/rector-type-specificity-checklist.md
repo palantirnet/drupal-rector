@@ -71,7 +71,7 @@ Use `/rector-type-check-review <RectorClassName>` to fix an AT-RISK rector inter
 | `ReplaceSessionWritesWithRequestSessionRector` | `$_SESSION[...]` superglobal | n/a | ✅ SAFE | 3518527 | 3518914 | Specific superglobal |
 | `ReplaceSystemPerformanceGzipKeyRector` | `->get()`/`->set()` on config chain | chain inspection for `'system.performance'` key | ✅ SAFE | 3184242 | 3526344 | Custom chain guard |
 | `ReplaceThemeGetSettingRector` | `theme_get_setting()` etc. | n/a | ✅ SAFE | 3573896 | — | Global functions |
-| `ReplaceUserSessionNamePropertyRector` | `->name` property | `isObjectType(UserSession)` + skips `$this` | ✅ SAFE | 3513856 | 3513877 | |
+| `ReplaceUserSessionNamePropertyRector` | `->name` property | `isObjectType(UserSession)` + skips `$this` | ✅ SAFE | 3513856 | 3513877 | Fixed |
 | `ReplaceViewsProceduralFunctionsRector` | `views_*()` functions | n/a | ✅ SAFE | 3572243 | 3572594 | Global functions |
 | `StatementPrefetchIteratorFetchColumnRector` | `->fetchColumn()` | `isObjectType(StatementPrefetchIterator)` | ✅ SAFE | 3490200 | 3490312 | Fixed |
 | `StripMigrationDependenciesExpandArgRector` | `->getMigrationDependencies()` | `isObjectType(MigrationInterface)` | ✅ SAFE | 3574717 | 3442785 | |
@@ -83,7 +83,7 @@ Use `/rector-type-check-review <RectorClassName>` to fix an AT-RISK rector inter
 
 ## AT-RISK Summary
 
-All 12 AT-RISK rectors have been fixed. ✅
+All 13 AT-RISK rectors have been fixed. ✅
 
 | # | Rector | Guard added | Drupal class/interface used | Issue | Change Record |
 |---|--------|------------|------------------------------|-------|---------------|
@@ -99,3 +99,4 @@ All 12 AT-RISK rectors have been fixed. ✅
 | 10 | `UseEntityTypeHasIntegerIdRector` | per-method `isObjectType` via `METHOD_OWNER_CLASS` map | `DefaultHtmlRouteProvider`, `CommentTypeForm`, `OverridesSectionStorage` | 3566801 | 3566814 |
 | 11 | `LoadAllIncludesRector` | `isObjectType` on `->loadAllIncludes()` caller | `Drupal\Core\Extension\ModuleHandlerInterface` | 3536431 | 3536432 |
 | 12 | `RemoveCacheExpireOverrideRector` | replaced broad `str_ends_with` with exact FQCN list; added `isObjectType(CachePluginBase)` fallback | `Drupal\views\Plugin\views\cache\CachePluginBase` | 3576556 | 3576855 |
+| 13 | `ReplaceUserSessionNamePropertyRector` | `isObjectType` on `->name` property variable | `Drupal\Core\Session\UserSession` | 3513856 | 3513877 |
