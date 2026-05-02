@@ -63,7 +63,7 @@ Use `/rector-type-check-review <RectorClassName>` to fix an AT-RISK rector inter
 | `ReplaceLocaleConfigBatchFunctionsRector` | `locale_config_batch_*()` functions | n/a | ✅ SAFE | 3575254 | — | Global functions |
 | `ReplaceNodeAccessViewAllNodesRector` | `node_access_view_all_nodes()` etc. | n/a | ✅ SAFE | 3038908 | 3038909 | Global functions |
 | `ReplaceNodeAddBodyFieldRector` | `node_add_body_field()` function | n/a | ✅ SAFE | 3489266 | 3516778 | Global function |
-| `ReplaceNodeModuleProceduralFunctionsRector` | `node_type_get_names()` etc. | n/a | ✅ SAFE | 3571623 | — | Global functions |
+| `ReplaceNodeModuleProceduralFunctionsRector` | `node_type_get_names()` etc. | `$node->name instanceof Name` guard | ✅ SAFE | 3571623 | — | Global functions; Fixed |
 | `ReplaceNodeSetPreviewModeRector` | `->setPreviewMode(0\|1\|2\|CONST)` | `isObjectType(NodeTypeInterface)` | ✅ SAFE | 3538277 | 3538666 | Fixed |
 | `ReplacePdoFetchConstantsRector` | `PDO::FETCH_*` constants | `isName(PDO)` on const fetch | ✅ SAFE | 3525077 | — | |
 | `ReplaceRecipeRunnerInstallModuleRector` | `RecipeRunner::installModule()` static | `isName(RecipeRunner)` | ✅ SAFE | 3498026 | 3579527 | |
@@ -83,7 +83,7 @@ Use `/rector-type-check-review <RectorClassName>` to fix an AT-RISK rector inter
 
 ## AT-RISK Summary
 
-All 13 AT-RISK rectors have been fixed. ✅
+All 14 AT-RISK rectors have been fixed. ✅
 
 | # | Rector | Guard added | Drupal class/interface used | Issue | Change Record |
 |---|--------|------------|------------------------------|-------|---------------|
@@ -100,3 +100,4 @@ All 13 AT-RISK rectors have been fixed. ✅
 | 11 | `LoadAllIncludesRector` | `isObjectType` on `->loadAllIncludes()` caller | `Drupal\Core\Extension\ModuleHandlerInterface` | 3536431 | 3536432 |
 | 12 | `RemoveCacheExpireOverrideRector` | replaced broad `str_ends_with` with exact FQCN list; added `isObjectType(CachePluginBase)` fallback | `Drupal\views\Plugin\views\cache\CachePluginBase` | 3576556 | 3576855 |
 | 13 | `ReplaceUserSessionNamePropertyRector` | `isObjectType` on `->name` property variable | `Drupal\Core\Session\UserSession` | 3513856 | 3513877 |
+| 14 | `ReplaceNodeModuleProceduralFunctionsRector` | added `$node->name instanceof Name` guard to skip variable/dynamic function calls | n/a — targets global functions | 3571623 | — |
