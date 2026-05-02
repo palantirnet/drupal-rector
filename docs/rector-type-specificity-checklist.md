@@ -55,7 +55,7 @@ Use `/rector-type-check-review <RectorClassName>` to fix an AT-RISK rector inter
 | `ReplaceCommentManagerGetCountNewCommentsRector` | `->getCountNewComments()` | `isObjectType(CommentManagerInterface)` | ✅ SAFE | 3543035 | 3551729 | |
 | `ReplaceCommentUriRector` | `comment_uri()` function | n/a | ✅ SAFE | 2010202 | 3384294 | Global function |
 | `ReplaceDateTimeRangeConstantsRector` | class constant fetch + function | `isName` on interface | ✅ SAFE | 3574901 | — | |
-| `ReplaceEditorLoadRector` | `editor_load()` function | n/a | ✅ SAFE | 3447794 | 3509245 | Global function |
+| `ReplaceEditorLoadRector` | `editor_load()` function | `count($node->args) !== 1` | ✅ SAFE | 3447794 | 3509245 | Global function; Fixed |
 | `ReplaceEntityOriginalPropertyRector` | `->original` property | `isObjectType(EntityInterface)` | ✅ SAFE | 3571065 | — | Fixed |
 | `ReplaceEntityReferenceRecursiveLimitRector` | `RECURSIVE_RENDER_LIMIT` class const | `isName` on target classes | ✅ SAFE | 2940605 | 3316878 | |
 | `ReplaceFieldgroupToFieldsetRector` | `'#type' => 'fieldgroup'` array literal | n/a | ✅ SAFE | 3512254 | 3515272 | String literal match |
@@ -83,7 +83,7 @@ Use `/rector-type-check-review <RectorClassName>` to fix an AT-RISK rector inter
 
 ## AT-RISK Summary
 
-All 14 AT-RISK rectors have been fixed. ✅
+All 16 AT-RISK rectors have been fixed. ✅
 
 | # | Rector | Guard added | Drupal class/interface used | Issue | Change Record |
 |---|--------|------------|------------------------------|-------|---------------|
@@ -101,3 +101,5 @@ All 14 AT-RISK rectors have been fixed. ✅
 | 12 | `RemoveCacheExpireOverrideRector` | replaced broad `str_ends_with` with exact FQCN list; added `isObjectType(CachePluginBase)` fallback | `Drupal\views\Plugin\views\cache\CachePluginBase` | 3576556 | 3576855 |
 | 13 | `ReplaceUserSessionNamePropertyRector` | `isObjectType` on `->name` property variable | `Drupal\Core\Session\UserSession` | 3513856 | 3513877 |
 | 14 | `ReplaceNodeModuleProceduralFunctionsRector` | added `$node->name instanceof Name` guard to skip variable/dynamic function calls | n/a — targets global functions | 3571623 | — |
+| 15 | `ReplaceEditorLoadRector` | added `count($node->args) !== 1` guard to skip argument-less calls | n/a — targets global function | 3447794 | 3509245 |
+| 16 | `ReplaceEntityOriginalPropertyRector` | `isObjectType(EntityInterface)` on `->original` variable; also added `NullsafePropertyFetch` branch missing from original | `Drupal\Core\Entity\EntityInterface` | 3571065 | — |
