@@ -7,13 +7,10 @@ namespace Drupal8\Rector\Deprecation\EntityViewRector;
 use Iterator;
 use Rector\Testing\PHPUnit\AbstractRectorTestCase;
 
+#[\PHPUnit\Framework\Attributes\CoversFunction('refactor')]
 class EntityViewRectorTest extends AbstractRectorTestCase
 {
-    /**
-     * @covers ::refactor
-     *
-     * @dataProvider provideData
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideData')]
     public function test(string $filePath): void
     {
         $this->doTestFile($filePath);

@@ -7,13 +7,10 @@ namespace DrupalRector\Tests\Drupal10\Rector\Deprecation\WatchdogExceptionRector
 use Iterator;
 use Rector\Testing\PHPUnit\AbstractRectorTestCase;
 
+#[\PHPUnit\Framework\Attributes\CoversFunction('refactor')]
 class WatchdogExceptionRectorTest extends AbstractRectorTestCase
 {
-    /**
-     * @covers ::refactor
-     *
-     * @dataProvider provideData
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideData')]
     public function test(string $filePath): void
     {
         $this->doTestFile($filePath);
