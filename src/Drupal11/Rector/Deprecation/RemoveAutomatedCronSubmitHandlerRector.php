@@ -25,6 +25,7 @@ final class RemoveAutomatedCronSubmitHandlerRector extends AbstractRector
         return [Node\Stmt\Expression::class];
     }
 
+    /** @return NodeVisitor::REMOVE_NODE|null */
     public function refactor(Node $node): mixed
     {
         assert($node instanceof Node\Stmt\Expression);
