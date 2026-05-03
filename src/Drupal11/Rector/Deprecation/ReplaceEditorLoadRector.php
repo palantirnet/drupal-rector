@@ -49,7 +49,7 @@ final class ReplaceEditorLoadRector extends AbstractRector
         return new RuleDefinition('Replace deprecated editor_load($format_id) with entityTypeManager()->getStorage(\'editor\')->load() (drupal:11.2.0)', [
             new CodeSample(
                 '$editor = editor_load($format_id);',
-                "$editor = \\Drupal::entityTypeManager()->getStorage('editor')->load(\$format_id);"
+                '$editor = \Drupal::entityTypeManager()->getStorage(\'editor\')->load($format_id);'
             ),
         ]);
     }
