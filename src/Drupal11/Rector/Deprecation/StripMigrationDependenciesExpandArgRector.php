@@ -24,7 +24,7 @@ final class StripMigrationDependenciesExpandArgRector extends AbstractRector
         return [Node\Expr\MethodCall::class];
     }
 
-    public function refactor(Node $node): mixed
+    public function refactor(Node $node): ?Node
     {
         assert($node instanceof Node\Expr\MethodCall);
 

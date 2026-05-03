@@ -32,7 +32,7 @@ final class ReplaceEntityOriginalPropertyRector extends AbstractRector
         return [PropertyFetch::class, NullsafePropertyFetch::class, Assign::class];
     }
 
-    public function refactor(Node $node): mixed
+    public function refactor(Node $node): ?Node
     {
         // Step 1a: $entity->original → $entity->getOriginal()
         // (skip $this->original — non-entity classes have a legitimate $original property)

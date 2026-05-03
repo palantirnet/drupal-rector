@@ -33,7 +33,7 @@ final class RemoveUpdaterPostInstallMethodsRector extends AbstractRector
         return [Class_::class];
     }
 
-    public function refactor(Node $node): mixed
+    public function refactor(Node $node): ?Node
     {
         assert($node instanceof Class_);
 

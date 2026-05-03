@@ -29,7 +29,7 @@ final class ReplaceViewsProceduralFunctionsRector extends AbstractRector
         return [Node\Expr\FuncCall::class];
     }
 
-    public function refactor(Node $node): mixed
+    public function refactor(Node $node): ?Node
     {
         assert($node instanceof Node\Expr\FuncCall);
 

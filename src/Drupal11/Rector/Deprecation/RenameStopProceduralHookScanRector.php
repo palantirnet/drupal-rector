@@ -31,7 +31,7 @@ final class RenameStopProceduralHookScanRector extends AbstractRector
         return [UseUse::class, Attribute::class];
     }
 
-    public function refactor(Node $node): mixed
+    public function refactor(Node $node): ?Node
     {
         if ($node instanceof UseUse) {
             if ($node->name->toString() === self::OLD_FQCN) {

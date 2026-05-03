@@ -36,7 +36,7 @@ final class UseEntityTypeHasIntegerIdRector extends AbstractRector
         return [Node\Expr\BinaryOp\Identical::class, Node\Expr\MethodCall::class];
     }
 
-    public function refactor(Node $node): mixed
+    public function refactor(Node $node): ?Node
     {
         if ($node instanceof Node\Expr\BinaryOp\Identical) {
             return $this->refactorIdentical($node);

@@ -30,7 +30,7 @@ final class ReplaceSessionWritesWithRequestSessionRector extends AbstractRector
         return [Assign::class];
     }
 
-    public function refactor(Node $node): mixed
+    public function refactor(Node $node): ?Node
     {
         assert($node instanceof Assign);
 

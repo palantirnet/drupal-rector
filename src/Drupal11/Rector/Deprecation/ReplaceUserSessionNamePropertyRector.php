@@ -25,7 +25,7 @@ final class ReplaceUserSessionNamePropertyRector extends AbstractRector
         return [Node\Expr\PropertyFetch::class];
     }
 
-    public function refactor(Node $node): mixed
+    public function refactor(Node $node): ?Node
     {
         assert($node instanceof Node\Expr\PropertyFetch);
 

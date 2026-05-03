@@ -23,7 +23,7 @@ final class ReplaceRequestTimeConstantRector extends AbstractRector
         return [Node\Expr\ConstFetch::class];
     }
 
-    public function refactor(Node $node): mixed
+    public function refactor(Node $node): ?Node
     {
         assert($node instanceof Node\Expr\ConstFetch);
 

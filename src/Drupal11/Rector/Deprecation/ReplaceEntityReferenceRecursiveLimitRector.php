@@ -30,7 +30,7 @@ final class ReplaceEntityReferenceRecursiveLimitRector extends AbstractRector
         return [ClassConstFetch::class];
     }
 
-    public function refactor(Node $node): mixed
+    public function refactor(Node $node): ?Node
     {
         assert($node instanceof ClassConstFetch);
 

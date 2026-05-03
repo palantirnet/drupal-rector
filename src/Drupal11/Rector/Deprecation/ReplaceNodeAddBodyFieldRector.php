@@ -28,7 +28,7 @@ final class ReplaceNodeAddBodyFieldRector extends AbstractRector
         return [FuncCall::class];
     }
 
-    public function refactor(Node $node): mixed
+    public function refactor(Node $node): ?Node
     {
         assert($node instanceof FuncCall);
 
