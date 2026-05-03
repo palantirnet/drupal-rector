@@ -6,16 +6,7 @@
  * This fixes Drupal testing namespace autoloading and PHPUnit compatibility.
  */
 
-use Rector\Core\Autoloading\BootstrapFilesIncluder;
-use Rector\Core\Exception\ShouldNotHappenException;
-
-
-if (class_exists('DrupalFinder\DrupalFinderComposerRuntime')) {
-    $drupalFinder = new DrupalFinder\DrupalFinderComposerRuntime();
-} else {
-    $drupalFinder = new DrupalFinder\DrupalFinder();
-    $drupalFinder->locateRoot(__DIR__);
-}
+$drupalFinder = new DrupalFinder\DrupalFinderComposerRuntime();
 
 $drupalRoot = $drupalFinder->getDrupalRoot();
 $drupalVendorRoot = $drupalFinder->getVendorDir();
@@ -33,8 +24,10 @@ if (! (bool) $drupalRoot || ! (bool) $drupalVendorRoot) {
  * @return array
  *   An associative array of extension directories found within the scanned
  *   directory, keyed by extension name.
+ *
+ * @return array<string, string>
  */
-function drupal_phpunit_find_extension_directories($scan_directory) {
+function drupal_phpunit_find_extension_directories(string $scan_directory): array {
   $extensions = [];
   $dirs = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($scan_directory, \RecursiveDirectoryIterator::FOLLOW_SYMLINKS));
   foreach ($dirs as $dir) {
@@ -55,10 +48,10 @@ function drupal_phpunit_find_extension_directories($scan_directory) {
  * @param string $root
  *   (optional) Path to the root of the Drupal installation.
  *
- * @return array
+ * @return array<int, string>
  *   An array of directories under which contributed extensions may exist.
  */
-function drupal_phpunit_contrib_extension_directory_roots($root) {
+function drupal_phpunit_contrib_extension_directory_roots(string $root): array {
   $paths = [
     $root . '/core/modules',
     $root . '/core/profiles',
@@ -83,13 +76,13 @@ function drupal_phpunit_contrib_extension_directory_roots($root) {
 /**
  * Registers the namespace for each extension directory with the autoloader.
  *
- * @param array $dirs
+ * @param array<string, string> $dirs
  *   An associative array of extension directories, keyed by extension name.
  *
- * @return array
+ * @return array<string, list<string>>
  *   An associative array of extension directories, keyed by their namespace.
  */
-function drupal_phpunit_get_extension_namespaces($dirs) {
+function drupal_phpunit_get_extension_namespaces(array $dirs): array {
   $suite_names = ['Unit', 'Kernel', 'Functional', 'Build', 'FunctionalJavascript'];
   $namespaces = [];
   foreach ($dirs as $extension => $dir) {
@@ -126,7 +119,7 @@ function drupal_phpunit_get_extension_namespaces($dirs) {
  * phpunit's global state change watcher. The class loader can be retrieved from
  * composer at any time by requiring autoload.php.
  */
-function drupal_phpunit_populate_class_loader($drupalRoot, $vendorRoot) {
+function drupal_phpunit_populate_class_loader(string $drupalRoot, string $vendorRoot): \Composer\Autoload\ClassLoader {
 
   /** @var \Composer\Autoload\ClassLoader $loader */
   $loader = require $vendorRoot . '/autoload.php';

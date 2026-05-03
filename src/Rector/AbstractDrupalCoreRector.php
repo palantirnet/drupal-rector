@@ -8,6 +8,7 @@ use Drupal\Component\Utility\DeprecationHelper;
 use DrupalRector\Contract\VersionedConfigurationInterface;
 use PhpParser\Node;
 use PhpParser\Node\Expr\ArrowFunction;
+use PhpParser\Node\Scalar\String_;
 use PHPStan\Reflection\MethodReflection;
 use Rector\Contract\Rector\ConfigurableRectorInterface;
 use Rector\NodeTypeResolver\Node\AttributeKey;
@@ -108,7 +109,7 @@ abstract class AbstractDrupalCoreRector extends AbstractRector implements Config
 
         return $this->nodeFactory->createStaticCall(DeprecationHelper::class, 'backwardsCompatibleCall', [
             $this->nodeFactory->createClassConstFetch(\Drupal::class, 'VERSION'),
-            $introducedVersion,
+            new String_($introducedVersion),
             new ArrowFunction(['expr' => $result]),
             new ArrowFunction(['expr' => $clonedNode]),
         ]);
