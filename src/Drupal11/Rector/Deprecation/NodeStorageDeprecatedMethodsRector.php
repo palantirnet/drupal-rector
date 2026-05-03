@@ -23,6 +23,7 @@ final class NodeStorageDeprecatedMethodsRector extends AbstractRector
         return [Node\Expr\MethodCall::class, Node\Stmt\Expression::class];
     }
 
+    /** @return Node|NodeVisitor::REMOVE_NODE|null */
     public function refactor(Node $node): mixed
     {
         if ($node instanceof Node\Stmt\Expression) {
