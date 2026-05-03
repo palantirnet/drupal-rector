@@ -42,6 +42,7 @@ final class RemoveTrustDataCallRector extends AbstractRector
 
     public function refactor(Node $node): ?Node
     {
+        assert($node instanceof MethodCall);
         if (!$this->isName($node->name, 'trustData')) {
             return null;
         }

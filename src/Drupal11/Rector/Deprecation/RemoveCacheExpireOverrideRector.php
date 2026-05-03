@@ -54,6 +54,7 @@ final class RemoveCacheExpireOverrideRector extends AbstractRector
 
     public function refactor(Node $node): ?Node
     {
+        assert($node instanceof Class_);
         if (!$this->isCachePluginBaseSubclass($node)) {
             return null;
         }

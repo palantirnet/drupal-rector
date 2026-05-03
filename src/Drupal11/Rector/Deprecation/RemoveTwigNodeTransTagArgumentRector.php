@@ -42,6 +42,7 @@ final class RemoveTwigNodeTransTagArgumentRector extends AbstractRector
 
     public function refactor(Node $node): ?Node
     {
+        assert($node instanceof New_);
         if (!$node->class instanceof Name) {
             return null;
         }

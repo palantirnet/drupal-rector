@@ -42,11 +42,9 @@ final class ReplaceFieldgroupToFieldsetRector extends AbstractRector
 
     public function refactor(Node $node): ?Node
     {
+        assert($node instanceof Array_);
         $changed = false;
         foreach ($node->items as $item) {
-            if ($item === null) {
-                continue;
-            }
             if (!$item->key instanceof String_ || $item->key->value !== '#type') {
                 continue;
             }

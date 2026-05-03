@@ -50,6 +50,7 @@ final class RemoveRootFromConvertDbUrlRector extends AbstractRector
 
     public function refactor(Node $node): ?Node
     {
+        assert($node instanceof StaticCall);
         if (!$this->isName($node->class, 'Drupal\Core\Database\Database')) {
             return null;
         }

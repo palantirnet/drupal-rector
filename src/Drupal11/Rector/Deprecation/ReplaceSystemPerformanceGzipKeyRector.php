@@ -46,6 +46,7 @@ final class ReplaceSystemPerformanceGzipKeyRector extends AbstractRector
 
     public function refactor(Node $node): ?Node
     {
+        assert($node instanceof MethodCall);
         if (!$this->isNames($node->name, ['get', 'set'])) {
             return null;
         }

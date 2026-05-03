@@ -44,6 +44,7 @@ final class MigrateSqlGetMigrationPluginManagerRector extends AbstractRector
 
     public function refactor(Node $node): ?Node
     {
+        assert($node instanceof MethodCall);
         if (!$node->var instanceof Variable || $node->var->name !== 'this') {
             return null;
         }

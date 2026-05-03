@@ -44,6 +44,7 @@ final class RemoveConfigSaveTrustedDataArgRector extends AbstractRector
 
     public function refactor(Node $node): ?Node
     {
+        assert($node instanceof MethodCall);
         if (!$this->isName($node->name, 'save')) {
             return null;
         }

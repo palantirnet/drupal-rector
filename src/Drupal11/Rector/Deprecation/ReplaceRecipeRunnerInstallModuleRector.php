@@ -46,6 +46,7 @@ final class ReplaceRecipeRunnerInstallModuleRector extends AbstractRector
 
     public function refactor(Node $node): ?Node
     {
+        assert($node instanceof StaticCall);
         if (!$this->isName($node->name, 'installModule')) {
             return null;
         }

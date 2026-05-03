@@ -52,6 +52,7 @@ final class ReplaceThemeGetSettingRector extends AbstractRector
 
     public function refactor(Node $node): ?Node
     {
+        assert($node instanceof FuncCall);
         if (!$node->name instanceof Name) {
             return null;
         }

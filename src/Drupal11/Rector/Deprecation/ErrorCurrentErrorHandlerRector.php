@@ -43,6 +43,7 @@ final class ErrorCurrentErrorHandlerRector extends AbstractRector
 
     public function refactor(Node $node): ?Node
     {
+        assert($node instanceof StaticCall);
         if (!$this->isName($node->name, 'currentErrorHandler')) {
             return null;
         }

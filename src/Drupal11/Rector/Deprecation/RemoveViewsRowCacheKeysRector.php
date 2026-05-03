@@ -6,7 +6,6 @@ namespace DrupalRector\Drupal11\Rector\Deprecation;
 
 use PhpParser\Node;
 use PhpParser\Node\Expr\Array_;
-use PhpParser\Node\Expr\ArrayItem;
 use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Identifier;
 use PHPStan\Type\ObjectType;
@@ -47,14 +46,11 @@ final class RemoveViewsRowCacheKeysRector extends AbstractRector
 
     public function refactor(Node $node): ?Node
     {
+        assert($node instanceof Array_);
         $modified = false;
         $newItems = [];
 
         foreach ($node->items as $item) {
-            if (!$item instanceof ArrayItem) {
-                $newItems[] = $item;
-                continue;
-            }
             if ($item->value instanceof MethodCall
                 && $item->value->name instanceof Identifier
                 && in_array($item->value->name->toString(), self::DEPRECATED_METHODS, true)
