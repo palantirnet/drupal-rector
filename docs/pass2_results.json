@@ -1,0 +1,8 @@
+{
+  "FileSystemBasenameToNativeRector": [
+    "project/ejectorseat"
+  ],
+  "NodeStorageDeprecatedMethodsRector": [
+    "project/tb_megamenu"
+  ]
+}
