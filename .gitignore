@@ -16,3 +16,4 @@
 
 /.phpunit.cache
 .worktrees/
+rector-decision.log
