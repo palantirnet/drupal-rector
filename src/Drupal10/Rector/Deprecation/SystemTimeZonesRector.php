@@ -63,6 +63,15 @@ class SystemTimeZonesRector extends AbstractDrupalCoreRector
             return $this->nodeFactory->createStaticCall('Drupal\Core\Datetime\TimeZoneFormHelper', 'getOptionsListByRegion');
         }
 
+        if (count($args) == 2 && !($args[1]->value instanceof ConstFetch && $this->valueResolver->isFalse($args[1]->value))) {
+            // Second arg is dynamic or not a literal FALSE — emit a ternary so the grouped flag is preserved.
+            return new Node\Expr\Ternary(
+                $args[1]->value,
+                $this->nodeFactory->createStaticCall('Drupal\Core\Datetime\TimeZoneFormHelper', 'getOptionsListByRegion', [$args[0]]),
+                $this->nodeFactory->createStaticCall('Drupal\Core\Datetime\TimeZoneFormHelper', 'getOptionsList', [$args[0]])
+            );
+        }
+
         if (count($args) == 0) {
             return $this->nodeFactory->createStaticCall('Drupal\Core\Datetime\TimeZoneFormHelper', 'getOptionsList');
         }
