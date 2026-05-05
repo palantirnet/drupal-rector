@@ -29,8 +29,8 @@ didn't match it.
 - [x] `LoadAllIncludesRector` — modules: config_track, schemadotorg
   - Pattern **exists** in schemadotorg at `SchemaDotOrgStarterkitConverter.php:430`: `$this->moduleHandler->loadAllIncludes('install')`
   - config_track only has a definition/override of the method, no calls.
-  - **Root cause unclear** — pattern present but rector still didn't fire. Likely PHPStan can't infer `$this->moduleHandler` is `ModuleHandlerInterface` (missing type declaration or annotation). Needs deeper look at the property/constructor type declaration.
-  - → Inspect `SchemaDotOrgStarterkitConverter` property/constructor types for `moduleHandler`.
+  - **Root cause: missing type declaration.** Tests confirm the rector handles both promoted properties and traditional `@var`-annotated properties correctly (fixtures `class_property.php.inc`, `traditional_constructor.php.inc`). The schemadotorg property likely has no `@var` annotation and no PHP-native type, so PHPStan cannot infer `ModuleHandlerInterface`. Documented via `no_change_class_property_untyped.php.inc`.
+  - → No rector fix needed. The schemadotorg module needs to add a `@var \Drupal\Core\Extension\ModuleHandlerInterface` annotation to its `$moduleHandler` property.
 - [x] `MigrateSqlGetMigrationPluginManagerRector` — modules: migmag, smart_sql_idmap
   - Pattern **exists** in both modules but rector logic was too narrow:
     - `migmag`: call is inside a trait; `$this` resolves to the test class, not `Sql` → type check fails (still unresolved)
@@ -76,8 +76,8 @@ didn't match it.
 
 - [x] `ReplaceCommentManagerGetCountNewCommentsRector` — modules: forum, history
   - Pattern **exists** in forum at `ForumManager.php:247`: `$this->commentManager->getCountNewComments($topic, 'comment_forum', $history)`.
-  - Root cause: **type inference failure**. Property `$commentManager` is declared via `@var` annotation + traditional constructor assignment — not a promoted property. PHPStan may not reliably propagate the type through the assignment, causing `isObjectType()` to fail.
-  - → Verify PHPStan can infer through traditional `$this->prop = $param` assignment. May need a `@var` annotation PHPStan understands, or a promoted property in the test fixture.
+  - **Root cause: missing type annotation, not traditional assignment.** Tests confirm the rector handles `@var`-annotated traditional constructor assignment correctly (fixture `traditional_constructor.php.inc`). PHPStan reads `@var` docblocks on properties reliably. The forum `$commentManager` property likely has no `@var` or PHP-native type declaration.
+  - → No rector fix needed. Forum's `ForumManager::$commentManager` needs a `@var \Drupal\comment\CommentManagerInterface` annotation (or typed property) for the rector to fire.
 
 - [x] `ReplaceDateTimeRangeConstantsRector` — modules: deprecation_status
   - Pattern **not present** (`DateTimeRangeConstantsInterface::BOTH` etc.) in deprecation_status or any installed module.
@@ -155,8 +155,8 @@ didn't match it.
   - Pattern **exists** in site_guardian:
     - `site_guardian.module:37`: `\Drupal::service('theme_handler')->rebuildThemeData()` — `\Drupal::service()` returns untyped `object`, PHPStan cannot infer `ThemeHandlerInterface`.
     - `SiteGuardianService.php:153`: `$this->themeHandler->rebuildThemeData()` — property typed as concrete `ThemeHandler` class, not the interface.
-  - Root cause: **type inference failure** in both cases. Rector checks for `ThemeHandlerInterface` but (1) `\Drupal::service()` is untyped and (2) `ThemeHandler` (concrete class) is not treated as equivalent to the interface in this context.
-  - → Fix: declare `$themeHandler` as `ThemeHandlerInterface` instead of `ThemeHandler`. The `\Drupal::service()` case can never be fixed without PHPStan service map stubs.
+  - **Root cause confirmed as known limitation.** (1) `\Drupal::service()` is untyped — cannot be fixed without PHPStan service map stubs. (2) Concrete `ThemeHandler` class: without Drupal's full class hierarchy loaded in analysis, PHPStan cannot confirm it implements `ThemeHandlerInterface` — documented via `no_change_concrete_class.php.inc`. The rector works correctly when the property is declared as `ThemeHandlerInterface` (fixture `class_property.php.inc`).
+  - → No rector fix needed. Users must declare `$themeHandler` as `ThemeHandlerInterface` for the rector to fire. The `\Drupal::service()` call is an unfixable limitation.
 
 - [x] `ReplaceRequestTimeConstantRector` — modules: google_analytics_counter, automatic_updates
   - Pattern **not present** (no bare `REQUEST_TIME` constant usage). Modules already use `$request->server->get('REQUEST_TIME')`.
