@@ -7,7 +7,9 @@ namespace DrupalRector\Drupal11\Rector\Deprecation;
 use PhpParser\Node;
 use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\PropertyFetch;
+use PhpParser\Node\Expr\StaticCall;
 use PhpParser\Node\Expr\Variable;
+use PhpParser\Node\Name;
 use PHPStan\Type\ObjectType;
 use Rector\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
@@ -39,11 +41,15 @@ final class MigrateSqlGetMigrationPluginManagerRector extends AbstractRector
     /** @return array<class-string<Node>> */
     public function getNodeTypes(): array
     {
-        return [MethodCall::class];
+        return [MethodCall::class, StaticCall::class];
     }
 
     public function refactor(Node $node): ?Node
     {
+        if ($node instanceof StaticCall) {
+            return $this->refactorStaticCall($node);
+        }
+
         assert($node instanceof MethodCall);
         if (!$node->var instanceof Variable || $node->var->name !== 'this') {
             return null;
@@ -55,6 +61,21 @@ final class MigrateSqlGetMigrationPluginManagerRector extends AbstractRector
             return null;
         }
         if (!$this->isObjectType($node->var, new ObjectType('Drupal\migrate\Plugin\migrate\id_map\Sql'))) {
+            return null;
+        }
+
+        return new PropertyFetch(new Variable('this'), 'migrationPluginManager');
+    }
+
+    private function refactorStaticCall(StaticCall $node): ?Node
+    {
+        if ($this->getName($node->name) !== 'getMigrationPluginManager') {
+            return null;
+        }
+        if ($node->args !== []) {
+            return null;
+        }
+        if (!$node->class instanceof Name || $node->class->toString() !== 'parent') {
             return null;
         }
 
