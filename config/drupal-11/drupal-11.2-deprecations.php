@@ -23,6 +23,7 @@ use DrupalRector\Rector\Deprecation\FunctionToStaticRector;
 use DrupalRector\Rector\Deprecation\MethodToMethodWithCheckRector;
 use DrupalRector\Rector\ValueObject\ClassConstantToClassConstantConfiguration;
 use DrupalRector\Rector\ValueObject\ConstantToClassConfiguration;
+use DrupalRector\Rector\ValueObject\DrupalIntroducedVersionConfiguration;
 use DrupalRector\Rector\ValueObject\FunctionCallRemovalConfiguration;
 use DrupalRector\Rector\ValueObject\FunctionToServiceConfiguration;
 use DrupalRector\Rector\ValueObject\FunctionToStaticConfiguration;
@@ -34,7 +35,9 @@ return static function (RectorConfig $rectorConfig): void {
     // https://www.drupal.org/node/3490200
     // StatementPrefetchIterator::fetchColumn() deprecated in drupal:11.2.0, removed in drupal:12.0.0.
     // Replaced by fetchField().
-    $rectorConfig->rule(StatementPrefetchIteratorFetchColumnRector::class);
+    $rectorConfig->ruleWithConfiguration(StatementPrefetchIteratorFetchColumnRector::class, [
+        new DrupalIntroducedVersionConfiguration('11.2.0'),
+    ]);
 
     // https://www.drupal.org/node/3498947
     // CacheBackendInterface::invalidateAll() deprecated in drupal:11.2.0, removed in drupal:12.0.0.
@@ -144,7 +147,9 @@ return static function (RectorConfig $rectorConfig): void {
     // https://www.drupal.org/node/3494126
     // file_get_content_headers($file) deprecated in drupal:11.2.0, removed in drupal:12.0.0.
     // Replaced by $file->getDownloadHeaders().
-    $rectorConfig->rule(ReplaceFileGetContentHeadersRector::class);
+    $rectorConfig->ruleWithConfiguration(ReplaceFileGetContentHeadersRector::class, [
+        new DrupalIntroducedVersionConfiguration('11.2.0'),
+    ]);
 
     // https://www.drupal.org/node/3518527
     // $_SESSION['key'] = $value deprecated in drupal:11.2.0.
@@ -154,7 +159,9 @@ return static function (RectorConfig $rectorConfig): void {
     // https://www.drupal.org/node/3447794
     // editor_load($format_id) deprecated in drupal:11.2.0, removed in drupal:12.0.0.
     // Replaced by entityTypeManager()->getStorage('editor')->load($format_id).
-    $rectorConfig->rule(ReplaceEditorLoadRector::class);
+    $rectorConfig->ruleWithConfiguration(ReplaceEditorLoadRector::class, [
+        new DrupalIntroducedVersionConfiguration('11.2.0'),
+    ]);
 
     // https://www.drupal.org/node/3571065
     // $entity->original magic property deprecated in drupal:11.2.0, removed in drupal:12.0.0.

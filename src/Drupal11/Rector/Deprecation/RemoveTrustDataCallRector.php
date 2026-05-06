@@ -4,11 +4,13 @@ declare(strict_types=1);
 
 namespace DrupalRector\Drupal11\Rector\Deprecation;
 
+use DrupalRector\Contract\VersionedConfigurationInterface;
+use DrupalRector\Rector\AbstractDrupalCoreRector;
+use DrupalRector\Rector\ValueObject\DrupalIntroducedVersionConfiguration;
 use PhpParser\Node;
 use PhpParser\Node\Expr\MethodCall;
 use PHPStan\Type\ObjectType;
-use Rector\Rector\AbstractRector;
-use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
+use Symplify\RuleDocGenerator\ValueObject\CodeSample\ConfiguredCodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 /**
@@ -19,16 +21,32 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  *
  * @see https://www.drupal.org/node/3347842
  */
-final class RemoveTrustDataCallRector extends AbstractRector
+final class RemoveTrustDataCallRector extends AbstractDrupalCoreRector
 {
+    /**
+     * @var array|DrupalIntroducedVersionConfiguration[]
+     */
+    protected array $configuration;
+
+    public function configure(array $configuration): void
+    {
+        foreach ($configuration as $value) {
+            if (!$value instanceof DrupalIntroducedVersionConfiguration) {
+                throw new \InvalidArgumentException(sprintf('Each configuration item must be an instance of "%s"', DrupalIntroducedVersionConfiguration::class));
+            }
+        }
+        parent::configure($configuration);
+    }
+
     public function getRuleDefinition(): RuleDefinition
     {
         return new RuleDefinition(
             'Remove deprecated trustData() calls from config entity method chains',
             [
-                new CodeSample(
+                new ConfiguredCodeSample(
                     '$entity->trustData()->save();',
-                    '$entity->save();'
+                    '$entity->save();',
+                    [new DrupalIntroducedVersionConfiguration('11.4.0')]
                 ),
             ]
         );
@@ -40,7 +58,7 @@ final class RemoveTrustDataCallRector extends AbstractRector
         return [MethodCall::class];
     }
 
-    public function refactor(Node $node): ?Node
+    public function refactorWithConfiguration(Node $node, VersionedConfigurationInterface $configuration): ?Node
     {
         assert($node instanceof MethodCall);
         if (!$this->isName($node->name, 'trustData')) {

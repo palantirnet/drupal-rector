@@ -4,14 +4,16 @@ declare(strict_types=1);
 
 namespace DrupalRector\Drupal11\Rector\Deprecation;
 
+use DrupalRector\Contract\VersionedConfigurationInterface;
+use DrupalRector\Rector\AbstractDrupalCoreRector;
+use DrupalRector\Rector\ValueObject\DrupalIntroducedVersionConfiguration;
 use PhpParser\Node;
 use PhpParser\Node\Arg;
 use PhpParser\Node\Expr\FuncCall;
 use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\Variable;
 use PhpParser\Node\Scalar\String_;
-use Rector\Rector\AbstractRector;
-use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
+use Symplify\RuleDocGenerator\ValueObject\CodeSample\ConfiguredCodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 /**
@@ -21,14 +23,29 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  *
  * @see https://www.drupal.org/node/3489266
  */
-final class ReplaceNodeAddBodyFieldRector extends AbstractRector
+final class ReplaceNodeAddBodyFieldRector extends AbstractDrupalCoreRector
 {
+    /**
+     * @var array|DrupalIntroducedVersionConfiguration[]
+     */
+    protected array $configuration;
+
+    public function configure(array $configuration): void
+    {
+        foreach ($configuration as $value) {
+            if (!$value instanceof DrupalIntroducedVersionConfiguration) {
+                throw new \InvalidArgumentException(sprintf('Each configuration item must be an instance of "%s"', DrupalIntroducedVersionConfiguration::class));
+            }
+        }
+        parent::configure($configuration);
+    }
+
     public function getNodeTypes(): array
     {
         return [FuncCall::class];
     }
 
-    public function refactor(Node $node): ?Node
+    public function refactorWithConfiguration(Node $node, VersionedConfigurationInterface $configuration): ?Node
     {
         assert($node instanceof FuncCall);
 
@@ -67,9 +84,10 @@ final class ReplaceNodeAddBodyFieldRector extends AbstractRector
     public function getRuleDefinition(): RuleDefinition
     {
         return new RuleDefinition('Replace deprecated node_add_body_field() with $this->createBodyField() (drupal:11.3.0)', [
-            new CodeSample(
+            new ConfiguredCodeSample(
                 'node_add_body_field($nodeType, \'My Body\');',
-                '$this->createBodyField(\'node\', $nodeType->id(), \'body\', \'My Body\');'
+                '$this->createBodyField(\'node\', $nodeType->id(), \'body\', \'My Body\');',
+                [new DrupalIntroducedVersionConfiguration('11.3.0')]
             ),
         ]);
     }

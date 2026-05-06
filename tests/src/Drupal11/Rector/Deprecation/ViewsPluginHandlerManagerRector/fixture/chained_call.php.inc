@@ -15,9 +15,9 @@ $instance = Views::pluginManager('display')->createInstance($id);
 use Drupal\views\Views;
 
 // handlerManager result used immediately in a method chain.
-$handler = \Drupal::service('plugin.manager.views.field')->getHandler($options, $id);
+$handler = \Drupal\Component\Utility\DeprecationHelper::backwardsCompatibleCall(\Drupal::VERSION, '11.4.0', fn() => \Drupal::service('plugin.manager.views.field'), fn() => Views::handlerManager('field'))->getHandler($options, $id);
 
 // pluginManager result used in a method chain.
-$instance = \Drupal::service('plugin.manager.views.display')->createInstance($id);
+$instance = \Drupal\Component\Utility\DeprecationHelper::backwardsCompatibleCall(\Drupal::VERSION, '11.4.0', fn() => \Drupal::service('plugin.manager.views.display'), fn() => Views::pluginManager('display'))->createInstance($id);
 
 ?>

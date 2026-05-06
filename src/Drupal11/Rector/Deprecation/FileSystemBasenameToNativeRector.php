@@ -4,13 +4,15 @@ declare(strict_types=1);
 
 namespace DrupalRector\Drupal11\Rector\Deprecation;
 
+use DrupalRector\Contract\VersionedConfigurationInterface;
+use DrupalRector\Rector\AbstractDrupalCoreRector;
+use DrupalRector\Rector\ValueObject\DrupalIntroducedVersionConfiguration;
 use PhpParser\Node;
 use PhpParser\Node\Expr\FuncCall;
 use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Name;
 use PHPStan\Type\ObjectType;
-use Rector\Rector\AbstractRector;
-use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
+use Symplify\RuleDocGenerator\ValueObject\CodeSample\ConfiguredCodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 /**
@@ -21,16 +23,32 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  *
  * @see https://www.drupal.org/node/3530461
  */
-final class FileSystemBasenameToNativeRector extends AbstractRector
+final class FileSystemBasenameToNativeRector extends AbstractDrupalCoreRector
 {
+    /**
+     * @var array|DrupalIntroducedVersionConfiguration[]
+     */
+    protected array $configuration;
+
+    public function configure(array $configuration): void
+    {
+        foreach ($configuration as $value) {
+            if (!$value instanceof DrupalIntroducedVersionConfiguration) {
+                throw new \InvalidArgumentException(sprintf('Each configuration item must be an instance of "%s"', DrupalIntroducedVersionConfiguration::class));
+            }
+        }
+        parent::configure($configuration);
+    }
+
     public function getRuleDefinition(): RuleDefinition
     {
         return new RuleDefinition(
             'Replace deprecated FileSystemInterface::basename() calls with PHP native basename()',
             [
-                new CodeSample(
+                new ConfiguredCodeSample(
                     '$fileSystem->basename($uri, $suffix);',
-                    'basename($uri, $suffix);'
+                    'basename($uri, $suffix);',
+                    [new DrupalIntroducedVersionConfiguration('11.3.0')]
                 ),
             ]
         );
@@ -42,14 +60,13 @@ final class FileSystemBasenameToNativeRector extends AbstractRector
         return [MethodCall::class];
     }
 
-    public function refactor(Node $node): ?Node
+    public function refactorWithConfiguration(Node $node, VersionedConfigurationInterface $configuration): ?Node
     {
         assert($node instanceof MethodCall);
         if (!$this->isName($node->name, 'basename')) {
             return null;
         }
 
-        $callerType = $this->getType($node->var);
         $isFileSystem = false;
         foreach (['Drupal\Core\File\FileSystemInterface', 'Drupal\Core\File\FileSystem'] as $class) {
             if ($this->isObjectType($node->var, new ObjectType($class))) {

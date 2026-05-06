@@ -33,7 +33,9 @@ return static function (RectorConfig $rectorConfig): void {
     // https://www.drupal.org/node/3566424
     // Views::pluginManager() and Views::handlerManager() deprecated in drupal:11.4.0, removed in drupal:13.0.0.
     // Replaced by \Drupal::service('plugin.manager.views.*') or views.plugin_managers service.
-    $rectorConfig->rule(ViewsPluginHandlerManagerRector::class);
+    $rectorConfig->ruleWithConfiguration(ViewsPluginHandlerManagerRector::class, [
+        new DrupalIntroducedVersionConfiguration('11.4.0'),
+    ]);
 
     // https://www.drupal.org/node/3577376
     // SessionManager::delete() deprecated in drupal:11.4.0, removed in drupal:12.0.0.
@@ -188,7 +190,9 @@ return static function (RectorConfig $rectorConfig): void {
 
     // https://www.drupal.org/node/3498026
     // RecipeRunner::installModule() deprecated in drupal:11.4.0. Use installModules() with an array.
-    $rectorConfig->rule(ReplaceRecipeRunnerInstallModuleRector::class);
+    $rectorConfig->ruleWithConfiguration(ReplaceRecipeRunnerInstallModuleRector::class, [
+        new DrupalIntroducedVersionConfiguration('11.4.0'),
+    ]);
 
     // https://www.drupal.org/node/3184242
     // system.performance css.gzip and js.gzip config keys deprecated in drupal:11.4.0, removed in drupal:12.0.0.
@@ -208,7 +212,9 @@ return static function (RectorConfig $rectorConfig): void {
     // https://www.drupal.org/node/3347842
     // trustData() deprecated in drupal:11.4.0, removed in drupal:13.0.0. Remove from fluent chains.
     // Config::save($has_trusted_data) boolean arg deprecated in drupal:11.4.0, removed in drupal:13.0.0.
-    $rectorConfig->rule(RemoveTrustDataCallRector::class);
+    $rectorConfig->ruleWithConfiguration(RemoveTrustDataCallRector::class, [
+        new DrupalIntroducedVersionConfiguration('11.4.0'),
+    ]);
     $rectorConfig->rule(RemoveConfigSaveTrustedDataArgRector::class);
 
     // https://www.drupal.org/node/3093118
@@ -231,7 +237,9 @@ return static function (RectorConfig $rectorConfig): void {
     // getEntityTypeIdKeyType() === 'integer', entityTypeSupportsComments(), and hasIntegerId($entityType)
     // deprecated in drupal:11.4.0, removed in drupal:13.0.0.
     // Replaced by EntityTypeInterface::hasIntegerId() called on the entity type object.
-    $rectorConfig->rule(UseEntityTypeHasIntegerIdRector::class);
+    $rectorConfig->ruleWithConfiguration(UseEntityTypeHasIntegerIdRector::class, [
+        new DrupalIntroducedVersionConfiguration('11.4.0'),
+    ]);
 
     // https://www.drupal.org/node/3568144
     // editor_filter_xss() deprecated in drupal:11.4.0, removed in drupal:13.0.0.

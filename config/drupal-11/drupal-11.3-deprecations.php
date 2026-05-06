@@ -65,7 +65,9 @@ return static function (RectorConfig $rectorConfig): void {
     // https://www.drupal.org/node/2010202
     // comment_uri($comment) deprecated in drupal:11.3.0, removed in drupal:12.0.0.
     // Replaced by $comment->permalink().
-    $rectorConfig->rule(ReplaceCommentUriRector::class);
+    $rectorConfig->ruleWithConfiguration(ReplaceCommentUriRector::class, [
+        new DrupalIntroducedVersionConfiguration('11.3.0'),
+    ]);
 
     // https://www.drupal.org/node/3038908
     // node_access_view_all_nodes() deprecated in drupal:11.3.0, removed in drupal:12.0.0.
@@ -86,12 +88,16 @@ return static function (RectorConfig $rectorConfig): void {
     // https://www.drupal.org/node/3489266
     // node_add_body_field() deprecated in drupal:11.3.0, removed in drupal:12.0.0.
     // Replaced by $this->createBodyField() from BodyFieldCreationTrait.
-    $rectorConfig->rule(ReplaceNodeAddBodyFieldRector::class);
+    $rectorConfig->ruleWithConfiguration(ReplaceNodeAddBodyFieldRector::class, [
+        new DrupalIntroducedVersionConfiguration('11.3.0'),
+    ]);
 
     // https://www.drupal.org/node/3513856
     // UserSession::$name property read deprecated in drupal:11.3.0, removed in drupal:12.0.0.
     // Replaced by getAccountName().
-    $rectorConfig->rule(ReplaceUserSessionNamePropertyRector::class);
+    $rectorConfig->ruleWithConfiguration(ReplaceUserSessionNamePropertyRector::class, [
+        new DrupalIntroducedVersionConfiguration('11.3.0'),
+    ]);
 
     // https://www.drupal.org/node/3534092
     // file_system_settings_submit() deprecated in drupal:11.3.0, removed in drupal:13.0.0.
@@ -119,12 +125,16 @@ return static function (RectorConfig $rectorConfig): void {
     // https://www.drupal.org/node/3530461
     // FileSystemInterface::basename() deprecated in drupal:11.3.0, removed in drupal:13.0.0.
     // Replaced by PHP native basename().
-    $rectorConfig->rule(FileSystemBasenameToNativeRector::class);
+    $rectorConfig->ruleWithConfiguration(FileSystemBasenameToNativeRector::class, [
+        new DrupalIntroducedVersionConfiguration('11.3.0'),
+    ]);
 
     // https://www.drupal.org/node/3526515
     // Error::currentErrorHandler() deprecated in drupal:11.3.0, removed in drupal:13.0.0.
     // Replaced by PHP built-in get_error_handler().
-    $rectorConfig->rule(ErrorCurrentErrorHandlerRector::class);
+    $rectorConfig->ruleWithConfiguration(ErrorCurrentErrorHandlerRector::class, [
+        new DrupalIntroducedVersionConfiguration('11.3.0'),
+    ]);
 
     // https://www.drupal.org/node/3573896
     // theme_get_setting() and _system_default_theme_features() deprecated in drupal:11.3.0, removed in drupal:13.0.0.

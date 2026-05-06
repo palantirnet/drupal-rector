@@ -16,7 +16,7 @@ use Drupal\comment\CommentTypeForm;
 
 class MyCommentForm extends CommentTypeForm {
     public function doSomething($entity_type): void {
-        $a = $entity_type->hasIntegerId();
+        $a = \Drupal\Component\Utility\DeprecationHelper::backwardsCompatibleCall(\Drupal::VERSION, '11.4.0', fn() => $entity_type->hasIntegerId(), fn() => $this->entityTypeSupportsComments($entity_type));
     }
 }
 

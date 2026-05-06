@@ -4,11 +4,13 @@ declare(strict_types=1);
 
 namespace DrupalRector\Drupal11\Rector\Deprecation;
 
+use DrupalRector\Contract\VersionedConfigurationInterface;
+use DrupalRector\Rector\AbstractDrupalCoreRector;
+use DrupalRector\Rector\ValueObject\DrupalIntroducedVersionConfiguration;
 use PhpParser\Node;
 use PhpParser\Node\Expr\Variable;
 use PHPStan\Type\ObjectType;
-use Rector\Rector\AbstractRector;
-use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
+use Symplify\RuleDocGenerator\ValueObject\CodeSample\ConfiguredCodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 /**
@@ -18,14 +20,29 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  *
  * @see https://www.drupal.org/node/3513856
  */
-final class ReplaceUserSessionNamePropertyRector extends AbstractRector
+final class ReplaceUserSessionNamePropertyRector extends AbstractDrupalCoreRector
 {
+    /**
+     * @var array|DrupalIntroducedVersionConfiguration[]
+     */
+    protected array $configuration;
+
+    public function configure(array $configuration): void
+    {
+        foreach ($configuration as $value) {
+            if (!$value instanceof DrupalIntroducedVersionConfiguration) {
+                throw new \InvalidArgumentException(sprintf('Each configuration item must be an instance of "%s"', DrupalIntroducedVersionConfiguration::class));
+            }
+        }
+        parent::configure($configuration);
+    }
+
     public function getNodeTypes(): array
     {
         return [Node\Expr\PropertyFetch::class];
     }
 
-    public function refactor(Node $node): ?Node
+    public function refactorWithConfiguration(Node $node, VersionedConfigurationInterface $configuration): ?Node
     {
         assert($node instanceof Node\Expr\PropertyFetch);
 
@@ -50,9 +67,10 @@ final class ReplaceUserSessionNamePropertyRector extends AbstractRector
     public function getRuleDefinition(): RuleDefinition
     {
         return new RuleDefinition('Replace deprecated $userSession->name property read with $userSession->getAccountName() (drupal:11.3.0)', [
-            new CodeSample(
+            new ConfiguredCodeSample(
                 '$name = $userSession->name;',
-                '$name = $userSession->getAccountName();'
+                '$name = $userSession->getAccountName();',
+                [new DrupalIntroducedVersionConfiguration('11.3.0')]
             ),
         ]);
     }

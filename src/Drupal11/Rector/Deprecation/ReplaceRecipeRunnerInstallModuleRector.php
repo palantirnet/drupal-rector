@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace DrupalRector\Drupal11\Rector\Deprecation;
 
+use DrupalRector\Contract\VersionedConfigurationInterface;
+use DrupalRector\Rector\AbstractDrupalCoreRector;
+use DrupalRector\Rector\ValueObject\DrupalIntroducedVersionConfiguration;
 use PhpParser\Node;
 use PhpParser\Node\Arg;
 use PhpParser\Node\Expr\Array_;
@@ -11,8 +14,7 @@ use PhpParser\Node\Expr\ArrayItem;
 use PhpParser\Node\Expr\StaticCall;
 use PhpParser\Node\Identifier;
 use PhpParser\Node\Name;
-use Rector\Rector\AbstractRector;
-use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
+use Symplify\RuleDocGenerator\ValueObject\CodeSample\ConfiguredCodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 /**
@@ -23,16 +25,32 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  *
  * @see https://www.drupal.org/node/3498026
  */
-final class ReplaceRecipeRunnerInstallModuleRector extends AbstractRector
+final class ReplaceRecipeRunnerInstallModuleRector extends AbstractDrupalCoreRector
 {
+    /**
+     * @var array|DrupalIntroducedVersionConfiguration[]
+     */
+    protected array $configuration;
+
+    public function configure(array $configuration): void
+    {
+        foreach ($configuration as $value) {
+            if (!$value instanceof DrupalIntroducedVersionConfiguration) {
+                throw new \InvalidArgumentException(sprintf('Each configuration item must be an instance of "%s"', DrupalIntroducedVersionConfiguration::class));
+            }
+        }
+        parent::configure($configuration);
+    }
+
     public function getRuleDefinition(): RuleDefinition
     {
         return new RuleDefinition(
             'Replace deprecated RecipeRunner::installModule() with installModules(), wrapping the module name in an array',
             [
-                new CodeSample(
+                new ConfiguredCodeSample(
                     'RecipeRunner::installModule($module, $recipeConfigStorage, $context);',
-                    'RecipeRunner::installModules([$module], $recipeConfigStorage, $context);'
+                    'RecipeRunner::installModules([$module], $recipeConfigStorage, $context);',
+                    [new DrupalIntroducedVersionConfiguration('11.4.0')]
                 ),
             ]
         );
@@ -44,7 +62,7 @@ final class ReplaceRecipeRunnerInstallModuleRector extends AbstractRector
         return [StaticCall::class];
     }
 
-    public function refactor(Node $node): ?Node
+    public function refactorWithConfiguration(Node $node, VersionedConfigurationInterface $configuration): ?Node
     {
         assert($node instanceof StaticCall);
         if (!$this->isName($node->name, 'installModule')) {
@@ -70,9 +88,10 @@ final class ReplaceRecipeRunnerInstallModuleRector extends AbstractRector
             return null;
         }
         $wrappedArray = new Array_([new ArrayItem($firstArg->value)]);
-        $node->name = new Identifier('installModules');
-        $node->args = array_merge([new Arg($wrappedArray)], array_slice($node->args, 1));
+        $newNode = clone $node;
+        $newNode->name = new Identifier('installModules');
+        $newNode->args = array_merge([new Arg($wrappedArray)], array_slice($node->args, 1));
 
-        return $node;
+        return $newNode;
     }
 }

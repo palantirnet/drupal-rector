@@ -11,9 +11,9 @@ $label = 'Hello ' . $session->name;
 <?php
 
 /** @var \Drupal\Core\Session\UserSession $session */
-if ($session->getAccountName() === 'admin') {
-    return $session->getAccountName();
+if (\Drupal\Component\Utility\DeprecationHelper::backwardsCompatibleCall(\Drupal::VERSION, '11.3.0', fn() => $session->getAccountName(), fn() => $session->name) === 'admin') {
+    return \Drupal\Component\Utility\DeprecationHelper::backwardsCompatibleCall(\Drupal::VERSION, '11.3.0', fn() => $session->getAccountName(), fn() => $session->name);
 }
-$label = 'Hello ' . $session->getAccountName();
+$label = 'Hello ' . \Drupal\Component\Utility\DeprecationHelper::backwardsCompatibleCall(\Drupal::VERSION, '11.3.0', fn() => $session->getAccountName(), fn() => $session->name);
 
 ?>

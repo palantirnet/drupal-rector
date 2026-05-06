@@ -4,13 +4,15 @@ declare(strict_types=1);
 
 namespace DrupalRector\Drupal11\Rector\Deprecation;
 
+use DrupalRector\Contract\VersionedConfigurationInterface;
+use DrupalRector\Rector\AbstractDrupalCoreRector;
+use DrupalRector\Rector\ValueObject\DrupalIntroducedVersionConfiguration;
 use PhpParser\Node;
 use PhpParser\Node\Expr\FuncCall;
 use PhpParser\Node\Expr\StaticCall;
 use PhpParser\Node\Name;
 use PHPStan\Type\ObjectType;
-use Rector\Rector\AbstractRector;
-use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
+use Symplify\RuleDocGenerator\ValueObject\CodeSample\ConfiguredCodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 /**
@@ -20,16 +22,32 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  *
  * @see https://www.drupal.org/node/3526515
  */
-final class ErrorCurrentErrorHandlerRector extends AbstractRector
+final class ErrorCurrentErrorHandlerRector extends AbstractDrupalCoreRector
 {
+    /**
+     * @var array|DrupalIntroducedVersionConfiguration[]
+     */
+    protected array $configuration;
+
+    public function configure(array $configuration): void
+    {
+        foreach ($configuration as $value) {
+            if (!$value instanceof DrupalIntroducedVersionConfiguration) {
+                throw new \InvalidArgumentException(sprintf('Each configuration item must be an instance of "%s"', DrupalIntroducedVersionConfiguration::class));
+            }
+        }
+        parent::configure($configuration);
+    }
+
     public function getRuleDefinition(): RuleDefinition
     {
         return new RuleDefinition(
             'Replace deprecated \\Drupal\\Core\\Utility\\Error::currentErrorHandler() with PHP built-in get_error_handler()',
             [
-                new CodeSample(
+                new ConfiguredCodeSample(
                     '$handler = \\Drupal\\Core\\Utility\\Error::currentErrorHandler();',
-                    '$handler = get_error_handler();'
+                    '$handler = get_error_handler();',
+                    [new DrupalIntroducedVersionConfiguration('11.3.0')]
                 ),
             ]
         );
@@ -41,7 +59,7 @@ final class ErrorCurrentErrorHandlerRector extends AbstractRector
         return [StaticCall::class];
     }
 
-    public function refactor(Node $node): ?Node
+    public function refactorWithConfiguration(Node $node, VersionedConfigurationInterface $configuration): ?Node
     {
         assert($node instanceof StaticCall);
         if (!$this->isName($node->name, 'currentErrorHandler')) {

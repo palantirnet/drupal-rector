@@ -25,8 +25,8 @@ class MyClass {
     public StatementPrefetchIterator $stmt;
 
     public function example(): void {
-        $result = $this->statement->fetchField(0);
-        $result2 = $this->stmt->fetchField(2);
+        $result = \Drupal\Component\Utility\DeprecationHelper::backwardsCompatibleCall(\Drupal::VERSION, '11.2.0', fn() => $this->statement->fetchField(0), fn() => $this->statement->fetchColumn(0));
+        $result2 = \Drupal\Component\Utility\DeprecationHelper::backwardsCompatibleCall(\Drupal::VERSION, '11.2.0', fn() => $this->stmt->fetchField(2), fn() => $this->stmt->fetchColumn(2));
     }
 }
 

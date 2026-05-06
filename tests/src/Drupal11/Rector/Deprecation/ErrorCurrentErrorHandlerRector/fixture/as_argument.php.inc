@@ -17,10 +17,10 @@ if (Error::currentErrorHandler() !== null) {
 use Drupal\Core\Utility\Error;
 
 // Result used inline as a function argument.
-set_error_handler(get_error_handler());
+set_error_handler(\Drupal\Component\Utility\DeprecationHelper::backwardsCompatibleCall(\Drupal::VERSION, '11.3.0', fn() => get_error_handler(), fn() => Error::currentErrorHandler()));
 
 // Result used in a boolean expression.
-if (get_error_handler() !== null) {
+if (\Drupal\Component\Utility\DeprecationHelper::backwardsCompatibleCall(\Drupal::VERSION, '11.3.0', fn() => get_error_handler(), fn() => Error::currentErrorHandler()) !== null) {
     // do something
 }
 

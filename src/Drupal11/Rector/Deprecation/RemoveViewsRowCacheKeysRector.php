@@ -39,6 +39,10 @@ final class RemoveViewsRowCacheKeysRector extends AbstractRector
     /** @var list<string> variable names whose assignments were removed in the current file */
     private array $removedVarNames = [];
 
+    /**
+     * @param array<Node> $nodes
+     * @return array<Node>
+     */
     public function beforeTraversal(array $nodes): array
     {
         $this->removedVarNames = [];
@@ -82,7 +86,8 @@ final class RemoveViewsRowCacheKeysRector extends AbstractRector
         return $this->refactorArray($node);
     }
 
-    private function refactorExpression(Expression $node): int|null
+    /** @return NodeVisitor::REMOVE_NODE|null */
+    private function refactorExpression(Expression $node): ?int
     {
         if (!$node->expr instanceof Assign) {
             return null;
@@ -106,7 +111,8 @@ final class RemoveViewsRowCacheKeysRector extends AbstractRector
         return NodeVisitor::REMOVE_NODE;
     }
 
-    private function refactorClassMethod(ClassMethod $node): int|null
+    /** @return NodeVisitor::REMOVE_NODE|null */
+    private function refactorClassMethod(ClassMethod $node): ?int
     {
         if (count($node->stmts ?? []) !== 1) {
             return null;

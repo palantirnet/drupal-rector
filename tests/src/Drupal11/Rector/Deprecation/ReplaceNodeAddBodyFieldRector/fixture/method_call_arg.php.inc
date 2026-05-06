@@ -7,7 +7,7 @@ node_add_body_field($this->getNodeType(), 'Custom Label');
 -----
 <?php
 
-$this->createBodyField('node', $this->getNodeType()->id());
-$this->createBodyField('node', $this->getNodeType()->id(), 'body', 'Custom Label');
+\Drupal\Component\Utility\DeprecationHelper::backwardsCompatibleCall(\Drupal::VERSION, '11.3.0', fn() => $this->createBodyField('node', $this->getNodeType()->id()), fn() => node_add_body_field($this->getNodeType()));
+\Drupal\Component\Utility\DeprecationHelper::backwardsCompatibleCall(\Drupal::VERSION, '11.3.0', fn() => $this->createBodyField('node', $this->getNodeType()->id(), 'body', 'Custom Label'), fn() => node_add_body_field($this->getNodeType(), 'Custom Label'));
 
 ?>
