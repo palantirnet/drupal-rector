@@ -10,6 +10,7 @@
     ],
     "require": {
         "rector/rector": "^2",
+        "mglaman/phpstan-drupal": "^2.0",
         "webflo/drupal-finder": "^1.2"
     },
     "license": "MIT",
@@ -92,5 +93,5 @@
         "phpstan": "vendor/bin/phpstan analyse --memory-limit=2G",
         "check-style": "vendor/bin/php-cs-fixer check",
         "fix-style": "vendor/bin/php-cs-fixer fix"
-    }
+        }
 }

@@ -381,8 +381,11 @@ run_test ReplacePdoFetchConstantsRector \
 run_test ReplaceRecipeRunnerInstallModuleRector \
     recipe_installer_kit
 
-run_test ReplaceSessionManagerDeleteRector \
-    role_expire
+run_test ReplaceSessionManagerDeleteRector
+    # role_expire confirmed caller at RoleExpireApiService.php:168 ($this->sessionManager->delete($uid))
+    # but AbstractDrupalCoreRector version gate requires Drupal >= 11.4.0 — SessionManager::delete()
+    # was deprecated in 11.4.0 which is not yet released (latest stable: 11.3.x).
+    # Re-enable with "role_expire" once the test site runs Drupal 11.4.0+.
 
 run_test ReplaceSessionWritesWithRequestSessionRector
     # No contrib usage: direct $_SESSION writes not present in any D11-compatible contrib module found
@@ -463,3 +466,5 @@ echo "     ReplaceEntityReferenceRecursiveLimit, ReplaceLocaleConfigBatchFunctio
 echo "     ReplaceNodeAccessViewAllNodes, ReplaceRequestTimeConstant,"
 echo "     ReplaceSessionWritesWithRequestSession, ReplaceSystemPerformanceGzipKey,"
 echo "     ReplaceUserSessionNameProperty, StatementPrefetchIteratorFetchColumn)"
+echo "  * 1 rector skipped — version gate requires Drupal >= 11.4.0 (not yet released):"
+echo "    ReplaceSessionManagerDeleteRector (role_expire is valid test module; re-enable after upgrade)"

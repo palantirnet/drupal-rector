@@ -123,7 +123,9 @@ didn't match it.
 - [x] `ReplaceSessionManagerDeleteRector` — modules: entity_visibility_preview, session_inspector → role_expire
   - Pattern **not present** with the required type in either original module. entity_visibility_preview has its own unrelated `SessionManager` service; session_inspector uses a raw DB delete. Both use the interface, not the concrete class.
   - **Found via search.tresbien.tech**: `role_expire/src/RoleExpireApiService.php` declares `@var Drupal\Core\Session\SessionManager` on its `$sessionManager` property (concrete class) and calls `$this->sessionManager->delete($uid)`. D11-compatible (`^10.2||^11`).
-  - **Fixed:** Replaced both modules with `role_expire`. The `@var` annotation naming the concrete class satisfies the rector's `isObjectType(SessionManager)` check.
+  - **Updated:** Replaced both modules with `role_expire`. The `@var` annotation naming the concrete class satisfies the rector's `isObjectType(SessionManager)` check.
+  - **Still NO_CHANGES** — blocked by version gate. `AbstractDrupalCoreRector::rectorShouldApplyToDrupalVersion()` compares `Drupal::VERSION` against the rector's `DrupalIntroducedVersionConfiguration('11.4.0')`. Test site runs Drupal 11.3.9. `SessionManager::delete()` was deprecated in Drupal 11.4.0 which has not been released yet (latest stable: 11.3.x).
+  - **Status:** `role_expire` is the correct test module. Re-enable in the test script once the test site is upgraded to Drupal 11.4.0+.
 
 - [x] `ReplaceSessionWritesWithRequestSessionRector` — modules: drd, entity_visibility_preview
   - Pattern **not present** (`$_SESSION[...] = ...` writes) in either module.
