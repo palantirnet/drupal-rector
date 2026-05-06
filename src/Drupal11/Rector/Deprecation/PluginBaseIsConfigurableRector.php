@@ -36,14 +36,6 @@ final class PluginBaseIsConfigurableRector extends AbstractRector
             return null;
         }
 
-        if (!$node->var instanceof Node\Expr\Variable) {
-            return null;
-        }
-
-        if ($this->getName($node->var) !== 'this') {
-            return null;
-        }
-
         if (!$this->isObjectType($node->var, new ObjectType('Drupal\Component\Plugin\PluginBase'))) {
             return null;
         }

@@ -1,6 +1,7 @@
 <?php
 
-// A standalone method call (not an array item value) must not be changed.
-// The rector only removes array items; bare method calls are unaffected.
+// $cache_plugin has no type annotation so PHPStan cannot confirm it is a
+// CachePluginBase.  Without that confirmation the rector must not remove these
+// assignment statements.
 $keys = $cache_plugin->getRowCacheKeys($row);
 $id = $cache_plugin->getRowId($row);

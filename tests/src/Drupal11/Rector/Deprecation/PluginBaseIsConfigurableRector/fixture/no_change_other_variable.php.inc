@@ -1,6 +1,5 @@
 <?php
 
-// $plugin->isConfigurable() — receiver is not $this, so it must not be changed.
-// Other classes (e.g. Action, CKEditor5PluginDefinition) have isConfigurable()
-// with different semantics.
+// $plugin has no type annotation, so PHPStan cannot confirm it is a PluginBase.
+// Without that confirmation the rector must not change the call.
 $result = $plugin->isConfigurable();

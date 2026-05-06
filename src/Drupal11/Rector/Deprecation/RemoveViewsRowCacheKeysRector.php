@@ -6,18 +6,27 @@ namespace DrupalRector\Drupal11\Rector\Deprecation;
 
 use PhpParser\Node;
 use PhpParser\Node\Expr\Array_;
+use PhpParser\Node\Expr\Assign;
 use PhpParser\Node\Expr\MethodCall;
+use PhpParser\Node\Expr\Variable;
 use PhpParser\Node\Identifier;
+use PhpParser\Node\Stmt\ClassMethod;
+use PhpParser\Node\Stmt\Expression;
+use PhpParser\Node\Stmt\Return_;
+use PhpParser\NodeVisitor;
 use PHPStan\Type\ObjectType;
 use Rector\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 /**
- * Removes deprecated CachePluginBase::getRowCacheKeys() and getRowId() array item values.
+ * Removes deprecated CachePluginBase::getRowCacheKeys() and getRowId() calls.
  *
  * Both methods are deprecated in drupal:11.4.0 and removed in drupal:13.0.0
- * with no replacement.
+ * with no replacement. Handles three patterns:
+ * - Inline array item value:  ['keys' => $plugin->getRowCacheKeys($row)]
+ * - Variable-first assignment: $keys = $plugin->getRowCacheKeys($row); [...'keys' => $keys]
+ * - Delegation method:         public function getRowCacheKeys($row) { return $this->plugin->getRowCacheKeys($row); }
  *
  * @see https://www.drupal.org/node/3564958
  */
@@ -25,13 +34,28 @@ final class RemoveViewsRowCacheKeysRector extends AbstractRector
 {
     private const DEPRECATED_METHODS = ['getRowCacheKeys', 'getRowId'];
 
+    private const CACHE_PLUGIN_BASE = 'Drupal\views\Plugin\views\cache\CachePluginBase';
+
+    /** @var list<string> variable names whose assignments were removed in the current file */
+    private array $removedVarNames = [];
+
+    public function beforeTraversal(array $nodes): array
+    {
+        $this->removedVarNames = [];
+        return $nodes;
+    }
+
     public function getRuleDefinition(): RuleDefinition
     {
         return new RuleDefinition(
-            'Remove deprecated CachePluginBase::getRowCacheKeys() and getRowId() array item values',
+            'Remove deprecated CachePluginBase::getRowCacheKeys() and getRowId() calls and array item values',
             [
                 new CodeSample(
                     "['keys' => \$cache_plugin->getRowCacheKeys(\$row), 'tags' => []]",
+                    "['tags' => []]"
+                ),
+                new CodeSample(
+                    "\$keys = \$cache_plugin->getRowCacheKeys(\$row);\n['keys' => \$keys, 'tags' => []]",
                     "['tags' => []]"
                 ),
             ]
@@ -41,24 +65,86 @@ final class RemoveViewsRowCacheKeysRector extends AbstractRector
     /** @return array<class-string<Node>> */
     public function getNodeTypes(): array
     {
-        return [Array_::class];
+        return [Array_::class, Expression::class, ClassMethod::class];
     }
 
-    public function refactor(Node $node): ?Node
+    public function refactor(Node $node): int|Node|null
     {
+        if ($node instanceof Expression) {
+            return $this->refactorExpression($node);
+        }
+
+        if ($node instanceof ClassMethod) {
+            return $this->refactorClassMethod($node);
+        }
+
         assert($node instanceof Array_);
+        return $this->refactorArray($node);
+    }
+
+    private function refactorExpression(Expression $node): int|null
+    {
+        if (!$node->expr instanceof Assign) {
+            return null;
+        }
+        $assign = $node->expr;
+        if (!$assign->var instanceof Variable) {
+            return null;
+        }
+        if (!$assign->expr instanceof MethodCall) {
+            return null;
+        }
+        if (!$this->isDeprecatedMethodCall($assign->expr)) {
+            return null;
+        }
+
+        $varName = $this->getName($assign->var);
+        if ($varName !== null) {
+            $this->removedVarNames[] = $varName;
+        }
+
+        return NodeVisitor::REMOVE_NODE;
+    }
+
+    private function refactorClassMethod(ClassMethod $node): int|null
+    {
+        if (count($node->stmts ?? []) !== 1) {
+            return null;
+        }
+        $stmt = $node->stmts[0];
+        if (!$stmt instanceof Return_) {
+            return null;
+        }
+        if (!$stmt->expr instanceof MethodCall) {
+            return null;
+        }
+        if (!$this->isDeprecatedMethodCall($stmt->expr)) {
+            return null;
+        }
+
+        return NodeVisitor::REMOVE_NODE;
+    }
+
+    private function refactorArray(Array_ $node): ?Array_
+    {
         $modified = false;
         $newItems = [];
 
         foreach ($node->items as $item) {
             if ($item->value instanceof MethodCall
-                && $item->value->name instanceof Identifier
-                && in_array($item->value->name->toString(), self::DEPRECATED_METHODS, true)
-                && $this->isObjectType($item->value->var, new ObjectType('Drupal\views\Plugin\views\cache\CachePluginBase'))
+                && $this->isDeprecatedMethodCall($item->value)
             ) {
                 $modified = true;
                 continue;
             }
+
+            if ($item->value instanceof Variable
+                && in_array($this->getName($item->value), $this->removedVarNames, true)
+            ) {
+                $modified = true;
+                continue;
+            }
+
             $newItems[] = $item;
         }
 
@@ -68,5 +154,12 @@ final class RemoveViewsRowCacheKeysRector extends AbstractRector
         $node->items = $newItems;
 
         return $node;
+    }
+
+    private function isDeprecatedMethodCall(MethodCall $call): bool
+    {
+        return $call->name instanceof Identifier
+            && in_array($call->name->toString(), self::DEPRECATED_METHODS, true)
+            && $this->isObjectType($call->var, new ObjectType(self::CACHE_PLUGIN_BASE));
     }
 }
