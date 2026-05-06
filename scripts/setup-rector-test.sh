@@ -89,19 +89,14 @@ echo "==> Requiring contrib modules…"
 
 # Batch 1 — multi-rector modules (high-value)
 ddev composer require --no-update \
-  "drupal/drd:*" \
   "drupal/acquia_contenthub:*" \
   "drupal/searchstax:*" \
   "drupal/ai_agents:*" \
-  "drupal/ckeditor5_plugin_pack:*" \
-  "drupal/bootstrap5:*" \
   "drupal/commerce_invoice:*" \
   "drupal/custom_field:*" \
-  "drupal/entity_visibility_preview:*" \
+  "drupal/role_expire:*" \
   "drupal/views_dependent_filters:*" \
   "drupal/group:*" \
-  "drupal/session_inspector:*" \
-  "drupal/sdx:*" \
   "drupal/search_api:*" \
   "drupal/schemadotorg:*" \
   "drupal/smart_migrate_cli:*" \
@@ -113,7 +108,6 @@ ddev composer require --no-update \
 ddev composer require --no-update \
   "drupal/tara:*" \
   "drupal/vani:*" \
-  "drupal/view_usernames_node_author:*" \
   "drupal/association:*" \
   "drupal/tome:*" \
   "drupal/cmrf_form_processor:*" \
@@ -126,29 +120,25 @@ ddev composer require --no-update \
   "drupal/vcp4dates:*" \
   "drupal/gdpr:*" \
   "drupal/ai_eca:*" \
-  "drupal/deprecation_status:*" \
   "drupal/gnode_request:*" \
-  "drupal/google_analytics_counter:*" \
   "drupal/migmag:*" \
-  "drupal/field_group_vertical_tabs:*" \
-  "drupal/ui_patterns_settings:*" \
-  "drupal/tb_megamenu:*" \
-  "drupal/automatic_updates:*" \
   "drupal/sparql_entity_storage:*" \
   "drupal/views_advanced_cache:*" \
-  "drupal/captcha:*" \
-  "drupal/ejectorseat:*" \
   "drupal/smart_sql_idmap:*" \
-  "drupal/jsonld:*" \
   "drupal/forum:*" \
   "drupal/history:*" \
-  "drupal/comment_mover:*" \
-  "drupal/rabbit_hole_href:*" \
   "drupal/addanother:*" \
   "drupal/quicktabs:*" \
   "drupal/entity_usage:*" \
   "drupal/media_auto_publication:*" \
-  "drupal/migrate_tools:*"
+  "drupal/migrate_tools:*" \
+  "drupal/stage_file_proxy:^3.1" \
+  "drupal/workflow_buttons:^1" \
+  "drupal/optional_end_date:*" \
+  "drupal/scheduler_field:*" \
+  "drupal/mailsystem:*" \
+  "drupal/webform:*" \
+  "drupal/recipe_installer_kit:*"
 
 echo ""
 echo "==> Running composer update to resolve all requirements…"
@@ -263,7 +253,7 @@ run_test() {
     printf "  Modules: %s\n" "${paths[*]}" | tee -a "$LOG"
     echo "" | tee -a "$LOG"
 
-    timeout 30 vendor/bin/rector process "${paths[@]}" --only="$fqcn" --dry-run --no-cache 2>&1 | tee -a "$LOG" || true
+    timeout 30 vendor/bin/rector process "${paths[@]}" --only="$fqcn" --dry-run --clear-cache 2>&1 | tee -a "$LOG" || true
 
     echo "" | tee -a "$LOG"
     git diff "${paths[@]}" | tee -a "$LOG" || true
@@ -280,7 +270,7 @@ run_test ErrorCurrentErrorHandlerRector
     # No contrib usage: Error::currentErrorHandler() deprecated D11.3.0; devel 5.x already cleaned up, no other hits
 
 run_test FileSystemBasenameToNativeRector \
-    ejectorseat
+    stage_file_proxy
 
 run_test LoadAllIncludesRector \
     config_track schemadotorg
@@ -289,7 +279,7 @@ run_test MigrateSqlGetMigrationPluginManagerRector \
     feeds_migrate migmag smart_sql_idmap
 
 run_test NodeStorageDeprecatedMethodsRector \
-    tb_megamenu
+    workflow_buttons
 
 run_test PluginBaseIsConfigurableRector \
     metatag search_api
@@ -307,25 +297,25 @@ run_test RemoveLinkWidgetValidateTitleElementRector
     # No contrib usage: LinkWidget::validateTitleElement() deprecated D11.4.0, no contrib calls found
 
 run_test RemoveModuleHandlerAddModuleCallsRector \
-    acquia_contenthub sdx
+    config_track
 
-run_test RemoveModuleHandlerDeprecatedMethodsRector \
-    captcha jsonld
+run_test RemoveModuleHandlerDeprecatedMethodsRector
+    # No contrib usage: writeCache()/getHookInfo() on ModuleHandlerInterface not called in any D11 contrib module found
 
 run_test RemoveRootFromConvertDbUrlRector \
     smart_migrate_cli sparql_entity_storage
 
-run_test RemoveSetUriCallbackRector \
-    rabbit_hole_href
+run_test RemoveSetUriCallbackRector
+    # No contrib usage: $entityType->setUriCallback() not called in any D11 contrib module found
 
-run_test RemoveStateCacheSettingRector \
-    searchstax sdx
+run_test RemoveStateCacheSettingRector
+    # No contrib usage: $settings['state_cache'] pattern not found in any D11 contrib module; likely already gone from codebase
 
 run_test RemoveTrustDataCallRector \
     views_dependent_filters group
 
-run_test RemoveTwigNodeTransTagArgumentRector \
-    searchstax
+run_test RemoveTwigNodeTransTagArgumentRector
+    # No contrib usage: TwigNodeTrans 6-arg constructor removed from core before D11 contrib caught up (version drift)
 
 run_test RemoveUpdaterPostInstallMethodsRector \
     group gnode_request
@@ -336,8 +326,10 @@ run_test RemoveViewsRowCacheKeysRector \
 run_test RenameStopProceduralHookScanRector
     # No contrib usage: StopProceduralHookScan attribute deprecated D11.2.0, niche — no contrib usage found
 
-run_test ReplaceAlphadecimalToIntNullRector \
-    comment_mover indieweb
+run_test ReplaceAlphadecimalToIntNullRector
+    # No contrib usage: alphadecimalToInt(null/'') — both values always returned 0,
+    # so this was only ever passed as a literal in custom code or tests. No D11 contrib
+    # module calls the function with a literal null or empty string.
 
 run_test ReplaceCommentManagerGetCountNewCommentsRector \
     forum history
@@ -346,10 +338,10 @@ run_test ReplaceCommentUriRector
     # No contrib usage: comment_uri() deprecated D11.3.0; Social 13.x already cleaned up (issue #3432522), no other D11 hits
 
 run_test ReplaceDateTimeRangeConstantsRector \
-    deprecation_status
+    optional_end_date scheduler_field
 
-run_test ReplaceEditorLoadRector \
-    acquia_contenthub ckeditor5_plugin_pack
+run_test ReplaceEditorLoadRector
+    # No contrib usage: editor_load() deprecated D11; not called in any D11 contrib module found
 
 run_test ReplaceEntityOriginalPropertyRector \
     entity_usage media_auto_publication
@@ -360,7 +352,7 @@ run_test ReplaceEntityReferenceRecursiveLimitRector
     # custom_field/external_entity define the constant, they don't reference core's.
 
 run_test ReplaceFieldgroupToFieldsetRector \
-    field_group_vertical_tabs ui_patterns_settings
+    webform
 
 run_test ReplaceFileGetContentHeadersRector \
     commerce_invoice tmgmt
@@ -369,10 +361,10 @@ run_test ReplaceLocaleConfigBatchFunctionsRector
     # No contrib usage: locale_config_batch_* deprecated D11.1.0; all GitLab hits were bundled core copies, not contrib code
 
 run_test ReplaceModuleHandlerGetNameRector \
-    drd reassign_user_content
+    mailsystem
 
-run_test ReplaceNodeAccessViewAllNodesRector \
-    view_usernames_node_author
+run_test ReplaceNodeAccessViewAllNodesRector
+    # No contrib usage: node_access_view_all_nodes() deprecated D11.3.0; no D11 contrib caller found (newly deprecated)
 
 run_test ReplaceNodeAddBodyFieldRector \
     tome ai_eca
@@ -387,22 +379,22 @@ run_test ReplacePdoFetchConstantsRector \
     acquia_contenthub gdpr
 
 run_test ReplaceRecipeRunnerInstallModuleRector \
-    schemadotorg
+    recipe_installer_kit
 
 run_test ReplaceSessionManagerDeleteRector \
-    entity_visibility_preview session_inspector
+    role_expire
 
-run_test ReplaceSessionWritesWithRequestSessionRector \
-    drd entity_visibility_preview
+run_test ReplaceSessionWritesWithRequestSessionRector
+    # No contrib usage: direct $_SESSION writes not present in any D11-compatible contrib module found
 
-run_test ReplaceSystemPerformanceGzipKeyRector \
-    drd bootstrap5
+run_test ReplaceSystemPerformanceGzipKeyRector
+    # No contrib usage: advagg (only known caller) declares "core_version_requirement: ^9.3 || ^10" — not D11-compatible
 
 run_test ReplaceThemeGetSettingRector \
     tara vani
 
-run_test ReplaceUserSessionNamePropertyRector \
-    acquia_contenthub session_inspector
+run_test ReplaceUserSessionNamePropertyRector
+    # No contrib usage: $userSession->name property access not present in any D11 contrib module found
 
 run_test ReplaceViewsProceduralFunctionsRector \
     custom_field quicktabs
@@ -421,13 +413,13 @@ run_test ViewsPluginHandlerManagerRector \
 
 # ── Drupal 10 rectors ──────────────────────────────────────────────────────
 run_test ReplaceModuleHandlerGetNameRector \
-    drd reassign_user_content
+    mailsystem
 
 run_test ReplaceRebuildThemeDataRector \
     site_guardian
 
-run_test ReplaceRequestTimeConstantRector \
-    google_analytics_counter automatic_updates
+run_test ReplaceRequestTimeConstantRector
+    # No contrib usage: REQUEST_TIME constant usage already migrated in all D11-compatible modules found
 
 run_test SystemTimeZonesRector \
     intl_date smart_date
@@ -461,8 +453,13 @@ echo ""
 echo "  Site: run 'ddev launch'  |  Admin: admin / admin"
 echo ""
 echo "  Coverage notes (see docs/contrib-modules-d11.md):"
-echo "  * 8 rectors skipped — pattern exhausted or no D11 contrib usage found"
+echo "  * 18 rectors skipped — pattern exhausted or no D11 contrib usage found"
 echo "    (ErrorCurrentErrorHandler, RemoveAutomatedCronSubmitHandler,"
-echo "     RemoveLinkWidgetValidateTitleElement, RenameStopProceduralHookScan,"
-echo "     ReplaceCommentUri, ReplaceEntityReferenceRecursiveLimit,"
-echo "     ReplaceLocaleConfigBatchFunctions, StatementPrefetchIteratorFetchColumn)"
+echo "     RemoveLinkWidgetValidateTitleElement, RemoveModuleHandlerDeprecatedMethods,"
+echo "     RemoveSetUriCallback, RemoveStateCacheSetting,"
+echo "     RemoveTwigNodeTransTagArgument, RenameStopProceduralHookScan,"
+echo "     ReplaceAlphadecimalToIntNull, ReplaceCommentUri, ReplaceEditorLoad,"
+echo "     ReplaceEntityReferenceRecursiveLimit, ReplaceLocaleConfigBatchFunctions,"
+echo "     ReplaceNodeAccessViewAllNodes, ReplaceRequestTimeConstant,"
+echo "     ReplaceSessionWritesWithRequestSession, ReplaceSystemPerformanceGzipKey,"
+echo "     ReplaceUserSessionNameProperty, StatementPrefetchIteratorFetchColumn)"
