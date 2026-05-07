@@ -53,7 +53,9 @@ return static function (RectorConfig $rectorConfig): void {
         new FunctionToServiceConfiguration('11.3.0', 'node_mass_update', 'Drupal\node\NodeBulkUpdate', 'process'),
         new FunctionToServiceConfiguration('11.3.0', 'template_preprocess_layout', 'Drupal\layout_discovery\Hook\LayoutDiscoveryThemeHooks', 'preprocessLayout'),
     ]);
-    $rectorConfig->rule(ReplaceNodeModuleProceduralFunctionsRector::class);
+    $rectorConfig->ruleWithConfiguration(ReplaceNodeModuleProceduralFunctionsRector::class, [
+        new DrupalIntroducedVersionConfiguration('11.3.0'),
+    ]);
 
     // https://www.drupal.org/node/3504005
     // block_content_add_body_field() deprecated in drupal:11.3.0, removed in drupal:13.0.0.
@@ -73,7 +75,9 @@ return static function (RectorConfig $rectorConfig): void {
     // node_access_view_all_nodes() deprecated in drupal:11.3.0, removed in drupal:12.0.0.
     // Replaced by entityTypeManager()->getAccessControlHandler('node')->checkAllGrants().
     // drupal_static_reset('node_access_view_all_nodes') replaced by node.view_all_nodes_memory_cache->deleteAll().
-    $rectorConfig->rule(ReplaceNodeAccessViewAllNodesRector::class);
+    $rectorConfig->ruleWithConfiguration(ReplaceNodeAccessViewAllNodesRector::class, [
+        new DrupalIntroducedVersionConfiguration('11.3.0'),
+    ]);
 
     // https://www.drupal.org/node/3574424
     // responsive_image_* functions deprecated in drupal:11.3.0, removed in drupal:12.0.0.
@@ -139,7 +143,9 @@ return static function (RectorConfig $rectorConfig): void {
     // https://www.drupal.org/node/3573896
     // theme_get_setting() and _system_default_theme_features() deprecated in drupal:11.3.0, removed in drupal:13.0.0.
     // Replaced by ThemeSettingsProvider service.
-    $rectorConfig->rule(ReplaceThemeGetSettingRector::class);
+    $rectorConfig->ruleWithConfiguration(ReplaceThemeGetSettingRector::class, [
+        new DrupalIntroducedVersionConfiguration('11.3.0'),
+    ]);
 
     // https://www.drupal.org/node/3522513
     // Database::convertDbUrlToConnectionInfo($url, $root, ...) deprecated in drupal:11.3.0, removed in drupal:12.0.0.

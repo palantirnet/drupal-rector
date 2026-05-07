@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace DrupalRector\Drupal11\Rector\Deprecation;
 
+use DrupalRector\Contract\VersionedConfigurationInterface;
+use DrupalRector\Rector\AbstractDrupalCoreRector;
+use DrupalRector\Rector\ValueObject\DrupalIntroducedVersionConfiguration;
 use PhpParser\Node;
 use PhpParser\Node\Arg;
 use PhpParser\Node\Expr\ClassConstFetch;
@@ -15,8 +18,7 @@ use PhpParser\Node\Identifier;
 use PhpParser\Node\Name;
 use PhpParser\Node\Name\FullyQualified;
 use PhpParser\Node\Scalar\String_;
-use Rector\Rector\AbstractRector;
-use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
+use Symplify\RuleDocGenerator\ValueObject\CodeSample\ConfiguredCodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 /**
@@ -27,7 +29,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  *
  * @see https://www.drupal.org/node/3574901
  */
-final class ReplaceDateTimeRangeConstantsRector extends AbstractRector
+final class ReplaceDateTimeRangeConstantsRector extends AbstractDrupalCoreRector
 {
     private const CONSTANTS_INTERFACE = 'Drupal\datetime_range\DateTimeRangeConstantsInterface';
     private const DISPLAY_OPTIONS_ENUM = 'Drupal\datetime_range\DateTimeRangeDisplayOptions';
@@ -38,18 +40,35 @@ final class ReplaceDateTimeRangeConstantsRector extends AbstractRector
         'END_DATE' => 'EndDate',
     ];
 
+    /**
+     * @var array|DrupalIntroducedVersionConfiguration[]
+     */
+    protected array $configuration;
+
+    public function configure(array $configuration): void
+    {
+        foreach ($configuration as $value) {
+            if (!$value instanceof DrupalIntroducedVersionConfiguration) {
+                throw new \InvalidArgumentException(sprintf('Each configuration item must be an instance of "%s"', DrupalIntroducedVersionConfiguration::class));
+            }
+        }
+        parent::configure($configuration);
+    }
+
     public function getRuleDefinition(): RuleDefinition
     {
         return new RuleDefinition(
             'Replace removed DateTimeRangeConstantsInterface constants and datetime_type_field_views_data_helper() with Drupal 12 equivalents',
             [
-                new CodeSample(
+                new ConfiguredCodeSample(
                     'DateTimeRangeConstantsInterface::BOTH;',
-                    '\\Drupal\\datetime_range\\DateTimeRangeDisplayOptions::Both->value;'
+                    '\\Drupal\\datetime_range\\DateTimeRangeDisplayOptions::Both->value;',
+                    [new DrupalIntroducedVersionConfiguration('11.2.0')]
                 ),
-                new CodeSample(
+                new ConfiguredCodeSample(
                     'datetime_type_field_views_data_helper($field_storage, $data, $column);',
-                    "\\Drupal::service('datetime.views_helper')->buildViewsData(\$field_storage, \$data, \$column);"
+                    "\\Drupal::service('datetime.views_helper')->buildViewsData(\$field_storage, \$data, \$column);",
+                    [new DrupalIntroducedVersionConfiguration('11.2.0')]
                 ),
             ]
         );
@@ -61,7 +80,7 @@ final class ReplaceDateTimeRangeConstantsRector extends AbstractRector
         return [ClassConstFetch::class, FuncCall::class];
     }
 
-    public function refactor(Node $node): ?Node
+    protected function refactorWithConfiguration(Node $node, VersionedConfigurationInterface $configuration): ?Node
     {
         if ($node instanceof ClassConstFetch) {
             return $this->refactorClassConst($node);

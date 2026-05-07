@@ -13,9 +13,9 @@ datetime_type_field_views_data_helper($field_storage, $data, 'value');
 
 use Drupal\datetime_range\DateTimeRangeConstantsInterface;
 
-$a = \Drupal\datetime_range\DateTimeRangeDisplayOptions::Both->value;
-$b = \Drupal\datetime_range\DateTimeRangeDisplayOptions::StartDate->value;
-$c = \Drupal\datetime_range\DateTimeRangeDisplayOptions::EndDate->value;
-\Drupal::service('datetime.views_helper')->buildViewsData($field_storage, $data, 'value');
+$a = \Drupal\Component\Utility\DeprecationHelper::backwardsCompatibleCall(\Drupal::VERSION, '11.2.0', fn() => \Drupal\datetime_range\DateTimeRangeDisplayOptions::Both->value, fn() => DateTimeRangeConstantsInterface::BOTH);
+$b = \Drupal\Component\Utility\DeprecationHelper::backwardsCompatibleCall(\Drupal::VERSION, '11.2.0', fn() => \Drupal\datetime_range\DateTimeRangeDisplayOptions::StartDate->value, fn() => DateTimeRangeConstantsInterface::START_DATE);
+$c = \Drupal\Component\Utility\DeprecationHelper::backwardsCompatibleCall(\Drupal::VERSION, '11.2.0', fn() => \Drupal\datetime_range\DateTimeRangeDisplayOptions::EndDate->value, fn() => DateTimeRangeConstantsInterface::END_DATE);
+\Drupal\Component\Utility\DeprecationHelper::backwardsCompatibleCall(\Drupal::VERSION, '11.2.0', fn() => \Drupal::service('datetime.views_helper')->buildViewsData($field_storage, $data, 'value'), fn() => datetime_type_field_views_data_helper($field_storage, $data, 'value'));
 
 ?>

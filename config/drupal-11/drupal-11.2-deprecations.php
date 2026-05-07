@@ -142,7 +142,9 @@ return static function (RectorConfig $rectorConfig): void {
     // Replaced by DateTimeRangeDisplayOptions enum cases (->value).
     // datetime_type_field_views_data_helper() deprecated in drupal:11.2.0, removed in drupal:12.0.0.
     // Replaced by \Drupal::service('datetime.views_helper')->buildViewsData().
-    $rectorConfig->rule(ReplaceDateTimeRangeConstantsRector::class);
+    $rectorConfig->ruleWithConfiguration(ReplaceDateTimeRangeConstantsRector::class, [
+        new DrupalIntroducedVersionConfiguration('11.2.0'),
+    ]);
 
     // https://www.drupal.org/node/3494126
     // file_get_content_headers($file) deprecated in drupal:11.2.0, removed in drupal:12.0.0.
@@ -166,7 +168,9 @@ return static function (RectorConfig $rectorConfig): void {
     // https://www.drupal.org/node/3571065
     // $entity->original magic property deprecated in drupal:11.2.0, removed in drupal:12.0.0.
     // Read access replaced by getOriginal(); write access replaced by setOriginal($value).
-    $rectorConfig->rule(ReplaceEntityOriginalPropertyRector::class);
+    $rectorConfig->ruleWithConfiguration(ReplaceEntityOriginalPropertyRector::class, [
+        new DrupalIntroducedVersionConfiguration('11.2.0'),
+    ]);
 
     // https://www.drupal.org/node/3495943
     // #[StopProceduralHookScan] attribute renamed to #[ProceduralHookScanStop] in drupal:11.2.0.

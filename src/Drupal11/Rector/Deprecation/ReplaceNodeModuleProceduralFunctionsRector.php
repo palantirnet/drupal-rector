@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace DrupalRector\Drupal11\Rector\Deprecation;
 
+use DrupalRector\Contract\VersionedConfigurationInterface;
+use DrupalRector\Rector\AbstractDrupalCoreRector;
+use DrupalRector\Rector\ValueObject\DrupalIntroducedVersionConfiguration;
 use PhpParser\Node;
 use PhpParser\Node\Arg;
 use PhpParser\Node\Expr\ClassConstFetch;
@@ -13,8 +16,7 @@ use PhpParser\Node\Expr\StaticCall;
 use PhpParser\Node\Name;
 use PhpParser\Node\Name\FullyQualified;
 use PhpParser\Node\Scalar\String_;
-use Rector\Rector\AbstractRector;
-use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
+use Symplify\RuleDocGenerator\ValueObject\CodeSample\ConfiguredCodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 /**
@@ -25,24 +27,42 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  *
  * @see https://www.drupal.org/node/3571623
  */
-final class ReplaceNodeModuleProceduralFunctionsRector extends AbstractRector
+final class ReplaceNodeModuleProceduralFunctionsRector extends AbstractDrupalCoreRector
 {
+    /**
+     * @var array|DrupalIntroducedVersionConfiguration[]
+     */
+    protected array $configuration;
+
+    public function configure(array $configuration): void
+    {
+        foreach ($configuration as $value) {
+            if (!$value instanceof DrupalIntroducedVersionConfiguration) {
+                throw new \InvalidArgumentException(sprintf('Each configuration item must be an instance of "%s"', DrupalIntroducedVersionConfiguration::class));
+            }
+        }
+        parent::configure($configuration);
+    }
+
     public function getRuleDefinition(): RuleDefinition
     {
         return new RuleDefinition(
             'Replace deprecated Node module procedural functions with OOP equivalents',
             [
-                new CodeSample(
+                new ConfiguredCodeSample(
                     'node_type_get_names();',
-                    "\\Drupal::service('entity_type.bundle.info')->getBundleLabels('node');"
+                    "\\Drupal::service('entity_type.bundle.info')->getBundleLabels('node');",
+                    [new DrupalIntroducedVersionConfiguration('11.3.0')]
                 ),
-                new CodeSample(
+                new ConfiguredCodeSample(
                     'node_get_type_label($node);',
-                    '$node->getBundleEntity()->label();'
+                    '$node->getBundleEntity()->label();',
+                    [new DrupalIntroducedVersionConfiguration('11.3.0')]
                 ),
-                new CodeSample(
+                new ConfiguredCodeSample(
                     'node_mass_update($nids, $updates, NULL, TRUE);',
-                    '\\Drupal::service(\\Drupal\\node\\NodeBulkUpdate::class)->process($nids, $updates, NULL, TRUE);'
+                    '\\Drupal::service(\\Drupal\\node\\NodeBulkUpdate::class)->process($nids, $updates, NULL, TRUE);',
+                    [new DrupalIntroducedVersionConfiguration('11.3.0')]
                 ),
             ]
         );
@@ -54,7 +74,7 @@ final class ReplaceNodeModuleProceduralFunctionsRector extends AbstractRector
         return [FuncCall::class];
     }
 
-    public function refactor(Node $node): ?Node
+    protected function refactorWithConfiguration(Node $node, VersionedConfigurationInterface $configuration): ?Node
     {
         assert($node instanceof FuncCall);
 

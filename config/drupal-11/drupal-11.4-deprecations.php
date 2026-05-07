@@ -231,7 +231,9 @@ return static function (RectorConfig $rectorConfig): void {
     // views_view_is_enabled(), views_view_is_disabled(), views_enable_view(),
     // views_disable_view(), views_get_view_result() deprecated in drupal:11.4.0, removed in drupal:13.0.0.
     // Replaced by OO equivalents on the view object or Views::getViewResult().
-    $rectorConfig->rule(ReplaceViewsProceduralFunctionsRector::class);
+    $rectorConfig->ruleWithConfiguration(ReplaceViewsProceduralFunctionsRector::class, [
+        new DrupalIntroducedVersionConfiguration('11.4.0'),
+    ]);
 
     // https://www.drupal.org/node/3566801
     // getEntityTypeIdKeyType() === 'integer', entityTypeSupportsComments(), and hasIntegerId($entityType)

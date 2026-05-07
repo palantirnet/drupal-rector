@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace DrupalRector\Drupal11\Rector\Deprecation;
 
+use DrupalRector\Contract\VersionedConfigurationInterface;
+use DrupalRector\Rector\AbstractDrupalCoreRector;
+use DrupalRector\Rector\ValueObject\DrupalIntroducedVersionConfiguration;
 use PhpParser\Node;
 use PhpParser\Node\Arg;
 use PhpParser\Node\Expr\ClassConstFetch;
@@ -12,8 +15,7 @@ use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\StaticCall;
 use PhpParser\Node\Name;
 use PhpParser\Node\Name\FullyQualified;
-use Rector\Rector\AbstractRector;
-use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
+use Symplify\RuleDocGenerator\ValueObject\CodeSample\ConfiguredCodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 /**
@@ -23,22 +25,39 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  *
  * @see https://www.drupal.org/node/3573896
  */
-final class ReplaceThemeGetSettingRector extends AbstractRector
+final class ReplaceThemeGetSettingRector extends AbstractDrupalCoreRector
 {
     private const THEME_SETTINGS_PROVIDER = 'Drupal\Core\Extension\ThemeSettingsProvider';
+
+    /**
+     * @var array|DrupalIntroducedVersionConfiguration[]
+     */
+    protected array $configuration;
+
+    public function configure(array $configuration): void
+    {
+        foreach ($configuration as $value) {
+            if (!$value instanceof DrupalIntroducedVersionConfiguration) {
+                throw new \InvalidArgumentException(sprintf('Each configuration item must be an instance of "%s"', DrupalIntroducedVersionConfiguration::class));
+            }
+        }
+        parent::configure($configuration);
+    }
 
     public function getRuleDefinition(): RuleDefinition
     {
         return new RuleDefinition(
             'Replace deprecated theme_get_setting() and _system_default_theme_features() with ThemeSettingsProvider equivalents',
             [
-                new CodeSample(
+                new ConfiguredCodeSample(
                     "theme_get_setting('logo.url');",
-                    "\\Drupal::service(\\Drupal\\Core\\Extension\\ThemeSettingsProvider::class)->getSetting('logo.url');"
+                    "\\Drupal::service(\\Drupal\\Core\\Extension\\ThemeSettingsProvider::class)->getSetting('logo.url');",
+                    [new DrupalIntroducedVersionConfiguration('11.3.0')]
                 ),
-                new CodeSample(
+                new ConfiguredCodeSample(
                     '_system_default_theme_features();',
-                    '\\Drupal\\Core\\Extension\\ThemeSettingsProvider::DEFAULT_THEME_FEATURES;'
+                    '\\Drupal\\Core\\Extension\\ThemeSettingsProvider::DEFAULT_THEME_FEATURES;',
+                    [new DrupalIntroducedVersionConfiguration('11.3.0')]
                 ),
             ]
         );
@@ -50,7 +69,7 @@ final class ReplaceThemeGetSettingRector extends AbstractRector
         return [FuncCall::class];
     }
 
-    public function refactor(Node $node): ?Node
+    protected function refactorWithConfiguration(Node $node, VersionedConfigurationInterface $configuration): ?Node
     {
         assert($node instanceof FuncCall);
         if (!$node->name instanceof Name) {

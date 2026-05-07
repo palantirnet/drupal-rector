@@ -4,13 +4,15 @@ declare(strict_types=1);
 
 namespace DrupalRector\Drupal11\Rector\Deprecation;
 
+use DrupalRector\Contract\VersionedConfigurationInterface;
+use DrupalRector\Rector\AbstractDrupalCoreRector;
+use DrupalRector\Rector\ValueObject\DrupalIntroducedVersionConfiguration;
 use PhpParser\Node;
 use PhpParser\Node\Arg;
 use PhpParser\Node\Expr\FuncCall;
 use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Scalar\String_;
-use Rector\Rector\AbstractRector;
-use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
+use Symplify\RuleDocGenerator\ValueObject\CodeSample\ConfiguredCodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 /**
@@ -20,14 +22,29 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  *
  * @see https://www.drupal.org/node/3038908
  */
-final class ReplaceNodeAccessViewAllNodesRector extends AbstractRector
+final class ReplaceNodeAccessViewAllNodesRector extends AbstractDrupalCoreRector
 {
+    /**
+     * @var array|DrupalIntroducedVersionConfiguration[]
+     */
+    protected array $configuration;
+
+    public function configure(array $configuration): void
+    {
+        foreach ($configuration as $value) {
+            if (!$value instanceof DrupalIntroducedVersionConfiguration) {
+                throw new \InvalidArgumentException(sprintf('Each configuration item must be an instance of "%s"', DrupalIntroducedVersionConfiguration::class));
+            }
+        }
+        parent::configure($configuration);
+    }
+
     public function getNodeTypes(): array
     {
         return [FuncCall::class];
     }
 
-    public function refactor(Node $node): ?Node
+    protected function refactorWithConfiguration(Node $node, VersionedConfigurationInterface $configuration): ?Node
     {
         assert($node instanceof FuncCall);
 
@@ -83,13 +100,15 @@ final class ReplaceNodeAccessViewAllNodesRector extends AbstractRector
     public function getRuleDefinition(): RuleDefinition
     {
         return new RuleDefinition('Replace deprecated node_access_view_all_nodes() with entityTypeManager()->getAccessControlHandler(\'node\')->checkAllGrants() (drupal:11.3.0)', [
-            new CodeSample(
+            new ConfiguredCodeSample(
                 'node_access_view_all_nodes();',
-                "\\Drupal::entityTypeManager()->getAccessControlHandler('node')->checkAllGrants(\\Drupal::currentUser());"
+                "\\Drupal::entityTypeManager()->getAccessControlHandler('node')->checkAllGrants(\\Drupal::currentUser());",
+                [new DrupalIntroducedVersionConfiguration('11.3.0')]
             ),
-            new CodeSample(
+            new ConfiguredCodeSample(
                 "drupal_static_reset('node_access_view_all_nodes');",
-                "\\Drupal::service('node.view_all_nodes_memory_cache')->deleteAll();"
+                "\\Drupal::service('node.view_all_nodes_memory_cache')->deleteAll();",
+                [new DrupalIntroducedVersionConfiguration('11.3.0')]
             ),
         ]);
     }
