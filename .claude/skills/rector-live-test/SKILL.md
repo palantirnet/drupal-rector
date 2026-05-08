@@ -1,6 +1,6 @@
 ---
 name: rector-live-test
-description: Finds D11-compatible contrib modules that exercise a rector and runs it against them. Uses search.tresbien.tech as primary search tool, falls back to Drupal GitLab API. Pass rector class name or issue number as argument.
+description: Finds D11-compatible contrib modules that exercise a rector and runs it against them. Uses api.tresbien.tech JSON API as primary search tool, falls back to Drupal GitLab API. Pass rector class name or issue number as argument.
 argument-hint: "<RectorClassName or issue-number>"
 allowed-tools: Read, Bash, Glob, WebFetch, WebSearch
 ---
@@ -32,38 +32,52 @@ Read the rector source to extract:
 
 ### 2. Search for contrib modules
 
-**Primary: `search.tresbien.tech`**
+**Primary: `api.tresbien.tech` JSON API**
 
-Use `WebFetch` to search this Drupal contrib code index. The base URL is:
+Use `curl` + `jq` to query the JSON search API. The base URL is:
 
 ```
-https://search.tresbien.tech/search?q=<urlencoded_query>&num=0&ctx=0
+https://api.tresbien.tech/v1/search?q=<urlencoded_query>&num=<max_results>
 ```
 
 **Always include `-r:drupal`** to exclude Drupal core from results (use `-r:drupal`, NOT `-r:core`).
 
+**Regex escaping:** The query is treated as a regex. Escape `(` as `\(` — an unescaped `(` causes a parse error and returns HTTP 418.
+
 Standard query construction:
-- Method call: `-r:drupal ->methodName(`
-- Function call: `-r:drupal functionName(`
+- Method call: `-r:drupal ->methodName\(`
+- Function call: `-r:drupal functionName\(`
 - Class constant: `-r:drupal ClassName::CONSTANT_NAME`
 - Property access: `-r:drupal ->propertyName`
 
 Additional filters to add as needed:
-- `f:\.php$` — PHP files only (add `f:\.module$` if the pattern may appear in `.module` files)
-- `-f:test` — exclude test files when you want production code only
+- `f:\.php$` — PHP files only (add `f:\.module$` if pattern may appear in `.module` files)
+- `-f:test` — exclude test files
 - `lang:php` — PHP language filter
 - `case:yes` — force case-sensitive match
 
-Example for `->delete(` on SessionManager:
-```
-https://search.tresbien.tech/search?q=-r%3Adrupal+-%3Edelete(&num=0&ctx=0
+Example — search for `_filter_autop(` in contrib PHP files:
+```bash
+curl -s "https://api.tresbien.tech/v1/search?q=-r%3Adrupal+_filter_autop%5C%28+-f%3Atest&num=20" \
+  | jq -r '.Result.Files[] | "\(.Repository)\t\(.FileName)\t\(.Branches | join(","))"'
 ```
 
-Parse the fetched page for matching file paths and extract the module/project name from the path prefix.
+The response is JSON with `Result.Files[]` — each entry has:
+- `.Repository` — module/project name (use this directly, no path parsing needed)
+- `.FileName` — file path within the repo
+- `.Branches[]` — which branch the match is on
+- `.ChunkMatches[].Content` — base64-encoded matched line(s)
+
+To decode a matched line and see actual code context:
+```bash
+echo "<base64string>" | base64 -d
+```
+
+**Never loop over individual repos.** If you need to search within a known set of repos, use regex alternation: `r:^(module1|module2|module3)$`.
 
 **Fallback: Drupal GitLab API blob search**
 
-If `search.tresbien.tech` yields no results or is unavailable:
+If the API yields no results or is unavailable:
 
 ```bash
 QUERY="<urlencoded_search_term>"
@@ -73,13 +87,24 @@ curl -s "https://git.drupalcode.org/search?group_id=2&scope=blobs&search=-path%3
 
 ### 3. Filter to D11-compatible modules
 
-For each module found, check its `.info.yml` for `core_version_requirement`:
+Use the repo listing API to batch-check all found modules at once. The endpoint returns `RawConfig."drupal-core"` (branch-keyed compatibility strings) and `RawConfig."drupal-usage"` (install counts per branch):
+
 ```bash
-# Example using GitLab API for a specific module
-curl -s "https://git.drupalcode.org/api/v4/projects/<group>%2F<module>/repository/files/<module>.info.yml/raw?ref=HEAD"
+# Get D11-compatible repos and their install counts
+MODULES='module1|module2|module3'  # pipe-separated list from step 2
+curl -s "https://api.tresbien.tech/v1/search/repo" \
+  | jq -r --arg mods "$MODULES" \
+    '.List.Repos[]
+     | select(.Repository.Name | test($mods))
+     | select(.Repository.RawConfig."drupal-core" // "" | test("\\^11"))
+     | [.Repository.Name,
+        .Repository.RawConfig."drupal-core",
+        .Repository.RawConfig."drupal-usage"] | @tsv'
 ```
 
-Keep only modules where `core_version_requirement` includes Drupal 11 (e.g., `^8 || ^9 || ^10 || ^11` or `>=10`).
+The `drupal-core` field looks like `"1.x:^10 || ^11;2.x:^11"` — keep modules where any branch entry includes `^11`.
+
+The `drupal-usage` field looks like `"1.x:4521;2.x:312"` — **prefer modules with higher install counts** for better real-world test coverage.
 
 If no D11-compatible modules are found, report:
 ```

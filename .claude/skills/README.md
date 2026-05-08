@@ -52,7 +52,7 @@ Produces a `PASS / WARN / FAIL` verdict per pass and an overall merge-readiness 
 
 ### `/rector-live-test <RectorClassName or issue-number>`
 
-Finds real contrib modules that use the deprecated API a rector targets, then runs the rector against them to verify it transforms real-world code correctly. Uses [search.tresbien.tech](https://search.tresbien.tech) as primary search, falls back to the Drupal GitLab API.
+Finds real contrib modules that use the deprecated API a rector targets, then runs the rector against them to verify it transforms real-world code correctly. Uses [api.tresbien.tech](https://api.tresbien.tech) JSON API as primary search, falls back to the Drupal GitLab API.
 
 ```
 /rector-live-test ReplaceSessionManagerDeleteRector
