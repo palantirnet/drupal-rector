@@ -26,7 +26,7 @@ return static function (RectorConfig $rectorConfig): void {
         // https://www.drupal.org/node/3571623 (Drupal 11.3)
         new FunctionToServiceConfiguration('11.3.0', 'node_mass_update', 'Drupal\node\NodeBulkUpdate', 'process'),
         // https://www.drupal.org/node/3571382 (Drupal 11.3)
-        new FunctionToServiceConfiguration('11.3.0', 'template_preprocess_layout', 'Drupal\layout_discovery\Hook\LayoutDiscoveryThemeHooks', 'preprocessLayout'),
+        new FunctionToServiceConfiguration('11.3.0', 'template_preprocess_layout', 'Drupal\layout_discovery\Hook\LayoutDiscoveryThemeHooks', 'preprocessLayout', true),
         // https://www.drupal.org/node/1685492 (Drupal 11.3)
         new FunctionToServiceConfiguration('11.3.0', 'twig_render_template', 'Drupal\Core\Template\TwigThemeEngine', 'renderTemplate'),
         // https://www.drupal.org/node/3574727 (Drupal 11.4)
@@ -70,6 +70,6 @@ return static function (RectorConfig $rectorConfig): void {
         // https://www.drupal.org/node/3582106 (Drupal 11.4)
         new FunctionToServiceConfiguration('11.4.0', 'user_form_process_password_confirm', 'Drupal\user\Hook\UserThemeHooks', 'processPasswordConfirm'),
         // https://www.drupal.org/node/2473041 (Drupal 11.4)
-        new FunctionToServiceConfiguration('11.4.0', 'node_access_grants', 'Drupal\node\NodeGrantsHelper', 'nodeAccessGrants'),
+        new FunctionToServiceConfiguration('11.4.0', 'node_access_grants', 'Drupal\node\NodeGrantsHelper', 'nodeAccessGrants', true),
     ]);
 };

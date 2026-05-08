@@ -25,12 +25,15 @@ class FunctionToServiceConfiguration implements VersionedConfigurationInterface
 
     protected string $introducedVersion;
 
-    public function __construct(string $introducedVersion, string $deprecatedFunctionName, string $serviceName, string $serviceMethodName)
+    protected bool $useClassSyntax;
+
+    public function __construct(string $introducedVersion, string $deprecatedFunctionName, string $serviceName, string $serviceMethodName, bool $useClassSyntax = false)
     {
         $this->deprecatedFunctionName = $deprecatedFunctionName;
         $this->serviceName = $serviceName;
         $this->serviceMethodName = $serviceMethodName;
         $this->introducedVersion = $introducedVersion;
+        $this->useClassSyntax = $useClassSyntax;
     }
 
     public function getDeprecatedFunctionName(): string
@@ -51,5 +54,10 @@ class FunctionToServiceConfiguration implements VersionedConfigurationInterface
     public function getIntroducedVersion(): string
     {
         return $this->introducedVersion;
+    }
+
+    public function useClassSyntax(): bool
+    {
+        return $this->useClassSyntax;
     }
 }

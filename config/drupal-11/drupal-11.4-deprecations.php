@@ -45,7 +45,7 @@ return static function (RectorConfig $rectorConfig): void {
     // node_access_grants() deprecated in drupal:11.4.0, removed in drupal:13.0.0.
     // Replaced by \Drupal\node\NodeGrantsHelper::nodeAccessGrants().
     $rectorConfig->ruleWithConfiguration(FunctionToServiceRector::class, [
-        new FunctionToServiceConfiguration('11.4.0', 'node_access_grants', 'Drupal\node\NodeGrantsHelper', 'nodeAccessGrants'),
+        new FunctionToServiceConfiguration('11.4.0', 'node_access_grants', 'Drupal\node\NodeGrantsHelper', 'nodeAccessGrants', true),
     ]);
 
     // https://www.drupal.org/node/3533299

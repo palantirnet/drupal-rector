@@ -57,8 +57,11 @@ class FunctionToServiceRector extends AbstractDrupalCoreRector
         assert($node instanceof Node\Expr\FuncCall);
 
         if ($this->getName($node->name) === $configuration->getDeprecatedFunctionName()) {
-            // This creates a service call like `\Drupal::service('file_system').
-            $service = new Node\Expr\StaticCall(new Node\Name\FullyQualified('Drupal'), 'service', [new Node\Arg(new Node\Scalar\String_($configuration->getServiceName()))]);
+            $serviceArg = $configuration->useClassSyntax()
+                ? new Node\Arg(new Node\Expr\ClassConstFetch(new Node\Name\FullyQualified($configuration->getServiceName()), 'class'))
+                : new Node\Arg(new Node\Scalar\String_($configuration->getServiceName()));
+
+            $service = new Node\Expr\StaticCall(new Node\Name\FullyQualified('Drupal'), 'service', [$serviceArg]);
 
             $method_name = new Node\Identifier($configuration->getServiceMethodName());
 

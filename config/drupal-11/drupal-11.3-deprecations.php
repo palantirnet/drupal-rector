@@ -64,7 +64,7 @@ return static function (RectorConfig $rectorConfig): void {
     // template_preprocess_layout() deprecated in drupal:11.3.0, removed in drupal:12.0.0.
     // Replaced by \Drupal\layout_discovery\Hook\LayoutDiscoveryThemeHooks::preprocessLayout().
     $rectorConfig->ruleWithConfiguration(FunctionToServiceRector::class, [
-        new FunctionToServiceConfiguration('11.3.0', 'template_preprocess_layout', 'Drupal\layout_discovery\Hook\LayoutDiscoveryThemeHooks', 'preprocessLayout'),
+        new FunctionToServiceConfiguration('11.3.0', 'template_preprocess_layout', 'Drupal\layout_discovery\Hook\LayoutDiscoveryThemeHooks', 'preprocessLayout', true),
     ]);
 
     // https://www.drupal.org/node/1685492
