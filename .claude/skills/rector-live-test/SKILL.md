@@ -2,7 +2,7 @@
 name: rector-live-test
 description: Finds D11-compatible contrib modules that exercise a rector and runs it against them. Uses search.tresbien.tech as primary search tool, falls back to Drupal GitLab API. Pass rector class name or issue number as argument.
 argument-hint: "<RectorClassName or issue-number>"
-allowed-tools: Read, Bash, Glob
+allowed-tools: Read, Bash, Glob, WebFetch, WebSearch
 ---
 
 # Rector Live Test
@@ -34,15 +34,21 @@ Read the rector source to extract:
 
 **Primary: `search.tresbien.tech`**
 
-Navigate to the search tool and search for the deprecated API pattern. This site searches Drupal contrib module code indexed from drupal.org.
+Fetch the search results for the deprecated API pattern. This site indexes Drupal contrib module code:
 
-Construct the search query:
+```
+https://search.tresbien.tech/?q=<urlencoded_search_term>
+```
+
+Construct the search term:
 - For method calls: `->methodName(`
 - For function calls: `functionName(`
 - For class constants: `ClassName::CONSTANT_NAME`
 - For properties: `->propertyName`
 
-If fewer than 3 results, also check `docs/contrib-module-search.md` for pre-discovered matches from session 18.
+Use `WebFetch` to retrieve the page and extract module names from the results. If the page format is unclear, try `WebSearch` with `site:search.tresbien.tech <term>` as a fallback.
+
+If fewer than 3 results, also check `docs/contrib-module-search.md` for pre-discovered matches.
 
 **Fallback: Drupal GitLab API blob search**
 

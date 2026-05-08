@@ -38,6 +38,18 @@ fi
 echo "Using digests repo: $DIGESTS_PATH"
 ```
 
+**Tip:** To make `/var/www/drupal-digests` available permanently inside the ddev container, create `.ddev/docker-compose.digests.yaml` (gitignored — user-specific path):
+```yaml
+services:
+  web:
+    volumes:
+      - "/absolute/path/to/drupal-digests:/var/www/drupal-digests:ro"
+```
+Then run `ddev restart`. On subsequent runs the first candidate path will match and no clone is needed.
+
+```bash
+```
+
 ### 2. Ensure the index is fresh
 
 Check whether `docs/rector-index.yml` exists and is less than 24 hours old:
@@ -52,26 +64,17 @@ else
 fi
 ```
 
-### 2. Read the index
+### 3. Read the index
 
 Read `docs/rector-index.yml` completely.
 
-### 3. Apply filters
-
-**Tip:** To make `/var/www/drupal-digests` available inside the ddev container, create `.ddev/docker-compose.digests.yaml` (gitignored):
-```yaml
-services:
-  web:
-    volumes:
-      - "/absolute/path/to/drupal-digests:/var/www/drupal-digests:ro"
-```
-Then run `ddev restart`.
+### 4. Apply filters
 
 If `$ARGUMENTS` contains `--phase X`, show only entries with `phase: 'X'`.
 If `$ARGUMENTS` contains `--limit N`, show only the first N entries.
 If `$ARGUMENTS` contains `--pending-only`, show only `status: pending` entries (default unless --all is passed).
 
-### 4. Present results
+### 5. Present results
 
 Print a summary header:
 ```
@@ -92,7 +95,7 @@ If all rules are implemented, print:
 All rules are implemented or have config-only entries. Nothing pending.
 ```
 
-### 5. Suggest next action
+### 6. Suggest next action
 
 At the end, suggest the highest-priority pending rule to work on next (Phase 1a first, then 1b, 1c, 2, 3, 4):
 ```

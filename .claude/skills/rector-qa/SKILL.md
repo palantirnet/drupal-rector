@@ -26,7 +26,7 @@ Read the rector class, test class, all fixture files, and the test config.
 
 ## Pass 1 — Type Guard Audit
 
-**Goal:** Every `MethodCall`, `NullsafeMethodCall`, or `PropertyFetch` node the rector handles must be guarded by `isObjectType()`. See `~/.claude/skills/rector-type-check-review/SKILL.md` for the full pattern reference.
+**Goal:** Every `MethodCall`, `NullsafeMethodCall`, or `PropertyFetch` node the rector handles must be guarded by `isObjectType()`. The full fix pattern is in `.claude/skills/rector-qa/SKILL.md` Pass 1 below, and in the `rector-type-check-review` skill if available.
 
 **Steps:**
 
@@ -98,7 +98,7 @@ Update the verdict column from `⚠️ AT-RISK` to `✅ SAFE` after fixing.
      - New node (what `refactor()` or `refactorWithConfiguration()` returns) is CallLike if: same list
    - **Q3:** Was the deprecation introduced in Drupal >= 10.1.0?
      - Check `introduced_version` in the test config or `DrupalIntroducedVersionConfiguration` usage.
-     - If unclear, read `~/projects/drupal-digests/issues/drupal-core/<issue-number>.md`.
+     - If unclear, read `<DIGESTS_PATH>/issues/drupal-core/<issue-number>.md` (use the same digests path detection as `rector-discover` step 1).
 
 3. Expected base class:
    - Q2 = CallLike → CallLike AND Q3 = version >= 10.1.0 → **`AbstractDrupalCoreRector`**
@@ -126,9 +126,9 @@ Update the verdict column from `⚠️ AT-RISK` to `✅ SAFE` after fixing.
 2. Determine the issue number and change record number:
    - The digest filename contains the **issue number** (last numeric group).
    - `~/projects/drupal-digests/issues/drupal-core/<issue-number>.md` contains the change record link if known.
-   - Alternatively, search `~/projects/drupal-core` for the deprecated function/method:
+   - Alternatively, search the Drupal core source for the deprecated function/method (try `/var/www/drupal-core`, `../drupal-core`, or `~/projects/drupal-core` in that order):
      ```bash
-     grep -rn "@deprecated in drupal:" ~/projects/drupal-core/core --include="*.php" | grep "<methodName>" | head -5
+     grep -rn "@deprecated in drupal:" <CORE_PATH>/core --include="*.php" | grep "<methodName>" | head -5
      ```
      The `@see` in the Drupal core deprecation notice usually points to the **change record**.
 

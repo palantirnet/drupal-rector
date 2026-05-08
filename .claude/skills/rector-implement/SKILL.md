@@ -54,9 +54,13 @@ For every `MethodCall`, `NullsafeMethodCall`, or `PropertyFetch` node the rector
 
 1. Is an `isObjectType()` guard present that constrains the owning class/interface?
 2. If missing:
-   a. Find the owning interface/class in `~/projects/drupal-core`:
+   a. Find the owning interface/class in the Drupal core source. Try these paths in order:
       ```bash
-      grep -rn "function <methodName>\|property \$<propertyName>" ~/projects/drupal-core/core --include="*.php" -l | head -5
+      CORE_PATH=""
+      for c in "/var/www/drupal-core" "../drupal-core" "$HOME/projects/drupal-core"; do
+        [ -d "$c/core" ] && CORE_PATH="$c" && break
+      done
+      grep -rn "function <methodName>\|property \$<propertyName>" "$CORE_PATH/core" --include="*.php" -l | head -5
       ```
    b. Check whether a stub exists:
       ```bash
@@ -95,11 +99,11 @@ Apply only if the rector extends `AbstractDrupalCoreRector`.
    ```
    This is the existing test — rename if needed or leave it.
 
-2. Add `testBelowVersion()` method:
+2. Add `testBelowVersion()` method. Use a version just below the rector's `introduced_version` (e.g., if introduced in `11.4.0`, use `11.3.0`):
    ```php
    public function testBelowVersion(): void
    {
-       AbstractDrupalCoreRector::setVersionOverride('10.0.0');
+       AbstractDrupalCoreRector::setVersionOverride('<major>.<minor-1>.0');
        try {
            $this->doTestFile(__DIR__ . '/fixture-below-version/basic.php.inc');
        } finally {
