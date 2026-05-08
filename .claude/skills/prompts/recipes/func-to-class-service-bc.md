@@ -1,7 +1,12 @@
 # Recipe: FuncCall → `::class` service method (BC-wrapped)
 
 **Use when:** a single deprecated global function is replaced by
-`\Drupal::service(SomeClass::class)->method()` and was introduced in Drupal >= 10.1.0.
+`\Drupal::service(SomeClass::class)->method()`, was introduced in Drupal >= 10.1.0,
+**and** the replacement requires custom logic: arg-count dispatch to different methods,
+chained calls (e.g. `->getFormat()->id()`), or method-on-first-arg mixed with a service call.
+
+For a plain 1-to-1 mapping with no custom logic, use `FunctionToServiceConfiguration(..., true)`
+as a config-only entry instead (see `config-only-template.md`).
 
 **Output:** one new custom rector class + test suite (4–5 files).
 

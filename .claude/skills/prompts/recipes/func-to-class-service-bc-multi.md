@@ -1,7 +1,12 @@
 # Recipe: Multiple FuncCalls → `::class` service methods (BC-wrapped)
 
 **Use when:** several deprecated global functions all map to methods on the same
-`\Drupal::service(SomeClass::class)` and were introduced in Drupal >= 10.1.0.
+`\Drupal::service(SomeClass::class)`, were introduced in Drupal >= 10.1.0,
+**and** the replacement requires custom logic: arg-count dispatch to different methods,
+chained calls, or method-on-first-arg mixed with service calls.
+
+For a group of plain 1-to-1 mappings with no custom logic, use multiple
+`FunctionToServiceConfiguration(..., true)` config-only entries instead (see `config-only-template.md`).
 
 **Output:** one new custom rector class + test suite (4–5 files).
 

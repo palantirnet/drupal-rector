@@ -89,15 +89,22 @@ BC-wrapped (introduced >= 10.1.0).
 
 ### FunctionToServiceRector
 
-Values: `{{introducedVersion}}`, `{{functionName}}`, `'{{serviceId}}'`, `{{methodName}}`
+Values: `{{introducedVersion}}`, `{{functionName}}`, `{{serviceId}}`, `{{methodName}}`
 
+**String service ID** (dotted alias like `'file_system'`, `'renderer'`):
 ```php
 new FunctionToServiceConfiguration('{{introducedVersion}}', '{{functionName}}', '{{serviceId}}', '{{methodName}}'),
 ```
-
-`serviceId` is a dotted string like `'filter.format_repository'`, NOT a class name.
-Use `func-to-class-service-bc.md` instead when the service is identified by `Fqcn::class`.
 Fixture "after": `\Drupal::service('{{serviceId}}')->{{methodName}}(args)`
+
+**FQCN service ID** (class or interface name like `Drupal\node\NodeGrantsHelper`):
+```php
+new FunctionToServiceConfiguration('{{introducedVersion}}', '{{functionName}}', '{{fqcn}}', '{{methodName}}', true),
+```
+Fixture "after": `\Drupal::service(\{{fqcn}}::class)->{{methodName}}(args)`
+
+Use `func-to-class-service-bc.md` only when the replacement has custom logic (arg-count dispatch, chained calls, method on first arg, etc.). For a plain 1-to-1 mapping, the 5th `true` argument handles it.
+
 BC-wrapped (introduced >= 10.1.0).
 
 ---

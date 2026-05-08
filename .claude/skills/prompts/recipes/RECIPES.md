@@ -23,8 +23,8 @@ Read the digest. Answer these questions in order:
    - `fn()` is removed entirely, no replacement → **func-removal** (config-only)
    - `SomeClass::staticMethod()` → **func-to-static** (config-only)
    - `\Drupal::service('string.id')->method()` → **func-to-string-service** (config-only)
-   - `\Drupal::service(FqcnClass::class)->method()`, one function → **func-to-class-service-bc** ✓
-   - `\Drupal::service(FqcnClass::class)->method()`, multiple functions → **func-to-class-service-bc-multi** ✓
+   - `\Drupal::service(FqcnClass::class)->method()`, simple 1-to-1 → **config-only** (`FunctionToServiceConfiguration(..., true)`)
+   - `\Drupal::service(FqcnClass::class)->method()`, arg-count dispatch / chained / mixed → **func-to-class-service-bc** or **func-to-class-service-bc-multi** ✓
    - `$firstArg->method()` (method on first argument) → **func-to-first-arg-method** (config-only)
    - `\Drupal::service('old.id')` → `\Drupal::service('new.id')` → **service-rename** (config-only)
    - Something else → **custom** (`digest-to-rector-prompt.md`)
@@ -43,8 +43,8 @@ Read the digest. Answer these questions in order:
 
 | Recipe file | Pattern | Type | Status |
 |---|---|---|---|
-| `func-to-class-service-bc.md` | FuncCall → `Fqcn::class` service, single | custom class | ✅ done |
-| `func-to-class-service-bc-multi.md` | FuncCall → `Fqcn::class` service, multiple | custom class | ✅ done |
+| `func-to-class-service-bc.md` | FuncCall → `Fqcn::class` service, complex (dispatch/chained) | custom class | ✅ done |
+| `func-to-class-service-bc-multi.md` | FuncCall → `Fqcn::class` service, multiple with complex logic | custom class | ✅ done |
 | `func-removal.md` | FuncCall removed entirely | config-only | 🔲 todo |
 | `func-to-static.md` | FuncCall → static method | config-only | 🔲 todo |
 | `func-to-string-service.md` | FuncCall → `'service.id'` method | config-only | 🔲 todo |
