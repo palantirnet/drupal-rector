@@ -29,7 +29,7 @@ main($argv);
 
 function main(array $argv): void
 {
-    $digestsPath = expandPath('~/projects/drupal-digests');
+    $digestsPath = dirname(__DIR__) . '/repos/drupal-digests';
 
     foreach (array_slice($argv, 1) as $arg) {
         if ($arg === '--help') {

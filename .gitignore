@@ -21,3 +21,4 @@
 .worktrees/
 rector-decision.log
 docs/rector-index.yml
+/repos/

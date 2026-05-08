@@ -13,39 +13,7 @@ Show which drupal-digests deprecation rules still need to be implemented in drup
 
 ### 1. Ensure the digests repo is available
 
-The generator needs access to `drupal-digests`. In a ddev context, `~/` resolves to the container home directory, so the repo must be present at a path accessible inside the container. Check the most common locations:
-
-```bash
-# Check if the repo is accessible (inside ddev or on host)
-DIGESTS_PATH=""
-for candidate in \
-    "/var/www/drupal-digests" \
-    "../drupal-digests" \
-    "$HOME/projects/drupal-digests"; do
-  if [ -d "$candidate/rector/rules" ]; then
-    DIGESTS_PATH="$candidate"
-    break
-  fi
-done
-
-if [ -z "$DIGESTS_PATH" ]; then
-  echo "drupal-digests repo not found. Cloning to sibling directory…"
-  cd ..
-  git clone --depth=1 https://github.com/dbuytaert/drupal-digests.git
-  cd drupal-rector
-  DIGESTS_PATH="../drupal-digests"
-fi
-echo "Using digests repo: $DIGESTS_PATH"
-```
-
-**Tip:** To make `/var/www/drupal-digests` available permanently inside the ddev container, create `.ddev/docker-compose.digests.yaml` (gitignored — user-specific path):
-```yaml
-services:
-  web:
-    volumes:
-      - "/absolute/path/to/drupal-digests:/var/www/drupal-digests:ro"
-```
-Then run `ddev restart`. On subsequent runs the first candidate path will match and no clone is needed.
+The canonical path is `repos/drupal-digests` (inside ddev: `/var/www/html/repos/drupal-digests`). If absent, run the setup script first:
 
 ```bash
 ```
@@ -55,10 +23,16 @@ Then run `ddev restart`. On subsequent runs the first candidate path will match 
 Check whether `docs/rector-index.yml` exists and is less than 24 hours old:
 
 ```bash
+[ -d repos/drupal-digests ] || bash scripts/setup-repos.sh
+```
+
+### 2. Ensure the index is fresh
+
+```bash
 INDEX="docs/rector-index.yml"
 if [ ! -f "$INDEX" ] || [ "$(find "$INDEX" -mmin +1440 2>/dev/null)" ]; then
   echo "Regenerating rector-index.yml…"
-  php scripts/generate-rector-index.php --digests-path="$DIGESTS_PATH"
+  php scripts/generate-rector-index.php --digests-path=repos/drupal-digests
 else
   echo "Using existing index ($(date -r "$INDEX" '+%Y-%m-%d %H:%M'))"
 fi
@@ -99,7 +73,7 @@ All rules are implemented or have config-only entries. Nothing pending.
 
 At the end, suggest the highest-priority pending rule to work on next (Phase 1a first, then 1b, 1c, 2, 3, 4):
 ```
-Next suggested: /rector-implement ~/projects/drupal-digests/rector/rules/<digest_file>
+Next suggested: /rector-implement repos/drupal-digests/rector/rules/<digest_file>
 ```
 
 ## Phase Reference

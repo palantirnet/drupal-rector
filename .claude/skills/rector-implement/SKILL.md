@@ -13,13 +13,10 @@ Convert a single drupal-digests rule into a drupal-rector–compliant implementa
 
 `$ARGUMENTS` must be the path to a drupal-digests rule file, e.g.:
 ```
-~/projects/drupal-digests/rector/rules/replace-deprecated-sessionmanager-delete-with-3577376.php
+repos/drupal-digests/rector/rules/replace-deprecated-sessionmanager-delete-with-3577376.php
 ```
 
-The path can also be relative: if the repo is cloned as a sibling of drupal-rector, use:
-```
-../drupal-digests/rector/rules/replace-deprecated-sessionmanager-delete-with-3577376.php
-```
+If `repos/drupal-digests` does not exist yet, run `bash scripts/setup-repos.sh` first.
 
 ## Steps
 
@@ -54,13 +51,9 @@ For every `MethodCall`, `NullsafeMethodCall`, or `PropertyFetch` node the rector
 
 1. Is an `isObjectType()` guard present that constrains the owning class/interface?
 2. If missing:
-   a. Find the owning interface/class in the Drupal core source. Try these paths in order:
+   a. Find the owning interface/class in the Drupal core source (`repos/drupal-core`). If absent, run `bash scripts/setup-repos.sh` first.
       ```bash
-      CORE_PATH=""
-      for c in "/var/www/drupal-core" "../drupal-core" "$HOME/projects/drupal-core"; do
-        [ -d "$c/core" ] && CORE_PATH="$c" && break
-      done
-      grep -rn "function <methodName>\|property \$<propertyName>" "$CORE_PATH/core" --include="*.php" -l | head -5
+      grep -rn "function <methodName>\|property \$<propertyName>" repos/drupal-core/core --include="*.php" -l | head -5
       ```
    b. Check whether a stub exists:
       ```bash
