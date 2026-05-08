@@ -51,6 +51,25 @@ Extract from the file:
 
 ---
 
+## Step 1b — Split check
+
+If `refactor()` (or the rule's code samples) handles **more than one** deprecated name (function, method, or constant), pause before proceeding and ask:
+
+> For each deprecated name, could it be independently applied without the others?
+
+**Split them if:**
+- Each has a different replacement pattern (e.g., one → string literal, another → service call)
+- Each could be useful without the others
+- Any individual one fits a generic rector from Step 4b — that one becomes a config entry, not a class method
+
+**Keep them together if:**
+- They are semantically inseparable (always migrated as a unit, e.g., an old getter/setter pair)
+- They share exactly the same replacement pattern (e.g., 10 procedural functions all mapping to service methods on the same class)
+
+**If splitting:** implement each piece separately — custom rector for patterns that need custom code, config entry for patterns that fit a generic rector — and use distinct, descriptive class names (e.g., `ReplaceTwigExtensionRector` not `TwigEngineFunctionsRector`).
+
+---
+
 ## Step 2 — Read the companion issue markdown
 
 The issue markdown is at:

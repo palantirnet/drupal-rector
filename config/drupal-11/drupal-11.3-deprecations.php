@@ -8,21 +8,22 @@ use DrupalRector\Drupal11\Rector\Deprecation\LoadAllIncludesRector;
 use DrupalRector\Drupal11\Rector\Deprecation\NodeStorageDeprecatedMethodsRector;
 use DrupalRector\Drupal11\Rector\Deprecation\RemoveRootFromConvertDbUrlRector;
 use DrupalRector\Drupal11\Rector\Deprecation\ReplaceCommentManagerGetCountNewCommentsRector;
-use DrupalRector\Rector\Deprecation\FunctionToFirstArgMethodRector;
-use DrupalRector\Rector\ValueObject\FunctionToFirstArgMethodConfiguration;
 use DrupalRector\Drupal11\Rector\Deprecation\ReplaceNodeAccessViewAllNodesRector;
 use DrupalRector\Drupal11\Rector\Deprecation\ReplaceNodeAddBodyFieldRector;
 use DrupalRector\Drupal11\Rector\Deprecation\ReplaceNodeModuleProceduralFunctionsRector;
 use DrupalRector\Drupal11\Rector\Deprecation\ReplaceNodeSetPreviewModeRector;
 use DrupalRector\Drupal11\Rector\Deprecation\ReplaceThemeGetSettingRector;
+use DrupalRector\Drupal11\Rector\Deprecation\ReplaceTwigExtensionRector;
 use DrupalRector\Drupal11\Rector\Deprecation\ReplaceUserSessionNamePropertyRector;
 use DrupalRector\Rector\Deprecation\ConstantToClassConstantRector;
 use DrupalRector\Rector\Deprecation\FunctionCallRemovalRector;
+use DrupalRector\Rector\Deprecation\FunctionToFirstArgMethodRector;
 use DrupalRector\Rector\Deprecation\FunctionToServiceRector;
 use DrupalRector\Rector\Deprecation\FunctionToStaticRector;
 use DrupalRector\Rector\ValueObject\ConstantToClassConfiguration;
 use DrupalRector\Rector\ValueObject\DrupalIntroducedVersionConfiguration;
 use DrupalRector\Rector\ValueObject\FunctionCallRemovalConfiguration;
+use DrupalRector\Rector\ValueObject\FunctionToFirstArgMethodConfiguration;
 use DrupalRector\Rector\ValueObject\FunctionToServiceConfiguration;
 use DrupalRector\Rector\ValueObject\FunctionToStaticConfiguration;
 use Rector\Config\RectorConfig;
@@ -50,10 +51,20 @@ return static function (RectorConfig $rectorConfig): void {
     // node_mass_update() deprecated in drupal:11.3.0, removed in drupal:13.0.0.
     // Replaced by \Drupal\node\NodeBulkUpdate::process().
     // node_type_get_names() and node_get_type_label() deprecated in drupal:11.3.0, removed in drupal:13.0.0.
+    // https://www.drupal.org/node/1685492
+    // twig_render_template() deprecated in drupal:11.3.0, removed in drupal:12.0.0.
+    // Replaced by \Drupal::service(TwigThemeEngine::class)->renderTemplate().
+    // twig_extension() is handled by ReplaceTwigExtensionRector below.
     $rectorConfig->ruleWithConfiguration(FunctionToServiceRector::class, [
         new FunctionToServiceConfiguration('11.3.0', 'node_mass_update', 'Drupal\node\NodeBulkUpdate', 'process'),
         new FunctionToServiceConfiguration('11.3.0', 'template_preprocess_layout', 'Drupal\layout_discovery\Hook\LayoutDiscoveryThemeHooks', 'preprocessLayout'),
+        new FunctionToServiceConfiguration('11.3.0', 'twig_render_template', 'Drupal\Core\Template\TwigThemeEngine', 'renderTemplate'),
     ]);
+
+    // https://www.drupal.org/node/1685492
+    // twig_extension() deprecated in drupal:11.3.0, removed in drupal:12.0.0.
+    // Replaced by the '.html.twig' string literal.
+    $rectorConfig->rule(ReplaceTwigExtensionRector::class);
     $rectorConfig->ruleWithConfiguration(ReplaceNodeModuleProceduralFunctionsRector::class, [
         new DrupalIntroducedVersionConfiguration('11.3.0'),
     ]);
