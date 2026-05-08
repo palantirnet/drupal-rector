@@ -3,6 +3,9 @@
 declare(strict_types=1);
 
 use DrupalRector\Drupal11\Rector\Deprecation\DeprecatedFilterFunctionsRector;
+use DrupalRector\Drupal11\Rector\Deprecation\FilterFormatFunctionsToServiceRector;
+use DrupalRector\Drupal11\Rector\Deprecation\MediaFilterFormatEditFormValidateRector;
+use DrupalRector\Drupal11\Rector\Deprecation\NodeAccessRebuildFunctionsRector;
 use DrupalRector\Drupal11\Rector\Deprecation\RemoveAutomatedCronSubmitHandlerRector;
 use DrupalRector\Drupal11\Rector\Deprecation\RemoveCacheExpireOverrideRector;
 use DrupalRector\Drupal11\Rector\Deprecation\RemoveConfigSaveTrustedDataArgRector;
@@ -37,6 +40,33 @@ return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->ruleWithConfiguration(ViewsPluginHandlerManagerRector::class, [
         new DrupalIntroducedVersionConfiguration('11.4.0'),
     ]);
+
+    // https://www.drupal.org/node/2473041
+    // node_access_grants() deprecated in drupal:11.4.0, removed in drupal:13.0.0.
+    // Replaced by \Drupal\node\NodeGrantsHelper::nodeAccessGrants().
+    $rectorConfig->ruleWithConfiguration(FunctionToServiceRector::class, [
+        new FunctionToServiceConfiguration('11.4.0', 'node_access_grants', 'Drupal\node\NodeGrantsHelper', 'nodeAccessGrants'),
+    ]);
+
+    // https://www.drupal.org/node/3533299
+    // node_access_rebuild() and node_access_needs_rebuild() deprecated in drupal:11.4.0, removed in drupal:13.0.0.
+    // Replaced by \Drupal\node\NodeAccessRebuild service.
+    $rectorConfig->ruleWithConfiguration(NodeAccessRebuildFunctionsRector::class, [
+        new DrupalIntroducedVersionConfiguration('11.4.0'),
+    ]);
+
+    // https://www.drupal.org/node/2536594
+    // filter_formats(), filter_get_roles_by_format(), filter_get_formats_by_role(),
+    // filter_default_format(), and filter_fallback_format() deprecated in drupal:11.4.0, removed in drupal:13.0.0.
+    // Replaced by \Drupal\filter\FilterFormatRepositoryInterface service.
+    $rectorConfig->ruleWithConfiguration(FilterFormatFunctionsToServiceRector::class, [
+        new DrupalIntroducedVersionConfiguration('11.4.0'),
+    ]);
+
+    // https://www.drupal.org/node/3568124
+    // media_filter_format_edit_form_validate() deprecated in drupal:11.4.0, removed in drupal:12.0.0.
+    // Replaced by \Drupal\media\Hook\MediaHooks::formatEditFormValidate().
+    $rectorConfig->rule(MediaFilterFormatEditFormValidateRector::class);
 
     // https://www.drupal.org/node/3226806
     // _filter_autop(), _filter_html_escape(), and _filter_html_image_secure_process()

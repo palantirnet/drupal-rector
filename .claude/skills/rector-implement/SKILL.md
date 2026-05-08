@@ -20,7 +20,24 @@ If `repos/drupal-digests` does not exist yet, run `bash .claude/scripts/setup-re
 
 ## Steps
 
-### Steps 1–14: Follow the canonical conversion workflow
+### Step 0 — Try a recipe first
+
+Before doing anything else:
+
+1. Read the digest file.
+2. Read `.claude/skills/prompts/recipes/RECIPES.md` and answer the routing questions.
+3. If a recipe matches, read that recipe file and follow it **instead of Steps 1–14 below**.
+   The recipe is self-contained and includes quality checks and commit instructions.
+4. If no recipe matches, continue with Steps 1–14.
+
+Available recipes:
+- `func-to-class-service-bc.md` — single FuncCall → `Fqcn::class` service method (BC-wrapped)
+- `func-to-class-service-bc-multi.md` — multiple FuncCalls → same `Fqcn::class` service (BC-wrapped)
+- `config-only-template.md` — all config-only patterns (FunctionToServiceRector, FunctionToStaticRector, etc.)
+
+---
+
+### Steps 1–14: Follow the canonical conversion workflow (fallback)
 
 Read `.claude/skills/prompts/digest-to-rector-prompt.md` completely and execute steps 1–14 as written there.
 
