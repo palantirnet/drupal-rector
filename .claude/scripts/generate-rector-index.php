@@ -52,8 +52,16 @@ function main(array $argv): void
     // Step 1: Build base entries from in-scope digest files.
     $entries = scanDigestFiles($rulesDir);
 
-    // Step 2: Mark implemented custom classes.
-    $unmatched = scanImplementedClasses($repoRoot . '/src/Drupal11/Rector/Deprecation', $entries);
+    // Step 2: Mark implemented custom classes — scan src/DrupalXX/ dirs for version >= 10, newest first.
+    $srcDirs = array_filter(
+        glob($repoRoot . '/src/Drupal*/Rector/Deprecation', GLOB_ONLYDIR),
+        fn($d) => preg_match('#/Drupal(\d+)/#', $d, $m) && (int) $m[1] >= 10
+    );
+    rsort($srcDirs);
+    $unmatched = [];
+    foreach ($srcDirs as $srcDir) {
+        $unmatched += scanImplementedClasses($srcDir, $repoRoot, $entries);
+    }
 
     // Step 3: Mark config-only Phase 1 entries.
     scanConfigFiles($repoRoot . '/config/drupal-11', $entries);
@@ -202,9 +210,12 @@ function classifyPhaseFromFilename(string $filename): string
  * @param  array<string, array<string, mixed>> $entries
  * @return array<string, array<string, mixed>>
  */
-function scanImplementedClasses(string $srcDir, array &$entries): array
+function scanImplementedClasses(string $srcDir, string $repoRoot, array &$entries): array
 {
     $unmatched = [];
+
+    $relSrcDir  = ltrim(str_replace($repoRoot, '', $srcDir), '/');
+    $relTestDir = preg_replace('#^src/(Drupal\d+)#', 'tests/src/$1', $relSrcDir);
 
     foreach (glob($srcDir . '/*.php') as $file) {
         $content = file_get_contents($file);
@@ -218,13 +229,13 @@ function scanImplementedClasses(string $srcDir, array &$entries): array
 
         $phase = classifyPhaseFromClass($content);
 
-        $relFile = 'src/Drupal11/Rector/Deprecation/' . basename($file);
+        $relFile = $relSrcDir . '/' . basename($file);
         $files   = [$relFile];
 
         // Add test file path if directory exists.
-        $testDir = dirname(dirname($srcDir)) . '/tests/src/Drupal11/Rector/Deprecation/' . $className;
+        $testDir = $repoRoot . '/' . $relTestDir . '/' . $className;
         if (is_dir($testDir)) {
-            $files[] = 'tests/src/Drupal11/Rector/Deprecation/' . $className . '/' . $className . 'Test.php';
+            $files[] = $relTestDir . '/' . $className . '/' . $className . 'Test.php';
         }
 
         if ($issueNumber !== null && isset($entries[$issueNumber])) {

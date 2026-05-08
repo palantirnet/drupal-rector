@@ -84,9 +84,12 @@ Next suggested: /rector-implement repos/drupal-digests/rector/rules/<digest_file
 | 1a | FuncCall → method on first arg (`fn($obj)` → `$obj->method()`) | `FunctionToFirstArgMethodRector` |
 | 1a | Service ID rename (`\Drupal::service('old')` → `\Drupal::service('new')`) | `DrupalServiceRenameRector` |
 | 1b | FuncCall → static call | `FunctionToStaticRector` |
-| 1c | Class constant replacement | `ClassConstantToClassConstantRector` |
-| 2 | MethodCall custom class | custom `AbstractRector` or `AbstractDrupalCoreRector` |
-| 3 | Node removal | custom class returning `REMOVE_NODE` |
+| 1c | Class constant → class constant (`OldClass::OLD` → `NewClass::NEW`) | `ClassConstantToClassConstantRector` |
+| 1c | Bare global constant → class constant (`DEPRECATED_CONST` → `\Ns\Class::CONST`) | `ConstantToClassConstantRector` |
+| 2 | MethodCall rename with type check (`$obj->old()` → `$obj->new()`) | `MethodToMethodWithCheckRector` |
+| 2 | MethodCall custom transformation | custom `AbstractRector` or `AbstractDrupalCoreRector` |
+| 3 | Remove a function call statement with no replacement | `FunctionCallRemovalRector` |
+| 3 | Node removal (other patterns) | custom class returning `REMOVE_NODE` |
 | 4 | Complex / multi-node | custom class |
 
 ## Refreshing manually
