@@ -224,16 +224,7 @@ cd /var/www/html
 
 LOG=/var/www/html/rector-test.log
 CONTRIB=web/modules/contrib
-STASH=/tmp/rector_mod_stash
 FILTER="${1:-}"
-
-# Restore any modules left in the stash from a previous crashed run
-if [ -d "$STASH" ]; then
-    for _stashed in "$STASH"/*/; do
-        [ -d "$_stashed" ] && mv "$_stashed" "$CONTRIB/"
-    done
-    rmdir "$STASH" 2>/dev/null || true
-fi
 
 run_test() {
     local rector="$1"
@@ -273,27 +264,6 @@ run_test() {
     printf "  Modules: %s\n" "${paths[*]}" | tee -a "$LOG"
     echo "" | tee -a "$LOG"
 
-    # Stash all modules not needed for this rector. PHPStan builds a type graph
-    # from every file it can reach via the autoloader; with 40+ contrib modules
-    # present it hits an infinite type-expansion loop on decorator patterns in
-    # group/. Isolating to only the required modules prevents this.
-    local hidden=()
-    mkdir -p "$STASH"
-    local modname needed m
-    for mod_dir in "$CONTRIB"/*/; do
-        [ -d "$mod_dir" ] || continue
-        modname="${mod_dir%/}"
-        modname="${modname##*/}"
-        needed=false
-        for m in "${mods[@]}"; do
-            [ "$m" = "$modname" ] && needed=true && break
-        done
-        if [ "$needed" = false ]; then
-            mv "$mod_dir" "$STASH/"
-            hidden+=("$modname")
-        fi
-    done
-
     rm -rf /tmp/rector_cached_files
     timeout 60 vendor/bin/rector process "${paths[@]}" --only="$fqcn" --dry-run 2>&1 | tee -a "$LOG" || true
 
@@ -303,11 +273,6 @@ run_test() {
     # Reset files so the next rector starts clean
     git checkout -- "${paths[@]}" 2>/dev/null || true
 
-    # Restore stashed modules
-    for modname in "${hidden[@]}"; do
-        mv "$STASH/$modname" "$CONTRIB/"
-    done
-    rmdir "$STASH" 2>/dev/null || true
 }
 
 echo "Rector test run — $(date)" | tee "$LOG"
