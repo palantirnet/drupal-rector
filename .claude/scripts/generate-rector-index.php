@@ -15,12 +15,15 @@ declare(strict_types=1);
 
 const GENERIC_RECTORS = [
     'FunctionToServiceRector'          => '1a',
+    'FunctionToFirstArgMethodRector'   => '1a',
+    'DrupalServiceRenameRector'        => '1a',
     'FunctionToStaticRector'           => '1b',
     'ClassConstantToClassConstantRector' => '1c',
     'ConstantToClassConstantRector'    => '1c',
-    'FunctionCallRemovalRector'        => '3',
     'MethodToMethodWithCheckRector'    => '2',
     'DeprecationHelperRemoveRector'    => '2',
+    'FunctionCallRemovalRector'        => '3',
+    'RenameClassRector'                => 'unknown',
 ];
 
 const SCOPE_PATTERN = '/^(replace-deprecated|remove-deprecated|replace-removed|strip-removed)/';
