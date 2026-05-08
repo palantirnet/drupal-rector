@@ -101,7 +101,7 @@ ddev composer require --no-update \
   "drupal/smart_migrate_cli:*" \
   "drupal/metatag:*" \
   "drupal/external_entity:*" \
-  "drupal/ckeditor5_premium_features:*" \
+  "drupal/ckeditor5_premium_features:1.3.*" \
   "drupal/reassign_user_content:*"
 
 # Batch 2 — single-rector gap-fillers
@@ -120,7 +120,6 @@ ddev composer require --no-update \
   "drupal/vcp4dates:*" \
   "drupal/gdpr:*" \
   "drupal/ai_eca:*" \
-  "drupal/gnode_request:*" \
   "drupal/migmag:*" \
   "drupal/sparql_entity_storage:*" \
   "drupal/views_advanced_cache:*" \
@@ -131,7 +130,7 @@ ddev composer require --no-update \
   "drupal/quicktabs:*" \
   "drupal/entity_usage:*" \
   "drupal/media_auto_publication:*" \
-  "drupal/migrate_tools:*" \
+  "drupal/migrate_tools:6.1.*" \
   "drupal/stage_file_proxy:^3.1" \
   "drupal/workflow_buttons:^1" \
   "drupal/optional_end_date:*" \
@@ -329,8 +328,9 @@ run_test RemoveTrustDataCallRector \
 run_test RemoveTwigNodeTransTagArgumentRector
     # No contrib usage: TwigNodeTrans 6-arg constructor removed from core before D11 contrib caught up (version drift)
 
-run_test RemoveUpdaterPostInstallMethodsRector \
-    gnode_request
+run_test RemoveUpdaterPostInstallMethodsRector
+    # No contrib usage: targets classes extending Drupal\Core\Updater\Updater/Module/Theme
+    # that override postInstall() or postInstallTasks(). No D11 contrib module uses this pattern.
 
 run_test RemoveViewsRowCacheKeysRector \
     metatag views_advanced_cache
@@ -372,9 +372,6 @@ run_test ReplaceFileGetContentHeadersRector \
 
 run_test ReplaceLocaleConfigBatchFunctionsRector
     # No contrib usage: locale_config_batch_* deprecated D11.1.0; all GitLab hits were bundled core copies, not contrib code
-
-run_test ReplaceModuleHandlerGetNameRector \
-    mailsystem
 
 run_test ReplaceNodeAccessViewAllNodesRector
     # No contrib usage: node_access_view_all_nodes() deprecated D11.3.0; no D11 contrib caller found (newly deprecated)
