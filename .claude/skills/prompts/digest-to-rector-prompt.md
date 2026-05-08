@@ -83,22 +83,27 @@ Read it completely. Extract:
 - **Removal version** — e.g., `removed in drupal:13.0.0` → `'13.0.0'`
 - **New API FQCN** — the fully-qualified class name of the replacement API, from `## Upgrade` or `## Technical details`
 - **Description** — one-sentence summary of what this rule does
+- **Change record number** — scan for any `drupal.org/node/` link in the "Upgrade path",
+  "Change record", or "Technical details" sections. A link like
+  `[#3567879](https://www.drupal.org/node/3567879)` is the change record node number.
+  Note it separately from the issue number — they are usually different.
 
-If any of these are missing or ambiguous, proceed to Step 3. Otherwise skip Step 3.
+If any of the above (including the change record number) are missing or ambiguous, proceed to Step 3. Otherwise skip Step 3.
 
 ---
 
 ## Step 3 — Optional: fetch from Drupal.org (only if Step 2 was insufficient)
 
-If the introduced version, removal version, or replacement FQCN is not clear from the markdown:
+If the introduced version, removal version, replacement FQCN, **or change record number** is not clear from the markdown:
 
 Fetch the Drupal.org issue page:
 ```
 https://www.drupal.org/node/[issue-number]
 ```
 
-Look for the change record linked from the issue. Change records typically contain the exact
-`deprecated in drupal:X.Y.Z` wording and code examples.
+Look for:
+- A "Change records for this issue" section or "Related change records" block — the linked node number is the change record.
+- The `deprecated in drupal:X.Y.Z` wording and code examples for version/FQCN confirmation.
 
 ---
 
