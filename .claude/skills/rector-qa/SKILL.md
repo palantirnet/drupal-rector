@@ -1,7 +1,7 @@
 ---
 name: rector-qa
-description: Comprehensive quality review of an existing Drupal rector. Runs four audit passes — type guards, fixture coverage, BC decision correctness, and @see URL accuracy — and produces a PASS/FAIL/WARN checklist. Use before merging a rector or when reviewing existing ones for regressions.
-argument-hint: "<RectorClassName>"
+description: Comprehensive quality review of an existing Drupal rector. Runs four audit passes — type guards, fixture coverage, BC decision correctness, and @see URL accuracy — and produces a PASS/FAIL/WARN checklist. Use before merging a rector or when reviewing existing ones for regressions. Pass 'all' to walk the full branch type-guard checklist.
+argument-hint: "<RectorClassName | all>"
 allowed-tools: Read, Bash, Edit, Write, Glob
 ---
 
@@ -11,7 +11,9 @@ Comprehensive four-pass quality review for a drupal-rector implementation.
 
 ## Input
 
-`$ARGUMENTS` — rector class name, e.g. `ReplaceSessionManagerDeleteRector`.
+`$ARGUMENTS` — one of:
+- Rector class name, e.g. `ReplaceSessionManagerDeleteRector` — runs all four passes on that rector.
+- `all` — walks every row marked `AT-RISK` in `.claude/skills/prompts/rector-type-specificity-checklist.md` and runs Pass 1 only, fixing each rector in sequence.
 
 ## Finding the files
 
@@ -26,7 +28,16 @@ Read the rector class, test class, all fixture files, and the test config.
 
 ## Pass 1 — Type Guard Audit
 
-**Goal:** Every `MethodCall`, `NullsafeMethodCall`, or `PropertyFetch` node the rector handles must be guarded by `isObjectType()`. The full fix pattern is in `.claude/skills/rector-qa/SKILL.md` Pass 1 below, and in the `rector-type-check-review` skill if available.
+**Goal:** Every `MethodCall`, `NullsafeMethodCall`, or `PropertyFetch` node the rector handles must be guarded by `isObjectType()`.
+
+| Pattern | What to look for | Risk if missing |
+|---------|-----------------|-----------------|
+| `->method()` on a variable | `isObjectType($node->var, new ObjectType('FQCN'))` | Any class with this method is transformed |
+| `->property` on a variable | Same `isObjectType` on `$node->var` | Any class with this property is transformed |
+| `$this->method()` inside a class body | `isObjectType($node->var, ...)` or `extends`-check on enclosing `Class_` | Any class with this method is transformed |
+| `ClassName::method()` static call | `isName($node->class, 'ClassName')` or `isObjectType` | Low risk if class name is unique |
+| Global function call `foo()` | None needed | SAFE — function names are global |
+| Class declaration (`class Foo extends Bar`) | Check `extends` on the `Class_` node | EXEMPT — different pattern |
 
 **Steps:**
 
@@ -41,14 +52,78 @@ Read the rector class, test class, all fixture files, and the test config.
 
 **Output:** `Pass 1: [SAFE|AT-RISK|EXEMPT] — <reason>`
 
-**If AT-RISK:** Propose the fix (see `rector-type-check-review` skill for exact fix pattern). Apply it and update `.claude/skills/prompts/rector-type-specificity-checklist.md`:
+**If AT-RISK:** Apply the fix (see patterns below), then update `.claude/skills/prompts/rector-type-specificity-checklist.md`:
 
 ```bash
-# Find the row for this rector in the checklist
 grep -n "<ClassName>" .claude/skills/prompts/rector-type-specificity-checklist.md
 ```
 
 Update the verdict column from `⚠️ AT-RISK` to `✅ SAFE` after fixing.
+
+### Finding the right class/interface
+
+Look up the FQCN in `repos/drupal-core` (run `bash .claude/scripts/setup-repos.sh` if absent):
+
+```bash
+grep -rn "function <methodName>\|property \$<propertyName>" repos/drupal-core/core --include="*.php" -l | head -5
+```
+
+Prefer the *interface* over the concrete class — it catches all implementations.
+
+### Fix pattern
+
+```php
+// Before — matches any ->save() call:
+if (!$this->isName($node->name, 'save')) {
+    return null;
+}
+
+// After — only matches Config::save():
+if (!$this->isName($node->name, 'save')) {
+    return null;
+}
+if (!$this->isObjectType($node->var, new ObjectType('Drupal\Core\Config\Config'))) {
+    return null;
+}
+```
+
+Always add the `isObjectType` check *after* the name check so the heavier type resolution only runs when the name already matches.
+
+### Stub pattern
+
+If the class is not already in `stubs/`, create a minimal stub:
+
+```php
+<?php
+declare(strict_types=1);
+namespace Drupal\Some\Namespace;
+
+if (class_exists(\Drupal\Some\Namespace\ClassName::class)) {
+    return;
+}
+
+class ClassName {}   // or: interface InterfaceName {}
+```
+
+Place it at `stubs/Drupal/Some/Namespace/ClassName.php`, then run `composer dump-autoload`.
+
+### Fixture update after adding a type guard
+
+- For a variable: add `/** @var \Fully\Qualified\Interface $var */` above the call.
+- For `$this`: wrap the code in a class that `extends` or `implements` the target type.
+- Add a `no_change_unrelated.php.inc` fixture showing an untyped or wrong-typed caller is left unchanged.
+
+---
+
+## Bulk mode (`all`)
+
+When `$ARGUMENTS` is `all`, open `.claude/skills/prompts/rector-type-specificity-checklist.md` and work through every row marked `⚠️ AT-RISK`, one by one. For each:
+
+1. Locate the rector source with `find src -name "<ClassName>.php"`.
+2. Apply the Pass 1 steps above.
+3. Fix any AT-RISK rectors and tick the checklist row.
+
+Do not run the other three passes in bulk mode.
 
 ---
 
