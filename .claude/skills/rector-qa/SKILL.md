@@ -205,16 +205,31 @@ a given digest file or Drupal core deprecation notice.
    a. **Issue number** — last numeric group in the digest filename, e.g.
       `remove-deprecated-foo-3505370.php` → issue `3505370`.
 
-   b. **Change record number** — look in two places:
-      - `repos/drupal-digests/issues/drupal-core/<issue-number>.md`: scan for a link like
-        `[#3567879](https://www.drupal.org/node/3567879)` in the Upgrade or Technical details section.
-      - Drupal core source (run `bash .claude/scripts/setup-repos.sh` if `repos/drupal-core` is absent):
-        ```bash
-        grep -rn "3505370\|@see https://www.drupal.org" repos/drupal-core/core --include="*.php" \
-          | grep "<methodName>\|<funcName>" | head -10
-        ```
-        The `@see` in Drupal core's own `@deprecated` block or `trigger_error` message usually
-        points to the **change record**.
+   b. **Change record number** — work through these sources in order, stopping when found:
+
+      **Source 1 — Issue markdown (fastest):**
+      ```bash
+      cat repos/drupal-digests/issues/drupal-core/<issue-number>.md
+      ```
+      Scan for a `drupal.org/node/` link in the "Upgrade path", "Change record", or "Technical
+      details" sections. A link like `[#3567879](https://www.drupal.org/node/3567879)` or
+      `https://www.drupal.org/node/3567879` in those sections is the change record number.
+      Also check the frontmatter for `change_record_url` or similar fields.
+
+      **Source 2 — Drupal.org issue page (reliable):**
+      Fetch `https://www.drupal.org/node/<issue-number>` and look for a
+      "Change records for this issue" section or a "Related change records" block.
+      Those links point directly to the change record node.
+
+      **Source 3 — Drupal core deprecation annotation (fallback):**
+      Run `bash .claude/scripts/setup-repos.sh` if `repos/drupal-core` is absent, then:
+      ```bash
+      grep -rn "@deprecated\|trigger_error" repos/drupal-core/core --include="*.php" \
+        | grep "<methodName>\|<funcName>" | head -10
+      ```
+      The `@see` URL inside the `@deprecated` docblock or `trigger_error` message usually
+      points to the **change record**. Verify the node number differs from the issue number
+      before treating it as a CR.
 
    c. If the issue number and change record number are the **same** (rare), one `@see` suffices.
 
