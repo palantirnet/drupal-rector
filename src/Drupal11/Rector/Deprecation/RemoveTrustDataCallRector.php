@@ -20,6 +20,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  * It was a no-op optimisation hint; removing it is safe.
  *
  * @see https://www.drupal.org/node/3347842
+ * @see https://www.drupal.org/node/3348180
  */
 final class RemoveTrustDataCallRector extends AbstractDrupalCoreRector
 {

@@ -19,6 +19,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  * in drupal:13.0.0. Cache expiration is now configured via cacheSetMaxAge().
  *
  * @see https://www.drupal.org/node/3576556
+ * @see https://www.drupal.org/node/3576855
  */
 final class RemoveCacheExpireOverrideRector extends AbstractRector
 {

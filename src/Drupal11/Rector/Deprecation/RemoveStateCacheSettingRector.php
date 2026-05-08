@@ -17,6 +17,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  * and the setting has no effect.
  *
  * @see https://www.drupal.org/node/3436954
+ * @see https://www.drupal.org/node/2575105
  */
 final class RemoveStateCacheSettingRector extends AbstractRector
 {

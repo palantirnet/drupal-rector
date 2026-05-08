@@ -21,6 +21,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  * Deprecated in drupal:11.3.0 and removed in drupal:13.0.0.
  *
  * @see https://www.drupal.org/node/3526515
+ * @see https://www.drupal.org/node/3529500
  */
 final class ErrorCurrentErrorHandlerRector extends AbstractDrupalCoreRector
 {

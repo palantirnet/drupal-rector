@@ -16,6 +16,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  * Deprecated in drupal:11.0.0, removed in drupal:12.0.0.
  *
  * @see https://www.drupal.org/node/3574717
+ * @see https://www.drupal.org/node/3442785
  */
 final class StripMigrationDependenciesExpandArgRector extends AbstractRector
 {

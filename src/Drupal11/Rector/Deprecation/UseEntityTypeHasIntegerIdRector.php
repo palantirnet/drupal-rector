@@ -23,6 +23,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  * - $this->hasIntegerId($entityType)                         => $entityType->hasIntegerId()
  *
  * @see https://www.drupal.org/node/3566801
+ * @see https://www.drupal.org/node/3566814
  */
 final class UseEntityTypeHasIntegerIdRector extends AbstractDrupalCoreRector
 {

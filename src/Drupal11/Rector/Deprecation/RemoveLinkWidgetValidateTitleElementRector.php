@@ -17,6 +17,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  * Validation is now handled by LinkTitleRequiredConstraint on the LinkItem field type.
  *
  * @see https://www.drupal.org/node/3093118
+ * @see https://www.drupal.org/node/3554139
  */
 final class RemoveLinkWidgetValidateTitleElementRector extends AbstractRector
 {

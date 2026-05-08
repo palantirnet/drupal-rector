@@ -18,6 +18,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  * Drupal core removed the parameter in issue #3473440.
  *
  * @see https://www.drupal.org/node/3473440
+ * @see https://www.drupal.org/node/3474692
  */
 final class RemoveTwigNodeTransTagArgumentRector extends AbstractRector
 {

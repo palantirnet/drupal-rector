@@ -22,6 +22,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  * Sql should access $this->migrationPluginManager directly.
  *
  * @see https://www.drupal.org/node/3439369
+ * @see https://www.drupal.org/node/3282894
  */
 final class MigrateSqlGetMigrationPluginManagerRector extends AbstractRector
 {

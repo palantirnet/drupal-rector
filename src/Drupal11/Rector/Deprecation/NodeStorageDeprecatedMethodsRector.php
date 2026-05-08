@@ -15,6 +15,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  * Replaces deprecated NodeStorage::revisionIds() and userRevisionIds() calls.
  *
  * @see https://www.drupal.org/node/3396062
+ * @see https://www.drupal.org/node/3519187
  */
 final class NodeStorageDeprecatedMethodsRector extends AbstractRector
 {

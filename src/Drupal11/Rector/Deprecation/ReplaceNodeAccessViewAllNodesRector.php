@@ -21,6 +21,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  * Deprecated in drupal:11.3.0, removed in drupal:12.0.0.
  *
  * @see https://www.drupal.org/node/3038908
+ * @see https://www.drupal.org/node/3038909
  */
 final class ReplaceNodeAccessViewAllNodesRector extends AbstractDrupalCoreRector
 {

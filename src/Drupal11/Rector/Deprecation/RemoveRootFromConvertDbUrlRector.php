@@ -26,6 +26,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  * Any third $include_test_drivers argument is shifted to position two.
  *
  * @see https://www.drupal.org/node/3522513
+ * @see https://www.drupal.org/node/3511287
  */
 final class RemoveRootFromConvertDbUrlRector extends AbstractRector
 {

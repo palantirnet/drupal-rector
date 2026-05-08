@@ -20,6 +20,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  * so any override is dead code.
  *
  * @see https://www.drupal.org/node/3485084
+ * @see https://www.drupal.org/node/3486781
  */
 final class RemoveHandlerBaseDefineExtraOptionsRector extends AbstractRector
 {

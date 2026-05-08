@@ -21,6 +21,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  * removed while preserving the rest of the chain.
  *
  * @see https://www.drupal.org/node/2667040
+ * @see https://www.drupal.org/node/3575062
  */
 final class RemoveSetUriCallbackRector extends AbstractRector
 {

@@ -17,6 +17,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  * Deprecated in drupal:11.3.0, removed in drupal:13.0.0.
  *
  * @see https://www.drupal.org/node/3538277
+ * @see https://www.drupal.org/node/3538666
  */
 final class ReplaceNodeSetPreviewModeRector extends AbstractRector
 {

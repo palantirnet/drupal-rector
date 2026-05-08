@@ -23,6 +23,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  * - views_get_view_result(...)    => \Drupal\views\Views::getViewResult(...)
  *
  * @see https://www.drupal.org/node/3572243
+ * @see https://www.drupal.org/node/3572594
  */
 final class ReplaceViewsProceduralFunctionsRector extends AbstractDrupalCoreRector
 {

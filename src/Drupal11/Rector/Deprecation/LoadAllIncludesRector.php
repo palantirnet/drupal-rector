@@ -14,6 +14,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  * Replaces deprecated ModuleHandler::loadAllIncludes() with an explicit foreach loop.
  *
  * @see https://www.drupal.org/node/3536431
+ * @see https://www.drupal.org/node/3536432
  */
 final class LoadAllIncludesRector extends AbstractRector
 {

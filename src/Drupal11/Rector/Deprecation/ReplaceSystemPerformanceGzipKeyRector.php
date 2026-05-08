@@ -20,6 +20,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  * and removed in drupal:12.0.0. Use css.compress and js.compress instead.
  *
  * @see https://www.drupal.org/node/3184242
+ * @see https://www.drupal.org/node/3526344
  */
 final class ReplaceSystemPerformanceGzipKeyRector extends AbstractRector
 {

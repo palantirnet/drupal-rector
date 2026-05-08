@@ -22,6 +22,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  * in drupal:12.0.0. Both values always returned 0.
  *
  * @see https://www.drupal.org/node/3442810
+ * @see https://www.drupal.org/node/3494472
  */
 final class ReplaceAlphadecimalToIntNullRector extends AbstractRector
 {

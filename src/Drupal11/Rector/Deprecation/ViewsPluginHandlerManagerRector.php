@@ -17,6 +17,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  * Deprecated in drupal:11.4.0, removed in drupal:13.0.0.
  *
  * @see https://www.drupal.org/node/3566424
+ * @see https://www.drupal.org/node/3566982
  */
 final class ViewsPluginHandlerManagerRector extends AbstractDrupalCoreRector
 {

@@ -22,6 +22,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  * in drupal:13.0.0. PHP native basename() is identical on PHP 8.x+.
  *
  * @see https://www.drupal.org/node/3530461
+ * @see https://www.drupal.org/node/3530869
  */
 final class FileSystemBasenameToNativeRector extends AbstractDrupalCoreRector
 {

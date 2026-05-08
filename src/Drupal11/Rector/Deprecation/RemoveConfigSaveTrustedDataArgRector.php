@@ -20,6 +20,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  * removed in drupal:13.0.0.
  *
  * @see https://www.drupal.org/node/3347842
+ * @see https://www.drupal.org/node/3348180
  */
 final class RemoveConfigSaveTrustedDataArgRector extends AbstractRector
 {

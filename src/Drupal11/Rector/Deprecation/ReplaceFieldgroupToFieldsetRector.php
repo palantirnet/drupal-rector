@@ -18,6 +18,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  * drupal:12.0.0.
  *
  * @see https://www.drupal.org/node/3512254
+ * @see https://www.drupal.org/node/3515272
  */
 final class ReplaceFieldgroupToFieldsetRector extends AbstractRector
 {

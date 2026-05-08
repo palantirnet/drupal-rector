@@ -24,6 +24,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  * Deprecated in drupal:11.4.0 and removed in drupal:13.0.0.
  *
  * @see https://www.drupal.org/node/2536594
+ * @see https://www.drupal.org/node/3035368
  */
 class FilterFormatFunctionsToServiceRector extends AbstractDrupalCoreRector
 {

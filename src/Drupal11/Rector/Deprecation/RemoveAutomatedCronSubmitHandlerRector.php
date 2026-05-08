@@ -17,6 +17,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  * Config saving is now handled automatically via #config_target on the interval element.
  *
  * @see https://www.drupal.org/node/3566768
+ * @see https://www.drupal.org/node/3566774
  */
 final class RemoveAutomatedCronSubmitHandlerRector extends AbstractRector
 {

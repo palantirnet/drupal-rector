@@ -22,6 +22,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  * Deprecated in drupal:11.3.0, removed in drupal:12.0.0.
  *
  * @see https://www.drupal.org/node/3489266
+ * @see https://www.drupal.org/node/3516778
  */
 final class ReplaceNodeAddBodyFieldRector extends AbstractDrupalCoreRector
 {

@@ -24,6 +24,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  * is wrapped in an array literal.
  *
  * @see https://www.drupal.org/node/3498026
+ * @see https://www.drupal.org/node/3579527
  */
 final class ReplaceRecipeRunnerInstallModuleRector extends AbstractDrupalCoreRector
 {

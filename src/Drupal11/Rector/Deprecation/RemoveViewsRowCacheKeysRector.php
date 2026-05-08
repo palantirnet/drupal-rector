@@ -28,6 +28,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  * - Variable-first assignment: $keys = $plugin->getRowCacheKeys($row); [...'keys' => $keys]
  * - Delegation method:         public function getRowCacheKeys($row) { return $this->plugin->getRowCacheKeys($row); }
  *
+ * @see https://www.drupal.org/node/3564937
  * @see https://www.drupal.org/node/3564958
  */
 final class RemoveViewsRowCacheKeysRector extends AbstractRector
