@@ -1,0 +1,39 @@
+<?php
+
+use Drupal\hookconvertrector\Hook\HookconvertrectorHooks;
+use Drupal\Core\Hook\Attribute\LegacyHook;
+
+/**
+ * Implements hook_theme_suggestions_HOOK_alter().
+ */
+function hookconvertrector_theme_suggestions_form_element_alter(&$suggestions, $variables) {
+    \Drupal::service(HookconvertrectorHooks1::class)->themeSuggestionsFormElementAlter($suggestions, $variables);
+}
+
+
+/**
+ * Implements hook_user_add().
+ */
+#[LegacyHook]
+function hookconvertrector_theme_suggestions_form_alter(array &$attachments): void {
+    $red = 'red';
+    $method = [
+        'red',
+        'green',
+        'blue',
+    ];
+    $edit = [
+        'red' => 'red',
+        'green' => 'green',
+        'blue' => 'blue',
+    ];
+}
+
+/**
+ * Implements hook_page_attachments_alter().
+ */
+#[LegacyHook]
+function hookconvertrector_page_attachments(array &$page)
+{
+    return \Drupal::service(HookconvertrectorHooks::class)->pageAttachmentsAlter($page);
+}
