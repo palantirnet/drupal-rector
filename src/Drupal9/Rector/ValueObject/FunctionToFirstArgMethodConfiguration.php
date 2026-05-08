@@ -8,4 +8,8 @@ use DrupalRector\Rector\ValueObject\FunctionToFirstArgMethodConfiguration as Gen
 
 class FunctionToFirstArgMethodConfiguration extends GenericFunctionToFirstArgMethodConfiguration
 {
+    public function __construct(string $deprecatedFunctionName, string $methodName)
+    {
+        parent::__construct('', $deprecatedFunctionName, $methodName);
+    }
 }

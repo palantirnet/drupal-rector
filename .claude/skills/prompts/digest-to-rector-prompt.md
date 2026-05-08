@@ -185,12 +185,12 @@ new ConstantToClassConfiguration('[GLOBAL_CONSTANT_NAME]', '[TargetClass\\FQCN]'
 // no introducedVersion — applies unconditionally; no BC wrapping
 
 // FunctionToFirstArgMethodRector — fn($obj) → $obj->method(); first arg must be the receiver
-new FunctionToFirstArgMethodConfiguration('[deprecatedFunctionName]', '[methodName]'),
-// no introducedVersion — applies unconditionally; no BC wrapping
+new FunctionToFirstArgMethodConfiguration('[introducedVersion]', '[deprecatedFunctionName]', '[methodName]'),
+// introducedVersion triggers DeprecationHelper BC wrapping; omit (use D9 BC wrapper) for older entries
 
 // DrupalServiceRenameRector — \Drupal::service('old.id') → \Drupal::service('new.id')
-new DrupalServiceRenameConfiguration('[deprecated.service.id]', '[new.service.id]'),
-// no introducedVersion — applies unconditionally; no BC wrapping
+new DrupalServiceRenameConfiguration('[introducedVersion]', '[deprecated.service.id]', '[new.service.id]'),
+// introducedVersion triggers DeprecationHelper BC wrapping; omit (use D8 BC wrapper) for older entries
 
 // RenameClassRector — pass an associative array directly, not a configuration object
 $rectorConfig->ruleWithConfiguration(RenameClassRector::class, [

@@ -4,25 +4,35 @@ declare(strict_types=1);
 
 namespace DrupalRector\Rector\ValueObject;
 
-class DrupalServiceRenameConfiguration
+use DrupalRector\Contract\VersionedConfigurationInterface;
+
+class DrupalServiceRenameConfiguration implements VersionedConfigurationInterface
 {
-    protected string $newService;
+    protected string $introducedVersion;
 
     protected string $deprecatedService;
 
-    public function __construct(string $deprecatedService, string $newService)
+    protected string $newService;
+
+    public function __construct(string $introducedVersion, string $deprecatedService, string $newService)
     {
+        $this->introducedVersion = $introducedVersion;
         $this->deprecatedService = $deprecatedService;
         $this->newService = $newService;
     }
 
-    public function getNewService(): string
+    public function getIntroducedVersion(): string
     {
-        return $this->newService;
+        return $this->introducedVersion;
     }
 
     public function getDeprecatedService(): string
     {
         return $this->deprecatedService;
+    }
+
+    public function getNewService(): string
+    {
+        return $this->newService;
     }
 }

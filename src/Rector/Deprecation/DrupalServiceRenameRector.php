@@ -4,18 +4,15 @@ declare(strict_types=1);
 
 namespace DrupalRector\Rector\Deprecation;
 
+use DrupalRector\Contract\VersionedConfigurationInterface;
+use DrupalRector\Rector\AbstractDrupalCoreRector;
 use DrupalRector\Rector\ValueObject\DrupalServiceRenameConfiguration;
 use PhpParser\Node;
-use Rector\Contract\Rector\ConfigurableRectorInterface;
-use Rector\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\ConfiguredCodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
-class DrupalServiceRenameRector extends AbstractRector implements ConfigurableRectorInterface
+class DrupalServiceRenameRector extends AbstractDrupalCoreRector
 {
-    /** @var DrupalServiceRenameConfiguration[] */
-    protected array $configuration = [];
-
     public function configure(array $configuration): void
     {
         foreach ($configuration as $value) {
@@ -24,7 +21,7 @@ class DrupalServiceRenameRector extends AbstractRector implements ConfigurableRe
             }
         }
 
-        $this->configuration = $configuration;
+        parent::configure($configuration);
     }
 
     public function getNodeTypes(): array
@@ -32,9 +29,10 @@ class DrupalServiceRenameRector extends AbstractRector implements ConfigurableRe
         return [Node\Expr\StaticCall::class];
     }
 
-    public function refactor(Node $node): ?Node
+    public function refactorWithConfiguration(Node $node, VersionedConfigurationInterface $configuration): ?Node
     {
         assert($node instanceof Node\Expr\StaticCall);
+        assert($configuration instanceof DrupalServiceRenameConfiguration);
 
         if ($this->getName($node->name) !== 'service' || (string) $node->class !== 'Drupal') {
             return null;
@@ -49,15 +47,13 @@ class DrupalServiceRenameRector extends AbstractRector implements ConfigurableRe
             return null;
         }
 
-        foreach ($this->configuration as $config) {
-            if ($argument->value->value === $config->getDeprecatedService()) {
-                $node->args[0] = new Node\Arg(new Node\Scalar\String_($config->getNewService()));
-
-                return $node;
-            }
+        if ($argument->value->value !== $configuration->getDeprecatedService()) {
+            return null;
         }
 
-        return null;
+        $node->args[0] = new Node\Arg(new Node\Scalar\String_($configuration->getNewService()));
+
+        return $node;
     }
 
     public function getRuleDefinition(): RuleDefinition
@@ -70,7 +66,7 @@ CODE_BEFORE,
                 <<<'CODE_AFTER'
 \Drupal::service('bar')->foo();
 CODE_AFTER,
-                [new DrupalServiceRenameConfiguration('old', 'bar')]
+                [new DrupalServiceRenameConfiguration('11.4.0', 'old', 'bar')]
             ),
         ]);
     }

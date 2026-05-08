@@ -4,23 +4,15 @@ declare(strict_types=1);
 
 namespace DrupalRector\Rector\Deprecation;
 
+use DrupalRector\Contract\VersionedConfigurationInterface;
+use DrupalRector\Rector\AbstractDrupalCoreRector;
 use DrupalRector\Rector\ValueObject\FunctionToFirstArgMethodConfiguration;
 use PhpParser\Node;
-use Rector\Contract\Rector\ConfigurableRectorInterface;
-use Rector\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\ConfiguredCodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
-class FunctionToFirstArgMethodRector extends AbstractRector implements ConfigurableRectorInterface
+class FunctionToFirstArgMethodRector extends AbstractDrupalCoreRector
 {
-    /** @var FunctionToFirstArgMethodConfiguration[] */
-    private array $configuration;
-
-    public function getNodeTypes(): array
-    {
-        return [Node\Expr\FuncCall::class];
-    }
-
     public function configure(array $configuration): void
     {
         foreach ($configuration as $value) {
@@ -29,27 +21,29 @@ class FunctionToFirstArgMethodRector extends AbstractRector implements Configura
             }
         }
 
-        $this->configuration = $configuration;
+        parent::configure($configuration);
     }
 
-    public function refactor(Node $node): ?Node
+    public function getNodeTypes(): array
+    {
+        return [Node\Expr\FuncCall::class];
+    }
+
+    public function refactorWithConfiguration(Node $node, VersionedConfigurationInterface $configuration): ?Node
     {
         assert($node instanceof Node\Expr\FuncCall);
+        assert($configuration instanceof FunctionToFirstArgMethodConfiguration);
 
-        foreach ($this->configuration as $configuration) {
-            if ($this->getName($node) !== $configuration->getDeprecatedFunctionName()) {
-                continue;
-            }
-
-            $args = $node->getArgs();
-            if (count($args) !== 1) {
-                continue;
-            }
-
-            return $this->nodeFactory->createMethodCall($args[0]->value, $configuration->getMethodName());
+        if ($this->getName($node) !== $configuration->getDeprecatedFunctionName()) {
+            return null;
         }
 
-        return null;
+        $args = $node->getArgs();
+        if (count($args) !== 1) {
+            return null;
+        }
+
+        return $this->nodeFactory->createMethodCall($args[0]->value, $configuration->getMethodName());
     }
 
     public function getRuleDefinition(): RuleDefinition
@@ -62,7 +56,7 @@ CODE_BEFORE,
                 <<<'CODE_AFTER'
 $url = $term->toUrl();
 CODE_AFTER,
-                [new FunctionToFirstArgMethodConfiguration('taxonomy_term_uri', 'toUrl')]
+                [new FunctionToFirstArgMethodConfiguration('9.3.0', 'taxonomy_term_uri', 'toUrl')]
             ),
         ]);
     }

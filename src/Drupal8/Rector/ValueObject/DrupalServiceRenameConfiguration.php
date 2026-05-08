@@ -8,4 +8,8 @@ use DrupalRector\Rector\ValueObject\DrupalServiceRenameConfiguration as GenericD
 
 class DrupalServiceRenameConfiguration extends GenericDrupalServiceRenameConfiguration
 {
+    public function __construct(string $deprecatedService, string $newService)
+    {
+        parent::__construct('', $deprecatedService, $newService);
+    }
 }
