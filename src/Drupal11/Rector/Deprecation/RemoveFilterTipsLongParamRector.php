@@ -26,7 +26,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  * When $long is used inside the method body the rule skips that method —
  * the developer must manually remove the long-tip branch.
  *
- * @see https://www.drupal.org/node/3505370
+ * @see https://www.drupal.org/node/3567879
  */
 class RemoveFilterTipsLongParamRector extends AbstractRector
 {
