@@ -6,6 +6,9 @@
 !/.gitattributes
 !/.editorconfig
 !.gitkeep
+!/.claude
+!/.claude/skills
+!/.claude/skills/**
 
 # Other ignored paths and files.
 /vendor
@@ -17,3 +20,4 @@
 /.phpunit.cache
 .worktrees/
 rector-decision.log
+docs/rector-index.yml
