@@ -54,7 +54,7 @@ final class ReplaceSessionManagerDeleteRector extends AbstractDrupalCoreRector
             return null;
         }
 
-        if (!$this->isObjectType($node->var, new ObjectType('Drupal\Core\Session\SessionManagerInterface'))) {
+        if (!$this->isSessionManagerType($node->var)) {
             return null;
         }
 
@@ -65,6 +65,31 @@ final class ReplaceSessionManagerDeleteRector extends AbstractDrupalCoreRector
         );
 
         return new Node\Expr\MethodCall($service, 'deleteAll', [$node->args[0]]);
+    }
+
+    private function isSessionManagerType(Node\Expr $node): bool
+    {
+        // Normal case: property typed as the interface or concrete class (with leading \).
+        if ($this->isObjectType($node, new ObjectType('Drupal\Core\Session\SessionManagerInterface'))) {
+            return true;
+        }
+        if ($this->isObjectType($node, new ObjectType('Drupal\Core\Session\SessionManager'))) {
+            return true;
+        }
+
+        // Older Drupal contrib code often omits the leading \ in @var annotations:
+        //   @var Drupal\Core\Session\SessionManager   (no leading \)
+        // PHPStan resolves this relative to the current namespace, producing a wrong
+        // class name like "Vendor\Module\Drupal\Core\Session\SessionManager". We check
+        // the exact suffix so we still match the same two Drupal classes and nothing else.
+        foreach ($this->getType($node)->getObjectClassNames() as $className) {
+            if (str_ends_with($className, '\\Drupal\\Core\\Session\\SessionManagerInterface')
+                || str_ends_with($className, '\\Drupal\\Core\\Session\\SessionManager')) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public function getRuleDefinition(): RuleDefinition
