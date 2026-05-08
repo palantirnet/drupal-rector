@@ -149,6 +149,23 @@ This marks the newly implemented rule as `implemented` in the index.
 
 ---
 
+### After the index update: Run rector-qa
+
+Read `.claude/skills/rector-qa/SKILL.md` and execute all four passes for `[ClassName]`.
+
+Apply any fixes the QA reveals. If fixes touch the rector class or test files, commit them
+separately:
+
+```bash
+git add src/Drupal11/Rector/Deprecation/[ClassName].php \
+        tests/src/Drupal11/Rector/Deprecation/[ClassName]/
+git commit -m "fix(Drupal11): QA fixes for [ClassName]"
+```
+
+Do not declare the implementation complete until rector-qa reports **Overall: PASS**.
+
+---
+
 ## Pre-flight Checklist
 
 Before declaring the implementation complete, verify all items from `.claude/skills/prompts/digest-to-rector-prompt.md`'s final checklist, plus:
@@ -159,6 +176,7 @@ Before declaring the implementation complete, verify all items from `.claude/ski
 - [ ] `vendor/bin/phpunit tests/src/Drupal11/Rector/Deprecation/[ClassName]/` passes
 - [ ] `ddev composer phpstan` reports no new errors
 - [ ] `ddev composer fix-style` produces no changes
+- [ ] rector-qa reports **Overall: PASS** (all four passes green)
 
 ## Quick Reference: Phase 1 (config-only) path
 

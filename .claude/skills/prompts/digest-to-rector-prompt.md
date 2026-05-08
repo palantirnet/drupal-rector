@@ -259,6 +259,12 @@ use Rector\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
+/**
+ * [description from Step 2]
+ *
+ * @see https://www.drupal.org/node/[issue-number]
+ * @see https://www.drupal.org/node/[change-record-number]
+ */
 class [ClassName] extends AbstractRector
 {
     // [copy private constants and properties from the digests rule unchanged]
@@ -313,6 +319,12 @@ use PhpParser\Node;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\ConfiguredCodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
+/**
+ * [description from Step 2]
+ *
+ * @see https://www.drupal.org/node/[issue-number]
+ * @see https://www.drupal.org/node/[change-record-number]
+ */
 class [ClassName] extends AbstractDrupalCoreRector
 {
     /** @var DrupalIntroducedVersionConfiguration[] */

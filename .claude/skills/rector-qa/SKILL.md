@@ -189,36 +189,53 @@ Do not run the other three passes in bulk mode.
 
 ## Pass 4 — @see URL Audit
 
-**Goal:** The `@see` URL in the rector class docblock should point to the correct Drupal.org node.
+**Goal:** The rector docblock must contain `@see` lines for **both** the Drupal.org issue node
+and the change record node, so the class is findable regardless of which reference appears in
+a given digest file or Drupal core deprecation notice.
 
 **Steps:**
 
-1. Extract the `@see` URL from the rector class:
+1. Extract all `@see` lines from the rector class:
    ```bash
    grep '@see' src/Drupal11/Rector/Deprecation/<ClassName>.php
    ```
 
 2. Determine the issue number and change record number:
-   - The digest filename contains the **issue number** (last numeric group).
-   - `~/projects/drupal-digests/issues/drupal-core/<issue-number>.md` contains the change record link if known.
-   - Alternatively, search `repos/drupal-core` for the deprecated function/method (run `bash .claude/scripts/setup-repos.sh` if absent):
-     ```bash
-     grep -rn "@deprecated in drupal:" repos/drupal-core/core --include="*.php" | grep "<methodName>" | head -5
-     ```
-     The `@see` in the Drupal core deprecation notice usually points to the **change record**.
 
-3. Expected `@see` URL:
-   - Rector should point to the **issue node** if that's what the digest file uses.
-   - OR the **change record node** if the Drupal core source cites it.
-   - Flag if the `@see` points to a node that's clearly wrong (e.g., points to a different, unrelated issue).
+   a. **Issue number** — last numeric group in the digest filename, e.g.
+      `remove-deprecated-foo-3505370.php` → issue `3505370`.
 
-4. Check URL validity by comparing the node number with known data:
-   - Issue URL: `https://www.drupal.org/node/<issue-number>` — from digest filename
-   - CR URL: `https://www.drupal.org/node/<cr-number>` — from drupal-core deprecation annotation
+   b. **Change record number** — look in two places:
+      - `repos/drupal-digests/issues/drupal-core/<issue-number>.md`: scan for a link like
+        `[#3567879](https://www.drupal.org/node/3567879)` in the Upgrade or Technical details section.
+      - Drupal core source (run `bash .claude/scripts/setup-repos.sh` if `repos/drupal-core` is absent):
+        ```bash
+        grep -rn "3505370\|@see https://www.drupal.org" repos/drupal-core/core --include="*.php" \
+          | grep "<methodName>\|<funcName>" | head -10
+        ```
+        The `@see` in Drupal core's own `@deprecated` block or `trigger_error` message usually
+        points to the **change record**.
 
-**Output:** `Pass 4: [PASS|WARN] — <URL> [matches issue|matches CR|MISMATCH: should be <correct URL>]`
+   c. If the issue number and change record number are the **same** (rare), one `@see` suffices.
 
-**If WARN/FAIL:** Propose the corrected `@see` URL and apply it.
+3. Verify the rector has **both** `@see` lines:
+   - `@see https://www.drupal.org/node/<issue-number>`
+   - `@see https://www.drupal.org/node/<cr-number>`
+
+4. Flag:
+   - **PASS** — both `@see` lines present (or issue == CR, so one is correct)
+   - **WARN** — one `@see` present but the other is missing; add the missing line
+   - **FAIL** — `@see` points to an entirely unrelated node
+
+**If WARN/FAIL:** Add or correct the `@see` line(s) in the rector docblock. Both should appear
+consecutively, issue first:
+
+```php
+ * @see https://www.drupal.org/node/<issue-number>
+ * @see https://www.drupal.org/node/<cr-number>
+```
+
+**Output:** `Pass 4: [PASS|WARN|FAIL] — issue:<number> CR:<number> — <present/missing>`
 
 ---
 
@@ -232,7 +249,7 @@ After all four passes, produce a summary checklist:
 Pass 1 — Type Guard:    [SAFE|AT-RISK|EXEMPT]
 Pass 2 — Fixtures:      [PASS|WARN] — <note>
 Pass 3 — BC Decision:   [PASS|FAIL] — <note>
-Pass 4 — @see URL:      [PASS|WARN] — <note>
+Pass 4 — @see URL:      [PASS|WARN|FAIL] — issue:<n> CR:<n> — <present/missing>
 
 Overall: [PASS — ready to merge | NEEDS FIXES — see above]
 ```
