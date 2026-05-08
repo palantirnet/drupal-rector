@@ -34,19 +34,32 @@ Read the rector source to extract:
 
 **Primary: `search.tresbien.tech`**
 
-Fetch the search results for the deprecated API pattern. This site indexes Drupal contrib module code:
+Use `WebFetch` to search this Drupal contrib code index. The base URL is:
 
 ```
-https://search.tresbien.tech/?q=<urlencoded_search_term>
+https://search.tresbien.tech/search?q=<urlencoded_query>&num=0&ctx=0
 ```
 
-Construct the search term:
-- For method calls: `->methodName(`
-- For function calls: `functionName(`
-- For class constants: `ClassName::CONSTANT_NAME`
-- For properties: `->propertyName`
+**Always include `-r:drupal`** to exclude Drupal core from results (use `-r:drupal`, NOT `-r:core`).
 
-Use `WebFetch` to retrieve the page and extract module names from the results. If the page format is unclear, try `WebSearch` with `site:search.tresbien.tech <term>` as a fallback.
+Standard query construction:
+- Method call: `-r:drupal ->methodName(`
+- Function call: `-r:drupal functionName(`
+- Class constant: `-r:drupal ClassName::CONSTANT_NAME`
+- Property access: `-r:drupal ->propertyName`
+
+Additional filters to add as needed:
+- `f:\.php$` — PHP files only (add `f:\.module$` if the pattern may appear in `.module` files)
+- `-f:test` — exclude test files when you want production code only
+- `lang:php` — PHP language filter
+- `case:yes` — force case-sensitive match
+
+Example for `->delete(` on SessionManager:
+```
+https://search.tresbien.tech/search?q=-r%3Adrupal+-%3Edelete(&num=0&ctx=0
+```
+
+Parse the fetched page for matching file paths and extract the module/project name from the path prefix.
 
 If fewer than 3 results, also check `docs/contrib-module-search.md` for pre-discovered matches.
 
