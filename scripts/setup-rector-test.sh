@@ -96,7 +96,6 @@ ddev composer require --no-update \
   "drupal/custom_field:*" \
   "drupal/role_expire:*" \
   "drupal/views_dependent_filters:*" \
-  "drupal/group:*" \
   "drupal/search_api:*" \
   "drupal/schemadotorg:*" \
   "drupal/smart_migrate_cli:*" \
@@ -331,7 +330,7 @@ run_test RemoveTwigNodeTransTagArgumentRector
     # No contrib usage: TwigNodeTrans 6-arg constructor removed from core before D11 contrib caught up (version drift)
 
 run_test RemoveUpdaterPostInstallMethodsRector \
-    group gnode_request
+    gnode_request
 
 run_test RemoveViewsRowCacheKeysRector \
     metatag views_advanced_cache
@@ -345,7 +344,7 @@ run_test ReplaceAlphadecimalToIntNullRector
     # module calls the function with a literal null or empty string.
 
 run_test ReplaceCommentManagerGetCountNewCommentsRector \
-    forum history
+    forum
 
 run_test ReplaceCommentUriRector
     # No contrib usage: comment_uri() deprecated D11.3.0; Social 13.x already cleaned up (issue #3432522), no other D11 hits
@@ -353,7 +352,7 @@ run_test ReplaceCommentUriRector
 run_test ReplaceDateTimeRangeConstantsRector \
     optional_end_date scheduler_field
 
-run_test ReplaceEditorLoadRector
+run_test ReplaceEditorLoadRector \
     ckeditor5_premium_features
     # No contrib usage: editor_load() deprecated D11; not called in any D11 contrib module found
 

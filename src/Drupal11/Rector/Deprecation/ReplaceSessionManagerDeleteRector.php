@@ -54,7 +54,7 @@ final class ReplaceSessionManagerDeleteRector extends AbstractDrupalCoreRector
             return null;
         }
 
-        if (!$this->isObjectType($node->var, new ObjectType('Drupal\Core\Session\SessionManager'))) {
+        if (!$this->isObjectType($node->var, new ObjectType('Drupal\Core\Session\SessionManagerInterface'))) {
             return null;
         }
 
