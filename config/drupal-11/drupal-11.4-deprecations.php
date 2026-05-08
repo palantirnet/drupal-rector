@@ -35,6 +35,7 @@ use Rector\Config\RectorConfig;
 
 return static function (RectorConfig $rectorConfig): void {
     // https://www.drupal.org/node/3566424
+    // https://www.drupal.org/node/3566982 (change record)
     // Views::pluginManager() and Views::handlerManager() deprecated in drupal:11.4.0, removed in drupal:13.0.0.
     // Replaced by \Drupal::service('plugin.manager.views.*') or views.plugin_managers service.
     $rectorConfig->ruleWithConfiguration(ViewsPluginHandlerManagerRector::class, [
@@ -49,6 +50,7 @@ return static function (RectorConfig $rectorConfig): void {
     ]);
 
     // https://www.drupal.org/node/3533299
+    // https://www.drupal.org/node/3575096 (change record)
     // node_access_rebuild() and node_access_needs_rebuild() deprecated in drupal:11.4.0, removed in drupal:13.0.0.
     // Replaced by \Drupal\node\NodeAccessRebuild service.
     $rectorConfig->ruleWithConfiguration(NodeAccessRebuildFunctionsRector::class, [
@@ -56,6 +58,7 @@ return static function (RectorConfig $rectorConfig): void {
     ]);
 
     // https://www.drupal.org/node/2536594
+    // https://www.drupal.org/node/3035368 (change record)
     // filter_formats(), filter_get_roles_by_format(), filter_get_formats_by_role(),
     // filter_default_format(), and filter_fallback_format() deprecated in drupal:11.4.0, removed in drupal:13.0.0.
     // Replaced by \Drupal\filter\FilterFormatRepositoryInterface service.
@@ -64,11 +67,13 @@ return static function (RectorConfig $rectorConfig): void {
     ]);
 
     // https://www.drupal.org/node/3568124
+    // https://www.drupal.org/node/3566774 (change record)
     // media_filter_format_edit_form_validate() deprecated in drupal:11.4.0, removed in drupal:12.0.0.
     // Replaced by \Drupal\media\Hook\MediaHooks::formatEditFormValidate().
     $rectorConfig->rule(MediaFilterFormatEditFormValidateRector::class);
 
     // https://www.drupal.org/node/3226806
+    // https://www.drupal.org/node/3566536 (change record)
     // _filter_autop(), _filter_html_escape(), and _filter_html_image_secure_process()
     // deprecated in drupal:11.4.0, removed in drupal:13.0.0.
     // Replaced by plugin.manager.filter createInstance() chain.
@@ -205,6 +210,7 @@ return static function (RectorConfig $rectorConfig): void {
     // views_ui_contextual_links_suppress*() deprecated in drupal:11.4.0, removed in drupal:13.0.0.
     // These are no-ops and can be removed.
     // https://www.drupal.org/node/3566768
+    // https://www.drupal.org/node/3566774 (change record)
     // automated_cron_settings_submit() deprecated in drupal:11.4.0, removed in drupal:13.0.0.
     // Config saving is now handled automatically via #config_target on the interval element.
     // https://www.drupal.org/node/3566782
@@ -223,32 +229,38 @@ return static function (RectorConfig $rectorConfig): void {
     ]);
 
     // https://www.drupal.org/node/2667040
+    // https://www.drupal.org/node/3575062 (change record)
     // EntityTypeInterface::setUriCallback() deprecated in drupal:11.4.0, removed in drupal:13.0.0.
     // Use link templates or a route provider instead.
     $rectorConfig->rule(RemoveSetUriCallbackRector::class);
 
     // https://www.drupal.org/node/3498026
+    // https://www.drupal.org/node/3579527 (change record)
     // RecipeRunner::installModule() deprecated in drupal:11.4.0. Use installModules() with an array.
     $rectorConfig->ruleWithConfiguration(ReplaceRecipeRunnerInstallModuleRector::class, [
         new DrupalIntroducedVersionConfiguration('11.4.0'),
     ]);
 
     // https://www.drupal.org/node/3184242
+    // https://www.drupal.org/node/3526344 (change record)
     // system.performance css.gzip and js.gzip config keys deprecated in drupal:11.4.0, removed in drupal:12.0.0.
     // Replaced by css.compress and js.compress.
     $rectorConfig->rule(ReplaceSystemPerformanceGzipKeyRector::class);
 
     // https://www.drupal.org/node/3564937
+    // https://www.drupal.org/node/3564958 (change record)
     // CachePluginBase::getRowCacheKeys() and getRowId() deprecated in drupal:11.4.0, removed in drupal:13.0.0.
     // Remove array items whose value is one of these calls.
     $rectorConfig->rule(RemoveViewsRowCacheKeysRector::class);
 
     // https://www.drupal.org/node/3576556
+    // https://www.drupal.org/node/3576855 (change record)
     // CachePluginBase::cacheExpire() deprecated in drupal:11.4.0, removed in drupal:13.0.0.
     // Subclass overrides are dead code; remove them.
     $rectorConfig->rule(RemoveCacheExpireOverrideRector::class);
 
     // https://www.drupal.org/node/3347842
+    // https://www.drupal.org/node/3348180 (change record)
     // trustData() deprecated in drupal:11.4.0, removed in drupal:13.0.0. Remove from fluent chains.
     // Config::save($has_trusted_data) boolean arg deprecated in drupal:11.4.0, removed in drupal:13.0.0.
     $rectorConfig->ruleWithConfiguration(RemoveTrustDataCallRector::class, [
@@ -257,16 +269,19 @@ return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->rule(RemoveConfigSaveTrustedDataArgRector::class);
 
     // https://www.drupal.org/node/3093118
+    // https://www.drupal.org/node/3554139 (change record)
     // LinkWidget::validateTitleElement() deprecated in drupal:11.4.0, removed in drupal:12.0.0.
     // Validation is now handled by LinkTitleRequiredConstraint on the LinkItem field type.
     $rectorConfig->rule(RemoveLinkWidgetValidateTitleElementRector::class);
 
     // https://www.drupal.org/node/3566768
+    // https://www.drupal.org/node/3566774 (change record)
     // $form['#submit'][] = 'automated_cron_settings_submit' deprecated in drupal:11.4.0, removed in drupal:13.0.0.
     // Config saving is now handled automatically via #config_target on the interval element.
     $rectorConfig->rule(RemoveAutomatedCronSubmitHandlerRector::class);
 
     // https://www.drupal.org/node/3572243
+    // https://www.drupal.org/node/3572594 (change record)
     // views_view_is_enabled(), views_view_is_disabled(), views_enable_view(),
     // views_disable_view(), views_get_view_result() deprecated in drupal:11.4.0, removed in drupal:13.0.0.
     // Replaced by OO equivalents on the view object or Views::getViewResult().
@@ -275,6 +290,7 @@ return static function (RectorConfig $rectorConfig): void {
     ]);
 
     // https://www.drupal.org/node/3566801
+    // https://www.drupal.org/node/3566814 (change record)
     // getEntityTypeIdKeyType() === 'integer', entityTypeSupportsComments(), and hasIntegerId($entityType)
     // deprecated in drupal:11.4.0, removed in drupal:13.0.0.
     // Replaced by EntityTypeInterface::hasIntegerId() called on the entity type object.

@@ -16,6 +16,7 @@ use Rector\Renaming\Rector\Name\RenameClassRector;
 
 return static function (RectorConfig $rectorConfig): void {
     // https://www.drupal.org/node/3459533
+    // https://www.drupal.org/node/2946122 (change record)
     // PluginBase::isConfigurable() deprecated in drupal:11.1.0, removed in drupal:12.0.0.
     // Replaced by instanceof \Drupal\Component\Plugin\ConfigurableInterface.
     $rectorConfig->rule(PluginBaseIsConfigurableRector::class);
@@ -35,6 +36,7 @@ return static function (RectorConfig $rectorConfig): void {
     ]);
 
     // https://www.drupal.org/node/3442009
+    // https://www.drupal.org/node/3368812 (change record)
     // ModuleHandlerInterface::writeCache() deprecated in drupal:11.1.0, removed in drupal:12.0.0. No replacement needed.
     // ModuleHandlerInterface::getHookInfo() deprecated in drupal:11.1.0, removed in drupal:12.0.0. Replaced by [].
     $rectorConfig->rule(RemoveModuleHandlerDeprecatedMethodsRector::class);
@@ -48,6 +50,7 @@ return static function (RectorConfig $rectorConfig): void {
     ]);
 
     // https://www.drupal.org/node/3417136
+    // https://www.drupal.org/node/3461934 (change record)
     // Updater::postInstall() and postInstallTasks() deprecated in drupal:11.1.0, removed in drupal:12.0.0.
     // The entire install-via-URL flow was eliminated; overrides are dead code.
     $rectorConfig->rule(RemoveUpdaterPostInstallMethodsRector::class);

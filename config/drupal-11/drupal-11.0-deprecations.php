@@ -10,6 +10,7 @@ use Rector\Config\RectorConfig;
 
 return static function (RectorConfig $rectorConfig): void {
     // https://www.drupal.org/node/3436954
+    // https://www.drupal.org/node/2575105 (change record)
     // $settings['state_cache'] deprecated in drupal:11.0.0.
     // State caching is now permanently enabled and the setting has no effect.
     $rectorConfig->rule(RemoveStateCacheSettingRector::class);
@@ -20,11 +21,13 @@ return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->rule(ReplaceRequestTimeConstantRector::class);
 
     // https://www.drupal.org/node/3574717
+    // https://www.drupal.org/node/3442785 (change record)
     // getMigrationDependencies($expand) deprecated in drupal:11.0.0, removed in drupal:12.0.0.
     // The $expand boolean argument is removed; call without arguments.
     $rectorConfig->rule(StripMigrationDependenciesExpandArgRector::class);
 
     // https://www.drupal.org/node/3439369
+    // https://www.drupal.org/node/3282894 (change record)
     // Sql::getMigrationPluginManager() deprecated in drupal:9.5.0, removed in drupal:11.0.0.
     // Replaced by $this->migrationPluginManager property access.
     $rectorConfig->rule(MigrateSqlGetMigrationPluginManagerRector::class);

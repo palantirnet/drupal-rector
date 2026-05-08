@@ -34,6 +34,7 @@ use Rector\Renaming\Rector\Name\RenameClassRector;
 
 return static function (RectorConfig $rectorConfig): void {
     // https://www.drupal.org/node/3490200
+    // https://www.drupal.org/node/3490312 (change record)
     // StatementPrefetchIterator::fetchColumn() deprecated in drupal:11.2.0, removed in drupal:12.0.0.
     // Replaced by fetchField().
     $rectorConfig->ruleWithConfiguration(StatementPrefetchIteratorFetchColumnRector::class, [
@@ -76,11 +77,13 @@ return static function (RectorConfig $rectorConfig): void {
     ]);
 
     // https://www.drupal.org/node/3528899
+    // https://www.drupal.org/node/3550193 (change record)
     // ModuleHandlerInterface::addModule() and addProfile() deprecated in drupal:11.2.0, removed in drupal:12.0.0.
     // These methods are no-ops and can be removed.
     $rectorConfig->rule(RemoveModuleHandlerAddModuleCallsRector::class);
 
     // https://www.drupal.org/node/3485084
+    // https://www.drupal.org/node/3486781 (change record)
     // HandlerBase::defineExtraOptions() deprecated in drupal:11.2.0, removed in drupal:12.0.0.
     // No replacement — Drupal core never called it; any override is dead code.
     $rectorConfig->rule(RemoveHandlerBaseDefineExtraOptionsRector::class);
@@ -119,21 +122,25 @@ return static function (RectorConfig $rectorConfig): void {
     ]);
 
     // https://www.drupal.org/node/3473440
+    // https://www.drupal.org/node/3474692 (change record)
     // TwigNodeTrans 6th $tag constructor argument deprecated in twig/twig 3.12, removed in drupal:11.2.0.
     // Drop the argument.
     $rectorConfig->rule(RemoveTwigNodeTransTagArgumentRector::class);
 
     // https://www.drupal.org/node/3442810
+    // https://www.drupal.org/node/3494472 (change record)
     // Number::alphadecimalToInt(null/'') deprecated in drupal:11.2.0, removed in drupal:12.0.0.
     // Both arguments always produced 0; replaced with literal 0.
     $rectorConfig->rule(ReplaceAlphadecimalToIntNullRector::class);
 
     // https://www.drupal.org/node/3512254
+    // https://www.drupal.org/node/3515272 (change record)
     // #type 'fieldgroup' deprecated in drupal:11.2.0, removed in drupal:12.0.0.
     // Replaced by 'fieldset'.
     $rectorConfig->rule(ReplaceFieldgroupToFieldsetRector::class);
 
     // https://www.drupal.org/node/3525077
+    // https://www.drupal.org/node/3488338 (change record)
     // PDO::FETCH_* constants deprecated in drupal:11.2.0, removed in drupal:12.0.0.
     // Replaced by \Drupal\Core\Database\Statement\FetchAs enum cases.
     $rectorConfig->rule(ReplacePdoFetchConstantsRector::class);
@@ -155,11 +162,13 @@ return static function (RectorConfig $rectorConfig): void {
     ]);
 
     // https://www.drupal.org/node/3518527
+    // https://www.drupal.org/node/3518914 (change record)
     // $_SESSION['key'] = $value deprecated in drupal:11.2.0.
     // Replaced by \Drupal::request()->getSession()->set('key', $value).
     $rectorConfig->rule(ReplaceSessionWritesWithRequestSessionRector::class);
 
     // https://www.drupal.org/node/3447794
+    // https://www.drupal.org/node/3509245 (change record)
     // editor_load($format_id) deprecated in drupal:11.2.0, removed in drupal:12.0.0.
     // Replaced by entityTypeManager()->getStorage('editor')->load($format_id).
     $rectorConfig->ruleWithConfiguration(ReplaceEditorLoadRector::class, [

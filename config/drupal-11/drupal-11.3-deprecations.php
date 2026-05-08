@@ -31,6 +31,7 @@ use Rector\Renaming\Rector\Name\RenameClassRector;
 
 return static function (RectorConfig $rectorConfig): void {
     // https://www.drupal.org/node/3543035
+    // https://www.drupal.org/node/3551729 (change record)
     // CommentManagerInterface::getCountNewComments() deprecated in drupal:11.3.0, removed in drupal:12.0.0.
     // Replaced by \Drupal\history\HistoryManager::getCountNewComments().
     $rectorConfig->ruleWithConfiguration(ReplaceCommentManagerGetCountNewCommentsRector::class, [
@@ -38,11 +39,13 @@ return static function (RectorConfig $rectorConfig): void {
     ]);
 
     // https://www.drupal.org/node/3536431
+    // https://www.drupal.org/node/3536432 (change record)
     // ModuleHandler::loadAllIncludes() deprecated in drupal:11.3.0, removed in drupal:13.0.0.
     // Replaced by an explicit foreach over getModuleList() + loadInclude().
     $rectorConfig->rule(LoadAllIncludesRector::class);
 
     // https://www.drupal.org/node/3396062
+    // https://www.drupal.org/node/3519187 (change record)
     // NodeStorage::revisionIds() and userRevisionIds() deprecated in drupal:11.3.0, removed in drupal:13.0.0.
     // Replaced by equivalent entity queries.
     $rectorConfig->rule(NodeStorageDeprecatedMethodsRector::class);
@@ -90,6 +93,7 @@ return static function (RectorConfig $rectorConfig): void {
     ]);
 
     // https://www.drupal.org/node/3038908
+    // https://www.drupal.org/node/3038909 (change record)
     // node_access_view_all_nodes() deprecated in drupal:11.3.0, removed in drupal:12.0.0.
     // Replaced by entityTypeManager()->getAccessControlHandler('node')->checkAllGrants().
     // drupal_static_reset('node_access_view_all_nodes') replaced by node.view_all_nodes_memory_cache->deleteAll().
@@ -108,6 +112,7 @@ return static function (RectorConfig $rectorConfig): void {
     ]);
 
     // https://www.drupal.org/node/3489266
+    // https://www.drupal.org/node/3516778 (change record)
     // node_add_body_field() deprecated in drupal:11.3.0, removed in drupal:12.0.0.
     // Replaced by $this->createBodyField() from BodyFieldCreationTrait.
     $rectorConfig->ruleWithConfiguration(ReplaceNodeAddBodyFieldRector::class, [
@@ -115,6 +120,7 @@ return static function (RectorConfig $rectorConfig): void {
     ]);
 
     // https://www.drupal.org/node/3513856
+    // https://www.drupal.org/node/3513877 (change record)
     // UserSession::$name property read deprecated in drupal:11.3.0, removed in drupal:12.0.0.
     // Replaced by getAccountName().
     $rectorConfig->ruleWithConfiguration(ReplaceUserSessionNamePropertyRector::class, [
@@ -139,12 +145,14 @@ return static function (RectorConfig $rectorConfig): void {
     ]);
 
     // https://www.drupal.org/node/3538277
+    // https://www.drupal.org/node/3538666 (change record)
     // DRUPAL_DISABLED/OPTIONAL/REQUIRED constants (and integers 0/1/2) in setPreviewMode()
     // deprecated in drupal:11.3.0, removed in drupal:13.0.0.
     // Replaced by NodePreviewMode enum cases.
     $rectorConfig->rule(ReplaceNodeSetPreviewModeRector::class);
 
     // https://www.drupal.org/node/3530461
+    // https://www.drupal.org/node/3530869 (change record)
     // FileSystemInterface::basename() deprecated in drupal:11.3.0, removed in drupal:13.0.0.
     // Replaced by PHP native basename().
     $rectorConfig->ruleWithConfiguration(FileSystemBasenameToNativeRector::class, [
@@ -152,6 +160,7 @@ return static function (RectorConfig $rectorConfig): void {
     ]);
 
     // https://www.drupal.org/node/3526515
+    // https://www.drupal.org/node/3529500 (change record)
     // Error::currentErrorHandler() deprecated in drupal:11.3.0, removed in drupal:13.0.0.
     // Replaced by PHP built-in get_error_handler().
     $rectorConfig->ruleWithConfiguration(ErrorCurrentErrorHandlerRector::class, [
@@ -166,6 +175,7 @@ return static function (RectorConfig $rectorConfig): void {
     ]);
 
     // https://www.drupal.org/node/3522513
+    // https://www.drupal.org/node/3511287 (change record)
     // Database::convertDbUrlToConnectionInfo($url, $root, ...) deprecated in drupal:11.3.0, removed in drupal:12.0.0.
     // The $root parameter is obsolete; remove it (shift any $include_test_drivers arg left).
     $rectorConfig->rule(RemoveRootFromConvertDbUrlRector::class);
