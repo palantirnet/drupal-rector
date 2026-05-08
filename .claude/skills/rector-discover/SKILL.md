@@ -23,7 +23,7 @@ The canonical path is `repos/drupal-digests` (inside ddev: `/var/www/html/repos/
 Check whether `docs/rector-index.yml` exists and is less than 24 hours old:
 
 ```bash
-[ -d repos/drupal-digests ] || bash scripts/setup-repos.sh
+[ -d repos/drupal-digests ] || bash .claude/scripts/setup-repos.sh
 ```
 
 ### 2. Ensure the index is fresh
@@ -32,7 +32,7 @@ Check whether `docs/rector-index.yml` exists and is less than 24 hours old:
 INDEX="docs/rector-index.yml"
 if [ ! -f "$INDEX" ] || [ "$(find "$INDEX" -mmin +1440 2>/dev/null)" ]; then
   echo "Regenerating rector-index.yml…"
-  php scripts/generate-rector-index.php --digests-path=repos/drupal-digests
+  php .claude/scripts/generate-rector-index.php --digests-path=repos/drupal-digests
 else
   echo "Using existing index ($(date -r "$INDEX" '+%Y-%m-%d %H:%M'))"
 fi
@@ -91,7 +91,7 @@ Next suggested: /rector-implement repos/drupal-digests/rector/rules/<digest_file
 
 To force a full regeneration:
 ```bash
-php scripts/generate-rector-index.php
+php .claude/scripts/generate-rector-index.php
 ```
 
 The generated file is gitignored — it's always derived from source.

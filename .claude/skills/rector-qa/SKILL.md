@@ -41,11 +41,11 @@ Read the rector class, test class, all fixture files, and the test config.
 
 **Output:** `Pass 1: [SAFE|AT-RISK|EXEMPT] — <reason>`
 
-**If AT-RISK:** Propose the fix (see `rector-type-check-review` skill for exact fix pattern). Apply it and update `docs/rector-type-specificity-checklist.md`:
+**If AT-RISK:** Propose the fix (see `rector-type-check-review` skill for exact fix pattern). Apply it and update `.claude/skills/prompts/rector-type-specificity-checklist.md`:
 
 ```bash
 # Find the row for this rector in the checklist
-grep -n "<ClassName>" docs/rector-type-specificity-checklist.md
+grep -n "<ClassName>" .claude/skills/prompts/rector-type-specificity-checklist.md
 ```
 
 Update the verdict column from `⚠️ AT-RISK` to `✅ SAFE` after fixing.
@@ -85,7 +85,7 @@ Update the verdict column from `⚠️ AT-RISK` to `✅ SAFE` after fixing.
 
 ## Pass 3 — BC Decision Audit
 
-**Goal:** The base class (`AbstractRector` vs `AbstractDrupalCoreRector`) must match the Step 4 classification from `docs/digest-to-rector-prompt.md`.
+**Goal:** The base class (`AbstractRector` vs `AbstractDrupalCoreRector`) must match the Step 4 classification from `.claude/skills/prompts/digest-to-rector-prompt.md`.
 
 **Steps:**
 
@@ -126,7 +126,7 @@ Update the verdict column from `⚠️ AT-RISK` to `✅ SAFE` after fixing.
 2. Determine the issue number and change record number:
    - The digest filename contains the **issue number** (last numeric group).
    - `~/projects/drupal-digests/issues/drupal-core/<issue-number>.md` contains the change record link if known.
-   - Alternatively, search `repos/drupal-core` for the deprecated function/method (run `bash scripts/setup-repos.sh` if absent):
+   - Alternatively, search `repos/drupal-core` for the deprecated function/method (run `bash .claude/scripts/setup-repos.sh` if absent):
      ```bash
      grep -rn "@deprecated in drupal:" repos/drupal-core/core --include="*.php" | grep "<methodName>" | head -5
      ```

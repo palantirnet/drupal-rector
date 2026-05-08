@@ -94,14 +94,14 @@ Update docs/contrib-module-search.md with findings.
 
 Check whether the integration test setup exists:
 ```bash
-ls scripts/setup-rector-test.sh scripts/drupal-rector-test/ 2>/dev/null
+ls .claude/skills/rector-live-test/setup-rector-test.sh .claude/skills/rector-live-test/drupal-rector-test/ 2>/dev/null
 ```
 
 **If the setup exists:**
 
-Add target modules to `scripts/drupal-rector-test/composer.json`, then run:
+Add target modules to `.claude/skills/rector-live-test/drupal-rector-test/composer.json`, then run:
 ```bash
-bash scripts/setup-rector-test.sh --rector <ClassName> --no-cache
+bash .claude/skills/rector-live-test/setup-rector-test.sh --rector <ClassName> --no-cache
 ```
 
 Always pass `--no-cache` to prevent stale rector results from a prior run.
@@ -112,7 +112,7 @@ Parse the output for:
 
 **If the setup does not exist:**
 
-Report that integration testing requires `scripts/setup-rector-test.sh` and provide manual instructions:
+Report that integration testing requires `.claude/skills/rector-live-test/setup-rector-test.sh` and provide manual instructions:
 
 1. Clone a D11-compatible module into a Drupal 11 site
 2. Run: `ddev exec vendor/bin/rector process <module-path> --config drupal-rector.php --no-cache`

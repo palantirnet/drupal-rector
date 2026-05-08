@@ -3,19 +3,18 @@
 # rectors, wires in the local drupal-rector branch, and runs rector so you can
 # review the resulting diff.
 #
-# Usage: ./scripts/setup-rector-test.sh [project-name]
+# Usage: bash .claude/skills/rector-live-test/setup-rector-test.sh [project-name]
 #   Default project name: drupal-rector-test
-#   Default location:     ../../<project-name>  (sibling of the rector repo)
+#   Default location:     <parent-of-repo>/<project-name>  (sibling of the rector repo)
 
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-RECTOR_REPO="$(cd "$SCRIPT_DIR/.." && pwd)"
+RECTOR_REPO="$(cd "$SCRIPT_DIR/../../.." && pwd)"
 RECTOR_BRANCH="feature/digest-rectors"
 
 PROJECT_NAME="${1:-drupal-rector-test}"
-# Two levels up from this script (scripts/ → repo-root → parent) then the project name.
-TARGET_DIR="$(cd "$SCRIPT_DIR/../.." && pwd)/$PROJECT_NAME"
+TARGET_DIR="$(cd "$RECTOR_REPO/.." && pwd)/$PROJECT_NAME"
 
 echo "==> Project directory : $TARGET_DIR"
 echo "==> drupal-rector repo : $RECTOR_REPO ($RECTOR_BRANCH)"

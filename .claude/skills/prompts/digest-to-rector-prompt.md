@@ -7,7 +7,7 @@ fully drupal-rector–compliant implementation with tests.
 **Usage:** Start a Claude Code session in the drupal-rector repository, then say:
 
 > Convert the drupal-digests rule at `[path-to-rule-file]` following the prompt in
-> `docs/digest-to-rector-prompt.md`.
+> `.claude/skills/prompts/digest-to-rector-prompt.md`.
 
 The agent will read both this document and the target rule, then produce all output files.
 

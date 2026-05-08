@@ -6,7 +6,7 @@ declare(strict_types=1);
 /**
  * Generates docs/rector-index.yml — single source of truth for D11 rector status.
  *
- * Usage: php scripts/generate-rector-index.php [--digests-path=PATH]
+ * Usage: php .claude/scripts/generate-rector-index.php [--digests-path=PATH]
  *
  * Options:
  *   --digests-path=PATH  Path to drupal-digests repo (default: ~/projects/drupal-digests)
@@ -29,7 +29,8 @@ main($argv);
 
 function main(array $argv): void
 {
-    $digestsPath = dirname(__DIR__) . '/repos/drupal-digests';
+    $repoRoot = dirname(dirname(__DIR__));
+    $digestsPath = $repoRoot . '/repos/drupal-digests';
 
     foreach (array_slice($argv, 1) as $arg) {
         if ($arg === '--help') {
@@ -40,8 +41,6 @@ function main(array $argv): void
             $digestsPath = expandPath(substr($arg, 15));
         }
     }
-
-    $repoRoot = dirname(__DIR__);
     $rulesDir = $digestsPath . '/rector/rules';
 
     if (!is_dir($rulesDir)) {

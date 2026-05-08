@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Clones or updates the external repos that drupal-rector skills depend on.
 #
-# Usage: bash scripts/setup-repos.sh [--update]
+# Usage: bash .claude/scripts/setup-repos.sh [--update]
 #
 # Without --update: skips repos that are already cloned.
 # With --update:    runs `git fetch --depth=1` on existing clones.
@@ -12,7 +12,7 @@
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-REPOS_DIR="$SCRIPT_DIR/../repos"
+REPOS_DIR="$(cd "$SCRIPT_DIR/../.." && pwd)/repos"
 UPDATE=false
 
 for arg in "$@"; do

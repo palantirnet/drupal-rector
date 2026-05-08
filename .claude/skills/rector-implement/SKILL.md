@@ -1,6 +1,6 @@
 ---
 name: rector-implement
-description: Converts a single drupal-digests rule to a drupal-rector-compliant implementation. Follows docs/digest-to-rector-prompt.md steps 1–14 and adds quality gates for type guards (QG-A) and version-gating tests (QG-B). Pass the path to the digests rule file as argument.
+description: Converts a single drupal-digests rule to a drupal-rector-compliant implementation. Follows .claude/skills/prompts/digest-to-rector-prompt.md steps 1–14 and adds quality gates for type guards (QG-A) and version-gating tests (QG-B). Pass the path to the digests rule file as argument.
 argument-hint: "~/projects/drupal-digests/rector/rules/<rule-filename>.php"
 allowed-tools: Read, Write, Edit, Bash, Glob
 ---
@@ -16,13 +16,13 @@ Convert a single drupal-digests rule into a drupal-rector–compliant implementa
 repos/drupal-digests/rector/rules/replace-deprecated-sessionmanager-delete-with-3577376.php
 ```
 
-If `repos/drupal-digests` does not exist yet, run `bash scripts/setup-repos.sh` first.
+If `repos/drupal-digests` does not exist yet, run `bash .claude/scripts/setup-repos.sh` first.
 
 ## Steps
 
 ### Steps 1–14: Follow the canonical conversion workflow
 
-Read `docs/digest-to-rector-prompt.md` completely and execute steps 1–14 as written there.
+Read `.claude/skills/prompts/digest-to-rector-prompt.md` completely and execute steps 1–14 as written there.
 
 The canonical prompt covers:
 - Step 1: Confirm input and extract class name, node types, refactor logic, code samples, issue number
@@ -41,7 +41,7 @@ The canonical prompt covers:
 - Step 13: Run the test (`vendor/bin/phpunit tests/src/Drupal11/Rector/Deprecation/[ClassName]/`)
 - Step 14: Commit
 
-**Do not skip or abbreviate any step.** The `docs/digest-to-rector-prompt.md` prompt is authoritative.
+**Do not skip or abbreviate any step.** The `.claude/skills/prompts/digest-to-rector-prompt.md` prompt is authoritative.
 
 ---
 
@@ -51,7 +51,7 @@ For every `MethodCall`, `NullsafeMethodCall`, or `PropertyFetch` node the rector
 
 1. Is an `isObjectType()` guard present that constrains the owning class/interface?
 2. If missing:
-   a. Find the owning interface/class in the Drupal core source (`repos/drupal-core`). If absent, run `bash scripts/setup-repos.sh` first.
+   a. Find the owning interface/class in the Drupal core source (`repos/drupal-core`). If absent, run `bash .claude/scripts/setup-repos.sh` first.
       ```bash
       grep -rn "function <methodName>\|property \$<propertyName>" repos/drupal-core/core --include="*.php" -l | head -5
       ```
@@ -124,7 +124,7 @@ Apply only if the rector extends `AbstractDrupalCoreRector`.
 
 ```bash
 if [ -f docs/rector-index.yml ]; then
-  php scripts/generate-rector-index.php
+  php .claude/scripts/generate-rector-index.php
 fi
 ```
 
@@ -134,7 +134,7 @@ This marks the newly implemented rule as `implemented` in the index.
 
 ## Pre-flight Checklist
 
-Before declaring the implementation complete, verify all items from `docs/digest-to-rector-prompt.md`'s final checklist, plus:
+Before declaring the implementation complete, verify all items from `.claude/skills/prompts/digest-to-rector-prompt.md`'s final checklist, plus:
 
 - [ ] QG-A: `isObjectType()` guard present for all MethodCall/PropertyFetch nodes (or explicitly not needed)
 - [ ] QG-A: `no_change_unrelated.php.inc` fixture exists if a type guard was added
@@ -145,4 +145,4 @@ Before declaring the implementation complete, verify all items from `docs/digest
 
 ## Quick Reference: Phase 1 (config-only) path
 
-If Step 4b determines a generic rector handles this rule, follow the "config-only" path in `docs/digest-to-rector-prompt.md` Step 4b instead of generating a custom class. No custom PHP class is written — only a config entry and fixture are added.
+If Step 4b determines a generic rector handles this rule, follow the "config-only" path in `.claude/skills/prompts/digest-to-rector-prompt.md` Step 4b instead of generating a custom class. No custom PHP class is written — only a config entry and fixture are added.
