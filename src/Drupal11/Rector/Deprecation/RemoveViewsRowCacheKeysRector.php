@@ -41,11 +41,13 @@ final class RemoveViewsRowCacheKeysRector extends AbstractRector
 
     /**
      * @param array<Node> $nodes
+     *
      * @return array<Node>
      */
     public function beforeTraversal(array $nodes): array
     {
         $this->removedVarNames = [];
+
         return $nodes;
     }
 
@@ -83,6 +85,7 @@ final class RemoveViewsRowCacheKeysRector extends AbstractRector
         }
 
         assert($node instanceof Array_);
+
         return $this->refactorArray($node);
     }
 
