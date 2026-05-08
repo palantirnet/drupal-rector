@@ -57,11 +57,14 @@ return static function (RectorConfig $rectorConfig): void {
     // twig_extension() is handled by ReplaceTwigExtensionRector below.
     $rectorConfig->ruleWithConfiguration(FunctionToServiceRector::class, [
         new FunctionToServiceConfiguration('11.3.0', 'node_mass_update', 'Drupal\node\NodeBulkUpdate', 'process'),
-        // https://www.drupal.org/node/3571382
-        // template_preprocess_layout() deprecated in drupal:11.3.0, removed in drupal:12.0.0.
-        // Replaced by \Drupal\layout_discovery\Hook\LayoutDiscoveryThemeHooks::preprocessLayout().
-        new FunctionToServiceConfiguration('11.3.0', 'template_preprocess_layout', 'Drupal\layout_discovery\Hook\LayoutDiscoveryThemeHooks', 'preprocessLayout'),
         new FunctionToServiceConfiguration('11.3.0', 'twig_render_template', 'Drupal\Core\Template\TwigThemeEngine', 'renderTemplate'),
+    ]);
+
+    // https://www.drupal.org/node/3571382
+    // template_preprocess_layout() deprecated in drupal:11.3.0, removed in drupal:12.0.0.
+    // Replaced by \Drupal\layout_discovery\Hook\LayoutDiscoveryThemeHooks::preprocessLayout().
+    $rectorConfig->ruleWithConfiguration(FunctionToServiceRector::class, [
+        new FunctionToServiceConfiguration('11.3.0', 'template_preprocess_layout', 'Drupal\layout_discovery\Hook\LayoutDiscoveryThemeHooks', 'preprocessLayout'),
     ]);
 
     // https://www.drupal.org/node/1685492
