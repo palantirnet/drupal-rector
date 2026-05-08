@@ -1,5 +1,5 @@
 ---
-Analyze the rector test log at ~/projects/drupal-rector-test2/rector-test.log. The user wants to know:
+Analyze the rector test log generated after running the rector-live-test. The user wants to know:
 1. Which rectors might not be working correctly (failures, errors, unexpected behavior)
 2. Which rectors should trigger but don't (missed transformations)
 

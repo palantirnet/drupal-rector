@@ -80,8 +80,6 @@ ddev composer require \
 
 # ---------------------------------------------------------------------------
 # 4. Require contrib modules (≥2 per rector where possible)
-#    See docs/contrib-modules-d11.md for the full coverage mapping.
-#    Note: 8 rectors have no testable D11 contrib module (see comments in test script).
 # ---------------------------------------------------------------------------
 echo ""
 echo "==> Requiring contrib modules…"
@@ -460,16 +458,4 @@ echo ""
 echo "  # Log is written to: $TARGET_DIR/rector-test.log"
 echo ""
 echo "  Site: run 'ddev launch'  |  Admin: admin / admin"
-echo ""
-echo "  Coverage notes (see docs/contrib-modules-d11.md):"
-echo "  * 18 rectors skipped — pattern exhausted or no D11 contrib usage found"
-echo "    (ErrorCurrentErrorHandler, RemoveAutomatedCronSubmitHandler,"
-echo "     RemoveLinkWidgetValidateTitleElement, RemoveModuleHandlerDeprecatedMethods,"
-echo "     RemoveSetUriCallback, RemoveStateCacheSetting,"
-echo "     RemoveTwigNodeTransTagArgument, RenameStopProceduralHookScan,"
-echo "     ReplaceAlphadecimalToIntNull, ReplaceCommentUri, ReplaceEditorLoad,"
-echo "     ReplaceEntityReferenceRecursiveLimit, ReplaceLocaleConfigBatchFunctions,"
-echo "     ReplaceNodeAccessViewAllNodes, ReplaceRequestTimeConstant,"
-echo "     ReplaceSessionWritesWithRequestSession, ReplaceSystemPerformanceGzipKey,"
-echo "     ReplaceUserSessionNameProperty, StatementPrefetchIteratorFetchColumn)"
-echo "  * Core is installed at 11.x-dev (11.4-dev) so all 11.4 version gates are active."
+

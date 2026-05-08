@@ -61,8 +61,6 @@ https://search.tresbien.tech/search?q=-r%3Adrupal+-%3Edelete(&num=0&ctx=0
 
 Parse the fetched page for matching file paths and extract the module/project name from the path prefix.
 
-If fewer than 3 results, also check `docs/contrib-module-search.md` for pre-discovered matches.
-
 **Fallback: Drupal GitLab API blob search**
 
 If `search.tresbien.tech` yields no results or is unavailable:
@@ -87,7 +85,6 @@ If no D11-compatible modules are found, report:
 ```
 No D11-compatible contrib modules found for <RectorName>.
 Try manually: https://git.drupalcode.org/search?group_id=2&scope=blobs&search=<query>
-Update docs/contrib-module-search.md with findings.
 ```
 
 ### 4. Run the rector (if setup script exists)
@@ -128,7 +125,7 @@ For each tested module, report:
 
 ### 6. Diagnose zero-match results
 
-If a module was found but 0 files were changed, investigate using `docs/no-match-investigation.md` (if it exists). Common causes:
+Common causes:
 
 | Cause | Diagnosis | Fix |
 |-------|-----------|-----|
@@ -138,11 +135,3 @@ If a module was found but 0 files were changed, investigate using `docs/no-match
 | Rector cache | Old cache silently skips files | Already handled by `--no-cache` |
 | getNodeTypes mismatch | The node type returned by the rector doesn't match the actual AST node | Read the digest rule and the actual module code to compare |
 
-### 7. Update contrib search doc
-
-After running, update `docs/contrib-module-search.md` with the modules found (or confirmed absent):
-```
-### <RectorClassName>
-- **Search:** `<search_term>`
-- **Modules found:** <module1>, <module2> or —
-```

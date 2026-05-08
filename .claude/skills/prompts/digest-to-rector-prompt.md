@@ -11,9 +11,6 @@ fully drupal-rector–compliant implementation with tests.
 
 The agent will read both this document and the target rule, then produce all output files.
 
-**Reference:** See `docs/digest-to-rector-mapping.md` for the full pattern mapping this prompt
-is based on.
-
 ---
 
 ## Prerequisites
@@ -107,6 +104,17 @@ Answer these questions using the information gathered:
 **Decision:**
 - BC wrapping applies → Use `AbstractDrupalCoreRector` + `DrupalIntroducedVersionConfiguration`
 - BC wrapping does not apply → Use `AbstractRector`
+
+**Quick reference:**
+
+| Input node | Output node | Introduced | Base class | BC wrapping |
+|---|---|---|---|---|
+| `FuncCall` | `StaticCall` | >= 10.1.0 | `AbstractDrupalCoreRector` | Yes |
+| `FuncCall` | `MethodCall` | >= 10.1.0 | `AbstractDrupalCoreRector` | Yes |
+| `FuncCall` | `StaticCall` | < 10.1.0 | `AbstractRector` | No |
+| `ClassConstFetch` | `ClassConstFetch` | any | `AbstractRector` | No |
+| `New_` (arg modification) | `New_` | any | `AbstractRector` | No |
+| `Class_` (structural) | `Class_` | any | `AbstractRector` | No |
 
 ---
 
@@ -330,9 +338,12 @@ CODE_AFTER,
 - Remove `final` keyword — drupal-rector classes are not final.
 - Remove `use Rector\Config\RectorConfig` from the rule class (it belongs only in config files).
 - Keep all private constants, arrays, and helper methods unchanged.
-- For multi-node-type rules (two or more different node types in `getNodeTypes()`), check if any
-  combination requires BC. If only some transformations need BC and others don't, split into two
-  separate rector classes. See `docs/digest-to-rector-mapping.md` section 8.
+- For multi-node-type rules (two or more different node types in `getNodeTypes()`):
+  - **If both transformations are simple (no BC):** Keep them in one class, use `AbstractRector`.
+    Both node types go in `getNodeTypes()` and are handled by type-checking inside `refactor()`.
+  - **If one needs BC and the other doesn't:** Split into two separate rector classes.
+    `AbstractDrupalCoreRector::refactor()` assumes all transformations share the same BC
+    configuration, so mixing is not possible in a single class.
 
 ---
 
@@ -442,6 +453,20 @@ return static function (RectorConfig $rectorConfig): void {
 
 **Note:** Set the third argument of `DeprecationBase::addClass()` to `true` only if the rule uses
 `AddCommentService` to insert human-review notices. This is uncommon — most rules use `false`.
+
+**When to use `AddCommentService`:** Only when the transformation is not fully automatic and
+requires developer judgment (e.g., the digests rule contains a `// TODO` comment in the output,
+or the replacement differs depending on context). Deterministic one-to-one replacements never
+need it.
+
+If used, inject it in the constructor and call it in `refactor()`/`refactorWithConfiguration()`:
+
+```php
+public function __construct(private readonly AddCommentService $commentService) {}
+
+// Inside refactor():
+$this->commentService->addDrupalRectorComment($node, 'Please verify this change manually.');
+```
 
 ---
 
