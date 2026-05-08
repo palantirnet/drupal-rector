@@ -11,14 +11,26 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 RECTOR_REPO="$(cd "$SCRIPT_DIR/../../.." && pwd)"
-RECTOR_BRANCH="feature/digest-rectors"
+RECTOR_BRANCH="$(git -C "$RECTOR_REPO" rev-parse --abbrev-ref HEAD)"
 
-PROJECT_NAME="${1:-drupal-rector-test}"
-TARGET_DIR="$(cd "$RECTOR_REPO/.." && pwd)/$PROJECT_NAME"
+TARGET_DIR="${RECTOR_TEST_DIR:-$HOME/projects/drupal-rector-test}"
+PROJECT_NAME="$(basename "$TARGET_DIR")"
 
 echo "==> Project directory : $TARGET_DIR"
 echo "==> drupal-rector repo : $RECTOR_REPO ($RECTOR_BRANCH)"
 echo ""
+
+# Idempotency: skip full setup if the DDEV project already exists.
+if [ -d "$TARGET_DIR/.ddev" ]; then
+    echo "==> Project already exists — starting DDEV if needed."
+    cd "$TARGET_DIR"
+    ddev start -y
+    echo ""
+    echo "  To run a single rector:"
+    echo "  ddev exec -d /var/www/html vendor/bin/rector process web/modules/contrib/<module> \\"
+    echo "    --only=\"DrupalRector\\\\Drupal11\\\\Rector\\\\Deprecation\\\\<ClassName>\" --no-cache"
+    exit 0
+fi
 
 # ---------------------------------------------------------------------------
 # 1. Create project directory and configure DDEV

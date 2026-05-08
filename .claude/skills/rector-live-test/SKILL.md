@@ -87,33 +87,47 @@ No D11-compatible contrib modules found for <RectorName>.
 Try manually: https://git.drupalcode.org/search?group_id=2&scope=blobs&search=<query>
 ```
 
-### 4. Run the rector (if setup script exists)
+### 4. Run the rector
 
-Check whether the integration test setup exists:
+**Check if the DDEV test project exists:**
 ```bash
-ls .claude/skills/rector-live-test/setup-rector-test.sh .claude/skills/rector-live-test/drupal-rector-test/ 2>/dev/null
+ls ~/projects/drupal-rector-test/.ddev 2>/dev/null && echo "exists" || echo "not found"
 ```
 
-**If the setup exists:**
-
-Add target modules to `.claude/skills/rector-live-test/drupal-rector-test/composer.json`, then run:
+**If not found**, run the one-time setup (takes ~10 minutes):
 ```bash
-bash .claude/skills/rector-live-test/setup-rector-test.sh --rector <ClassName> --no-cache
+bash .claude/skills/rector-live-test/setup-rector-test.sh
+```
+This creates a Drupal 11 site at `~/projects/drupal-rector-test` with a broad set of
+contrib modules pre-installed. Running the script again is safe — it detects the existing
+project and just ensures DDEV is started.
+
+**If a module found in step 2 is not pre-installed**, add it before running:
+```bash
+cd ~/projects/drupal-rector-test
+ddev composer require drupal/<module> --no-interaction
 ```
 
-Always pass `--no-cache` to prevent stale rector results from a prior run.
+**Resolve the FQCN** based on where the rector source lives:
+- `src/Drupal11/…` → `DrupalRector\Drupal11\Rector\Deprecation\<ClassName>`
+- `src/Drupal10/…` → `DrupalRector\Drupal10\Rector\Deprecation\<ClassName>`
+- `src/Rector/…`   → `DrupalRector\Rector\Deprecation\<ClassName>`
 
-Parse the output for:
-- `X file(s) changed` — success, the rector transformed code
-- `0 files changed` or no output — investigate (see below)
+**Run rector** against the found modules:
+```bash
+cd ~/projects/drupal-rector-test
+ddev exec -d /var/www/html \
+  vendor/bin/rector process \
+  web/modules/contrib/<module1> web/modules/contrib/<module2> \
+  --only="DrupalRector\\Drupal11\\Rector\\Deprecation\\<ClassName>" \
+  --no-cache 2>&1
+```
 
-**If the setup does not exist:**
-
-Report that integration testing requires `.claude/skills/rector-live-test/setup-rector-test.sh` and provide manual instructions:
-
-1. Clone a D11-compatible module into a Drupal 11 site
-2. Run: `ddev exec vendor/bin/rector process <module-path> --config drupal-rector.php --no-cache`
-3. Check the diff for expected transformations
+**Inspect the diff**, then reset for the next run:
+```bash
+git -C ~/projects/drupal-rector-test diff web/modules/contrib/
+git -C ~/projects/drupal-rector-test checkout -- web/modules/contrib/
+```
 
 ### 5. Report results
 
