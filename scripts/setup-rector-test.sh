@@ -102,6 +102,7 @@ ddev composer require --no-update \
   "drupal/smart_migrate_cli:*" \
   "drupal/metatag:*" \
   "drupal/external_entity:*" \
+  "drupal/ckeditor5_premium_features:*" \
   "drupal/reassign_user_content:*"
 
 # Batch 2 — single-rector gap-fillers
@@ -143,6 +144,16 @@ ddev composer require --no-update \
 echo ""
 echo "==> Running composer update to resolve all requirements…"
 ddev composer update --no-interaction --with-all-dependencies
+
+# Upgrade to 11.x-dev so the Drupal 11.4 version gate in AbstractDrupalCoreRector
+# is satisfied, enabling rectors like RemoveTrustDataCallRector and
+# ReplaceSessionManagerDeleteRector to produce diffs.
+echo ""
+echo "==> Upgrading Drupal core to 11.x-dev (satisfies 11.4 version gates)…"
+ddev composer require \
+  'drupal/core-recommended:11.x-dev' \
+  'drupal/core-composer-scaffold:11.x-dev' \
+  --with-all-dependencies --no-interaction
 
 # ---------------------------------------------------------------------------
 # 5. Initialise git and commit the installed baseline
@@ -213,7 +224,16 @@ cd /var/www/html
 
 LOG=/var/www/html/rector-test.log
 CONTRIB=web/modules/contrib
+STASH=/tmp/rector_mod_stash
 FILTER="${1:-}"
+
+# Restore any modules left in the stash from a previous crashed run
+if [ -d "$STASH" ]; then
+    for _stashed in "$STASH"/*/; do
+        [ -d "$_stashed" ] && mv "$_stashed" "$CONTRIB/"
+    done
+    rmdir "$STASH" 2>/dev/null || true
+fi
 
 run_test() {
     local rector="$1"
@@ -253,13 +273,41 @@ run_test() {
     printf "  Modules: %s\n" "${paths[*]}" | tee -a "$LOG"
     echo "" | tee -a "$LOG"
 
-    timeout 30 vendor/bin/rector process "${paths[@]}" --only="$fqcn" --dry-run --clear-cache 2>&1 | tee -a "$LOG" || true
+    # Stash all modules not needed for this rector. PHPStan builds a type graph
+    # from every file it can reach via the autoloader; with 40+ contrib modules
+    # present it hits an infinite type-expansion loop on decorator patterns in
+    # group/. Isolating to only the required modules prevents this.
+    local hidden=()
+    mkdir -p "$STASH"
+    local modname needed m
+    for mod_dir in "$CONTRIB"/*/; do
+        [ -d "$mod_dir" ] || continue
+        modname="${mod_dir%/}"
+        modname="${modname##*/}"
+        needed=false
+        for m in "${mods[@]}"; do
+            [ "$m" = "$modname" ] && needed=true && break
+        done
+        if [ "$needed" = false ]; then
+            mv "$mod_dir" "$STASH/"
+            hidden+=("$modname")
+        fi
+    done
+
+    rm -rf /tmp/rector_cached_files
+    timeout 60 vendor/bin/rector process "${paths[@]}" --only="$fqcn" --dry-run 2>&1 | tee -a "$LOG" || true
 
     echo "" | tee -a "$LOG"
     git diff "${paths[@]}" | tee -a "$LOG" || true
 
     # Reset files so the next rector starts clean
     git checkout -- "${paths[@]}" 2>/dev/null || true
+
+    # Restore stashed modules
+    for modname in "${hidden[@]}"; do
+        mv "$STASH/$modname" "$CONTRIB/"
+    done
+    rmdir "$STASH" 2>/dev/null || true
 }
 
 echo "Rector test run — $(date)" | tee "$LOG"
@@ -312,7 +360,7 @@ run_test RemoveStateCacheSettingRector
     # No contrib usage: $settings['state_cache'] pattern not found in any D11 contrib module; likely already gone from codebase
 
 run_test RemoveTrustDataCallRector \
-    views_dependent_filters group
+    views_dependent_filters
 
 run_test RemoveTwigNodeTransTagArgumentRector
     # No contrib usage: TwigNodeTrans 6-arg constructor removed from core before D11 contrib caught up (version drift)
@@ -341,6 +389,7 @@ run_test ReplaceDateTimeRangeConstantsRector \
     optional_end_date scheduler_field
 
 run_test ReplaceEditorLoadRector
+    ckeditor5_premium_features
     # No contrib usage: editor_load() deprecated D11; not called in any D11 contrib module found
 
 run_test ReplaceEntityOriginalPropertyRector \
@@ -381,11 +430,8 @@ run_test ReplacePdoFetchConstantsRector \
 run_test ReplaceRecipeRunnerInstallModuleRector \
     recipe_installer_kit
 
-run_test ReplaceSessionManagerDeleteRector
-    # role_expire confirmed caller at RoleExpireApiService.php:168 ($this->sessionManager->delete($uid))
-    # but AbstractDrupalCoreRector version gate requires Drupal >= 11.4.0 — SessionManager::delete()
-    # was deprecated in 11.4.0 which is not yet released (latest stable: 11.3.x).
-    # Re-enable with "role_expire" once the test site runs Drupal 11.4.0+.
+run_test ReplaceSessionManagerDeleteRector \
+    role_expire
 
 run_test ReplaceSessionWritesWithRequestSessionRector
     # No contrib usage: direct $_SESSION writes not present in any D11-compatible contrib module found
@@ -466,5 +512,4 @@ echo "     ReplaceEntityReferenceRecursiveLimit, ReplaceLocaleConfigBatchFunctio
 echo "     ReplaceNodeAccessViewAllNodes, ReplaceRequestTimeConstant,"
 echo "     ReplaceSessionWritesWithRequestSession, ReplaceSystemPerformanceGzipKey,"
 echo "     ReplaceUserSessionNameProperty, StatementPrefetchIteratorFetchColumn)"
-echo "  * 1 rector skipped — version gate requires Drupal >= 11.4.0 (not yet released):"
-echo "    ReplaceSessionManagerDeleteRector (role_expire is valid test module; re-enable after upgrade)"
+echo "  * Core is installed at 11.x-dev (11.4-dev) so all 11.4 version gates are active."
