@@ -11,7 +11,8 @@ use DrupalRector\Drupal11\Rector\Deprecation\ReplaceDateTimeRangeConstantsRector
 use DrupalRector\Drupal11\Rector\Deprecation\ReplaceEditorLoadRector;
 use DrupalRector\Drupal11\Rector\Deprecation\ReplaceEntityOriginalPropertyRector;
 use DrupalRector\Drupal11\Rector\Deprecation\ReplaceFieldgroupToFieldsetRector;
-use DrupalRector\Drupal11\Rector\Deprecation\ReplaceFileGetContentHeadersRector;
+use DrupalRector\Rector\Deprecation\FunctionToFirstArgMethodRector;
+use DrupalRector\Rector\ValueObject\FunctionToFirstArgMethodConfiguration;
 use DrupalRector\Drupal11\Rector\Deprecation\ReplacePdoFetchConstantsRector;
 use DrupalRector\Drupal11\Rector\Deprecation\ReplaceSessionWritesWithRequestSessionRector;
 use DrupalRector\Drupal11\Rector\Deprecation\StatementPrefetchIteratorFetchColumnRector;
@@ -149,8 +150,8 @@ return static function (RectorConfig $rectorConfig): void {
     // https://www.drupal.org/node/3494126
     // file_get_content_headers($file) deprecated in drupal:11.2.0, removed in drupal:12.0.0.
     // Replaced by $file->getDownloadHeaders().
-    $rectorConfig->ruleWithConfiguration(ReplaceFileGetContentHeadersRector::class, [
-        new DrupalIntroducedVersionConfiguration('11.2.0'),
+    $rectorConfig->ruleWithConfiguration(FunctionToFirstArgMethodRector::class, [
+        new FunctionToFirstArgMethodConfiguration('11.2.0', 'file_get_content_headers', 'getDownloadHeaders'),
     ]);
 
     // https://www.drupal.org/node/3518527

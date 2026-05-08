@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace DrupalRector\Tests\Drupal11\Rector\Deprecation\ReplaceFileGetContentHeadersRector;
+namespace DrupalRector\Tests\Rector\Deprecation\FunctionToFirstArgMethodRector;
 
 use DrupalRector\Rector\AbstractDrupalCoreRector;
 use Rector\Testing\PHPUnit\AbstractRectorTestCase;
 
-class ReplaceFileGetContentHeadersRectorTest extends AbstractRectorTestCase
+class FunctionToFirstArgMethodRectorTest extends AbstractRectorTestCase
 {
     #[\PHPUnit\Framework\Attributes\DataProvider('provideData')]
     public function testAboveVersion(string $filePath): void

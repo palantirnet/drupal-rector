@@ -8,7 +8,8 @@ use DrupalRector\Drupal11\Rector\Deprecation\LoadAllIncludesRector;
 use DrupalRector\Drupal11\Rector\Deprecation\NodeStorageDeprecatedMethodsRector;
 use DrupalRector\Drupal11\Rector\Deprecation\RemoveRootFromConvertDbUrlRector;
 use DrupalRector\Drupal11\Rector\Deprecation\ReplaceCommentManagerGetCountNewCommentsRector;
-use DrupalRector\Drupal11\Rector\Deprecation\ReplaceCommentUriRector;
+use DrupalRector\Rector\Deprecation\FunctionToFirstArgMethodRector;
+use DrupalRector\Rector\ValueObject\FunctionToFirstArgMethodConfiguration;
 use DrupalRector\Drupal11\Rector\Deprecation\ReplaceNodeAccessViewAllNodesRector;
 use DrupalRector\Drupal11\Rector\Deprecation\ReplaceNodeAddBodyFieldRector;
 use DrupalRector\Drupal11\Rector\Deprecation\ReplaceNodeModuleProceduralFunctionsRector;
@@ -67,8 +68,8 @@ return static function (RectorConfig $rectorConfig): void {
     // https://www.drupal.org/node/2010202
     // comment_uri($comment) deprecated in drupal:11.3.0, removed in drupal:12.0.0.
     // Replaced by $comment->permalink().
-    $rectorConfig->ruleWithConfiguration(ReplaceCommentUriRector::class, [
-        new DrupalIntroducedVersionConfiguration('11.3.0'),
+    $rectorConfig->ruleWithConfiguration(FunctionToFirstArgMethodRector::class, [
+        new FunctionToFirstArgMethodConfiguration('11.3.0', 'comment_uri', 'permalink'),
     ]);
 
     // https://www.drupal.org/node/3038908
