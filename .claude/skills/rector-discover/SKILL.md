@@ -81,6 +81,8 @@ Next suggested: /rector-implement repos/drupal-digests/rector/rules/<digest_file
 | Phase | Description | Generic rector |
 |-------|-------------|----------------|
 | 1a | FuncCall → service call | `FunctionToServiceRector` |
+| 1a | FuncCall → method on first arg (`fn($obj)` → `$obj->method()`) | `FunctionToFirstArgMethodRector` |
+| 1a | Service ID rename (`\Drupal::service('old')` → `\Drupal::service('new')`) | `DrupalServiceRenameRector` |
 | 1b | FuncCall → static call | `FunctionToStaticRector` |
 | 1c | Class constant replacement | `ClassConstantToClassConstantRector` |
 | 2 | MethodCall custom class | custom `AbstractRector` or `AbstractDrupalCoreRector` |

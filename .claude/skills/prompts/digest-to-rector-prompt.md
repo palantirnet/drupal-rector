@@ -131,6 +131,8 @@ preferred path — it avoids creating new classes for patterns that drupal-recto
 | Global function call removed entirely (no replacement) | `FunctionCallRemovalRector` |
 | Global function → static class method | `FunctionToStaticRector` |
 | Global function → `\Drupal::service('…')->method()` | `FunctionToServiceRector` |
+| Global function → method on its first argument (e.g. `fn($obj)` → `$obj->method()`) | `FunctionToFirstArgMethodRector` |
+| `\Drupal::service('old.id')` → `\Drupal::service('new.id')` | `DrupalServiceRenameRector` |
 | Instance method renamed (with receiver type check) | `MethodToMethodWithCheckRector` |
 | Class constant → different class constant | `ClassConstantToClassConstantRector` |
 | Global constant → class constant | `ConstantToClassConstantRector` |
@@ -180,6 +182,14 @@ new ClassConstantToClassConstantConfiguration('[OldClass\\FQCN]', '[OLD_CONST]',
 
 // ConstantToClassConstantRector — replaces bare global constant (ConstFetch) with class constant
 new ConstantToClassConfiguration('[GLOBAL_CONSTANT_NAME]', '[TargetClass\\FQCN]', '[CONST_NAME]'),
+// no introducedVersion — applies unconditionally; no BC wrapping
+
+// FunctionToFirstArgMethodRector — fn($obj) → $obj->method(); first arg must be the receiver
+new FunctionToFirstArgMethodConfiguration('[deprecatedFunctionName]', '[methodName]'),
+// no introducedVersion — applies unconditionally; no BC wrapping
+
+// DrupalServiceRenameRector — \Drupal::service('old.id') → \Drupal::service('new.id')
+new DrupalServiceRenameConfiguration('[deprecated.service.id]', '[new.service.id]'),
 // no introducedVersion — applies unconditionally; no BC wrapping
 
 // RenameClassRector — pass an associative array directly, not a configuration object
