@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use DrupalRector\Drupal11\Rector\Deprecation\DeprecatedFilterFunctionsRector;
 use DrupalRector\Drupal11\Rector\Deprecation\RemoveAutomatedCronSubmitHandlerRector;
 use DrupalRector\Drupal11\Rector\Deprecation\RemoveCacheExpireOverrideRector;
 use DrupalRector\Drupal11\Rector\Deprecation\RemoveConfigSaveTrustedDataArgRector;
@@ -34,6 +35,14 @@ return static function (RectorConfig $rectorConfig): void {
     // Views::pluginManager() and Views::handlerManager() deprecated in drupal:11.4.0, removed in drupal:13.0.0.
     // Replaced by \Drupal::service('plugin.manager.views.*') or views.plugin_managers service.
     $rectorConfig->ruleWithConfiguration(ViewsPluginHandlerManagerRector::class, [
+        new DrupalIntroducedVersionConfiguration('11.4.0'),
+    ]);
+
+    // https://www.drupal.org/node/3226806
+    // _filter_autop(), _filter_html_escape(), and _filter_html_image_secure_process()
+    // deprecated in drupal:11.4.0, removed in drupal:13.0.0.
+    // Replaced by plugin.manager.filter createInstance() chain.
+    $rectorConfig->ruleWithConfiguration(DeprecatedFilterFunctionsRector::class, [
         new DrupalIntroducedVersionConfiguration('11.4.0'),
     ]);
 
