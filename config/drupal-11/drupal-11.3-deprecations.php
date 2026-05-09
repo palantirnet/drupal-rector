@@ -74,7 +74,9 @@ return static function (RectorConfig $rectorConfig): void {
     // https://www.drupal.org/node/1685492
     // twig_extension() deprecated in drupal:11.3.0, removed in drupal:12.0.0.
     // Replaced by the '.html.twig' string literal.
-    $rectorConfig->rule(ReplaceTwigExtensionRector::class);
+    $rectorConfig->ruleWithConfiguration(ReplaceTwigExtensionRector::class, [
+        new DrupalIntroducedVersionConfiguration('11.3.0'),
+    ]);
     $rectorConfig->ruleWithConfiguration(ReplaceNodeModuleProceduralFunctionsRector::class, [
         new DrupalIntroducedVersionConfiguration('11.3.0'),
     ]);
@@ -144,7 +146,9 @@ return static function (RectorConfig $rectorConfig): void {
     // https://www.drupal.org/node/3534091 (change record)
     // 'file_managed_file_submit' string callback deprecated in drupal:11.3.0, removed in drupal:12.0.0.
     // Replaced by [\Drupal\file\Element\ManagedFile::class, 'submit'] array callable.
-    $rectorConfig->rule(FileManagedFileSubmitRector::class);
+    $rectorConfig->ruleWithConfiguration(FileManagedFileSubmitRector::class, [
+        new DrupalIntroducedVersionConfiguration('11.3.0'),
+    ]);
 
     // https://www.drupal.org/node/3495600
     // JSONAPI_FILTER_AMONG_* global constants deprecated in drupal:11.3.0, removed in drupal:13.0.0.
@@ -161,7 +165,9 @@ return static function (RectorConfig $rectorConfig): void {
     // DRUPAL_DISABLED/OPTIONAL/REQUIRED constants (and integers 0/1/2) in setPreviewMode()
     // deprecated in drupal:11.3.0, removed in drupal:13.0.0.
     // Replaced by NodePreviewMode enum cases.
-    $rectorConfig->rule(ReplaceNodeSetPreviewModeRector::class);
+    $rectorConfig->ruleWithConfiguration(ReplaceNodeSetPreviewModeRector::class, [
+        new DrupalIntroducedVersionConfiguration('11.3.0'),
+    ]);
 
     // https://www.drupal.org/node/3530461
     // https://www.drupal.org/node/3530869 (change record)
@@ -190,7 +196,9 @@ return static function (RectorConfig $rectorConfig): void {
     // https://www.drupal.org/node/3511287 (change record)
     // Database::convertDbUrlToConnectionInfo($url, $root, ...) deprecated in drupal:11.3.0, removed in drupal:12.0.0.
     // The $root parameter is obsolete; remove it (shift any $include_test_drivers arg left).
-    $rectorConfig->rule(RemoveRootFromConvertDbUrlRector::class);
+    $rectorConfig->ruleWithConfiguration(RemoveRootFromConvertDbUrlRector::class, [
+        new DrupalIntroducedVersionConfiguration('11.3.0'),
+    ]);
 
     // https://www.drupal.org/node/3551446
     // workspaces.association service and WorkspaceAssociationInterface renamed in drupal:11.3.0.

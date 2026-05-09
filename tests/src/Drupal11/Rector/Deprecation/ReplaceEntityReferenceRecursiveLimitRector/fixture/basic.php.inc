@@ -14,10 +14,10 @@ $limit = EntityReferenceEntityFormatter::RECURSIVE_RENDER_LIMIT;
 
 use Drupal\Core\Field\Plugin\Field\FieldFormatter\EntityReferenceEntityFormatter;
 
-if ($count > 20) {
+if ($count > \Drupal\Component\Utility\DeprecationHelper::backwardsCompatibleCall(\Drupal::VERSION, '11.4.0', fn() => 20, fn() => EntityReferenceEntityFormatter::RECURSIVE_RENDER_LIMIT)) {
     return;
 }
 
-$limit = 20;
+$limit = \Drupal\Component\Utility\DeprecationHelper::backwardsCompatibleCall(\Drupal::VERSION, '11.4.0', fn() => 20, fn() => EntityReferenceEntityFormatter::RECURSIVE_RENDER_LIMIT);
 
 ?>

@@ -4,20 +4,47 @@ declare(strict_types=1);
 
 namespace DrupalRector\Tests\Drupal11\Rector\Deprecation\MediaFilterFormatEditFormValidateRector;
 
+use DrupalRector\Services\DrupalRectorSettings;
 use Rector\Testing\PHPUnit\AbstractRectorTestCase;
 
 class MediaFilterFormatEditFormValidateRectorTest extends AbstractRectorTestCase
 {
     #[\PHPUnit\Framework\Attributes\DataProvider('provideData')]
-    public function test(string $filePath): void
+    public function testAboveVersion(string $filePath): void
     {
-        $this->doTestFile($filePath);
+        static::getContainer()->make(DrupalRectorSettings::class)->setDrupalVersion('99.99.99');
+        try {
+            $this->doTestFile($filePath);
+        } finally {
+            static::getContainer()->make(DrupalRectorSettings::class)->setDrupalVersion(null);
+        }
     }
 
-    /** @return \Iterator<array<string>> */
+    /**
+     * @return \Iterator<<string>>
+     */
     public static function provideData(): \Iterator
     {
         return self::yieldFilesFromDirectory(__DIR__.'/fixture');
+    }
+
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideDataBelowVersion')]
+    public function testBelowVersion(string $filePath): void
+    {
+        static::getContainer()->make(DrupalRectorSettings::class)->setDrupalVersion('1.0.0');
+        try {
+            $this->doTestFile($filePath);
+        } finally {
+            static::getContainer()->make(DrupalRectorSettings::class)->setDrupalVersion(null);
+        }
+    }
+
+    /**
+     * @return \Iterator<<string>>
+     */
+    public static function provideDataBelowVersion(): \Iterator
+    {
+        return self::yieldFilesFromDirectory(__DIR__.'/fixture-below-version');
     }
 
     public function provideConfigFilePath(): string
