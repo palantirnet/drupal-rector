@@ -13,8 +13,8 @@ $d = OtherClass::alphadecimalToInt(NULL);
 
 use Drupal\Component\Utility\Number;
 
-$a = 0;
-$b = 0;
+$a = \Drupal\Component\Utility\DeprecationHelper::backwardsCompatibleCall(\Drupal::VERSION, '11.2.0', fn() => 0, fn() => Number::alphadecimalToInt(NULL));
+$b = \Drupal\Component\Utility\DeprecationHelper::backwardsCompatibleCall(\Drupal::VERSION, '11.2.0', fn() => 0, fn() => Number::alphadecimalToInt(''));
 $c = Number::alphadecimalToInt('abc');
 $d = OtherClass::alphadecimalToInt(NULL);
 

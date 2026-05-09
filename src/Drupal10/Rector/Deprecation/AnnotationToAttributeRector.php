@@ -8,6 +8,7 @@ use DrupalRector\Contract\VersionedConfigurationInterface;
 use DrupalRector\Drupal10\Rector\ValueObject\AnnotationToAttributeConfiguration;
 use DrupalRector\Rector\AbstractDrupalCoreRector;
 use DrupalRector\Rector\ValueObject\DrupalIntroducedVersionConfiguration;
+use DrupalRector\Services\DrupalRectorSettings;
 use PhpParser\Node;
 use PhpParser\Node\Arg;
 use PhpParser\Node\Attribute;
@@ -57,8 +58,9 @@ final class AnnotationToAttributeRector extends AbstractDrupalCoreRector impleme
      */
     private AnnotationToAttributeMapper $annotationToAttributeMapper;
 
-    public function __construct(PhpDocTagRemover $phpDocTagRemover, DocBlockUpdater $docBlockUpdater, PhpDocInfoFactory $phpDocInfoFactory, ArrayParser $arrayParser, TokenIteratorFactory $tokenIteratorFactory, AnnotationToAttributeMapper $annotationToAttributeMapper)
+    public function __construct(DrupalRectorSettings $drupalRectorSettings, PhpDocTagRemover $phpDocTagRemover, DocBlockUpdater $docBlockUpdater, PhpDocInfoFactory $phpDocInfoFactory, ArrayParser $arrayParser, TokenIteratorFactory $tokenIteratorFactory, AnnotationToAttributeMapper $annotationToAttributeMapper)
     {
+        parent::__construct($drupalRectorSettings);
         $this->phpDocTagRemover = $phpDocTagRemover;
         $this->docBlockUpdater = $docBlockUpdater;
         $this->phpDocInfoFactory = $phpDocInfoFactory;

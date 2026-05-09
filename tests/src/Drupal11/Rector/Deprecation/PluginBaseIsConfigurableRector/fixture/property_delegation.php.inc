@@ -29,7 +29,7 @@ class PluginWrapper extends CachePluginBase {
     protected $plugin;
 
     public function isConfigurable(): bool {
-        return $this->plugin instanceof \Drupal\Component\Plugin\ConfigurableInterface;
+        return \Drupal\Component\Utility\DeprecationHelper::backwardsCompatibleCall(\Drupal::VERSION, '11.1.0', fn() => $this->plugin instanceof \Drupal\Component\Plugin\ConfigurableInterface, fn() => $this->plugin->isConfigurable());
     }
 }
 ?>

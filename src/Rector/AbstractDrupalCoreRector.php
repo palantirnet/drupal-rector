@@ -6,6 +6,7 @@ namespace DrupalRector\Rector;
 
 use Drupal\Component\Utility\DeprecationHelper;
 use DrupalRector\Contract\VersionedConfigurationInterface;
+use DrupalRector\Services\DrupalRectorSettings;
 use PhpParser\Node;
 use PhpParser\Node\Expr\ArrowFunction;
 use PHPStan\Reflection\MethodReflection;
@@ -15,12 +16,14 @@ use Rector\Rector\AbstractRector;
 
 abstract class AbstractDrupalCoreRector extends AbstractRector implements ConfigurableRectorInterface
 {
-    private static ?string $versionOverride = null;
-
     /**
      * @var array|VersionedConfigurationInterface[]
      */
     protected array $configuration = [];
+
+    public function __construct(private readonly DrupalRectorSettings $drupalRectorSettings)
+    {
+    }
 
     public function configure(array $configuration): void
     {
@@ -125,11 +128,6 @@ abstract class AbstractDrupalCoreRector extends AbstractRector implements Config
         return version_compare($this->installedDrupalVersion(), $configuration->getIntroducedVersion(), '>=');
     }
 
-    public static function setVersionOverride(?string $version): void
-    {
-        self::$versionOverride = $version;
-    }
-
     /**
      * @phpstan-return non-empty-string
      */
@@ -138,7 +136,7 @@ abstract class AbstractDrupalCoreRector extends AbstractRector implements Config
         return str_replace([
             '.x-dev',
             '-dev',
-        ], '.0', self::$versionOverride ?? \Drupal::VERSION);
+        ], '.0', $this->drupalRectorSettings->getDrupalVersion() ?? \Drupal::VERSION);
     }
 
     /**
@@ -155,6 +153,12 @@ abstract class AbstractDrupalCoreRector extends AbstractRector implements Config
      */
     public function supportBackwardsCompatibility(VersionedConfigurationInterface $configuration): bool
     {
-        return !(version_compare($this->installedDrupalVersion(), '10.1.0', '<') || version_compare($configuration->getIntroducedVersion(), '10.0.0', '<'));
+        if (!$this->drupalRectorSettings->isBackwardCompatibilityEnabled()) {
+            return false;
+        }
+
+        $minimumVersion = $this->drupalRectorSettings->getMinimumCoreVersionSupported();
+
+        return !(version_compare($minimumVersion, '10.1.0', '<') || version_compare($configuration->getIntroducedVersion(), '10.0.0', '<'));
     }
 }

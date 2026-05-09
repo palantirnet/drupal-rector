@@ -70,7 +70,9 @@ return static function (RectorConfig $rectorConfig): void {
     // https://www.drupal.org/node/3566774 (change record)
     // media_filter_format_edit_form_validate() deprecated in drupal:11.4.0, removed in drupal:12.0.0.
     // Replaced by \Drupal\media\Hook\MediaHooks::formatEditFormValidate().
-    $rectorConfig->rule(MediaFilterFormatEditFormValidateRector::class);
+    $rectorConfig->ruleWithConfiguration(MediaFilterFormatEditFormValidateRector::class, [
+        new DrupalIntroducedVersionConfiguration('11.4.0'),
+    ]);
 
     // https://www.drupal.org/node/3226806
     // https://www.drupal.org/node/3566536 (change record)
@@ -245,7 +247,9 @@ return static function (RectorConfig $rectorConfig): void {
     // https://www.drupal.org/node/3526344 (change record)
     // system.performance css.gzip and js.gzip config keys deprecated in drupal:11.4.0, removed in drupal:12.0.0.
     // Replaced by css.compress and js.compress.
-    $rectorConfig->rule(ReplaceSystemPerformanceGzipKeyRector::class);
+    $rectorConfig->ruleWithConfiguration(ReplaceSystemPerformanceGzipKeyRector::class, [
+        new DrupalIntroducedVersionConfiguration('11.4.0'),
+    ]);
 
     // https://www.drupal.org/node/3564937
     // https://www.drupal.org/node/3564958 (change record)
@@ -266,7 +270,9 @@ return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->ruleWithConfiguration(RemoveTrustDataCallRector::class, [
         new DrupalIntroducedVersionConfiguration('11.4.0'),
     ]);
-    $rectorConfig->rule(RemoveConfigSaveTrustedDataArgRector::class);
+    $rectorConfig->ruleWithConfiguration(RemoveConfigSaveTrustedDataArgRector::class, [
+        new DrupalIntroducedVersionConfiguration('11.4.0'),
+    ]);
 
     // https://www.drupal.org/node/3093118
     // https://www.drupal.org/node/3554139 (change record)
@@ -367,5 +373,7 @@ return static function (RectorConfig $rectorConfig): void {
     // https://www.drupal.org/node/2940605
     // EntityReferenceEntityFormatter::RECURSIVE_RENDER_LIMIT deprecated in drupal:11.4.0, removed in drupal:13.0.0.
     // Replaced by literal 20.
-    $rectorConfig->rule(ReplaceEntityReferenceRecursiveLimitRector::class);
+    $rectorConfig->ruleWithConfiguration(ReplaceEntityReferenceRecursiveLimitRector::class, [
+        new DrupalIntroducedVersionConfiguration('11.4.0'),
+    ]);
 };

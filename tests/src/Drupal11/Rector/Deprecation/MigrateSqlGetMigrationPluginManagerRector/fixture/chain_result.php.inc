@@ -20,7 +20,7 @@ class MyIdMap extends Sql
 {
     public function doSomething(array $requirements): array
     {
-        return $this->migrationPluginManager->createInstances($requirements);
+        return \Drupal\Component\Utility\DeprecationHelper::backwardsCompatibleCall(\Drupal::VERSION, '11.0.0', fn() => $this->migrationPluginManager, fn() => $this->getMigrationPluginManager())->createInstances($requirements);
     }
 }
 

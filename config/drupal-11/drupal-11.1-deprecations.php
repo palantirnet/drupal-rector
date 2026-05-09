@@ -19,7 +19,9 @@ return static function (RectorConfig $rectorConfig): void {
     // https://www.drupal.org/node/2946122 (change record)
     // PluginBase::isConfigurable() deprecated in drupal:11.1.0, removed in drupal:12.0.0.
     // Replaced by instanceof \Drupal\Component\Plugin\ConfigurableInterface.
-    $rectorConfig->rule(PluginBaseIsConfigurableRector::class);
+    $rectorConfig->ruleWithConfiguration(PluginBaseIsConfigurableRector::class, [
+        new DrupalIntroducedVersionConfiguration('11.1.0'),
+    ]);
 
     // https://www.drupal.org/node/3151086
     // AliasWhitelist and AliasWhitelistInterface deprecated in drupal:11.1.0, removed in drupal:12.0.0.

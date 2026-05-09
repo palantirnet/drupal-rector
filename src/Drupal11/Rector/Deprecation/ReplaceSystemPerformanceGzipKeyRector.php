@@ -4,13 +4,15 @@ declare(strict_types=1);
 
 namespace DrupalRector\Drupal11\Rector\Deprecation;
 
+use DrupalRector\Contract\VersionedConfigurationInterface;
+use DrupalRector\Rector\AbstractDrupalCoreRector;
+use DrupalRector\Rector\ValueObject\DrupalIntroducedVersionConfiguration;
 use PhpParser\Node;
 use PhpParser\Node\Arg;
 use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\StaticCall;
 use PhpParser\Node\Scalar\String_;
-use Rector\Rector\AbstractRector;
-use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
+use Symplify\RuleDocGenerator\ValueObject\CodeSample\ConfiguredCodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 /**
@@ -22,18 +24,34 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  * @see https://www.drupal.org/node/3184242
  * @see https://www.drupal.org/node/3526344
  */
-final class ReplaceSystemPerformanceGzipKeyRector extends AbstractRector
+final class ReplaceSystemPerformanceGzipKeyRector extends AbstractDrupalCoreRector
 {
     private const CONFIG_ACCESSOR_METHODS = ['config', 'get', 'getEditable'];
+
+    /**
+     * @var array|DrupalIntroducedVersionConfiguration[]
+     */
+    protected array $configuration;
+
+    public function configure(array $configuration): void
+    {
+        foreach ($configuration as $value) {
+            if (!$value instanceof DrupalIntroducedVersionConfiguration) {
+                throw new \InvalidArgumentException(sprintf('Each configuration item must be an instance of "%s"', DrupalIntroducedVersionConfiguration::class));
+            }
+        }
+        parent::configure($configuration);
+    }
 
     public function getRuleDefinition(): RuleDefinition
     {
         return new RuleDefinition(
             'Replace deprecated system.performance css.gzip/js.gzip config keys with css.compress/js.compress',
             [
-                new CodeSample(
+                new ConfiguredCodeSample(
                     "\\Drupal::config('system.performance')->get('css.gzip');",
-                    "\\Drupal::config('system.performance')->get('css.compress');"
+                    "\\Drupal::config('system.performance')->get('css.compress');",
+                    [new DrupalIntroducedVersionConfiguration('11.4.0')]
                 ),
             ]
         );
@@ -45,7 +63,7 @@ final class ReplaceSystemPerformanceGzipKeyRector extends AbstractRector
         return [MethodCall::class];
     }
 
-    public function refactor(Node $node): ?Node
+    protected function refactorWithConfiguration(Node $node, VersionedConfigurationInterface $configuration): ?Node
     {
         assert($node instanceof MethodCall);
         if (!$this->isNames($node->name, ['get', 'set'])) {
@@ -70,9 +88,10 @@ final class ReplaceSystemPerformanceGzipKeyRector extends AbstractRector
             return null;
         }
         $newKey = ($key === 'css.gzip') ? 'css.compress' : 'js.compress';
-        $node->args[0] = new Arg(new String_($newKey));
+        $cloned = clone $node;
+        $cloned->args[0] = new Arg(new String_($newKey));
 
-        return $node;
+        return $cloned;
     }
 
     private function isSystemPerformanceConfigReceiver(Node $receiver): bool

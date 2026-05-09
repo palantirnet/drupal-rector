@@ -27,9 +27,9 @@ that does not set an explicit override. Do not revert it to `10.99.x-dev` — th
 disable all Drupal 11 rules in the test suite.
 
 For tests that need to simulate a specific Drupal version (e.g., to verify a rule does NOT fire
-on an older version), use `AbstractDrupalCoreRector::setVersionOverride($version)` in `setUp()`
-and reset it with `setVersionOverride(null)` in `tearDown()`. Standard conversion tests do not
-need this — the stub default is sufficient.
+on an older version), use `DrupalRectorSettings::setDrupalVersion($version)` via the service
+container, and reset it in a `finally` block. Standard conversion tests do not need this — the
+stub default (`11.99.x-dev`) is sufficient for normal fixture testing.
 
 ---
 
@@ -114,11 +114,17 @@ Answer these questions using the information gathered:
 **Q1: What node types does the rule process?**
 - List each type from `getNodeTypes()`.
 
-**Q2: Is there a CallLike → CallLike transformation?**
-- Old node is CallLike if: `FuncCall`, `MethodCall`, `StaticCall`, `NullsafeMethodCall`, `New_`.
-- New node (what `refactor()` returns) is CallLike if: `FuncCall`, `MethodCall`, `StaticCall`, `NullsafeMethodCall`, `New_`.
-- If both are CallLike → BC wrapping is **eligible**.
-- If either is NOT CallLike (e.g., `ClassConstFetch`, `Class_`) → BC wrapping is **not applicable**.
+**Q2: Is there an Expr → Expr transformation?**
+- The authoritative check (from `AbstractDrupalCoreRector::refactor()` line 92) is:
+  `if ($node instanceof Node\Expr && $result instanceof Node\Expr)`.
+- If **both** the input node and the returned node are `Node\Expr` subtypes → BC wrapping is **eligible**.
+- `Node\Expr` subtypes include: `FuncCall`, `MethodCall`, `StaticCall`, `NullsafeMethodCall`,
+  `New_`, `Array_`, `ClassConstFetch`, `ConstFetch`, `String_`, `Int_`, `PropertyFetch`, and more.
+- `Class_` (structural node) and `ArrayItem` are **not** `Node\Expr` → BC wrapping is not applicable.
+- Exception: `ArrayItem` cannot appear as an arrow function body in PHP syntax, so even though
+  `Node\Expr\ArrayItem` exists, it cannot be BC-wrapped. If a rector handles `ArrayItem` nodes
+  alongside BC-wrappable nodes, override `refactor()` to apply the ArrayItem transform directly
+  while letting the parent handle BC for other node types (see edge case note in Template B).
 
 **Q3: Was the deprecation introduced in Drupal >= 10.1.0?**
 - Compare the introduced version from Step 2 against `10.1.0`.
@@ -135,10 +141,13 @@ Answer these questions using the information gathered:
 |---|---|---|---|---|
 | `FuncCall` | `StaticCall` | >= 10.1.0 | `AbstractDrupalCoreRector` | Yes |
 | `FuncCall` | `MethodCall` | >= 10.1.0 | `AbstractDrupalCoreRector` | Yes |
+| `MethodCall` | `MethodCall` | >= 10.1.0 | `AbstractDrupalCoreRector` | Yes |
+| `Array_` | `Array_` | >= 10.1.0 | `AbstractDrupalCoreRector` | Yes |
+| `New_` | `New_` | >= 10.1.0 | `AbstractDrupalCoreRector` | Yes |
+| `ClassConstFetch` | `ClassConstFetch` | >= 10.1.0 | `AbstractDrupalCoreRector` | Yes |
 | `FuncCall` | `StaticCall` | < 10.1.0 | `AbstractRector` | No |
-| `ClassConstFetch` | `ClassConstFetch` | any | `AbstractRector` | No |
-| `New_` (arg modification) | `New_` | any | `AbstractRector` | No |
-| `Class_` (structural) | `Class_` | any | `AbstractRector` | No |
+| `ArrayItem` | `ArrayItem` | any | `AbstractRector` | No (PHP syntax limit) |
+| `Class_` (structural) | `Class_` | any | `AbstractRector` | No (not an Expr) |
 
 ---
 
@@ -391,6 +400,50 @@ CODE_AFTER,
     `AbstractDrupalCoreRector::refactor()` assumes all transformations share the same BC
     configuration, so mixing is not possible in a single class.
 
+**Shallow-clone warning (critical for correctness):**
+PHP's `clone` is a shallow copy — child objects in arrays (e.g. `$node->args[]`, `$node->items[]`)
+are the same object instances in both the original and the clone. If you mutate a child after
+cloning the parent, the mutation appears on **both** the original and the cloned node. This breaks
+BC wrapping: both the `fn() => <new>` and `fn() => <old>` sides of the
+`DeprecationHelper::backwardsCompatibleCall()` will show the mutated (new) value.
+
+**Rule:** Always clone child nodes before mutating them:
+```php
+// WRONG — mutates the shared Arg object; BC call gets new value on both sides
+$arg->value = $replacement;
+
+// CORRECT — clone the child, mutate the clone, put it back in the cloned parent
+$newArg = clone $arg;
+$newArg->value = $replacement;
+$cloned->args[$index] = $newArg;
+```
+This applies to any child node you modify: `Arg`, `ArrayItem`, `Node\Identifier`, etc.
+
+**ArrayItem edge case:**
+`ArrayItem` (`Node\Expr\ArrayItem`) cannot appear as an arrow function body in valid PHP. If a
+rector handles `ArrayItem` nodes alongside BC-wrappable nodes (e.g. `MethodCall`), override
+`refactor()` to apply ArrayItem transforms directly and skip the BC path for that node type:
+```php
+public function refactor(Node $node): ?Node
+{
+    if ($node instanceof ArrayItem) {
+        // Apply directly; BC wrapping is not applicable for ArrayItem.
+        foreach ($this->configuration as $configuration) {
+            if (!$this->rectorShouldApplyToDrupalVersion($configuration)) {
+                continue;
+            }
+            if ($this->isInBackwardsCompatibleCall($node)) {
+                continue;
+            }
+            return $this->refactorArrayItem($node);
+        }
+        return null;
+    }
+    // Let the parent handle BC wrapping for all other Expr nodes.
+    return parent::refactor($node);
+}
+```
+
 ---
 
 ## Step 7 — Generate the fixture file
@@ -413,7 +466,10 @@ Format:
 **Rules:**
 - The `-----` separator must be on its own line with no surrounding whitespace.
 - Remove `use` statements from the "after" section if the new code uses FQCNs (backslash-prefixed).
-- For BC-wrapped rules: the "after" section should show the `DeprecationHelper::backwardsCompatibleCall()` output.
+- For BC-wrapped rules: the "after" section must show the full
+  `\Drupal\Component\Utility\DeprecationHelper::backwardsCompatibleCall(\Drupal::VERSION, 'X.Y.Z', fn() => <new>, fn() => <old>)`
+  output rather than the plain transformed code. The exact format is produced by the rector at
+  runtime — if unsure, run `vendor/bin/phpunit` once and read the failure diff to copy the actual output.
 - If the CodeSample before/after strings are not full PHP files, wrap them appropriately (add `<?php\n\n` prefix and `\n` suffix before the `?>`).
 - Add realistic surrounding context if the snippet is very minimal (e.g., wrap a bare expression in a function body).
 
@@ -423,22 +479,20 @@ Format:
 
 Write `tests/src/Drupal11/Rector/Deprecation/[ClassName]/[ClassName]Test.php`.
 
+**For simple rules (AbstractRector, no BC):**
+
 ```php
 <?php
 
 declare(strict_types=1);
 
-namespace Drupal11\Rector\Deprecation\[ClassName];
+namespace DrupalRector\Tests\Drupal11\Rector\Deprecation\[ClassName];
 
 use Rector\Testing\PHPUnit\AbstractRectorTestCase;
 
 class [ClassName]Test extends AbstractRectorTestCase
 {
-    /**
-     * @covers ::refactor
-     *
-     * @dataProvider provideData
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideData')]
     public function test(string $filePath): void
     {
         $this->doTestFile($filePath);
@@ -455,6 +509,10 @@ class [ClassName]Test extends AbstractRectorTestCase
     }
 }
 ```
+
+**For BC-capable rules (AbstractDrupalCoreRector):** Use the full `testAboveVersion` /
+`testBelowVersion` form from the QG-B section of SKILL.md. Do NOT use the simple `test()` form
+above — the version-gating tests are required for all BC-wrapped rectors.
 
 ---
 

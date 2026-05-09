@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace DrupalRector\Drupal11\Rector\Deprecation;
 
+use DrupalRector\Contract\VersionedConfigurationInterface;
+use DrupalRector\Rector\AbstractDrupalCoreRector;
+use DrupalRector\Rector\ValueObject\DrupalIntroducedVersionConfiguration;
 use PhpParser\Node;
 use PHPStan\Type\ObjectType;
-use Rector\Rector\AbstractRector;
-use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
+use Symplify\RuleDocGenerator\ValueObject\CodeSample\ConfiguredCodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 /**
@@ -19,7 +21,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  * @see https://www.drupal.org/node/3538277
  * @see https://www.drupal.org/node/3538666
  */
-final class ReplaceNodeSetPreviewModeRector extends AbstractRector
+final class ReplaceNodeSetPreviewModeRector extends AbstractDrupalCoreRector
 {
     private const CONST_TO_ENUM = [
         'DRUPAL_DISABLED' => 'Disabled',
@@ -33,12 +35,27 @@ final class ReplaceNodeSetPreviewModeRector extends AbstractRector
         2 => 'Required',
     ];
 
+    /**
+     * @var array|DrupalIntroducedVersionConfiguration[]
+     */
+    protected array $configuration;
+
+    public function configure(array $configuration): void
+    {
+        foreach ($configuration as $value) {
+            if (!$value instanceof DrupalIntroducedVersionConfiguration) {
+                throw new \InvalidArgumentException(sprintf('Each configuration item must be an instance of "%s"', DrupalIntroducedVersionConfiguration::class));
+            }
+        }
+        parent::configure($configuration);
+    }
+
     public function getNodeTypes(): array
     {
         return [Node\Expr\MethodCall::class];
     }
 
-    public function refactor(Node $node): ?Node
+    protected function refactorWithConfiguration(Node $node, VersionedConfigurationInterface $configuration): ?Node
     {
         assert($node instanceof Node\Expr\MethodCall);
 
@@ -72,22 +89,24 @@ final class ReplaceNodeSetPreviewModeRector extends AbstractRector
             return null;
         }
 
-        $node->args[0] = new Node\Arg(
+        $cloned = clone $node;
+        $cloned->args[0] = new Node\Arg(
             new Node\Expr\ClassConstFetch(
                 new Node\Name\FullyQualified('Drupal\node\NodePreviewMode'),
                 $enumCase
             )
         );
 
-        return $node;
+        return $cloned;
     }
 
     public function getRuleDefinition(): RuleDefinition
     {
         return new RuleDefinition('Replace deprecated DRUPAL_DISABLED/OPTIONAL/REQUIRED constants and integer literals in setPreviewMode() with NodePreviewMode enum cases (drupal:11.3.0)', [
-            new CodeSample(
+            new ConfiguredCodeSample(
                 '$nodeType->setPreviewMode(DRUPAL_DISABLED);',
-                '$nodeType->setPreviewMode(\\Drupal\\node\\NodePreviewMode::Disabled);'
+                '$nodeType->setPreviewMode(\\Drupal\\node\\NodePreviewMode::Disabled);',
+                [new DrupalIntroducedVersionConfiguration('11.3.0')]
             ),
         ]);
     }

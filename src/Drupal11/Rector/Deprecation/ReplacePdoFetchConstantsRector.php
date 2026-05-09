@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace DrupalRector\Drupal11\Rector\Deprecation;
 
+use DrupalRector\Contract\VersionedConfigurationInterface;
+use DrupalRector\Rector\AbstractDrupalCoreRector;
+use DrupalRector\Rector\ValueObject\DrupalIntroducedVersionConfiguration;
 use PhpParser\Node;
 use PhpParser\Node\Arg;
 use PhpParser\Node\Expr\ArrayItem;
@@ -11,8 +14,7 @@ use PhpParser\Node\Expr\ClassConstFetch;
 use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Name\FullyQualified;
 use PhpParser\Node\Scalar\String_;
-use Rector\Rector\AbstractRector;
-use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
+use Symplify\RuleDocGenerator\ValueObject\CodeSample\ConfiguredCodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 /**
@@ -23,7 +25,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  * @see https://www.drupal.org/node/3525077
  * @see https://www.drupal.org/node/3488338
  */
-final class ReplacePdoFetchConstantsRector extends AbstractRector
+final class ReplacePdoFetchConstantsRector extends AbstractDrupalCoreRector
 {
     private const FETCH_MAP = [
         'FETCH_OBJ' => 'Object',
@@ -42,14 +44,30 @@ final class ReplacePdoFetchConstantsRector extends AbstractRector
 
     private const PDO_RETURN_METHODS = ['getClientStatement', 'getClientConnection'];
 
+    /**
+     * @var array|DrupalIntroducedVersionConfiguration[]
+     */
+    protected array $configuration;
+
+    public function configure(array $configuration): void
+    {
+        foreach ($configuration as $value) {
+            if (!$value instanceof DrupalIntroducedVersionConfiguration) {
+                throw new \InvalidArgumentException(sprintf('Each configuration item must be an instance of "%s"', DrupalIntroducedVersionConfiguration::class));
+            }
+        }
+        parent::configure($configuration);
+    }
+
     public function getRuleDefinition(): RuleDefinition
     {
         return new RuleDefinition(
             'Replace PDO::FETCH_* constants with FetchAs enum cases in Drupal Database API calls',
             [
-                new CodeSample(
+                new ConfiguredCodeSample(
                     '$statement->setFetchMode(\\PDO::FETCH_ASSOC);',
-                    '$statement->setFetchMode(\\Drupal\\Core\\Database\\Statement\\FetchAs::Associative);'
+                    '$statement->setFetchMode(\\Drupal\\Core\\Database\\Statement\\FetchAs::Associative);',
+                    [new DrupalIntroducedVersionConfiguration('11.2.0')]
                 ),
             ]
         );
@@ -63,11 +81,30 @@ final class ReplacePdoFetchConstantsRector extends AbstractRector
 
     public function refactor(Node $node): ?Node
     {
+        if ($node instanceof ArrayItem) {
+            // ArrayItem nodes cannot be BC-wrapped as standalone expressions.
+            // Apply the transformation directly without version-gating wrapper.
+            foreach ($this->configuration as $configuration) {
+                if (!$this->rectorShouldApplyToDrupalVersion($configuration)) {
+                    continue;
+                }
+                if ($this->isInBackwardsCompatibleCall($node)) {
+                    continue;
+                }
+
+                return $this->refactorArrayItem($node);
+            }
+
+            return null;
+        }
+
+        return parent::refactor($node);
+    }
+
+    protected function refactorWithConfiguration(Node $node, VersionedConfigurationInterface $configuration): ?Node
+    {
         if ($node instanceof MethodCall) {
             return $this->refactorMethodCall($node);
-        }
-        if ($node instanceof ArrayItem) {
-            return $this->refactorArrayItem($node);
         }
 
         return null;
@@ -89,19 +126,22 @@ final class ReplacePdoFetchConstantsRector extends AbstractRector
 
         $fetchArgIndex = self::DRUPAL_FETCH_METHODS[$methodName];
         $changed = false;
+        $cloned = clone $node;
 
-        foreach ($node->args as $index => $arg) {
+        foreach ($cloned->args as $index => $arg) {
             if (!$arg instanceof Arg || $index !== $fetchArgIndex) {
                 continue;
             }
             $replacement = $this->replacePdoFetchConst($arg->value);
             if ($replacement !== null) {
-                $arg->value = $replacement;
+                $newArg = clone $arg;
+                $newArg->value = $replacement;
+                $cloned->args[$index] = $newArg;
                 $changed = true;
             }
         }
 
-        return $changed ? $node : null;
+        return $changed ? $cloned : null;
     }
 
     private function refactorArrayItem(ArrayItem $node): ?ArrayItem
@@ -116,9 +156,10 @@ final class ReplacePdoFetchConstantsRector extends AbstractRector
         if ($replacement === null) {
             return null;
         }
-        $node->value = $replacement;
+        $cloned = clone $node;
+        $cloned->value = $replacement;
 
-        return $node;
+        return $cloned;
     }
 
     private function replacePdoFetchConst(Node $node): ?ClassConstFetch

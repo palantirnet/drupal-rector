@@ -100,40 +100,85 @@ For every `MethodCall`, `NullsafeMethodCall`, or `PropertyFetch` node the rector
 
 Apply only if the rector extends `AbstractDrupalCoreRector`.
 
-1. Add `testAboveVersion()` method to the test class:
-   ```php
-   public function testAboveVersion(): void
-   {
-       $this->doTestFile(__DIR__ . '/fixture/basic.php.inc');
-   }
-   ```
-   This is the existing test — rename if needed or leave it.
+Replace the simple test class with the full `testAboveVersion` / `testBelowVersion` form that uses
+`DrupalRectorSettings::setDrupalVersion()` (not `AbstractDrupalCoreRector::setVersionOverride()`):
 
-2. Add `testBelowVersion()` method. Use a version just below the rector's `introduced_version` (e.g., if introduced in `11.4.0`, use `11.3.0`):
-   ```php
-   public function testBelowVersion(): void
-   {
-       AbstractDrupalCoreRector::setVersionOverride('<major>.<minor-1>.0');
-       try {
-           $this->doTestFile(__DIR__ . '/fixture-below-version/basic.php.inc');
-       } finally {
-           AbstractDrupalCoreRector::setVersionOverride(null);
-       }
-   }
-   ```
+```php
+<?php
 
-3. Create `tests/src/Drupal11/Rector/Deprecation/[ClassName]/fixture-below-version/basic.php.inc`:
-   ```
-   <?php
+declare(strict_types=1);
 
-   [same "before" code as main fixture]
-   ?>
-   -----
-   <?php
+namespace DrupalRector\Tests\Drupal11\Rector\Deprecation\[ClassName];
 
-   [same "before" code — no change, because Drupal version is below the introduced version]
-   ?>
-   ```
+use DrupalRector\Services\DrupalRectorSettings;
+use Rector\Testing\PHPUnit\AbstractRectorTestCase;
+
+class [ClassName]Test extends AbstractRectorTestCase
+{
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideData')]
+    public function testAboveVersion(string $filePath): void
+    {
+        static::getContainer()->make(DrupalRectorSettings::class)->setDrupalVersion('99.99.99');
+        try {
+            $this->doTestFile($filePath);
+        } finally {
+            static::getContainer()->make(DrupalRectorSettings::class)->setDrupalVersion(null);
+        }
+    }
+
+    /**
+     * @return \Iterator<<string>>
+     */
+    public static function provideData(): \Iterator
+    {
+        return self::yieldFilesFromDirectory(__DIR__.'/fixture');
+    }
+
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideDataBelowVersion')]
+    public function testBelowVersion(string $filePath): void
+    {
+        static::getContainer()->make(DrupalRectorSettings::class)->setDrupalVersion('1.0.0');
+        try {
+            $this->doTestFile($filePath);
+        } finally {
+            static::getContainer()->make(DrupalRectorSettings::class)->setDrupalVersion(null);
+        }
+    }
+
+    /**
+     * @return \Iterator<<string>>
+     */
+    public static function provideDataBelowVersion(): \Iterator
+    {
+        return self::yieldFilesFromDirectory(__DIR__.'/fixture-below-version');
+    }
+
+    public function provideConfigFilePath(): string
+    {
+        return __DIR__.'/config/configured_rule.php';
+    }
+}
+```
+
+- `'99.99.99'` simulates a Drupal version well above any introduced version → BC wrapper fires.
+- `'1.0.0'` simulates a version below every introduced version → rector skips, no change applied.
+
+Create `tests/src/Drupal11/Rector/Deprecation/[ClassName]/fixture-below-version/basic.php.inc`:
+```
+<?php
+
+[same "before" code as main fixture]
+?>
+-----
+<?php
+
+[same "before" code — no change, because Drupal version is below the introduced version]
+?>
+```
+
+Only "transformable" fixtures (those that produce a change) need a `fixture-below-version/`
+counterpart. No-change fixtures (`no_change_*.php.inc`) do not need one — they already show no
+transformation.
 
 ---
 
@@ -172,7 +217,7 @@ Before declaring the implementation complete, verify all items from `.claude/ski
 
 - [ ] QG-A: `isObjectType()` guard present for all MethodCall/PropertyFetch nodes (or explicitly not needed)
 - [ ] QG-A: `no_change_unrelated.php.inc` fixture exists if a type guard was added
-- [ ] QG-B: `testBelowVersion()` and `fixture-below-version/basic.php.inc` present if BC-wrapped
+- [ ] QG-B: `testAboveVersion()` + `testBelowVersion()` (with `DrupalRectorSettings::setDrupalVersion`) and `fixture-below-version/basic.php.inc` present if BC-wrapped
 - [ ] `vendor/bin/phpunit tests/src/Drupal11/Rector/Deprecation/[ClassName]/` passes
 - [ ] `ddev composer phpstan` reports no new errors
 - [ ] `ddev composer fix-style` produces no changes

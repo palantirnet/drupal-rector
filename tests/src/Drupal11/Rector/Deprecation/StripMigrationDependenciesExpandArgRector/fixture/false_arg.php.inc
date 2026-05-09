@@ -10,6 +10,6 @@ $deps = $migration->getMigrationDependencies(FALSE);
 
 // FALSE argument is also removed — the arg value doesn't matter, only presence does.
 /** @var \Drupal\migrate\Plugin\MigrationInterface $migration */
-$deps = $migration->getMigrationDependencies();
+$deps = \Drupal\Component\Utility\DeprecationHelper::backwardsCompatibleCall(\Drupal::VERSION, '11.0.0', fn() => $migration->getMigrationDependencies(), fn() => $migration->getMigrationDependencies(FALSE));
 
 ?>

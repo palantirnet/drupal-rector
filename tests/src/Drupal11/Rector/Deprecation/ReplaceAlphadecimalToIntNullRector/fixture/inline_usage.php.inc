@@ -13,7 +13,7 @@ $x = Number::alphadecimalToInt('') + 5;
 use Drupal\Component\Utility\Number;
 
 // Result used inline: as a function argument and in an expression.
-foo(0);
-$x = 0 + 5;
+foo(\Drupal\Component\Utility\DeprecationHelper::backwardsCompatibleCall(\Drupal::VERSION, '11.2.0', fn() => 0, fn() => Number::alphadecimalToInt(null)));
+$x = \Drupal\Component\Utility\DeprecationHelper::backwardsCompatibleCall(\Drupal::VERSION, '11.2.0', fn() => 0, fn() => Number::alphadecimalToInt('')) + 5;
 
 ?>

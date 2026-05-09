@@ -4,11 +4,13 @@ declare(strict_types=1);
 
 namespace DrupalRector\Drupal11\Rector\Deprecation;
 
+use DrupalRector\Contract\VersionedConfigurationInterface;
+use DrupalRector\Rector\AbstractDrupalCoreRector;
+use DrupalRector\Rector\ValueObject\DrupalIntroducedVersionConfiguration;
 use PhpParser\Node;
 use PhpParser\Node\Expr\New_;
 use PhpParser\Node\Name;
-use Rector\Rector\AbstractRector;
-use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
+use Symplify\RuleDocGenerator\ValueObject\CodeSample\ConfiguredCodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 /**
@@ -20,16 +22,32 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  * @see https://www.drupal.org/node/3473440
  * @see https://www.drupal.org/node/3474692
  */
-final class RemoveTwigNodeTransTagArgumentRector extends AbstractRector
+final class RemoveTwigNodeTransTagArgumentRector extends AbstractDrupalCoreRector
 {
+    /**
+     * @var array|DrupalIntroducedVersionConfiguration[]
+     */
+    protected array $configuration;
+
+    public function configure(array $configuration): void
+    {
+        foreach ($configuration as $value) {
+            if (!$value instanceof DrupalIntroducedVersionConfiguration) {
+                throw new \InvalidArgumentException(sprintf('Each configuration item must be an instance of "%s"', DrupalIntroducedVersionConfiguration::class));
+            }
+        }
+        parent::configure($configuration);
+    }
+
     public function getRuleDefinition(): RuleDefinition
     {
         return new RuleDefinition(
             'Remove the deprecated 6th $tag argument from TwigNodeTrans constructor calls',
             [
-                new CodeSample(
+                new ConfiguredCodeSample(
                     'new TwigNodeTrans($body, $plural, $count, $options, $lineno, $this->getTag());',
-                    'new TwigNodeTrans($body, $plural, $count, $options, $lineno);'
+                    'new TwigNodeTrans($body, $plural, $count, $options, $lineno);',
+                    [new DrupalIntroducedVersionConfiguration('11.2.0')]
                 ),
             ]
         );
@@ -41,7 +59,7 @@ final class RemoveTwigNodeTransTagArgumentRector extends AbstractRector
         return [New_::class];
     }
 
-    public function refactor(Node $node): ?Node
+    protected function refactorWithConfiguration(Node $node, VersionedConfigurationInterface $configuration): ?Node
     {
         assert($node instanceof New_);
         if (!$node->class instanceof Name) {
@@ -56,8 +74,10 @@ final class RemoveTwigNodeTransTagArgumentRector extends AbstractRector
         if (count($node->args) !== 6) {
             return null;
         }
-        array_pop($node->args);
 
-        return $node;
+        $cloned = clone $node;
+        array_pop($cloned->args);
+
+        return $cloned;
     }
 }

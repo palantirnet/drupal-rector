@@ -21,7 +21,7 @@ class MyIdMap extends Sql
 {
     public function doSomething(): void
     {
-        $manager = $this->migrationPluginManager;
+        $manager = \Drupal\Component\Utility\DeprecationHelper::backwardsCompatibleCall(\Drupal::VERSION, '11.0.0', fn() => $this->migrationPluginManager, fn() => $this->getMigrationPluginManager());
         $other = $this->someOtherMethod();
     }
 }
