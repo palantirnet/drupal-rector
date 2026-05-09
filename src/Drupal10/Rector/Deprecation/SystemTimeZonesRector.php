@@ -6,6 +6,7 @@ namespace DrupalRector\Drupal10\Rector\Deprecation;
 
 use DrupalRector\Contract\VersionedConfigurationInterface;
 use DrupalRector\Rector\AbstractDrupalCoreRector;
+use DrupalRector\Services\DrupalRectorSettings;
 use DrupalRector\Rector\ValueObject\DrupalIntroducedVersionConfiguration;
 use PhpParser\Node;
 use PhpParser\Node\Expr\ConstFetch;
@@ -25,8 +26,9 @@ class SystemTimeZonesRector extends AbstractDrupalCoreRector
      */
     private ValueResolver $valueResolver;
 
-    public function __construct(ValueResolver $valueResolver)
+    public function __construct(DrupalRectorSettings $drupalRectorSettings, ValueResolver $valueResolver)
     {
+        parent::__construct($drupalRectorSettings);
         $this->valueResolver = $valueResolver;
     }
 

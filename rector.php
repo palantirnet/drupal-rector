@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-use DrupalRector\Rector\AbstractDrupalCoreRector;
 use DrupalRector\Services\DrupalRectorSettings;
 use DrupalRector\Set\Drupal10SetList;
 use DrupalRector\Set\Drupal8SetList;
@@ -32,10 +31,6 @@ return static function (RectorConfig $rectorConfig): void {
             // Contrib module developers: set the minimum Drupal version your
             // module needs to support so that BC wrappers are emitted correctly.
             // Example: ->setMinimumCoreVersionSupported('10.5.0')
-    );
-    $rectorConfig->afterResolving(
-        AbstractDrupalCoreRector::class,
-        fn ($rector, $container) => $rector->setDrupalRectorSettings($container->make(DrupalRectorSettings::class))
     );
 
     if (class_exists('DrupalFinder\DrupalFinderComposerRuntime')) {
