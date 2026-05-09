@@ -10,7 +10,6 @@
     ],
     "require": {
         "rector/rector": "^2",
-        "mglaman/phpstan-drupal": "^2.0",
         "webflo/drupal-finder": "^1.2"
     },
     "license": "MIT",
