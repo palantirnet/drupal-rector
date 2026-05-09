@@ -96,6 +96,29 @@ $rectorConfig->sets([
 
 This is more granular than the `Drupal9SetList::DRUPAL_9` set.
 
+### DrupalRectorSettings
+
+The copied `rector.php` includes a `DrupalRectorSettings` block that controls two behaviours:
+
+**Backward-compatibility wrapping** — when enabled, rule results are wrapped in `DeprecationHelper::backwardsCompatibleCall()` so the code works on both the old and new Drupal API simultaneously. The default in `rector.php` is **disabled** (recommended for most projects). Enable it when you need the output to run on multiple Drupal versions at the same time:
+
+```php
+$rectorConfig->singleton(DrupalRectorSettings::class, fn () =>
+    (new DrupalRectorSettings())
+        ->enableBackwardCompatibility()
+);
+```
+
+**Minimum supported Drupal version** (contrib modules) — if you are running Rector against a contrib module that must stay compatible with an older Drupal release, set `minimumCoreVersionSupported` so BC wrappers are emitted correctly even when your development environment runs a newer Drupal:
+
+```php
+$rectorConfig->singleton(DrupalRectorSettings::class, fn () =>
+    (new DrupalRectorSettings())
+        ->enableBackwardCompatibility()
+        ->setMinimumCoreVersionSupported('10.5.0')
+);
+```
+
 ## Suggested workflow
 
 1. Analyze your code with Rector and review suggested changes:
