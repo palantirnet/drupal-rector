@@ -6,8 +6,8 @@ namespace DrupalRector\Drupal10\Rector\Deprecation;
 
 use DrupalRector\Contract\VersionedConfigurationInterface;
 use DrupalRector\Rector\AbstractDrupalCoreRector;
-use DrupalRector\Services\DrupalRectorSettings;
 use DrupalRector\Rector\ValueObject\DrupalIntroducedVersionConfiguration;
+use DrupalRector\Services\DrupalRectorSettings;
 use PhpParser\Node;
 use PhpParser\Node\Expr\ConstFetch;
 use Rector\PhpParser\Node\Value\ValueResolver;
