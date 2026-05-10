@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Skill(rector-qa)",
+      "Skill(rector-discover)"
+    ]
+  }
+}
