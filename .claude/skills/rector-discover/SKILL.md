@@ -47,11 +47,11 @@ Rector Index — <timestamp>
   implemented: X   config-only: Y   pending: Z
 ```
 
-Then list pending entries grouped by phase in order: 1a → 1b → 1c → 2 → 3 → 4 → unknown. For each phase list the title of that phase.
+Then list pending entries grouped by phase in order: 1a → 1b → 1c → 2 → 3 → 4 → unknown. Eg: `Phase 3 — Remove function call / node removal`
 
 For each pending entry show:
 ```
-[Phase 2] ReplaceSessionManagerDeleteRector — issue #3577376
+[Phase 2] ReplaceSessionManagerDeleteRector — issue [#3577376](https://www.drupal.org/i/3577376)
   Digest: replace-deprecated-sessionmanager-delete-with-3577376.php
 ```
 

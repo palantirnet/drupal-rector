@@ -20,22 +20,22 @@ Read the digest. Answer these questions in order:
    - Multiple node types in one class → **custom** (`digest-to-rector-prompt.md`)
 
 2. **What does the replacement look like?**
-   - `fn()` is removed entirely, no replacement → **func-removal** (config-only)
-   - `SomeClass::staticMethod()` → **func-to-static** (config-only)
-   - `\Drupal::service('string.id')->method()` → **func-to-string-service** (config-only)
-   - `\Drupal::service(FqcnClass::class)->method()`, simple 1-to-1 → **config-only** (`FunctionToServiceConfiguration(..., true)`)
+   - `fn()` is removed entirely, no replacement → [`config-only-template.md#functioncallremovalrector`](config-only-template.md#functioncallremovalrector)
+   - `SomeClass::staticMethod()` → [`config-only-template.md#functiontostaticroctor`](config-only-template.md#functiontostaticroctor)
+   - `\Drupal::service('string.id')->method()` → [`config-only-template.md#functiontoservicerector`](config-only-template.md#functiontoservicerector)
+   - `\Drupal::service(FqcnClass::class)->method()`, simple 1-to-1 → [`config-only-template.md#functiontoservicerector`](config-only-template.md#functiontoservicerector) (`FunctionToServiceConfiguration(..., true)`)
    - `\Drupal::service(FqcnClass::class)->method()`, arg-count dispatch / chained / mixed → **func-to-class-service-bc** or **func-to-class-service-bc-multi** ✓
-   - `$firstArg->method()` (method on first argument) → **func-to-first-arg-method** (config-only)
-   - `\Drupal::service('old.id')` → `\Drupal::service('new.id')` → **service-rename** (config-only)
+   - `$firstArg->method()` (method on first argument) → [`config-only-template.md#functiontofirstargmethodrector`](config-only-template.md#functiontofirstargmethodrector)
+   - `\Drupal::service('old.id')` → `\Drupal::service('new.id')` → [`config-only-template.md#drupalservicerenamerector`](config-only-template.md#drupalservicerenamerector)
    - Something else → **custom** (`digest-to-rector-prompt.md`)
 
 3. **For MethodCall:** which generic rector applies?
-   - Rename with receiver type check → **method-rename** (config-only)
+   - Rename with receiver type check → [`config-only-template.md#methodtomethodwithcheckrector`](config-only-template.md#methodtomethodwithcheckrector)
    - Complex transformation → **custom**
 
 4. **For ClassConstFetch:**
-   - `OldClass::CONST` → `NewClass::CONST` → **class-const-rename** (config-only)
-   - `GLOBAL_CONST` → `SomeClass::CONST` → **global-const-to-class-const** (config-only)
+   - `OldClass::CONST` → `NewClass::CONST` → [`config-only-template.md#classconstanttoclassconstantrector`](config-only-template.md#classconstanttoclassconstantrector)
+   - `GLOBAL_CONST` → `SomeClass::CONST` → [`config-only-template.md#constanttoclassconstantrector`](config-only-template.md#constanttoclassconstantrector)
 
 ---
 
@@ -45,14 +45,14 @@ Read the digest. Answer these questions in order:
 |---|---|---|---|
 | `func-to-class-service-bc.md` | FuncCall → `Fqcn::class` service, complex (dispatch/chained) | custom class | ✅ done |
 | `func-to-class-service-bc-multi.md` | FuncCall → `Fqcn::class` service, multiple with complex logic | custom class | ✅ done |
-| `func-removal.md` | FuncCall removed entirely | config-only | 🔲 todo |
-| `func-to-static.md` | FuncCall → static method | config-only | 🔲 todo |
-| `func-to-string-service.md` | FuncCall → `'service.id'` method | config-only | 🔲 todo |
-| `func-to-first-arg-method.md` | FuncCall → method on first arg | config-only | 🔲 todo |
-| `service-rename.md` | `\Drupal::service('old')` → `'new'` | config-only | 🔲 todo |
-| `method-rename.md` | MethodCall rename with type check | config-only | 🔲 todo |
-| `class-const-rename.md` | `OldClass::CONST` → `NewClass::CONST` | config-only | 🔲 todo |
-| `global-const-to-class-const.md` | `GLOBAL_CONST` → `Class::CONST` | config-only | 🔲 todo |
+| [`config-only-template.md#functioncallremovalrector`](config-only-template.md#functioncallremovalrector) | FuncCall removed entirely | config-only | ✅ done |
+| [`config-only-template.md#functiontostaticroctor`](config-only-template.md#functiontostaticroctor) | FuncCall → static method | config-only | ✅ done |
+| [`config-only-template.md#functiontoservicerector`](config-only-template.md#functiontoservicerector) | FuncCall → `'service.id'` method or `Fqcn::class` simple 1-to-1 | config-only | ✅ done |
+| [`config-only-template.md#functiontofirstargmethodrector`](config-only-template.md#functiontofirstargmethodrector) | FuncCall → method on first arg | config-only | ✅ done |
+| [`config-only-template.md#drupalservicerenamerector`](config-only-template.md#drupalservicerenamerector) | `\Drupal::service('old')` → `'new'` | config-only | ✅ done |
+| [`config-only-template.md#methodtomethodwithcheckrector`](config-only-template.md#methodtomethodwithcheckrector) | MethodCall rename with type check | config-only | ✅ done |
+| [`config-only-template.md#classconstanttoclassconstantrector`](config-only-template.md#classconstanttoclassconstantrector) | `OldClass::CONST` → `NewClass::CONST` | config-only | ✅ done |
+| [`config-only-template.md#constanttoclassconstantrector`](config-only-template.md#constanttoclassconstantrector) | `GLOBAL_CONST` → `Class::CONST` | config-only | ✅ done |
 
 ---
 
