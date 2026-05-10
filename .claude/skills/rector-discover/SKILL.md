@@ -13,29 +13,20 @@ Show which drupal-digests deprecation rules still need to be implemented in drup
 
 ### 1. Ensure the digests repo is available
 
-The canonical path is `repos/drupal-digests` (inside ddev: `/var/www/html/repos/drupal-digests`). If absent, run the setup script first:
+The canonical path is `repos/drupal-digests` (inside ddev: `/var/www/html/repos/drupal-digests`). Always run the setup script first to clone or update the repositories:
 
 ```bash
+bash .claude/scripts/setup-repos.sh
 ```
 
 ### 2. Ensure the index is fresh
 
-Check whether `docs/rector-index.yml` exists and is less than 24 hours old:
-
-```bash
-[ -d repos/drupal-digests ] || bash .claude/scripts/setup-repos.sh
-```
-
-### 2. Ensure the index is fresh
+Update the `docs/rector-index.yml`:
 
 ```bash
 INDEX="docs/rector-index.yml"
-if [ ! -f "$INDEX" ] || [ "$(find "$INDEX" -mmin +1440 2>/dev/null)" ]; then
-  echo "Regenerating rector-index.yml…"
-  php .claude/scripts/generate-rector-index.php --digests-path=repos/drupal-digests
-else
-  echo "Using existing index ($(date -r "$INDEX" '+%Y-%m-%d %H:%M'))"
-fi
+echo "Regenerating rector-index.yml…"
+php .claude/scripts/generate-rector-index.php --digests-path=repos/drupal-digests
 ```
 
 ### 3. Read the index
@@ -56,7 +47,7 @@ Rector Index — <timestamp>
   implemented: X   config-only: Y   pending: Z
 ```
 
-Then list pending entries grouped by phase in order: 1a → 1b → 1c → 2 → 3 → 4 → unknown.
+Then list pending entries grouped by phase in order: 1a → 1b → 1c → 2 → 3 → 4 → unknown. For each phase list the title of that phase.
 
 For each pending entry show:
 ```
@@ -78,25 +69,16 @@ Next suggested: /rector-implement repos/drupal-digests/rector/rules/<digest_file
 
 ## Phase Reference
 
-| Phase | Description | Generic rector |
-|-------|-------------|----------------|
-| 1a | FuncCall → service call | `FunctionToServiceRector` |
-| 1a | FuncCall → method on first arg (`fn($obj)` → `$obj->method()`) | `FunctionToFirstArgMethodRector` |
-| 1a | Service ID rename (`\Drupal::service('old')` → `\Drupal::service('new')`) | `DrupalServiceRenameRector` |
-| 1b | FuncCall → static call | `FunctionToStaticRector` |
-| 1c | Class constant → class constant (`OldClass::OLD` → `NewClass::NEW`) | `ClassConstantToClassConstantRector` |
+| Phase | Description                                                                     | Generic rector |
+|-------|---------------------------------------------------------------------------------|----------------|
+| 1a | FuncCall → service call (`fn(...)` ->  `\Drupal::service(...)`                   | `FunctionToServiceRector` |
+| 1a | FuncCall → method on first arg (`fn($obj)` → `$obj->method()`)                  | `FunctionToFirstArgMethodRector` |
+| 1a | Service ID rename (`\Drupal::service('old')` → `\Drupal::service('new')`)       | `DrupalServiceRenameRector` |
+| 1b | FuncCall → static call on class (`fn(...)` -> `Class::method(...)`              | `FunctionToStaticRector` |
+| 1c | Class constant → class constant (`OldClass::OLD` → `NewClass::NEW`)             | `ClassConstantToClassConstantRector` |
 | 1c | Bare global constant → class constant (`DEPRECATED_CONST` → `\Ns\Class::CONST`) | `ConstantToClassConstantRector` |
-| 2 | MethodCall rename with type check (`$obj->old()` → `$obj->new()`) | `MethodToMethodWithCheckRector` |
-| 2 | MethodCall custom transformation | custom `AbstractRector` or `AbstractDrupalCoreRector` |
-| 3 | Remove a function call statement with no replacement | `FunctionCallRemovalRector` |
-| 3 | Node removal (other patterns) | custom class returning `REMOVE_NODE` |
-| 4 | Complex / multi-node | custom class |
-
-## Refreshing manually
-
-To force a full regeneration:
-```bash
-php .claude/scripts/generate-rector-index.php
-```
-
-The generated file is gitignored — it's always derived from source.
+| 2 | MethodCall rename with type check (`$obj->old()` → `$obj->new()`)               | `MethodToMethodWithCheckRector` |
+| 2 | MethodCall custom transformation                                                | custom `AbstractRector` or `AbstractDrupalCoreRector` |
+| 3 | Remove a function call statement with no replacement                            | `FunctionCallRemovalRector` |
+| 3 | Node removal (other patterns)                                                   | custom class returning `REMOVE_NODE` |
+| 4 | Complex / multi-node                                                            | custom class |

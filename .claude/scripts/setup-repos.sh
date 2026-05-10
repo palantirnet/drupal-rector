@@ -13,12 +13,6 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPOS_DIR="$(cd "$SCRIPT_DIR/../.." && pwd)/repos"
-UPDATE=false
-
-for arg in "$@"; do
-  [ "$arg" = "--update" ] && UPDATE=true
-done
-
 mkdir -p "$REPOS_DIR"
 
 clone_or_update() {
@@ -28,13 +22,9 @@ clone_or_update() {
   local dest="$REPOS_DIR/$name"
 
   if [ -d "$dest/.git" ]; then
-    if $UPDATE; then
-      echo "==> Updating $name..."
-      git -C "$dest" fetch --depth=1 ${branch:+origin "$branch"} 2>&1 | tail -3
-      git -C "$dest" reset --hard FETCH_HEAD
-    else
-      echo "==> $name already cloned -skipping (use --update to refresh)"
-    fi
+    echo "==> Updating $name..."
+    git -C "$dest" fetch --depth=1 ${branch:+origin "$branch"} 2>&1 | tail -3
+    git -C "$dest" reset --hard FETCH_HEAD
   else
     echo "==> Cloning $name..."
     local clone_args=(--depth=1)
