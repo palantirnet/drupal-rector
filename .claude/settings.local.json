@@ -2,7 +2,11 @@
   "permissions": {
     "allow": [
       "Skill(rector-qa)",
-      "Skill(rector-discover)"
+      "Skill(rector-discover)",
+      "Skill(rector-implement)",
+      "WebFetch(domain:www.drupal.org)",
+      "Bash(ddev composer *)",
+      "Bash(rg *)"
     ]
   }
 }

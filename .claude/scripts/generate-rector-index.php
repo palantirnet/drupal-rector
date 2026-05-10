@@ -55,7 +55,7 @@ function main(array $argv): void
     // Step 1: Build base entries from in-scope digest files.
     $entries = scanDigestFiles($rulesDir);
 
-    // Step 2: Mark implemented custom classes — scan src/DrupalXX/ dirs for version >= 10, newest first.
+    // Step 2: Mark implemented custom classes — scan src/Drupal*/Rector/Deprecation dirs, newest first.
     $srcDirs = array_filter(
         glob($repoRoot . '/src/Drupal*/Rector/Deprecation', GLOB_ONLYDIR),
         fn($d) => preg_match('#/Drupal(\d+)/#', $d, $m) && (int) $m[1] >= 10
@@ -66,8 +66,12 @@ function main(array $argv): void
         $unmatched += scanImplementedClasses($srcDir, $repoRoot, $entries);
     }
 
-    // Step 3: Mark config-only Phase 1 entries.
-    scanConfigFiles($repoRoot . '/config/drupal-11', $entries);
+    // Build a reverse lookup: shortClassName => {class, files} for all known implemented classes.
+    // Used in Step 3 so config files can link pending issues to existing custom rectors.
+    $implementedClasses = buildClassMap($entries, $unmatched);
+
+    // Step 3: Mark config-only / implemented entries found in any config/* subdir.
+    scanConfigFiles($repoRoot . '/config', $entries, $implementedClasses);
 
     // Step 4: Add unmatched custom classes (no digest file found).
     foreach ($unmatched as $className => $data) {
@@ -307,30 +311,67 @@ function classifyPhaseFromClass(string $content): string
 }
 
 /**
- * Scans config files and marks config-only Phase 1 entries.
+ * Builds a map of shortClassName => {class, files} for all currently-implemented entries
+ * plus unmatched classes. Used to resolve custom rectors referenced in config files.
  *
- * @param array<string, array<string, mixed>> $entries
+ * @param  array<string, array<string, mixed>> $entries
+ * @param  array<string, array<string, mixed>> $unmatched
+ * @return array<string, array<string, mixed>>
  */
-function scanConfigFiles(string $configDir, array &$entries): void
+function buildClassMap(array $entries, array $unmatched): array
 {
-    foreach (glob($configDir . '/*.php') as $configFile) {
-        if (str_ends_with($configFile, 'drupal-11-all-deprecations.php')) {
+    $map = [];
+
+    foreach ($entries as $entry) {
+        if ($entry['status'] !== 'implemented') {
             continue;
         }
+        foreach ((array) $entry['class'] as $cls) {
+            if ($cls !== null) {
+                $map[$cls] = ['class' => $cls, 'files' => $entry['files']];
+            }
+        }
+    }
 
-        $content = file_get_contents($configFile);
-        $relFile = 'config/drupal-11/' . basename($configFile);
+    foreach ($unmatched as $className => $data) {
+        $map[$className] = ['class' => $className, 'files' => $data['files']];
+    }
 
-        parseConfigBlock($content, $relFile, $entries);
+    return $map;
+}
+
+/**
+ * Scans all config/* subdirectories and marks config-only / implemented entries.
+ *
+ * @param array<string, array<string, mixed>> $entries
+ * @param array<string, array<string, mixed>> $implementedClasses
+ */
+function scanConfigFiles(string $configRoot, array &$entries, array $implementedClasses): void
+{
+    foreach (glob($configRoot . '/*/', GLOB_ONLYDIR) as $configDir) {
+        $dirName = basename(rtrim($configDir, '/'));
+        foreach (glob($configDir . '*.php') as $configFile) {
+            // Skip aggregate "all deprecations" bundle files.
+            if (preg_match('/drupal-\d+-all-deprecations\.php$/', basename($configFile))) {
+                continue;
+            }
+            $content = file_get_contents($configFile);
+            $relFile  = 'config/' . $dirName . '/' . basename($configFile);
+            parseConfigBlock($content, $relFile, $entries, $implementedClasses);
+        }
     }
 }
 
 /**
  * Parses a config file, associating issue URL comments with rector class calls.
  *
+ * Generic rectors (FunctionToServiceRector etc.) → config-only.
+ * Custom rectors already found in src/ → implemented (linked via $implementedClasses).
+ *
  * @param array<string, array<string, mixed>> $entries
+ * @param array<string, array<string, mixed>> $implementedClasses  shortClassName => {class, files}
  */
-function parseConfigBlock(string $content, string $relFile, array &$entries): void
+function parseConfigBlock(string $content, string $relFile, array &$entries, array $implementedClasses): void
 {
     $lines = explode("\n", $content);
     $pendingIssues = [];
@@ -349,8 +390,8 @@ function parseConfigBlock(string $content, string $relFile, array &$entries): vo
             $shortClass = extractShortClassName($m[1]);
 
             if (isset(GENERIC_RECTORS[$shortClass])) {
+                // Generic rector — mark as config-only.
                 $phase = GENERIC_RECTORS[$shortClass];
-
                 foreach ($pendingIssues as $issue) {
                     if (isset($entries[$issue]) && $entries[$issue]['status'] === 'pending') {
                         $entries[$issue]['status'] = 'config-only';
@@ -358,6 +399,16 @@ function parseConfigBlock(string $content, string $relFile, array &$entries): vo
                         if (!in_array($relFile, $entries[$issue]['files'])) {
                             $entries[$issue]['files'][] = $relFile;
                         }
+                    }
+                }
+            } elseif (isset($implementedClasses[$shortClass])) {
+                // Custom rector already implemented in src/ — mark as implemented.
+                $classData = $implementedClasses[$shortClass];
+                foreach ($pendingIssues as $issue) {
+                    if (isset($entries[$issue]) && $entries[$issue]['status'] === 'pending') {
+                        $entries[$issue]['status'] = 'implemented';
+                        $entries[$issue]['class']  = $classData['class'];
+                        $entries[$issue]['files']  = $classData['files'];
                     }
                 }
             }
