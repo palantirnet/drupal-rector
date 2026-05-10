@@ -4,9 +4,6 @@ declare(strict_types=1);
 
 namespace DrupalRector\Drupal11\Rector\Deprecation;
 
-use DrupalRector\Contract\VersionedConfigurationInterface;
-use DrupalRector\Rector\AbstractDrupalCoreRector;
-use DrupalRector\Rector\ValueObject\DrupalIntroducedVersionConfiguration;
 use PhpParser\Node;
 use PhpParser\Node\Arg;
 use PhpParser\Node\ArrayItem;
@@ -14,7 +11,8 @@ use PhpParser\Node\Expr\Array_;
 use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Scalar\String_;
 use PHPStan\Type\ObjectType;
-use Symplify\RuleDocGenerator\ValueObject\CodeSample\ConfiguredCodeSample;
+use Rector\Rector\AbstractRector;
+use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 /**
@@ -26,34 +24,20 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  * @see https://www.drupal.org/node/3196937
  * @see https://www.drupal.org/node/3473739
  */
-class BlockContentTestBaseStringToArrayRector extends AbstractDrupalCoreRector
+class BlockContentTestBaseStringToArrayRector extends AbstractRector
 {
-    /** @var DrupalIntroducedVersionConfiguration[] */
-    protected array $configuration;
-
-    public function configure(array $configuration): void
-    {
-        foreach ($configuration as $value) {
-            if (!$value instanceof DrupalIntroducedVersionConfiguration) {
-                throw new \InvalidArgumentException(sprintf('Each configuration item must be an instance of "%s"', DrupalIntroducedVersionConfiguration::class));
-            }
-        }
-        parent::configure($configuration);
-    }
-
     public function getRuleDefinition(): RuleDefinition
     {
         return new RuleDefinition(
             "Replace deprecated string \$values in BlockContentTestBase::createBlockContentType() with an ['id' => ...] array",
             [
-                new ConfiguredCodeSample(
+                new CodeSample(
                     <<<'CODE_BEFORE'
 $this->createBlockContentType('basic', TRUE);
 CODE_BEFORE,
                     <<<'CODE_AFTER'
 $this->createBlockContentType(['id' => 'basic'], TRUE);
-CODE_AFTER,
-                    [new DrupalIntroducedVersionConfiguration('11.1.0')]
+CODE_AFTER
                 ),
             ]
         );
@@ -65,12 +49,9 @@ CODE_AFTER,
         return [MethodCall::class];
     }
 
-    protected function refactorWithConfiguration(Node $node, VersionedConfigurationInterface $configuration): ?Node
+    /** @param MethodCall $node */
+    public function refactor(Node $node): ?Node
     {
-        if (!$node instanceof MethodCall) {
-            return null;
-        }
-
         if (!$this->isName($node->name, 'createBlockContentType')) {
             return null;
         }
@@ -100,12 +81,8 @@ CODE_AFTER,
             return null;
         }
 
-        // Clone to avoid mutating the original node — required for correct BC wrapping.
-        $clonedNode = clone $node;
-        $clonedArg = clone $firstArg;
-        $clonedArg->value = new Array_([new ArrayItem($firstArg->value, new String_('id'))]);
-        $clonedNode->args[0] = $clonedArg;
+        $firstArg->value = new Array_([new ArrayItem($firstArg->value, new String_('id'))]);
 
-        return $clonedNode;
+        return $node;
     }
 }
