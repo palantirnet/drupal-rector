@@ -128,26 +128,50 @@ Answer these questions using the information gathered:
 
 **Q3: Was the deprecation introduced in Drupal >= 10.1.0?**
 - Compare the introduced version from Step 2 against `10.1.0`.
-- If introduced version >= `10.1.0` AND Q2 is eligible → BC wrapping **applies**.
+- If introduced version >= `10.1.0` AND Q2 is eligible → BC wrapping is **potentially applicable**, but check Q4.
 - Otherwise → BC wrapping does **not** apply.
 
+**Q4: Does the replacement code depend on a new Drupal API?**
+
+This is the key semantic question that overrides the structural eligibility from Q2/Q3.
+
+Ask: *Could the transformed code run unchanged on a Drupal version that predates the deprecation?*
+
+- **Yes, it depends on a new API** → BC wrapping IS needed.
+  The replacement calls a function, method, class, or constant that was introduced at the same
+  time as the deprecation. Running the new code on an older Drupal would cause a fatal error or
+  missing-symbol error. The BC wrapper lets contrib code work on both old and new Drupal
+  simultaneously.
+  > Example: `locale_config_batch_set_config_langcodes()` → `locale_config_batch_update_default_config_langcodes()`.
+  > The new function only exists on Drupal ≥ 11.1.0; calling it on 11.0.x would fail.
+
+- **No, the replacement is version-agnostic** → BC wrapping is **NOT** needed — use `AbstractRector`.
+  The replacement is pure PHP, uses only native PHP functions, or uses Drupal APIs that existed
+  long before this deprecation. The transformed code is safe to run on any Drupal version, so
+  there is nothing to guard with a version check.
+  > Example: `uasort($arr, 'system_sort_themes')` → `uasort($arr, static function ($a, $b) { … })`.
+  > The inline closure is pure PHP and works on every Drupal version; BC wrapping adds no value.
+
 **Decision:**
-- BC wrapping applies → Use `AbstractDrupalCoreRector` + `DrupalIntroducedVersionConfiguration`
-- BC wrapping does not apply → Use `AbstractRector`
+- Q2 eligible AND Q3 >= 10.1.0 AND Q4 = new API → Use `AbstractDrupalCoreRector` + `DrupalIntroducedVersionConfiguration`
+- Q4 = version-agnostic replacement (or Q2/Q3 not met) → Use `AbstractRector`
 
 **Quick reference:**
 
-| Input node | Output node | Introduced | Base class | BC wrapping |
-|---|---|---|---|---|
-| `FuncCall` | `StaticCall` | >= 10.1.0 | `AbstractDrupalCoreRector` | Yes |
-| `FuncCall` | `MethodCall` | >= 10.1.0 | `AbstractDrupalCoreRector` | Yes |
-| `MethodCall` | `MethodCall` | >= 10.1.0 | `AbstractDrupalCoreRector` | Yes |
-| `Array_` | `Array_` | >= 10.1.0 | `AbstractDrupalCoreRector` | Yes |
-| `New_` | `New_` | >= 10.1.0 | `AbstractDrupalCoreRector` | Yes |
-| `ClassConstFetch` | `ClassConstFetch` | >= 10.1.0 | `AbstractDrupalCoreRector` | Yes |
-| `FuncCall` | `StaticCall` | < 10.1.0 | `AbstractRector` | No |
-| `ArrayItem` | `ArrayItem` | any | `AbstractRector` | No (PHP syntax limit) |
-| `Class_` (structural) | `Class_` | any | `AbstractRector` | No (not an Expr) |
+| Input node | Output node | Replacement type | Introduced | Base class | BC wrapping |
+|---|---|---|---|---|---|
+| `FuncCall` | `FuncCall` (renamed) | new Drupal function | >= 10.1.0 | `AbstractDrupalCoreRector` | Yes |
+| `FuncCall` | `StaticCall` | new static method | >= 10.1.0 | `AbstractDrupalCoreRector` | Yes |
+| `FuncCall` | `MethodCall` | new service method | >= 10.1.0 | `AbstractDrupalCoreRector` | Yes |
+| `MethodCall` | `MethodCall` | new method on same class | >= 10.1.0 | `AbstractDrupalCoreRector` | Yes |
+| `Array_` | `Array_` | new class constant/callable | >= 10.1.0 | `AbstractDrupalCoreRector` | Yes |
+| `New_` | `New_` | new class name | >= 10.1.0 | `AbstractDrupalCoreRector` | Yes |
+| `ClassConstFetch` | `ClassConstFetch` | new class constant | >= 10.1.0 | `AbstractDrupalCoreRector` | Yes |
+| `FuncCall` | `FuncCall` (modified args) | pure PHP / no new API | any | `AbstractRector` | No |
+| `MethodCall` | `FuncCall` | native PHP function | any | `AbstractRector` | No |
+| `FuncCall` | `StaticCall` | any | < 10.1.0 | `AbstractRector` | No |
+| `ArrayItem` | `ArrayItem` | any | any | `AbstractRector` | No (PHP syntax limit) |
+| `Class_` (structural) | `Class_` | any | any | `AbstractRector` | No (not an Expr) |
 
 ---
 

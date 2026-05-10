@@ -141,11 +141,11 @@ Do not run the other three passes in bulk mode.
 
 2. Check for required coverage:
 
-| Fixture | Required when | Status |
-|---------|--------------|--------|
-| `fixture/basic.php.inc` | Always | ✅/❌ |
-| `fixture/no_change_unrelated.php.inc` | Rector uses `isObjectType()` | ✅/❌ |
-| `fixture-below-version/basic.php.inc` | Rector extends `AbstractDrupalCoreRector` | ✅/❌ |
+| Fixture | Required when                                   | Status |
+|---------|-------------------------------------------------|--------|
+| `fixture/basic.php.inc` | Always                                          | ✅/❌ |
+| `fixture/no_change_unrelated.php.inc` | Always                                          | ✅/❌ |
+| `fixture-below-version/basic.php.inc` | Rector extends `AbstractDrupalCoreRector`       | ✅/❌ |
 | Edge-case fixtures | Rector has conditional branches in `refactor()` | ✅/❌/N/A |
 
 3. For `no_change_unrelated.php.inc`: verify the before and after sections are **identical** (the rector must NOT change untyped code).
@@ -168,16 +168,22 @@ Do not run the other three passes in bulk mode.
 
 2. Re-run the Step 4 decision:
    - **Q1:** What node types does `getNodeTypes()` return?
-   - **Q2:** Is the transformation CallLike → CallLike?
-     - Old node is CallLike if: `FuncCall`, `MethodCall`, `StaticCall`, `NullsafeMethodCall`, `New_`
-     - New node (what `refactor()` or `refactorWithConfiguration()` returns) is CallLike if: same list
+   - **Q2:** Is the transformation Expr → Expr?
+     - Old node is `Node\Expr` if: `FuncCall`, `MethodCall`, `StaticCall`, `NullsafeMethodCall`, `New_`, `Array_`, `ClassConstFetch`, `String_`, etc.
+     - New node (what `refactor()` or `refactorWithConfiguration()` returns) must also be `Node\Expr`.
    - **Q3:** Was the deprecation introduced in Drupal >= 10.1.0?
      - Check `introduced_version` in the test config or `DrupalIntroducedVersionConfiguration` usage.
      - If unclear, read `repos/drupal-digests/issues/drupal-core/<issue-number>.md`.
+   - **Q4:** Does the replacement code depend on a new Drupal API?
+     - Read `refactor()`/`refactorWithConfiguration()` and identify what the returned node calls or
+       references (function name, class name, method name, constant).
+     - Ask: could this replacement code run unchanged on a Drupal version that predates the deprecation?
+     - **New Drupal API** (function/method/class introduced alongside the deprecation) → BC needed.
+     - **Pure PHP or version-agnostic** (native functions, inline closures, no new Drupal symbols) → BC NOT needed.
 
 3. Expected base class:
-   - Q2 = CallLike → CallLike AND Q3 = version >= 10.1.0 → **`AbstractDrupalCoreRector`**
-   - Otherwise → **`AbstractRector`**
+   - Q2 = Expr → Expr AND Q3 = version >= 10.1.0 AND **Q4 = new Drupal API** → **`AbstractDrupalCoreRector`**
+   - Q4 = version-agnostic replacement (or Q2/Q3 not met) → **`AbstractRector`**
 
 4. Compare expected vs actual.
 
