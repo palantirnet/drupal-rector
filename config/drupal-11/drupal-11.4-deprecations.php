@@ -372,6 +372,14 @@ return static function (RectorConfig $rectorConfig): void {
         new FunctionToServiceConfiguration('11.4.0', 'locale_translate_get_interface_translation_files', 'Drupal\locale\File\LocaleFileManager', 'getInterfaceTranslationFiles'),
     ]);
 
+    // https://www.drupal.org/node/2571679
+    // https://www.drupal.org/node/3382344 (change record)
+    // views_add_contextual_links() deprecated in drupal:11.4.0, removed in drupal:13.0.0.
+    // Replaced by \Drupal\views\ContextualLinksHelper::addLinks() service call.
+    $rectorConfig->ruleWithConfiguration(FunctionToServiceRector::class, [
+        new FunctionToServiceConfiguration('11.4.0', 'views_add_contextual_links', 'Drupal\views\ContextualLinksHelper', 'addLinks', true),
+    ]);
+
     // https://www.drupal.org/node/3567618
     // IMAGE_DERIVATIVE_TOKEN deprecated in drupal:11.4.0, removed in drupal:13.0.0.
     // Replaced by \Drupal\image\ImageStyleInterface::TOKEN.
