@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use DrupalRector\Drupal11\Rector\Deprecation\DeprecatedFilterFunctionsRector;
 use DrupalRector\Drupal11\Rector\Deprecation\FilterFormatFunctionsToServiceRector;
+use DrupalRector\Drupal11\Rector\Deprecation\GetOriginalClassToGetDecoratedClassesRector;
 use DrupalRector\Drupal11\Rector\Deprecation\MediaFilterFormatEditFormValidateRector;
 use DrupalRector\Drupal11\Rector\Deprecation\NodeAccessRebuildFunctionsRector;
 use DrupalRector\Drupal11\Rector\Deprecation\RemoveAutomatedCronSubmitHandlerRector;
@@ -292,6 +293,14 @@ return static function (RectorConfig $rectorConfig): void {
     // views_disable_view(), views_get_view_result() deprecated in drupal:11.4.0, removed in drupal:13.0.0.
     // Replaced by OO equivalents on the view object or Views::getViewResult().
     $rectorConfig->ruleWithConfiguration(ReplaceViewsProceduralFunctionsRector::class, [
+        new DrupalIntroducedVersionConfiguration('11.4.0'),
+    ]);
+
+    // https://www.drupal.org/node/3557461
+    // https://www.drupal.org/node/3587853 (change record)
+    // EntityTypeInterface::getOriginalClass() deprecated in drupal:11.4.0, removed in drupal:12.0.0.
+    // Replaced by getDecoratedClasses()[0].
+    $rectorConfig->ruleWithConfiguration(GetOriginalClassToGetDecoratedClassesRector::class, [
         new DrupalIntroducedVersionConfiguration('11.4.0'),
     ]);
 
