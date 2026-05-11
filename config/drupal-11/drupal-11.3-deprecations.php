@@ -51,10 +51,9 @@ return static function (RectorConfig $rectorConfig): void {
     // Replaced by equivalent entity queries.
     $rectorConfig->rule(NodeStorageDeprecatedMethodsRector::class);
 
-    // https://www.drupal.org/node/3571623
+    // https://www.drupal.org/node/3533083
     // node_mass_update() deprecated in drupal:11.3.0, removed in drupal:13.0.0.
     // Replaced by \Drupal\node\NodeBulkUpdate::process().
-    // node_type_get_names() and node_get_type_label() deprecated in drupal:11.3.0, removed in drupal:13.0.0.
     // https://www.drupal.org/node/1685492
     // twig_render_template() deprecated in drupal:11.3.0, removed in drupal:12.0.0.
     // Replaced by \Drupal::service(TwigThemeEngine::class)->renderTemplate().
