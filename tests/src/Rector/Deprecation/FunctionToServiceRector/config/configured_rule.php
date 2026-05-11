@@ -24,7 +24,7 @@ return static function (RectorConfig $rectorConfig): void {
         new FunctionToServiceConfiguration('11.2.0', 'template_preprocess_html', 'Drupal\Core\Theme\ThemePreprocess', 'preprocessHtml'),
         new FunctionToServiceConfiguration('11.2.0', 'template_preprocess_page', 'Drupal\Core\Theme\ThemePreprocess', 'preprocessPage'),
         // https://www.drupal.org/node/3571623 (Drupal 11.3)
-        new FunctionToServiceConfiguration('11.3.0', 'node_mass_update', 'Drupal\node\NodeBulkUpdate', 'process'),
+        new FunctionToServiceConfiguration('11.3.0', 'node_mass_update', 'Drupal\node\NodeBulkUpdate', 'process', true),
         // https://www.drupal.org/node/3571382 (Drupal 11.3)
         new FunctionToServiceConfiguration('11.3.0', 'template_preprocess_layout', 'Drupal\layout_discovery\Hook\LayoutDiscoveryThemeHooks', 'preprocessLayout', true),
         // https://www.drupal.org/node/1685492 (Drupal 11.3)

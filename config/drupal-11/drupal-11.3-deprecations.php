@@ -60,7 +60,7 @@ return static function (RectorConfig $rectorConfig): void {
     // Replaced by \Drupal::service(TwigThemeEngine::class)->renderTemplate().
     // twig_extension() is handled by ReplaceTwigExtensionRector below.
     $rectorConfig->ruleWithConfiguration(FunctionToServiceRector::class, [
-        new FunctionToServiceConfiguration('11.3.0', 'node_mass_update', 'Drupal\node\NodeBulkUpdate', 'process'),
+        new FunctionToServiceConfiguration('11.3.0', 'node_mass_update', 'Drupal\node\NodeBulkUpdate', 'process', true),
         new FunctionToServiceConfiguration('11.3.0', 'twig_render_template', 'Drupal\Core\Template\TwigThemeEngine', 'renderTemplate'),
     ]);
 
