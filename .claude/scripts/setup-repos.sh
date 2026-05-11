@@ -4,7 +4,7 @@
 # Usage: bash .claude/scripts/setup-repos.sh [--update]
 #
 # Without --update: skips repos that are already cloned.
-# With --update:    runs `git fetch --depth=1` on existing clones.
+# With --update:    runs `git fetch` on existing clones.
 #
 # Repos are cloned into repos/ (gitignored) so they are accessible from
 # inside the ddev container at /var/www/html/repos/.
@@ -23,11 +23,11 @@ clone_or_update() {
 
   if [ -d "$dest/.git" ]; then
     echo "==> Updating $name..."
-    git -C "$dest" fetch --depth=1 ${branch:+origin "$branch"} 2>&1 | tail -3
+    git -C "$dest" fetch ${branch:+origin "$branch"} 2>&1 | tail -3
     git -C "$dest" reset --hard FETCH_HEAD
   else
     echo "==> Cloning $name..."
-    local clone_args=(--depth=1)
+    local clone_args=()
     [ -n "$branch" ] && clone_args+=(--branch "$branch" --single-branch)
     git clone "${clone_args[@]}" "$url" "$dest"
   fi
