@@ -23,5 +23,8 @@ return static function (RectorConfig $rectorConfig): void {
         new FunctionToStaticConfiguration('11.4.0', 'views_ui_nojs_submit', 'Drupal\views\ViewsFormAjaxHelperTrait', 'noJsSubmit'),
         // https://www.drupal.org/node/3534089 (Drupal 11.3)
         new FunctionToStaticConfiguration('11.3.0', 'file_managed_file_submit', 'Drupal\file\Element\ManagedFile', 'submit'),
+        // https://www.drupal.org/node/3495966 (Drupal 11.2)
+        new FunctionToStaticConfiguration('11.2.0', 'entity_test_create_bundle', 'Drupal\entity_test\EntityTestHelper', 'createBundle'),
+        new FunctionToStaticConfiguration('11.2.0', 'entity_test_delete_bundle', 'Drupal\entity_test\EntityTestHelper', 'deleteBundle'),
     ]);
 };

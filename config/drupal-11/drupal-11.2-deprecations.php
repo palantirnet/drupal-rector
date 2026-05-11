@@ -91,8 +91,14 @@ return static function (RectorConfig $rectorConfig): void {
     // https://www.drupal.org/node/3410938
     // drupal_requirements_severity() deprecated in drupal:11.2.0, removed in drupal:12.0.0.
     // Replaced by RequirementSeverity::maxSeverityFromRequirements().
+    // https://www.drupal.org/node/3495966
+    // https://www.drupal.org/node/3497049 (change record)
+    // entity_test_create_bundle() and entity_test_delete_bundle() deprecated in drupal:11.2.0, removed in drupal:12.0.0.
+    // Replaced by EntityTestHelper::createBundle() and EntityTestHelper::deleteBundle().
     $rectorConfig->ruleWithConfiguration(FunctionToStaticRector::class, [
         new FunctionToStaticConfiguration('11.2.0', 'drupal_requirements_severity', 'Drupal\Core\Extension\Requirement\RequirementSeverity', 'maxSeverityFromRequirements'),
+        new FunctionToStaticConfiguration('11.2.0', 'entity_test_create_bundle', 'Drupal\entity_test\EntityTestHelper', 'createBundle'),
+        new FunctionToStaticConfiguration('11.2.0', 'entity_test_delete_bundle', 'Drupal\entity_test\EntityTestHelper', 'deleteBundle'),
     ]);
 
     // https://www.drupal.org/node/3489415
