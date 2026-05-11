@@ -10,6 +10,7 @@ use DrupalRector\Rector\ValueObject\DrupalIntroducedVersionConfiguration;
 use PhpParser\Node;
 use PhpParser\Node\Arg;
 use PhpParser\Node\Expr;
+use PhpParser\Node\Expr\ClassConstFetch;
 use PhpParser\Node\Expr\ConstFetch;
 use PhpParser\Node\Expr\FuncCall;
 use PhpParser\Node\Expr\MethodCall;
@@ -78,6 +79,7 @@ class SystemRegionFunctionsRector extends AbstractDrupalCoreRector
             if (
                 ($showArg instanceof ConstFetch && in_array($this->getName($showArg), ['REGIONS_VISIBLE', 'visible'], true))
                 || ($showArg instanceof String_ && $showArg->value === 'visible')
+                || ($showArg instanceof ClassConstFetch && $this->isName($showArg->name, 'REGIONS_VISIBLE'))
             ) {
                 $method = 'listVisibleRegions';
             }
