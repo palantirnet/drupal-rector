@@ -208,6 +208,11 @@ return static function (RectorConfig $rectorConfig): void {
         new FunctionToServiceConfiguration('11.4.0', 'menu_ui_form_node_type_form_builder', 'Drupal\menu_ui\Hook\MenuUiHooks', 'formNodeTypeFormBuilder'),
         new FunctionToServiceConfiguration('11.4.0', 'text_summary', 'Drupal\text\TextSummary', 'generate'),
         new FunctionToServiceConfiguration('11.4.0', 'user_form_process_password_confirm', 'Drupal\user\Hook\UserThemeHooks', 'processPasswordConfirm'),
+        // https://www.drupal.org/node/3567163
+        // https://www.drupal.org/node/3566774 (change record)
+        // field_ui_form_manage_field_form_submit() deprecated in drupal:11.4.0, removed in drupal:12.0.0.
+        // Replaced by \Drupal\field_ui\Hook\FieldUiHooks::manageFieldFormSubmit().
+        new FunctionToServiceConfiguration('11.4.0', 'field_ui_form_manage_field_form_submit', 'Drupal\field_ui\Hook\FieldUiHooks', 'manageFieldFormSubmit', true),
     ]);
 
     // https://www.drupal.org/node/3035340
