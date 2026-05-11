@@ -66,7 +66,12 @@ The canonical prompt covers:
 
 For every `MethodCall`, `NullsafeMethodCall`, or `PropertyFetch` node the rector handles:
 
-1. Is an `isObjectType()` guard present that constrains the owning class/interface?
+**Choose the right guard for the node type:**
+- Instance method/property on a variable → `isObjectType($node->var, new ObjectType('FQCN'))` (prefer the interface over the concrete class)
+- Static call `ClassName::method()` → `isName($node->class, 'Fully\Qualified\ClassName')` using the FQCN directly — `isObjectType` is not needed here
+- Global function `foo()` or class constant `ClassName::CONST` → no guard needed, SAFE
+
+1. Is the correct guard present?
 2. If missing:
    a. Find the owning interface/class in the Drupal core source (`repos/drupal-core`). If absent, run `bash .claude/scripts/setup-repos.sh` first.
       ```bash
@@ -87,10 +92,12 @@ For every `MethodCall`, `NullsafeMethodCall`, or `PropertyFetch` node the rector
       interface ClassName {}
       ```
    d. Run `composer dump-autoload` to register the stub.
-   e. Add the `isObjectType()` guard to the rector class (after the name check).
+   e. Add the guard to the rector class (after the name check).
    f. Add a `no_change_unrelated.php.inc` fixture proving untyped callers are skipped:
       - Before section: a call with no type annotation
       - After section: identical (no change)
+
+**Note on `isObjectType` limits:** if real-world testing shows the rector silently skips valid cases, the cause is often a `@var` annotation without a leading `\` — PHPStan mangles the class into the current namespace. Add a `getType($node)->getObjectClassNames()` + `str_ends_with()` fallback (see `ReplaceSessionManagerDeleteRector::isSessionManagerType()` for the reference pattern). Only add this when a real miss is confirmed; do not add it pre-emptively.
 
 **Global functions (FuncCall without a receiver) and class constants (ClassConstFetch) do NOT need `isObjectType()` guards — skip QG-A for these.**
 

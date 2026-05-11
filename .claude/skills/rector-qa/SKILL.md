@@ -28,16 +28,36 @@ Read the rector class, test class, all fixture files, and the test config.
 
 ## Pass 1 — Type Guard Audit
 
-**Goal:** Every `MethodCall`, `NullsafeMethodCall`, or `PropertyFetch` node the rector handles must be guarded by `isObjectType()`.
+**Goal:** Every `MethodCall`, `NullsafeMethodCall`, or `PropertyFetch` node the rector handles must be guarded by an appropriate type check.
 
 | Pattern | What to look for | Risk if missing |
 |---------|-----------------|-----------------|
 | `->method()` on a variable | `isObjectType($node->var, new ObjectType('FQCN'))` | Any class with this method is transformed |
 | `->property` on a variable | Same `isObjectType` on `$node->var` | Any class with this property is transformed |
 | `$this->method()` inside a class body | `isObjectType($node->var, ...)` or `extends`-check on enclosing `Class_` | Any class with this method is transformed |
-| `ClassName::method()` static call | `isName($node->class, 'ClassName')` or `isObjectType` | Low risk if class name is unique |
+| `ClassName::method()` static call | `isName($node->class, 'Fully\Qualified\ClassName')` — use the FQCN directly; `isObjectType` is not needed | Low risk but use FQCN, not short name |
 | Global function call `foo()` | None needed | SAFE — function names are global |
 | Class declaration (`class Foo extends Bar`) | Check `extends` on the `Class_` node | EXEMPT — different pattern |
+
+**When `isObjectType` is not enough:** contrib code sometimes writes `@var Drupal\Core\Session\SessionManager` (no leading `\`). PHPStan resolves this relative to the current namespace and produces a mangled class name like `Vendor\Module\Drupal\Core\Session\SessionManager` that `isObjectType` won't match. Add a fallback using `getType($node)->getObjectClassNames()` with `str_ends_with()`:
+
+```php
+private function isSessionManagerType(Node\Expr $node): bool
+{
+    if ($this->isObjectType($node, new ObjectType('Drupal\Core\Session\SessionManagerInterface'))) {
+        return true;
+    }
+    // Fallback for @var without leading \ (PHPStan mangles the class name)
+    foreach ($this->getType($node)->getObjectClassNames() as $className) {
+        if (str_ends_with($className, '\\Drupal\\Core\\Session\\SessionManagerInterface')) {
+            return true;
+        }
+    }
+    return false;
+}
+```
+
+Only add this fallback when real-world testing shows `isObjectType` silently misses a valid case. See `ReplaceSessionManagerDeleteRector` for the reference implementation.
 
 **Steps:**
 
@@ -141,11 +161,11 @@ Do not run the other three passes in bulk mode.
 
 2. Check for required coverage:
 
-| Fixture | Required when                                   | Status |
-|---------|-------------------------------------------------|--------|
-| `fixture/basic.php.inc` | Always                                          | ✅/❌ |
+| Fixture | Required when | Status |
+|---------|--------------|--------|
+| `fixture/basic.php.inc` | Always | ✅/❌ |
 | `fixture/no_change_unrelated.php.inc` | Always                                          | ✅/❌ |
-| `fixture-below-version/basic.php.inc` | Rector extends `AbstractDrupalCoreRector`       | ✅/❌ |
+| `fixture-below-version/basic.php.inc` | Rector extends `AbstractDrupalCoreRector` | ✅/❌ |
 | Edge-case fixtures | Rector has conditional branches in `refactor()` | ✅/❌/N/A |
 
 3. For `no_change_unrelated.php.inc`: verify the before and after sections are **identical** (the rector must NOT change untyped code).
