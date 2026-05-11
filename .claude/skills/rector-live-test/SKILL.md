@@ -124,8 +124,14 @@ ls ~/projects/drupal-rector-test/.ddev 2>/dev/null && echo "exists" || echo "not
 bash .claude/skills/rector-live-test/setup-rector-test.sh
 ```
 This creates a Drupal 11 site at `~/projects/drupal-rector-test` with a broad set of
-contrib modules pre-installed. Running the script again is safe — it detects the existing
-project and just ensures DDEV is started.
+contrib modules pre-installed.
+
+**If found**, check whether DDEV is running and start it only if needed:
+```bash
+cd ~/projects/drupal-rector-test
+DDEV_STATUS=$(ddev status --json-output 2>/dev/null | python3 -c "import json,sys; print(json.load(sys.stdin).get('raw',{}).get('status','stopped'))" 2>/dev/null || echo "stopped")
+[ "$DDEV_STATUS" = "running" ] || ddev start -y
+```
 
 **If a module found in step 2 is not pre-installed**, add it before running:
 ```bash

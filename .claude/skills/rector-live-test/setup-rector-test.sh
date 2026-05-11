@@ -22,9 +22,14 @@ echo ""
 
 # Idempotency: skip full setup if the DDEV project already exists.
 if [ -d "$TARGET_DIR/.ddev" ]; then
-    echo "==> Project already exists — starting DDEV if needed."
+    echo "==> Project already exists — checking DDEV status."
     cd "$TARGET_DIR"
-    ddev start -y
+    DDEV_STATUS=$(ddev status --json-output 2>/dev/null | python3 -c "import json,sys; print(json.load(sys.stdin).get('raw',{}).get('status','stopped'))" 2>/dev/null || echo "stopped")
+    if [ "$DDEV_STATUS" = "running" ]; then
+        echo "==> DDEV already running."
+    else
+        ddev start -y
+    fi
     echo ""
     echo "  To run a single rector:"
     echo "  ddev exec -d /var/www/html vendor/bin/rector process web/modules/contrib/<module> \\"
