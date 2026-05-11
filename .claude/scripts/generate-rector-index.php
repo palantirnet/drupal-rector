@@ -26,7 +26,9 @@ const GENERIC_RECTORS = [
     'RenameClassRector'                => 'unknown',
 ];
 
-const SCOPE_PATTERN = '/^(replace-deprecated|remove-deprecated|replace-removed|strip-removed)/';
+// Files with these prefixes add new capability (constructor args, type hints, DI wiring)
+// rather than removing deprecated APIs. Keep them out of scope even when they mention @deprecated.
+const FORWARD_COMPAT_PREFIXES = ['add-', 'fix-', 'guard-', 'pass-', 'update-'];
 
 main($argv);
 
@@ -113,16 +115,17 @@ function scanDigestFiles(string $rulesDir): array
     foreach (glob($rulesDir . '/*.php') as $file) {
         $filename = basename($file);
 
-        if (!preg_match(SCOPE_PATTERN, $filename)) {
-            continue;
-        }
-
         $issueNumber = extractIssueNumber($filename);
         if ($issueNumber === null) {
             continue;
         }
 
         $content = file_get_contents($file);
+
+        if (!isDeprecationDigest($filename, $content)) {
+            continue;
+        }
+
         $phase = classifyPhaseFromDigest($content, $filename);
 
         $entries[$issueNumber] = [
@@ -149,6 +152,42 @@ function extractIssueNumber(string $filename): ?string
 }
 
 /**
+ * Returns true when a digest file documents a Drupal deprecation or removal.
+ *
+ * Two-pass check:
+ * 1. Canonical prefixes (replace-deprecated-*, remove-deprecated-*, replace-removed-*,
+ *    strip-removed-*) are always in scope — this includes Twig/library deprecations
+ *    that don't use the "@deprecated drupal:" marker.
+ * 2. Non-canonical prefixes are included when the file content contains
+ *    "@deprecated drupal:" or "deprecated in drupal:" — the standard Drupal core
+ *    notation. This catches files like "rename-deprecated-*", "replace-filesysteminterface-*",
+ *    "remove-overrides-of-deprecated-*", etc.
+ *
+ * Exception: files with forward-compatibility prefixes (add new constructor args,
+ * fix type signatures, etc.) are excluded even when they mention a deprecated signature.
+ */
+function isDeprecationDigest(string $filename, string $content): bool
+{
+    // Always in scope: canonical deprecation/removal/rename prefixes.
+    // rename- is included unconditionally because renaming a class or hook is inherently
+    // a breaking API change — there is no "forward-compat" meaning for a rename.
+    if (preg_match('/^(replace-deprecated|remove-deprecated|replace-removed|strip-removed|rename-)/', $filename)) {
+        return true;
+    }
+
+    // Never in scope: forward-compatibility files (add args, fix signatures, etc.).
+    foreach (FORWARD_COMPAT_PREFIXES as $prefix) {
+        if (str_starts_with($filename, $prefix)) {
+            return false;
+        }
+    }
+
+    // Also in scope: non-canonical prefix but explicitly Drupal-deprecated APIs.
+    return str_contains($content, '@deprecated drupal:')
+        || str_contains($content, 'deprecated in drupal:');
+}
+
+/**
  * Classifies phase from digest file content by inspecting getNodeTypes().
  */
 function classifyPhaseFromDigest(string $content, string $filename): string
@@ -162,27 +201,33 @@ function classifyPhaseFromDigest(string $content, string $filename): string
 
     $hasFuncCall      = str_contains($nodeTypes, 'FuncCall');
     $hasMethodCall    = str_contains($nodeTypes, 'MethodCall') || str_contains($nodeTypes, 'NullsafeMethodCall');
+    $hasStaticCall    = str_contains($nodeTypes, 'StaticCall');
     $hasClassConst    = str_contains($nodeTypes, 'ClassConstFetch') || str_contains($nodeTypes, 'ConstFetch');
     $hasExpression    = str_contains($nodeTypes, 'Expression');
     $hasRemoveNode    = str_contains($content, 'REMOVE_NODE');
 
     // Phase 3: removes the node entirely.
-    if ($hasRemoveNode || ($hasExpression && !$hasFuncCall && !$hasMethodCall)) {
+    if ($hasRemoveNode || ($hasExpression && !$hasFuncCall && !$hasMethodCall && !$hasStaticCall)) {
         return '3';
     }
 
     // Pure FuncCall — Phase 1a or 1b.
-    if ($hasFuncCall && !$hasMethodCall && !$hasClassConst) {
+    if ($hasFuncCall && !$hasMethodCall && !$hasStaticCall && !$hasClassConst) {
         return classifyFuncCallSubPhase($content);
     }
 
     // ClassConstFetch / ConstFetch — Phase 1c.
-    if ($hasClassConst && !$hasFuncCall && !$hasMethodCall) {
+    if ($hasClassConst && !$hasFuncCall && !$hasMethodCall && !$hasStaticCall) {
         return '1c';
     }
 
     // MethodCall/NullsafeMethodCall — Phase 2.
-    if ($hasMethodCall && !$hasFuncCall && !$hasClassConst && !$hasExpression) {
+    if ($hasMethodCall && !$hasFuncCall && !$hasStaticCall && !$hasClassConst && !$hasExpression) {
+        return '2';
+    }
+
+    // StaticCall — Phase 2 (custom transformation of a typed static call, same complexity as MethodCall).
+    if ($hasStaticCall && !$hasFuncCall && !$hasMethodCall && !$hasClassConst && !$hasExpression) {
         return '2';
     }
 
@@ -385,8 +430,11 @@ function parseConfigBlock(string $content, string $relFile, array &$entries, arr
             continue;
         }
 
-        // On ruleWithConfiguration(...), process the pending issues.
-        if (preg_match('/\$rectorConfig->ruleWithConfiguration\s*\(\s*([A-Za-z0-9_\\\\]+)::class/', $trimmed, $m)) {
+        // On ruleWithConfiguration(...) or rule(...), process the pending issues.
+        $isRuleCall = preg_match('/\$rectorConfig->ruleWithConfiguration\s*\(\s*([A-Za-z0-9_\\\\]+)::class/', $trimmed, $m)
+            || preg_match('/\$rectorConfig->rule\s*\(\s*([A-Za-z0-9_\\\\]+)::class/', $trimmed, $m);
+
+        if ($isRuleCall) {
             $shortClass = extractShortClassName($m[1]);
 
             if (isset(GENERIC_RECTORS[$shortClass])) {
