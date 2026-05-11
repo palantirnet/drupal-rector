@@ -90,8 +90,12 @@ return static function (RectorConfig $rectorConfig): void {
     // https://www.drupal.org/node/2010202
     // comment_uri($comment) deprecated in drupal:11.3.0, removed in drupal:12.0.0.
     // Replaced by $comment->permalink().
+    // https://www.drupal.org/node/3531944
+    // node_type_get_description($node_type) deprecated in drupal:11.3.0, removed in drupal:12.0.0.
+    // Replaced by $node_type->getDescription().
     $rectorConfig->ruleWithConfiguration(FunctionToFirstArgMethodRector::class, [
         new FunctionToFirstArgMethodConfiguration('11.3.0', 'comment_uri', 'permalink'),
+        new FunctionToFirstArgMethodConfiguration('11.3.0', 'node_type_get_description', 'getDescription'),
     ]);
 
     // https://www.drupal.org/node/3038908
