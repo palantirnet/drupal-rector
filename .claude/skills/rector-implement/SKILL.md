@@ -108,7 +108,7 @@ For every `MethodCall`, `NullsafeMethodCall`, or `PropertyFetch` node the rector
 Apply only if the rector extends `AbstractDrupalCoreRector`.
 
 Replace the simple test class with the full `testAboveVersion` / `testBelowVersion` form that uses
-`DrupalRectorSettings::setDrupalVersion()` (not `AbstractDrupalCoreRector::setVersionOverride()`):
+`DrupalRectorSettings::setDrupalVersion()`:
 
 ```php
 <?php

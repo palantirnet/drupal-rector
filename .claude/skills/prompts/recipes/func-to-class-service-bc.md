@@ -145,7 +145,7 @@ declare(strict_types=1);
 
 namespace DrupalRector\Tests\Drupal11\Rector\Deprecation\{{ClassName}};
 
-use DrupalRector\Rector\AbstractDrupalCoreRector;
+use DrupalRector\Services\DrupalRectorSettings;
 use Rector\Testing\PHPUnit\AbstractRectorTestCase;
 
 class {{ClassName}}Test extends AbstractRectorTestCase
@@ -153,11 +153,11 @@ class {{ClassName}}Test extends AbstractRectorTestCase
     #[\PHPUnit\Framework\Attributes\DataProvider('provideData')]
     public function testAboveVersion(string $filePath): void
     {
-        AbstractDrupalCoreRector::setVersionOverride('99.99.99');
+        static::getContainer()->make(DrupalRectorSettings::class)->setDrupalVersion('99.99.99');
         try {
             $this->doTestFile($filePath);
         } finally {
-            AbstractDrupalCoreRector::setVersionOverride(null);
+            static::getContainer()->make(DrupalRectorSettings::class)->setDrupalVersion(null);
         }
     }
 
@@ -170,11 +170,11 @@ class {{ClassName}}Test extends AbstractRectorTestCase
     #[\PHPUnit\Framework\Attributes\DataProvider('provideDataBelowVersion')]
     public function testBelowVersion(string $filePath): void
     {
-        AbstractDrupalCoreRector::setVersionOverride('1.0.0');
+        static::getContainer()->make(DrupalRectorSettings::class)->setDrupalVersion('1.0.0');
         try {
             $this->doTestFile($filePath);
         } finally {
-            AbstractDrupalCoreRector::setVersionOverride(null);
+            static::getContainer()->make(DrupalRectorSettings::class)->setDrupalVersion(null);
         }
     }
 
