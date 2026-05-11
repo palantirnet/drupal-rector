@@ -19,6 +19,7 @@ use DrupalRector\Drupal11\Rector\Deprecation\ReplaceRecipeRunnerInstallModuleRec
 use DrupalRector\Drupal11\Rector\Deprecation\ReplaceSessionManagerDeleteRector;
 use DrupalRector\Drupal11\Rector\Deprecation\ReplaceSystemPerformanceGzipKeyRector;
 use DrupalRector\Drupal11\Rector\Deprecation\ReplaceViewsProceduralFunctionsRector;
+use DrupalRector\Drupal11\Rector\Deprecation\SystemRegionFunctionsRector;
 use DrupalRector\Drupal11\Rector\Deprecation\UseEntityTypeHasIntegerIdRector;
 use DrupalRector\Drupal11\Rector\Deprecation\ViewsPluginHandlerManagerRector;
 use DrupalRector\Rector\Deprecation\ClassConstantToClassConstantRector;
@@ -391,6 +392,13 @@ return static function (RectorConfig $rectorConfig): void {
     // EntityReferenceEntityFormatter::RECURSIVE_RENDER_LIMIT deprecated in drupal:11.4.0, removed in drupal:13.0.0.
     // Replaced by literal 20.
     $rectorConfig->ruleWithConfiguration(ReplaceEntityReferenceRecursiveLimitRector::class, [
+        new DrupalIntroducedVersionConfiguration('11.4.0'),
+    ]);
+
+    // https://www.drupal.org/node/3015812
+    // system_region_list() and system_default_region() deprecated in drupal:11.4.0, removed in drupal:13.0.0.
+    // Replaced by Theme object methods via \Drupal::service('theme_handler')->getTheme().
+    $rectorConfig->ruleWithConfiguration(SystemRegionFunctionsRector::class, [
         new DrupalIntroducedVersionConfiguration('11.4.0'),
     ]);
 };
