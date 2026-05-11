@@ -213,7 +213,7 @@ preferred path — it avoids creating new classes for patterns that drupal-recto
    vendor/bin/phpunit tests/src/Rector/Deprecation/[GenericRectorName]/
    ```
 
-5. Skip to Step 11 (fix-style) then Step 12 (phpstan) then Step 13 (test) then Step 14 (commit).
+5. Skip to Step 11 (fix-style) then Step 12 (phpstan) then Step 13 (test).
 
 **Configuration entry syntax by generic rector:**
 
@@ -655,16 +655,9 @@ prevented the failure from occurring, so future conversions avoid the same issue
 
 ---
 
-## Step 14 — Commit
+## Step 14 — Done
 
-```bash
-git add \
-  src/Drupal11/Rector/Deprecation/[ClassName].php \
-  tests/src/Drupal11/Rector/Deprecation/[ClassName]/
-git commit -m "feat(Drupal11): Add [ClassName] for issue #[issue-number]"
-```
-
-Do not push — leave pushing to the human reviewer.
+Leave committing to the human reviewer. Do not run any git commands.
 
 ---
 

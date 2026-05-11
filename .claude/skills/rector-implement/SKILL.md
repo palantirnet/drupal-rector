@@ -56,7 +56,7 @@ The canonical prompt covers:
 - Step 11: Fix code style (`ddev composer fix-style`)
 - Step 12: Run static analysis (`ddev composer phpstan`)
 - Step 13: Run the test (`vendor/bin/phpunit tests/src/Drupal11/Rector/Deprecation/[ClassName]/`)
-- Step 14: Commit
+- Step 14: Done (no commit — leave that to the reviewer)
 
 **Do not skip or abbreviate any step.** The `.claude/skills/prompts/digest-to-rector-prompt.md` prompt is authoritative.
 
@@ -198,16 +198,7 @@ This marks the newly implemented rule as `implemented` in the index.
 
 Read `.claude/skills/rector-qa/SKILL.md` and execute all four passes for `[ClassName]`.
 
-Apply any fixes the QA reveals. If fixes touch the rector class or test files, commit them
-separately:
-
-```bash
-git add src/Drupal11/Rector/Deprecation/[ClassName].php \
-        tests/src/Drupal11/Rector/Deprecation/[ClassName]/
-git commit -m "fix(Drupal11): QA fixes for [ClassName]"
-```
-
-Do not declare the implementation complete until rector-qa reports **Overall: PASS**.
+Apply any fixes the QA reveals. Do not declare the implementation complete until rector-qa reports **Overall: PASS**.
 
 ---
 
