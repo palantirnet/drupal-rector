@@ -138,20 +138,43 @@ ddev composer require drupal/<module> --no-interaction
 - `src/Drupal10/…` → `DrupalRector\Drupal10\Rector\Deprecation\<ClassName>`
 - `src/Rector/…`   → `DrupalRector\Rector\Deprecation\<ClassName>`
 
+**Write a minimal config file** — do NOT use `--only` (it loads the project's default rector.php
+which may be broken) and do NOT omit `fileExtensions` (Rector only processes `.php` by default,
+silently skipping `.module`, `.install`, etc.):
+
+```bash
+cat > ~/projects/drupal-rector-test/rector-live-test.php << 'RECTOR_EOF'
+<?php
+declare(strict_types=1);
+
+use DrupalRector\Drupal11\Rector\Deprecation\<ClassName>;
+use DrupalRector\Rector\ValueObject\DrupalIntroducedVersionConfiguration;
+use Rector\Config\RectorConfig;
+
+return static function (RectorConfig $rectorConfig): void {
+    $rectorConfig->fileExtensions(['php', 'module', 'theme', 'install', 'profile', 'inc']);
+    $rectorConfig->ruleWithConfiguration(<ClassName>::class, [
+        new DrupalIntroducedVersionConfiguration('<introduced-version>'),
+    ]);
+};
+RECTOR_EOF
+```
+
 **Run rector** against the found modules:
 ```bash
 cd ~/projects/drupal-rector-test
 ddev exec -d /var/www/html \
   vendor/bin/rector process \
   web/modules/contrib/<module1> web/modules/contrib/<module2> \
-  --only="DrupalRector\\Drupal11\\Rector\\Deprecation\\<ClassName>" \
-  --no-cache 2>&1
+  --config rector-live-test.php \
+  --clear-cache 2>&1
 ```
 
-**Inspect the diff**, then reset for the next run:
+**Inspect the diff**, then reset and clean up:
 ```bash
 git -C ~/projects/drupal-rector-test diff web/modules/contrib/
 git -C ~/projects/drupal-rector-test checkout -- web/modules/contrib/
+rm ~/projects/drupal-rector-test/rector-live-test.php
 ```
 
 ### 5. Report results
@@ -162,15 +185,35 @@ For each tested module, report:
   Transformations: <summary of what changed>
 ```
 
+For every module with **zero changes**, do not just say "no match" — always show the actual
+code and explain why. See step 6.
+
 ### 6. Diagnose zero-match results
 
-Common causes:
+For **every** module that produced no changes, you must:
 
-| Cause | Diagnosis | Fix |
-|-------|-----------|-----|
-| Untyped code | The variable calling the deprecated method has no type annotation | The rector is working correctly — untyped code is intentionally skipped to avoid false positives |
-| Wrong module version | The module has already updated its code | Try an older tagged version |
-| Rector class mismatch | Wrong rector class was run | Verify the rector targets the exact deprecated API used in the module |
-| Rector cache | Old cache silently skips files | Already handled by `--no-cache` |
-| getNodeTypes mismatch | The node type returned by the rector doesn't match the actual AST node | Read the digest rule and the actual module code to compare |
+1. **Find the exact call site:**
+   ```bash
+   grep -n "<deprecatedMethod>" ~/projects/drupal-rector-test/web/modules/contrib/<module>/<file>
+   ```
+
+2. **Show the surrounding code** (±8 lines):
+   ```bash
+   sed -n '<start>,<end>p' ~/projects/drupal-rector-test/web/modules/contrib/<module>/<file>
+   ```
+
+3. **Diagnose** by reading the code and identifying the cause from the table below.
+
+4. **Report** the code snippet and diagnosis inline — do not skip this even if the cause seems obvious.
+
+**Common causes:**
+
+| Cause | How to spot it | Verdict |
+|-------|---------------|---------|
+| Untyped receiver | No `@var` annotation and no type-hinted parameter for the variable | Rector is correct to skip — would cause false positives on unrelated classes |
+| Chained call, return type unresolvable | `$foo->something()->getOriginalClass()` where `something()` has no known return type | Rector correctly skips — add phpstan-drupal or a stub to fix |
+| Broken `use` import | File imports a class from a module that isn't installed | PHPStan can't resolve the import, degrades type inference for the whole file |
+| `.module` file silently skipped | File extension is `.module`, `.install`, etc. | Config is missing `fileExtensions()` — this should not happen if step 4 was followed |
+| Module already updated | The call site no longer uses the deprecated API | Expected — the module has already migrated |
+| Wrong rector class | The rector targets a different method/function | Verify the rector's `isName()` matches the actual call in the module |
 
