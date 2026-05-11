@@ -9,7 +9,6 @@ use DrupalRector\Rector\AbstractDrupalCoreRector;
 use DrupalRector\Rector\ValueObject\DrupalIntroducedVersionConfiguration;
 use PhpParser\Node;
 use PhpParser\Node\Arg;
-use PhpParser\Node\Expr\ClassConstFetch;
 use PhpParser\Node\Expr\FuncCall;
 use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\StaticCall;
@@ -59,11 +58,6 @@ final class ReplaceNodeModuleProceduralFunctionsRector extends AbstractDrupalCor
                     '$node->getBundleEntity()->label();',
                     [new DrupalIntroducedVersionConfiguration('11.3.0')]
                 ),
-                new ConfiguredCodeSample(
-                    'node_mass_update($nids, $updates, NULL, TRUE);',
-                    '\\Drupal::service(\\Drupal\\node\\NodeBulkUpdate::class)->process($nids, $updates, NULL, TRUE);',
-                    [new DrupalIntroducedVersionConfiguration('11.3.0')]
-                ),
             ]
         );
     }
@@ -85,7 +79,6 @@ final class ReplaceNodeModuleProceduralFunctionsRector extends AbstractDrupalCor
         return match ($node->name->toString()) {
             'node_type_get_names' => $this->refactorNodeTypeGetNames(),
             'node_get_type_label' => $this->refactorNodeGetTypeLabel($node),
-            'node_mass_update' => $this->refactorNodeMassUpdate($node),
             default => null,
         };
     }
@@ -112,23 +105,5 @@ final class ReplaceNodeModuleProceduralFunctionsRector extends AbstractDrupalCor
             new MethodCall($nodeArg, 'getBundleEntity'),
             'label'
         );
-    }
-
-    private function refactorNodeMassUpdate(FuncCall $node): ?Node
-    {
-        if (count($node->args) < 2) {
-            return null;
-        }
-
-        $serviceCall = new StaticCall(
-            new FullyQualified('Drupal'),
-            'service',
-            [new Arg(new ClassConstFetch(
-                new FullyQualified('Drupal\node\NodeBulkUpdate'),
-                'class'
-            ))]
-        );
-
-        return new MethodCall($serviceCall, 'process', $node->args);
     }
 }
