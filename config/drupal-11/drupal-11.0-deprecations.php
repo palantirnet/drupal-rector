@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use DrupalRector\Drupal10\Rector\Deprecation\ReplaceRequestTimeConstantRector;
+use DrupalRector\Drupal11\Rector\Deprecation\GetNameToNameRector;
 use DrupalRector\Drupal11\Rector\Deprecation\MigrateSqlGetMigrationPluginManagerRector;
 use DrupalRector\Drupal11\Rector\Deprecation\RemoveStateCacheSettingRector;
 use DrupalRector\Drupal11\Rector\Deprecation\StripMigrationDependenciesExpandArgRector;
@@ -10,6 +11,11 @@ use DrupalRector\Rector\ValueObject\DrupalIntroducedVersionConfiguration;
 use Rector\Config\RectorConfig;
 
 return static function (RectorConfig $rectorConfig): void {
+    // https://www.drupal.org/node/3217904
+    // TestCase::getName() deprecated in drupal:10.1.0, removed in drupal:11.0.0.
+    // Replaced by name().
+    $rectorConfig->rule(GetNameToNameRector::class);
+
     // https://www.drupal.org/node/3436954
     // https://www.drupal.org/node/2575105 (change record)
     // $settings['state_cache'] deprecated in drupal:11.0.0.
