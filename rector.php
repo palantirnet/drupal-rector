@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use DrupalRector\Services\DrupalRectorSettings;
+use DrupalRector\Set\Drupal11SetList;
 use DrupalRector\Set\Drupal10SetList;
 use DrupalRector\Set\Drupal8SetList;
 use DrupalRector\Set\Drupal9SetList;
@@ -19,6 +20,7 @@ return static function (RectorConfig $rectorConfig): void {
         Drupal8SetList::DRUPAL_8,
         Drupal9SetList::DRUPAL_9,
         Drupal10SetList::DRUPAL_10,
+        Drupal11SetList::DRUPAL_11,
     ]);
 
     // Configure DrupalRectorSettings to control rule behaviour.
