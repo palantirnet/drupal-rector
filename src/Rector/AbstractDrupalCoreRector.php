@@ -159,6 +159,6 @@ abstract class AbstractDrupalCoreRector extends AbstractRector implements Config
 
         $minimumVersion = $this->drupalRectorSettings->getMinimumCoreVersionSupported();
 
-        return !(version_compare($minimumVersion, '10.1.0', '<') || version_compare($configuration->getIntroducedVersion(), '10.0.0', '<'));
+        return !(version_compare($minimumVersion, '10.1.0', '<') || version_compare($configuration->getIntroducedVersion(), '10.0.0', '<') || version_compare($minimumVersion, $configuration->getIntroducedVersion(), '>='));
     }
 }

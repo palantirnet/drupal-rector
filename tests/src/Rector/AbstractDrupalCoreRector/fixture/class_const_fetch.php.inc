@@ -8,6 +8,6 @@ function simple_example() {
 <?php
 
 function simple_example() {
-    $value = \Drupal\Component\Utility\DeprecationHelper::backwardsCompatibleCall(\Drupal::VERSION, '10.1.0', fn() => \NewClass::NEW_CONST, fn() => OldClass::OLD_CONST);
+    $value = \NewClass::NEW_CONST;
 }
 ?>
