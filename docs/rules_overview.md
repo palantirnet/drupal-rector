@@ -72,21 +72,6 @@ Fixes deprecated `system_time_zones()` calls
 
 <br>
 
-### VersionedFunctionToServiceRector
-
-Fixes deprecated function to service calls, used in Drupal 8 and 9 deprecations
-
-:wrench: **configure it!**
-
-- class: [`DrupalRector\Drupal10\Rector\Deprecation\VersionedFunctionToServiceRector`](../src/Drupal10/Rector/Deprecation/VersionedFunctionToServiceRector.php)
-
-```diff
--_drupal_flush_css_js();
-+\Drupal::service('asset.query_string')->reset();
-```
-
-<br>
-
 ### WatchdogExceptionRector
 
 Fixes deprecated watchdog_exception('update', `$exception)` calls

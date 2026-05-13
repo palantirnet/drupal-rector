@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-use DrupalRector\Drupal10\Rector\Deprecation\VersionedFunctionToServiceRector;
-use DrupalRector\Drupal10\Rector\ValueObject\VersionedFunctionToServiceConfiguration;
+use DrupalRector\Rector\Deprecation\FunctionToServiceRector;
 use DrupalRector\Rector\Deprecation\FunctionToStaticRector;
+use DrupalRector\Rector\ValueObject\FunctionToServiceConfiguration;
 use DrupalRector\Rector\Deprecation\MethodToMethodWithCheckRector;
 use DrupalRector\Rector\ValueObject\FunctionToStaticConfiguration;
 use DrupalRector\Rector\ValueObject\MethodToMethodWithCheckConfiguration;
@@ -28,7 +28,7 @@ return static function (RectorConfig $rectorConfig): void {
     ]);
 
     // https://www.drupal.org/node/3358337
-    $rectorConfig->ruleWithConfiguration(VersionedFunctionToServiceRector::class, [
-        new VersionedFunctionToServiceConfiguration('10.2.0', '_drupal_flush_css_js', 'asset.query_string', 'reset'),
+    $rectorConfig->ruleWithConfiguration(FunctionToServiceRector::class, [
+        new FunctionToServiceConfiguration('10.2.0', '_drupal_flush_css_js', 'asset.query_string', 'reset'),
     ]);
 };
