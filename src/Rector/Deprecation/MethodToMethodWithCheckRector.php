@@ -9,7 +9,6 @@ use DrupalRector\Services\AddCommentService;
 use PhpParser\Node;
 use PHPStan\Type\ObjectType;
 use Rector\Contract\Rector\ConfigurableRectorInterface;
-use Rector\Exception\ShouldNotHappenException;
 use Rector\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\ConfiguredCodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
@@ -134,8 +133,19 @@ class MethodToMethodWithCheckRector extends AbstractRector implements Configurab
             } elseif ($node->var instanceof Node\Expr\MethodCall) {
                 $node_var = $node->var->name;
                 $node_var = "$node_var()";
+            } elseif ($node->var instanceof Node\Expr\StaticCall) {
+                $class = $node->var->class instanceof Node\Name ? $node->var->class->toString() : '(expression)';
+                $method = $node->var->name instanceof Node\Identifier ? $node->var->name->toString() : '(method)';
+                $node_var = "$class::$method(...)";
+            } elseif ($node->var instanceof Node\Expr\PropertyFetch) {
+                $obj = $node->var->var instanceof Node\Expr\Variable ? '$' . $node->var->var->name : '(expression)';
+                $prop = $node->var->name instanceof Node\Identifier ? $node->var->name->toString() : '(property)';
+                $node_var = "$obj->$prop";
+            } elseif ($node->var instanceof Node\Expr\NullsafeMethodCall) {
+                $method = $node->var->name instanceof Node\Identifier ? $node->var->name->toString() : '(method)';
+                $node_var = "$method?->()";
             } else {
-                throw new ShouldNotHappenException('Unexpected node type: '.get_class($node->var));
+                $node_var = '(expression)';
             }
             $className = $configuration->getClassName();
 
