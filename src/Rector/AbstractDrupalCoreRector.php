@@ -57,6 +57,7 @@ abstract class AbstractDrupalCoreRector extends AbstractRector implements Config
                 return true;
             }
         }
+
         return false;
     }
 
