@@ -138,7 +138,7 @@ class MethodToMethodWithCheckRector extends AbstractRector implements Configurab
                 $method = $node->var->name instanceof Node\Identifier ? $node->var->name->toString() : '(method)';
                 $node_var = "$class::$method(...)";
             } elseif ($node->var instanceof Node\Expr\PropertyFetch) {
-                $obj = $node->var->var instanceof Node\Expr\Variable ? '$' . $node->var->var->name : '(expression)';
+                $obj = $node->var->var instanceof Node\Expr\Variable ? '$'.$node->var->var->name : '(expression)';
                 $prop = $node->var->name instanceof Node\Identifier ? $node->var->name->toString() : '(property)';
                 $node_var = "$obj->$prop";
             } elseif ($node->var instanceof Node\Expr\NullsafeMethodCall) {
