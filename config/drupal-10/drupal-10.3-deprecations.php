@@ -6,12 +6,21 @@ use DrupalRector\Drupal10\Rector\Deprecation\ReplaceModuleHandlerGetNameRector;
 use DrupalRector\Drupal10\Rector\Deprecation\ReplaceRebuildThemeDataRector;
 use DrupalRector\Rector\Deprecation\ClassConstantToClassConstantRector;
 use DrupalRector\Rector\Deprecation\FunctionToStaticRector;
+use DrupalRector\Rector\Deprecation\MethodToMethodWithCheckRector;
 use DrupalRector\Rector\ValueObject\ClassConstantToClassConstantConfiguration;
 use DrupalRector\Rector\ValueObject\DrupalIntroducedVersionConfiguration;
 use DrupalRector\Rector\ValueObject\FunctionToStaticConfiguration;
+use DrupalRector\Rector\ValueObject\MethodToMethodWithCheckConfiguration;
 use Rector\Config\RectorConfig;
 
 return static function (RectorConfig $rectorConfig): void {
+    // https://www.drupal.org/node/3407994
+    // RendererInterface::renderPlain() deprecated in drupal:10.3.0, removed in drupal:12.0.0.
+    // Replaced by RendererInterface::renderInIsolation().
+    $rectorConfig->ruleWithConfiguration(MethodToMethodWithCheckRector::class, [
+        new MethodToMethodWithCheckConfiguration('Drupal\Core\Render\RendererInterface', 'renderPlain', 'renderInIsolation'),
+    ]);
+
     // https://www.drupal.org/node/3411269 file_icon_class, file_icon_map
     $rectorConfig->ruleWithConfiguration(FunctionToStaticRector::class, [
         new FunctionToStaticConfiguration('10.3.0', 'file_icon_class', 'Drupal\file\IconMimeTypes', 'getIconClass'),
