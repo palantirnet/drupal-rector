@@ -75,6 +75,7 @@ return static function (RectorConfig $rectorConfig): void {
             'FILE_STATUS_PERMANENT',
             'Drupal\file\FileInterface',
             'STATUS_PERMANENT',
+            '9.3.0',
         ),
     ]);
 };
