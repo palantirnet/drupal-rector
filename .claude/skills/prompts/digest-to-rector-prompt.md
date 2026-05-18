@@ -239,8 +239,8 @@ new ClassConstantToClassConstantConfiguration('[OldClass\\FQCN]', '[OLD_CONST]',
 // no introducedVersion — applies unconditionally; no BC wrapping
 
 // ConstantToClassConstantRector — replaces bare global constant (ConstFetch) with class constant
-new ConstantToClassConfiguration('[GLOBAL_CONSTANT_NAME]', '[TargetClass\\FQCN]', '[CONST_NAME]'),
-// no introducedVersion — applies unconditionally; no BC wrapping
+new ConstantToClassConfiguration('[GLOBAL_CONSTANT_NAME]', '[TargetClass\\FQCN]', '[CONST_NAME]', '[introducedVersion]'),
+// introducedVersion is required; triggers DeprecationHelper BC wrapping for versions >= 10.1.0
 
 // FunctionToFirstArgMethodRector — fn($obj) → $obj->method(); first arg must be the receiver
 new FunctionToFirstArgMethodConfiguration('[introducedVersion]', '[deprecatedFunctionName]', '[methodName]'),
