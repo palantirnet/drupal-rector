@@ -67,26 +67,20 @@ CODE_AFTER
     {
         assert($node instanceof Node\Stmt\Expression);
 
-        if (!($node->expr instanceof Node\Expr\MethodCall) && !($node->expr instanceof Node\Expr\Assign && $node->expr->expr instanceof Node\Expr\MethodCall)) {
-            return null;
-        }
-
-        if ($node->expr instanceof Node\Expr\MethodCall && $this->getName($node->expr->name) !== 'link') {
-            return null;
-        }
-
-        if (($node->expr instanceof Node\Expr\Assign && $node->expr->expr instanceof Node\Expr\MethodCall) && $this->getName($node->expr->expr->name) !== 'link') {
-            return null;
-        }
-
         if ($node->expr instanceof Node\Expr\MethodCall) {
+            if ($this->getName($node->expr->name) !== 'link') {
+                return null;
+            }
             $methodCall = $this->getMethodCall($node->expr, $node);
             $node->expr = $methodCall;
 
             return $node;
         }
 
-        if ($node->expr->expr instanceof Node\Expr\MethodCall) {
+        if ($node->expr instanceof Node\Expr\Assign && $node->expr->expr instanceof Node\Expr\MethodCall) {
+            if ($this->getName($node->expr->expr->name) !== 'link') {
+                return null;
+            }
             $methodCall = $this->getMethodCall($node->expr->expr, $node);
             $node->expr->expr = $methodCall;
 
