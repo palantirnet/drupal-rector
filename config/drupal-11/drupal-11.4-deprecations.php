@@ -5,6 +5,7 @@ declare(strict_types=1);
 use DrupalRector\Drupal11\Rector\Deprecation\DeprecatedFilterFunctionsRector;
 use DrupalRector\Drupal11\Rector\Deprecation\FilterFormatFunctionsToServiceRector;
 use DrupalRector\Drupal11\Rector\Deprecation\GetOriginalClassToGetDecoratedClassesRector;
+use DrupalRector\Drupal11\Rector\Deprecation\LocaleCompareIncToServiceRector;
 use DrupalRector\Drupal11\Rector\Deprecation\MediaFilterFormatEditFormValidateRector;
 use DrupalRector\Drupal11\Rector\Deprecation\NodeAccessRebuildFunctionsRector;
 use DrupalRector\Drupal11\Rector\Deprecation\RemoveAutomatedCronSubmitHandlerRector;
@@ -404,6 +405,14 @@ return static function (RectorConfig $rectorConfig): void {
     // system_region_list() and system_default_region() deprecated in drupal:11.4.0, removed in drupal:13.0.0.
     // Replaced by Theme object methods via \Drupal::service('theme_handler')->getTheme().
     $rectorConfig->ruleWithConfiguration(SystemRegionFunctionsRector::class, [
+        new DrupalIntroducedVersionConfiguration('11.4.0'),
+    ]);
+
+    // https://www.drupal.org/node/3037031
+    // locale_translation_flush_projects(), locale_translation_build_projects(), locale_translation_check_projects(),
+    // and locale_translation_check_projects_local() deprecated in drupal:11.4.0, removed in drupal:13.0.0.
+    // Replaced by LocaleProjectRepository and LocaleProjectChecker service methods.
+    $rectorConfig->ruleWithConfiguration(LocaleCompareIncToServiceRector::class, [
         new DrupalIntroducedVersionConfiguration('11.4.0'),
     ]);
 };
