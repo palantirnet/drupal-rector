@@ -82,8 +82,6 @@ final class ReplacePdoFetchConstantsRector extends AbstractDrupalCoreRector
     public function refactor(Node $node): ?Node
     {
         if ($node instanceof ArrayItem) {
-            // ArrayItem nodes cannot be BC-wrapped as standalone expressions.
-            // Apply the transformation directly without version-gating wrapper.
             foreach ($this->configuration as $configuration) {
                 if (!$this->rectorShouldApplyToDrupalVersion($configuration)) {
                     continue;
@@ -92,7 +90,23 @@ final class ReplacePdoFetchConstantsRector extends AbstractDrupalCoreRector
                     continue;
                 }
 
-                return $this->refactorArrayItem($node);
+                $result = $this->refactorArrayItem($node);
+                if ($result === null) {
+                    return null;
+                }
+
+                if ($this->supportBackwardsCompatibility($configuration)) {
+                    $cloned = clone $result;
+                    $cloned->value = $this->createBcCallOnExpr(
+                        $node->value,
+                        $result->value,
+                        $configuration->getIntroducedVersion()
+                    );
+
+                    return $cloned;
+                }
+
+                return $result;
             }
 
             return null;

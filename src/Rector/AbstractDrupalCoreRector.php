@@ -106,7 +106,7 @@ abstract class AbstractDrupalCoreRector extends AbstractRector implements Config
      */
     abstract protected function refactorWithConfiguration(Node $node, VersionedConfigurationInterface $configuration);
 
-    private function createBcCallOnExpr(Node\Expr $node, Node\Expr $result, string $introducedVersion): Node\Expr\StaticCall
+    protected function createBcCallOnExpr(Node\Expr $node, Node\Expr $result, string $introducedVersion): Node\Expr\StaticCall
     {
         $clonedNode = clone $node;
 
