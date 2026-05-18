@@ -120,11 +120,11 @@ Answer these questions using the information gathered:
 - If **both** the input node and the returned node are `Node\Expr` subtypes → BC wrapping is **eligible**.
 - `Node\Expr` subtypes include: `FuncCall`, `MethodCall`, `StaticCall`, `NullsafeMethodCall`,
   `New_`, `Array_`, `ClassConstFetch`, `ConstFetch`, `String_`, `Int_`, `PropertyFetch`, and more.
-- `Class_` (structural node) and `ArrayItem` are **not** `Node\Expr` → BC wrapping is not applicable.
-- Exception: `ArrayItem` cannot appear as an arrow function body in PHP syntax, so even though
-  `Node\Expr\ArrayItem` exists, it cannot be BC-wrapped. If a rector handles `ArrayItem` nodes
-  alongside BC-wrappable nodes, override `refactor()` to apply the ArrayItem transform directly
-  while letting the parent handle BC for other node types (see edge case note in Template B).
+- `Class_` (structural node) is **not** a `Node\Expr` → BC wrapping is not applicable.
+- `ArrayItem` (`Node\Expr\ArrayItem`) extends `Node\Expr`, but the **ArrayItem node itself** cannot
+  be replaced by a `StaticCall` — doing so would remove the `key => value` structure from the
+  array. However, the **value inside** an ArrayItem can be wrapped in a BC call. Override
+  `refactor()` to handle this manually (see edge case note in Template B).
 
 **Q3: Was the deprecation introduced in Drupal >= 10.1.0?**
 - Compare the introduced version from Step 2 against `10.1.0`.
@@ -170,7 +170,8 @@ Ask: *Could the transformed code run unchanged on a Drupal version that predates
 | `FuncCall` | `FuncCall` (modified args) | pure PHP / no new API | any | `AbstractRector` | No |
 | `MethodCall` | `FuncCall` | native PHP function | any | `AbstractRector` | No |
 | `FuncCall` | `StaticCall` | any | < 10.1.0 | `AbstractRector` | No |
-| `ArrayItem` | `ArrayItem` | any | any | `AbstractRector` | No (PHP syntax limit) |
+| `ArrayItem` | `ArrayItem` | new Drupal API | >= 10.1.0 | `AbstractDrupalCoreRector` | Yes (wrap value, not the node) |
+| `ArrayItem` | `ArrayItem` | version-agnostic | any | `AbstractRector` | No |
 | `Class_` (structural) | `Class_` | any | any | `AbstractRector` | No (not an Expr) |
 
 ---
@@ -444,14 +445,13 @@ $cloned->args[$index] = $newArg;
 This applies to any child node you modify: `Arg`, `ArrayItem`, `Node\Identifier`, etc.
 
 **ArrayItem edge case:**
-`ArrayItem` (`Node\Expr\ArrayItem`) cannot appear as an arrow function body in valid PHP. If a
-rector handles `ArrayItem` nodes alongside BC-wrappable nodes (e.g. `MethodCall`), override
-`refactor()` to apply ArrayItem transforms directly and skip the BC path for that node type:
+`ArrayItem` (`Node\Expr\ArrayItem`) is an `Expr` node but the **node itself** cannot be replaced
+by a `StaticCall` — that would destroy the `key => value` structure. However, the **value** inside
+the ArrayItem can be wrapped in a BC call. Override `refactor()` and wrap only `$result->value`:
 ```php
 public function refactor(Node $node): ?Node
 {
     if ($node instanceof ArrayItem) {
-        // Apply directly; BC wrapping is not applicable for ArrayItem.
         foreach ($this->configuration as $configuration) {
             if (!$this->rectorShouldApplyToDrupalVersion($configuration)) {
                 continue;
@@ -459,7 +459,21 @@ public function refactor(Node $node): ?Node
             if ($this->isInBackwardsCompatibleCall($node)) {
                 continue;
             }
-            return $this->refactorArrayItem($node);
+            $result = $this->refactorArrayItem($node);
+            if ($result === null) {
+                return null;
+            }
+            if ($this->supportBackwardsCompatibility($configuration)) {
+                // Wrap the VALUE in DeprecationHelper, not the ArrayItem itself.
+                $cloned = clone $result;
+                $cloned->value = $this->createBcCallOnExpr(
+                    $node->value,
+                    $result->value,
+                    $configuration->getIntroducedVersion()
+                );
+                return $cloned;
+            }
+            return $result;
         }
         return null;
     }
@@ -467,6 +481,7 @@ public function refactor(Node $node): ?Node
     return parent::refactor($node);
 }
 ```
+Result: `['fetch' => DeprecationHelper::backwardsCompatibleCall(\Drupal::VERSION, '11.2.0', fn() => FetchAs::Associative, fn() => \PDO::FETCH_ASSOC)]` — the array item is preserved, only its value is version-gated.
 
 ---
 
