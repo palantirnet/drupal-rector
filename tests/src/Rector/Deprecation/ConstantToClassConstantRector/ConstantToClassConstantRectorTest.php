@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace DrupalRector\Rector\Deprecation\ConstantToClassConstantRector;
 
+use DrupalRector\Services\DrupalRectorSettings;
 use Iterator;
 use Rector\Testing\PHPUnit\AbstractRectorTestCase;
 
@@ -22,6 +23,25 @@ class ConstantToClassConstantRectorTest extends AbstractRectorTestCase
     public static function provideData(): \Iterator
     {
         return self::yieldFilesFromDirectory(__DIR__.'/fixture');
+    }
+
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideDataBelowVersion')]
+    public function testBelowVersion(string $filePath): void
+    {
+        static::getContainer()->make(DrupalRectorSettings::class)->setDrupalVersion('1.0.0');
+        try {
+            $this->doTestFile($filePath);
+        } finally {
+            static::getContainer()->make(DrupalRectorSettings::class)->setDrupalVersion(null);
+        }
+    }
+
+    /**
+     * @return Iterator<<string>>
+     */
+    public static function provideDataBelowVersion(): \Iterator
+    {
+        return self::yieldFilesFromDirectory(__DIR__.'/fixture-below-version');
     }
 
     public function provideConfigFilePath(): string

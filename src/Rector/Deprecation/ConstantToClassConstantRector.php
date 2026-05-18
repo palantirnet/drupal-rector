@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace DrupalRector\Rector\Deprecation;
 
+use DrupalRector\Contract\VersionedConfigurationInterface;
+use DrupalRector\Rector\AbstractDrupalCoreRector;
 use DrupalRector\Rector\ValueObject\ConstantToClassConfiguration;
 use PhpParser\Node;
-use Rector\Contract\Rector\ConfigurableRectorInterface;
-use Rector\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\ConfiguredCodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
@@ -17,13 +17,8 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  * What is covered:
  * - Replacement with a use statement.
  */
-class ConstantToClassConstantRector extends AbstractRector implements ConfigurableRectorInterface
+class ConstantToClassConstantRector extends AbstractDrupalCoreRector
 {
-    /**
-     * @var ConstantToClassConfiguration[]
-     */
-    private array $constantToClassRenames;
-
     public function configure(array $configuration): void
     {
         foreach ($configuration as $value) {
@@ -32,61 +27,37 @@ class ConstantToClassConstantRector extends AbstractRector implements Configurab
             }
         }
 
-        $this->constantToClassRenames = $configuration;
+        parent::configure($configuration);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getRuleDefinition(): RuleDefinition
     {
-        return new RuleDefinition('Fixes deprecated contant use, used in Drupal 8 and 9 deprecations', [
+        return new RuleDefinition('Fixes deprecated constant use, used in Drupal 8 and later deprecations', [
             new ConfiguredCodeSample(
-                <<<'CODE_BEFORE'
-$result = file_unmanaged_copy($source, $destination, DEPRECATED_CONSTANT);
-CODE_BEFORE,
-                <<<'CODE_AFTER'
-$result = file_unmanaged_copy($source, $destination, \Drupal\MyClass::CONSTANT);
-CODE_AFTER,
-                [
-                    new ConstantToClassConfiguration(
-                        'DEPRECATED_CONSTANT',
-                        'Drupal\MyClass',
-                        'CONSTANT'
-                    ),
-                ]
+                '$result = file_unmanaged_copy($source, $destination, DEPRECATED_CONSTANT);',
+                '$result = file_unmanaged_copy($source, $destination, \Drupal\MyClass::CONSTANT);',
+                [new ConstantToClassConfiguration('DEPRECATED_CONSTANT', 'Drupal\MyClass', 'CONSTANT', '8.0.0')]
             ),
         ]);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getNodeTypes(): array
     {
-        return [
-            Node\Expr\ConstFetch::class,
-        ];
+        return [Node\Expr\ConstFetch::class];
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function refactor(Node $node): ?Node
+    protected function refactorWithConfiguration(Node $node, VersionedConfigurationInterface $configuration): ?Node
     {
         assert($node instanceof Node\Expr\ConstFetch);
+        assert($configuration instanceof ConstantToClassConfiguration);
 
-        foreach ($this->constantToClassRenames as $constantToClassRename) {
-            if ($this->getName($node->name) === $constantToClassRename->getDeprecated()) {
-                // We add a fully qualified class name and the parameters in `rector.php` adds the use statement.
-                $fully_qualified_class = new Node\Name\FullyQualified($constantToClassRename->getClass());
-
-                $name = new Node\Identifier($constantToClassRename->getConstant());
-
-                return new Node\Expr\ClassConstFetch($fully_qualified_class, $name);
-            }
+        if ($this->getName($node->name) !== $configuration->getDeprecated()) {
+            return null;
         }
 
-        return null;
+        return new Node\Expr\ClassConstFetch(
+            new Node\Name\FullyQualified($configuration->getClass()),
+            new Node\Identifier($configuration->getConstant())
+        );
     }
 }

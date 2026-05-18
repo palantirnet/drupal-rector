@@ -390,7 +390,7 @@ return static function (RectorConfig $rectorConfig): void {
     // IMAGE_DERIVATIVE_TOKEN deprecated in drupal:11.4.0, removed in drupal:13.0.0.
     // Replaced by \Drupal\image\ImageStyleInterface::TOKEN.
     $rectorConfig->ruleWithConfiguration(ConstantToClassConstantRector::class, [
-        new ConstantToClassConfiguration('IMAGE_DERIVATIVE_TOKEN', 'Drupal\image\ImageStyleInterface', 'TOKEN'),
+        new ConstantToClassConfiguration('IMAGE_DERIVATIVE_TOKEN', 'Drupal\image\ImageStyleInterface', 'TOKEN', '11.4.0'),
     ]);
 
     // https://www.drupal.org/node/2940605

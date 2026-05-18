@@ -120,11 +120,11 @@ return static function (RectorConfig $rectorConfig): void {
     // LOCALE_TRANSLATION_DEFAULT_SERVER_PATTERN deprecated in drupal:11.2.0, removed in drupal:12.0.0.
     // Replaced by \Drupal::TRANSLATION_DEFAULT_SERVER_PATTERN.
     $rectorConfig->ruleWithConfiguration(ConstantToClassConstantRector::class, [
-        new ConstantToClassConfiguration('REQUIREMENT_INFO', 'Drupal\Core\Extension\Requirement\RequirementSeverity', 'Info'),
-        new ConstantToClassConfiguration('REQUIREMENT_OK', 'Drupal\Core\Extension\Requirement\RequirementSeverity', 'OK'),
-        new ConstantToClassConfiguration('REQUIREMENT_WARNING', 'Drupal\Core\Extension\Requirement\RequirementSeverity', 'Warning'),
-        new ConstantToClassConfiguration('REQUIREMENT_ERROR', 'Drupal\Core\Extension\Requirement\RequirementSeverity', 'Error'),
-        new ConstantToClassConfiguration('LOCALE_TRANSLATION_DEFAULT_SERVER_PATTERN', 'Drupal', 'TRANSLATION_DEFAULT_SERVER_PATTERN'),
+        new ConstantToClassConfiguration('REQUIREMENT_INFO', 'Drupal\Core\Extension\Requirement\RequirementSeverity', 'Info', '11.2.0'),
+        new ConstantToClassConfiguration('REQUIREMENT_OK', 'Drupal\Core\Extension\Requirement\RequirementSeverity', 'OK', '11.2.0'),
+        new ConstantToClassConfiguration('REQUIREMENT_WARNING', 'Drupal\Core\Extension\Requirement\RequirementSeverity', 'Warning', '11.2.0'),
+        new ConstantToClassConfiguration('REQUIREMENT_ERROR', 'Drupal\Core\Extension\Requirement\RequirementSeverity', 'Error', '11.2.0'),
+        new ConstantToClassConfiguration('LOCALE_TRANSLATION_DEFAULT_SERVER_PATTERN', 'Drupal', 'TRANSLATION_DEFAULT_SERVER_PATTERN', '11.2.0'),
     ]);
 
     // https://www.drupal.org/node/3473440

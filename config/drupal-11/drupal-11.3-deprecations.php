@@ -157,10 +157,10 @@ return static function (RectorConfig $rectorConfig): void {
     // JSONAPI_FILTER_AMONG_* global constants deprecated in drupal:11.3.0, removed in drupal:13.0.0.
     // Replaced by \Drupal\jsonapi\JsonApiFilter::AMONG_* class constants.
     $rectorConfig->ruleWithConfiguration(ConstantToClassConstantRector::class, [
-        new ConstantToClassConfiguration('JSONAPI_FILTER_AMONG_ALL', 'Drupal\jsonapi\JsonApiFilter', 'AMONG_ALL'),
-        new ConstantToClassConfiguration('JSONAPI_FILTER_AMONG_PUBLISHED', 'Drupal\jsonapi\JsonApiFilter', 'AMONG_PUBLISHED'),
-        new ConstantToClassConfiguration('JSONAPI_FILTER_AMONG_ENABLED', 'Drupal\jsonapi\JsonApiFilter', 'AMONG_ENABLED'),
-        new ConstantToClassConfiguration('JSONAPI_FILTER_AMONG_OWN', 'Drupal\jsonapi\JsonApiFilter', 'AMONG_OWN'),
+        new ConstantToClassConfiguration('JSONAPI_FILTER_AMONG_ALL', 'Drupal\jsonapi\JsonApiFilter', 'AMONG_ALL', '11.3.0'),
+        new ConstantToClassConfiguration('JSONAPI_FILTER_AMONG_PUBLISHED', 'Drupal\jsonapi\JsonApiFilter', 'AMONG_PUBLISHED', '11.3.0'),
+        new ConstantToClassConfiguration('JSONAPI_FILTER_AMONG_ENABLED', 'Drupal\jsonapi\JsonApiFilter', 'AMONG_ENABLED', '11.3.0'),
+        new ConstantToClassConfiguration('JSONAPI_FILTER_AMONG_OWN', 'Drupal\jsonapi\JsonApiFilter', 'AMONG_OWN', '11.3.0'),
     ]);
 
     // https://www.drupal.org/node/3538277
