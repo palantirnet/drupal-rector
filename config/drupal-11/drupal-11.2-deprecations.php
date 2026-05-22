@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 use DrupalRector\Drupal11\Rector\Deprecation\RemoveCacheTagChecksumAssertionsRector;
 use DrupalRector\Drupal11\Rector\Deprecation\RemoveHandlerBaseDefineExtraOptionsRector;
-use DrupalRector\Drupal11\Rector\Deprecation\RemoveRootFromCreateConnectionOptionsFromUrlRector;
 use DrupalRector\Drupal11\Rector\Deprecation\RemoveModuleHandlerAddModuleCallsRector;
+use DrupalRector\Drupal11\Rector\Deprecation\RemoveRootFromCreateConnectionOptionsFromUrlRector;
 use DrupalRector\Drupal11\Rector\Deprecation\RemoveTwigNodeTransTagArgumentRector;
 use DrupalRector\Drupal11\Rector\Deprecation\RenameStopProceduralHookScanRector;
 use DrupalRector\Drupal11\Rector\Deprecation\ReplaceAlphadecimalToIntNullRector;
