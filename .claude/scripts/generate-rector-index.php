@@ -9,7 +9,7 @@ declare(strict_types=1);
  * Usage: php .claude/scripts/generate-rector-index.php [--digests-path=PATH]
  *
  * Options:
- *   --digests-path=PATH  Path to drupal-digests repo (default: ~/projects/drupal-digests)
+ *   --digests-path=PATH  Path to drupal-digests repo (default: repos//drupal-digests)
  *   --help               Show this help
  */
 
