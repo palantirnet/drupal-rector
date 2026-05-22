@@ -3,3 +3,7 @@ services:
   Drupal\hookconvertrector\Hook\HookconvertrectorHooks:
     class: Drupal\hookconvertrector\Hook\HookconvertrectorHooks
     autowire: true
+
+  Drupal\hookconvertrector\Hook\HookconvertrectorHooks1:
+    class: Drupal\hookconvertrector\Hook\HookconvertrectorHooks1
+    autowire: true
