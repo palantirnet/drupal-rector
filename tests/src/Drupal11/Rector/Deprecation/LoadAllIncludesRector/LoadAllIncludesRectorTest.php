@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace DrupalRector\Tests\Drupal11\Rector\Deprecation\LoadAllIncludesRector;
 
-use Rector\Testing\PHPUnit\AbstractRectorTestCase;
+use DrupalRector\Tests\AbstractDrupalRectorTestCase;
 
-class LoadAllIncludesRectorTest extends AbstractRectorTestCase
+class LoadAllIncludesRectorTest extends AbstractDrupalRectorTestCase
 {
     #[\PHPUnit\Framework\Attributes\DataProvider('provideData')]
     public function test(string $filePath): void

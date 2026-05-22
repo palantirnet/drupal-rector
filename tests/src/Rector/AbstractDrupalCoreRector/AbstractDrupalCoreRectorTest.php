@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace DrupalRector\Tests\Rector\AbstractDrupalCoreRector;
 
 use Iterator;
-use Rector\Testing\PHPUnit\AbstractRectorTestCase;
+use DrupalRector\Tests\AbstractDrupalRectorTestCase;
 
-class AbstractDrupalCoreRectorTest extends AbstractRectorTestCase
+class AbstractDrupalCoreRectorTest extends AbstractDrupalRectorTestCase
 {
     #[\PHPUnit\Framework\Attributes\DataProvider('provideData')]
     public function test(string $filePath): void

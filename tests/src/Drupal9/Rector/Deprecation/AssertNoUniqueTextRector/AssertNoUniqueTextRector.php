@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace Drupal9\Rector\Deprecation\AssertNoUniqueTextRector;
 
 use Iterator;
-use Rector\Testing\PHPUnit\AbstractRectorTestCase;
+use DrupalRector\Tests\AbstractDrupalRectorTestCase;
 
 #[\PHPUnit\Framework\Attributes\CoversFunction('refactor')]
-class AssertNoUniqueTextRector extends AbstractRectorTestCase
+class AssertNoUniqueTextRector extends AbstractDrupalRectorTestCase
 {
     public function __construct()
     {

@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace DrupalRector\Tests\Drupal11\Rector\Deprecation\RemoveModuleHandlerAddModuleCallsRector;
 
-use Rector\Testing\PHPUnit\AbstractRectorTestCase;
+use DrupalRector\Tests\AbstractDrupalRectorTestCase;
 
-class RemoveModuleHandlerAddModuleCallsRectorTest extends AbstractRectorTestCase
+class RemoveModuleHandlerAddModuleCallsRectorTest extends AbstractDrupalRectorTestCase
 {
     #[\PHPUnit\Framework\Attributes\DataProvider('provideData')]
     public function test(string $filePath): void

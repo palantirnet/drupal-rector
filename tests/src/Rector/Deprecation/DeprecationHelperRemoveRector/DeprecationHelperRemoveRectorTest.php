@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace DrupalRector\Tests\Rector\Deprecation\DeprecationHelperRemoveRector;
 
 use Iterator;
-use Rector\Testing\PHPUnit\AbstractRectorTestCase;
+use DrupalRector\Tests\AbstractDrupalRectorTestCase;
 
 #[\PHPUnit\Framework\Attributes\CoversFunction('refactor')]
-class DeprecationHelperRemoveRectorTest extends AbstractRectorTestCase
+class DeprecationHelperRemoveRectorTest extends AbstractDrupalRectorTestCase
 {
     #[\PHPUnit\Framework\Attributes\DataProvider('provideData')]
     public function test(string $filePath): void

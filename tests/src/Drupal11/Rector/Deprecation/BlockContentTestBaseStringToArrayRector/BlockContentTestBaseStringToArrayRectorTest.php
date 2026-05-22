@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace DrupalRector\Tests\Drupal11\Rector\Deprecation\BlockContentTestBaseStringToArrayRector;
 
-use Rector\Testing\PHPUnit\AbstractRectorTestCase;
+use DrupalRector\Tests\AbstractDrupalRectorTestCase;
 
-class BlockContentTestBaseStringToArrayRectorTest extends AbstractRectorTestCase
+class BlockContentTestBaseStringToArrayRectorTest extends AbstractDrupalRectorTestCase
 {
     #[\PHPUnit\Framework\Attributes\DataProvider('provideData')]
     public function test(string $filePath): void

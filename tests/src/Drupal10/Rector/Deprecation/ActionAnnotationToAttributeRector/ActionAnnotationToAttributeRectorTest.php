@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace DrupalRector\Tests\Drupal10\Rector\Deprecation\ActionAnnotationToAttributeRector;
 
 use Iterator;
-use Rector\Testing\PHPUnit\AbstractRectorTestCase;
+use DrupalRector\Tests\AbstractDrupalRectorTestCase;
 
 #[\PHPUnit\Framework\Attributes\CoversFunction('refactor')]
-class ActionAnnotationToAttributeRectorTest extends AbstractRectorTestCase
+class ActionAnnotationToAttributeRectorTest extends AbstractDrupalRectorTestCase
 {
     #[\PHPUnit\Framework\Attributes\DataProvider('provideData')]
     public function test(string $filePath): void

@@ -5,19 +5,15 @@ declare(strict_types=1);
 namespace DrupalRector\Tests\Drupal11\Rector\Deprecation\ViewsPluginHandlerManagerRector;
 
 use DrupalRector\Services\DrupalRectorSettings;
-use Rector\Testing\PHPUnit\AbstractRectorTestCase;
+use DrupalRector\Tests\AbstractDrupalRectorTestCase;
 
-class ViewsPluginHandlerManagerRectorTest extends AbstractRectorTestCase
+class ViewsPluginHandlerManagerRectorTest extends AbstractDrupalRectorTestCase
 {
     #[\PHPUnit\Framework\Attributes\DataProvider('provideData')]
     public function testAboveVersion(string $filePath): void
     {
         static::getContainer()->make(DrupalRectorSettings::class)->setDrupalVersion('99.99.99');
-        try {
-            $this->doTestFile($filePath);
-        } finally {
-            static::getContainer()->make(DrupalRectorSettings::class)->setDrupalVersion(null);
-        }
+        $this->doTestFile($filePath);
     }
 
     /**
@@ -32,11 +28,7 @@ class ViewsPluginHandlerManagerRectorTest extends AbstractRectorTestCase
     public function testBelowVersion(string $filePath): void
     {
         static::getContainer()->make(DrupalRectorSettings::class)->setDrupalVersion('1.0.0');
-        try {
-            $this->doTestFile($filePath);
-        } finally {
-            static::getContainer()->make(DrupalRectorSettings::class)->setDrupalVersion(null);
-        }
+        $this->doTestFile($filePath);
     }
 
     /**

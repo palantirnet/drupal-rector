@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace DrupalRector\Tests\Drupal11\Rector\Deprecation\RemoveCacheTagChecksumAssertionsRector;
 
-use Rector\Testing\PHPUnit\AbstractRectorTestCase;
+use DrupalRector\Tests\AbstractDrupalRectorTestCase;
 
-class RemoveCacheTagChecksumAssertionsRectorTest extends AbstractRectorTestCase
+class RemoveCacheTagChecksumAssertionsRectorTest extends AbstractDrupalRectorTestCase
 {
     #[\PHPUnit\Framework\Attributes\DataProvider('provideData')]
     public function test(string $filePath): void

@@ -5,19 +5,15 @@ declare(strict_types=1);
 namespace DrupalRector\Tests\Drupal10\Rector\Deprecation\ReplaceRebuildThemeDataRector;
 
 use DrupalRector\Services\DrupalRectorSettings;
-use Rector\Testing\PHPUnit\AbstractRectorTestCase;
+use DrupalRector\Tests\AbstractDrupalRectorTestCase;
 
-class ReplaceRebuildThemeDataRectorTest extends AbstractRectorTestCase
+class ReplaceRebuildThemeDataRectorTest extends AbstractDrupalRectorTestCase
 {
     #[\PHPUnit\Framework\Attributes\DataProvider('provideData')]
     public function testAboveVersion(string $filePath): void
     {
         static::getContainer()->make(DrupalRectorSettings::class)->setDrupalVersion('99.99.99');
-        try {
-            $this->doTestFile($filePath);
-        } finally {
-            static::getContainer()->make(DrupalRectorSettings::class)->setDrupalVersion(null);
-        }
+        $this->doTestFile($filePath);
     }
 
     /**
@@ -32,11 +28,7 @@ class ReplaceRebuildThemeDataRectorTest extends AbstractRectorTestCase
     public function testBelowVersion(string $filePath): void
     {
         static::getContainer()->make(DrupalRectorSettings::class)->setDrupalVersion('1.0.0');
-        try {
-            $this->doTestFile($filePath);
-        } finally {
-            static::getContainer()->make(DrupalRectorSettings::class)->setDrupalVersion(null);
-        }
+        $this->doTestFile($filePath);
     }
 
     /**

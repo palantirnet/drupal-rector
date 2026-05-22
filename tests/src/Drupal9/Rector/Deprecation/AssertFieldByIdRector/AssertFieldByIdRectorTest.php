@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace DrupalRector\Tests\Drupal9\Rector\Deprecation\AssertFieldByIdRector;
 
 use Iterator;
-use Rector\Testing\PHPUnit\AbstractRectorTestCase;
+use DrupalRector\Tests\AbstractDrupalRectorTestCase;
 
 #[\PHPUnit\Framework\Attributes\CoversFunction('refactor')]
-class AssertFieldByIdRectorTest extends AbstractRectorTestCase
+class AssertFieldByIdRectorTest extends AbstractDrupalRectorTestCase
 {
     #[\PHPUnit\Framework\Attributes\DataProvider('provideData')]
     public function test(string $filePath): void

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace DrupalRector\Tests\Drupal10\Rector\Deprecation\ActionAnnotationToAttributeRector;
 
 use Iterator;
-use Rector\Testing\PHPUnit\AbstractRectorTestCase;
+use DrupalRector\Tests\AbstractDrupalRectorTestCase;
 
 class Drupal
 {
@@ -13,7 +13,7 @@ class Drupal
 }
 
 #[\PHPUnit\Framework\Attributes\CoversFunction('refactor')]
-class BackwardsCompatibilityActionAnnotationToAttributeRectorTest extends AbstractRectorTestCase
+class BackwardsCompatibilityActionAnnotationToAttributeRectorTest extends AbstractDrupalRectorTestCase
 {
     #[\PHPUnit\Framework\Attributes\DataProvider('provideData')]
     public function test(string $filePath): void

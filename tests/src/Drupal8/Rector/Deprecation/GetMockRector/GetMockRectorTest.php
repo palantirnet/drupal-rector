@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Drupal8\Rector\Deprecation\GetMockRector;
 
 use Iterator;
-use Rector\Testing\PHPUnit\AbstractRectorTestCase;
+use DrupalRector\Tests\AbstractDrupalRectorTestCase;
 
-class GetMockRectorTest extends AbstractRectorTestCase
+class GetMockRectorTest extends AbstractDrupalRectorTestCase
 {
     #[\PHPUnit\Framework\Attributes\DataProvider('provideData')]
     public function test(string $filePath): void

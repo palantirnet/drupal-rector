@@ -28,8 +28,9 @@ disable all Drupal 11 rules in the test suite.
 
 For tests that need to simulate a specific Drupal version (e.g., to verify a rule does NOT fire
 on an older version), use `DrupalRectorSettings::setDrupalVersion($version)` via the service
-container, and reset it in a `finally` block. Standard conversion tests do not need this — the
-stub default (`11.99.x-dev`) is sufficient for normal fixture testing.
+container. Cleanup is handled automatically by `AbstractDrupalRectorTestCase::tearDown()` — do
+not add a `try`/`finally` block. Standard conversion tests do not need this — the stub default
+(`11.99.x-dev`) is sufficient for normal fixture testing.
 
 ---
 
@@ -537,9 +538,9 @@ declare(strict_types=1);
 
 namespace DrupalRector\Tests\Drupal11\Rector\Deprecation\[ClassName];
 
-use Rector\Testing\PHPUnit\AbstractRectorTestCase;
+use DrupalRector\Tests\AbstractDrupalRectorTestCase;
 
-class [ClassName]Test extends AbstractRectorTestCase
+class [ClassName]Test extends AbstractDrupalRectorTestCase
 {
     #[\PHPUnit\Framework\Attributes\DataProvider('provideData')]
     public function test(string $filePath): void

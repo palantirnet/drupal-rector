@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace Drupal8\Rector\Deprecation\EntityViewRector;
 
 use Iterator;
-use Rector\Testing\PHPUnit\AbstractRectorTestCase;
+use DrupalRector\Tests\AbstractDrupalRectorTestCase;
 
 #[\PHPUnit\Framework\Attributes\CoversFunction('refactor')]
-class EntityViewRectorTest extends AbstractRectorTestCase
+class EntityViewRectorTest extends AbstractDrupalRectorTestCase
 {
     #[\PHPUnit\Framework\Attributes\DataProvider('provideData')]
     public function test(string $filePath): void
