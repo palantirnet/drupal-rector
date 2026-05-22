@@ -19,7 +19,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  * Replaces deprecated EntityTypeInterface::getOriginalClass() with getDecoratedClasses()[0].
  *
  * @see https://www.drupal.org/node/3557461
- * @see https://www.drupal.org/node/3587853
+ * @see https://www.drupal.org/node/3557464
  */
 class GetOriginalClassToGetDecoratedClassesRector extends AbstractDrupalCoreRector
 {

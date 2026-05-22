@@ -19,7 +19,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  * - locale_config_batch_set_config_langcodes()  => locale_config_batch_update_default_config_langcodes()
  * - locale_config_batch_refresh_name()          => locale_config_batch_update_config_translations()
  *
- * @see https://www.drupal.org/node/3575254
+ * @see https://www.drupal.org/node/3475054
  */
 final class ReplaceLocaleConfigBatchFunctionsRector extends AbstractDrupalCoreRector
 {

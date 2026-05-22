@@ -27,7 +27,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  *
  * Deprecated in drupal:11.2.0 and removed in drupal:12.0.0.
  *
- * @see https://www.drupal.org/node/3574901
+ * @see https://www.drupal.org/node/3495241
  */
 final class ReplaceDateTimeRangeConstantsRector extends AbstractDrupalCoreRector
 {

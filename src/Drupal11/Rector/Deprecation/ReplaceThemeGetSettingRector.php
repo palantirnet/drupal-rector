@@ -23,7 +23,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  *
  * Both are deprecated in drupal:11.3.0 and removed in drupal:13.0.0.
  *
- * @see https://www.drupal.org/node/3573896
+ * @see https://www.drupal.org/node/3035289
  */
 final class ReplaceThemeGetSettingRector extends AbstractDrupalCoreRector
 {

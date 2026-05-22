@@ -41,14 +41,14 @@ return static function (RectorConfig $rectorConfig): void {
         new DrupalIntroducedVersionConfiguration('11.2.0'),
     ]);
 
-    // https://www.drupal.org/node/3498947
+    // https://www.drupal.org/node/3500622
     // CacheBackendInterface::invalidateAll() deprecated in drupal:11.2.0, removed in drupal:12.0.0.
     // Replaced by deleteAll().
     $rectorConfig->ruleWithConfiguration(MethodToMethodWithCheckRector::class, [
         new MethodToMethodWithCheckConfiguration('Drupal\Core\Cache\CacheBackendInterface', 'invalidateAll', 'deleteAll'),
     ]);
 
-    // https://www.drupal.org/node/3501136
+    // https://www.drupal.org/node/3504125
     // template_preprocess_*() functions deprecated in drupal:11.2.0, removed in drupal:12.0.0.
     // Replaced by ThemePreprocess and DatePreprocess service methods.
     $rectorConfig->ruleWithConfiguration(FunctionToServiceRector::class, [
@@ -63,7 +63,7 @@ return static function (RectorConfig $rectorConfig): void {
 
     // https://www.drupal.org/node/3501136
     // template_preprocess() deprecated in drupal:11.2.0, removed in drupal:12.0.0.
-    // https://www.drupal.org/node/3499559
+    // https://www.drupal.org/node/3522119
     // update_clear_update_disk_cache(), update_delete_file_if_stale(),
     // _update_manager_cache_directory(), _update_manager_extract_directory(),
     // and _update_manager_unique_identifier() deprecated in drupal:11.2.0, removed in drupal:13.0.0.
@@ -104,7 +104,7 @@ return static function (RectorConfig $rectorConfig): void {
     // https://www.drupal.org/node/3489415
     // views_field_default_views_data() and _views_field_get_entity_type_storage() deprecated in drupal:11.2.0, removed in drupal:12.0.0.
     // Replaced by views.field_data_provider service methods.
-    // https://www.drupal.org/node/3069442
+    // https://www.drupal.org/node/3489411
     // views_entity_field_label() deprecated in drupal:11.2.0, removed in drupal:12.0.0.
     // Replaced by entity_field.manager::getFieldLabels().
     $rectorConfig->ruleWithConfiguration(FunctionToServiceRector::class, [
@@ -116,7 +116,7 @@ return static function (RectorConfig $rectorConfig): void {
     // https://www.drupal.org/node/3575841
     // REQUIREMENT_INFO/OK/WARNING/ERROR global constants deprecated in drupal:11.2.0, removed in drupal:12.0.0.
     // Replaced by RequirementSeverity enum cases.
-    // https://www.drupal.org/node/3477277
+    // https://www.drupal.org/node/3488133
     // LOCALE_TRANSLATION_DEFAULT_SERVER_PATTERN deprecated in drupal:11.2.0, removed in drupal:12.0.0.
     // Replaced by \Drupal::TRANSLATION_DEFAULT_SERVER_PATTERN.
     $rectorConfig->ruleWithConfiguration(ConstantToClassConstantRector::class, [
@@ -168,7 +168,7 @@ return static function (RectorConfig $rectorConfig): void {
         new DrupalIntroducedVersionConfiguration('11.2.0'),
     ]);
 
-    // https://www.drupal.org/node/3494126
+    // https://www.drupal.org/node/3494172
     // file_get_content_headers($file) deprecated in drupal:11.2.0, removed in drupal:12.0.0.
     // Replaced by $file->getDownloadHeaders().
     $rectorConfig->ruleWithConfiguration(FunctionToFirstArgMethodRector::class, [
@@ -207,7 +207,7 @@ return static function (RectorConfig $rectorConfig): void {
     // Moved to Drupal\pgsql\EntityQuery\*.
     // https://www.drupal.org/node/3472008
     // Drupal\jsonapi\EventSubscriber\ResourceResponseValidator moved to jsonapi_response_validator submodule.
-    // https://www.drupal.org/node/3498915
+    // https://www.drupal.org/node/3498916
     // Drupal\migrate_drupal\Plugin\migrate\source\ContentEntity/ContentEntityDeriver deprecated in drupal:11.2.0,
     // removed in drupal:12.0.0. Moved to Drupal\migrate namespace.
     $rectorConfig->ruleWithConfiguration(RenameClassRector::class, [
@@ -218,7 +218,7 @@ return static function (RectorConfig $rectorConfig): void {
         'Drupal\migrate_drupal\Plugin\migrate\source\ContentEntityDeriver' => 'Drupal\migrate\Plugin\migrate\source\ContentEntityDeriver',
     ]);
 
-    // https://www.drupal.org/node/3575841
+    // https://www.drupal.org/node/3410939
     // SystemManager::REQUIREMENT_* deprecated in drupal:11.2.0, removed in drupal:12.0.0.
     // Replaced by \Drupal\Core\Extension\Requirement\RequirementSeverity enum cases.
     $rectorConfig->ruleWithConfiguration(ClassConstantToClassConstantRector::class, [

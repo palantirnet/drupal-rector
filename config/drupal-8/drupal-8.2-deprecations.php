@@ -10,7 +10,7 @@ return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->singleton(AddCommentService::class, function () {
         return new AddCommentService();
     });
-    // https://www.drupal.org/node/2802569
+    // https://www.drupal.org/node/2418133
     $rectorConfig->ruleWithConfiguration(FunctionToStaticRector::class, [
         new DrupalRector\Rector\ValueObject\FunctionToStaticConfiguration(
             '8.2.0',

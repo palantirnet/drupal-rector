@@ -16,7 +16,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 /**
  * Replaces deprecated twig_extension() with the '.html.twig' string literal.
  *
- * @see https://www.drupal.org/node/1685492
+ * @see https://www.drupal.org/node/3547356
  */
 final class ReplaceTwigExtensionRector extends AbstractDrupalCoreRector
 {

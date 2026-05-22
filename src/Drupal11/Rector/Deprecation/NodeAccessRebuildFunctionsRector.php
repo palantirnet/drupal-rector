@@ -24,7 +24,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  * Deprecated in drupal:11.4.0 and removed in drupal:13.0.0.
  *
  * @see https://www.drupal.org/node/3533299
- * @see https://www.drupal.org/node/3575096
+ * @see https://www.drupal.org/node/3534610
  */
 class NodeAccessRebuildFunctionsRector extends AbstractDrupalCoreRector
 {

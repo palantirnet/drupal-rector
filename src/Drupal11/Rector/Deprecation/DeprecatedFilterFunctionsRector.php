@@ -24,7 +24,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  * chain.
  *
  * @see https://www.drupal.org/node/3226806
- * @see https://www.drupal.org/node/3566536
+ * @see https://www.drupal.org/node/3566774
  */
 final class DeprecatedFilterFunctionsRector extends AbstractDrupalCoreRector
 {

@@ -15,7 +15,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 /**
  * Replaces deprecated ModuleHandlerInterface::getName() calls.
  *
- * @see https://www.drupal.org/node/3571063
+ * @see https://www.drupal.org/node/3310017
  */
 final class ReplaceModuleHandlerGetNameRector extends AbstractDrupalCoreRector
 {

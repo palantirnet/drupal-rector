@@ -15,7 +15,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 /**
  * Replaces deprecated ThemeHandlerInterface::rebuildThemeData() with the extension.list.theme service.
  *
- * @see https://www.drupal.org/node/3571068
+ * @see https://www.drupal.org/node/3413196
  */
 final class ReplaceRebuildThemeDataRector extends AbstractDrupalCoreRector
 {

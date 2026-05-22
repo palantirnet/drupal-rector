@@ -45,7 +45,7 @@ return static function (RectorConfig $rectorConfig): void {
         new DrupalIntroducedVersionConfiguration('11.4.0'),
     ]);
 
-    // https://www.drupal.org/node/2473041
+    // https://www.drupal.org/node/3578055
     // node_access_grants() deprecated in drupal:11.4.0, removed in drupal:13.0.0.
     // Replaced by \Drupal\node\NodeGrantsHelper::nodeAccessGrants().
     $rectorConfig->ruleWithConfiguration(FunctionToServiceRector::class, [
@@ -53,7 +53,7 @@ return static function (RectorConfig $rectorConfig): void {
     ]);
 
     // https://www.drupal.org/node/3533299
-    // https://www.drupal.org/node/3575096 (change record)
+    // https://www.drupal.org/node/3534610 (change record)
     // node_access_rebuild() and node_access_needs_rebuild() deprecated in drupal:11.4.0, removed in drupal:13.0.0.
     // Replaced by \Drupal\node\NodeAccessRebuild service.
     $rectorConfig->ruleWithConfiguration(NodeAccessRebuildFunctionsRector::class, [
@@ -78,7 +78,7 @@ return static function (RectorConfig $rectorConfig): void {
     ]);
 
     // https://www.drupal.org/node/3226806
-    // https://www.drupal.org/node/3566536 (change record)
+    // https://www.drupal.org/node/3566774 (change record)
     // _filter_autop(), _filter_html_escape(), and _filter_html_image_secure_process()
     // deprecated in drupal:11.4.0, removed in drupal:13.0.0.
     // Replaced by plugin.manager.filter createInstance() chain.
@@ -86,7 +86,7 @@ return static function (RectorConfig $rectorConfig): void {
         new DrupalIntroducedVersionConfiguration('11.4.0'),
     ]);
 
-    // https://www.drupal.org/node/3577376
+    // https://www.drupal.org/node/3570851
     // SessionManager::delete() deprecated in drupal:11.4.0, removed in drupal:12.0.0.
     // Replaced by \Drupal\Core\Session\UserSessionRepositoryInterface::deleteAll().
     $rectorConfig->ruleWithConfiguration(ReplaceSessionManagerDeleteRector::class, [
@@ -96,7 +96,7 @@ return static function (RectorConfig $rectorConfig): void {
     // https://www.drupal.org/node/3550054
     // CommentItemInterface::FORM_BELOW and FORM_SEPARATE_PAGE deprecated in 11.4.0,
     // removed in 13.0.0. Replaced by FormLocation enum cases.
-    // https://www.drupal.org/node/3574661
+    // https://www.drupal.org/node/3547352
     // CommentItemInterface::HIDDEN/CLOSED/OPEN and CommentInterface::ANONYMOUS_*
     // deprecated in 11.4.0, removed in 13.0.0. Replaced by CommentingStatus and
     // AnonymousContact enum cases.
@@ -176,7 +176,7 @@ return static function (RectorConfig $rectorConfig): void {
     // menu_ui.module procedural functions deprecated in 11.4.0, removed in 12.0.0/13.0.0.
     // https://www.drupal.org/node/3568387
     // text_summary() deprecated in 11.4.0, removed in 13.0.0. Replaced by TextSummary service.
-    // https://www.drupal.org/node/3582106
+    // https://www.drupal.org/node/3582107
     // user_form_process_password_confirm() deprecated in 11.4.0, removed in 13.0.0.
     $rectorConfig->ruleWithConfiguration(FunctionToServiceRector::class, [
         new FunctionToServiceConfiguration('11.4.0', 'language_process_language_select', 'Drupal\language\Hook\LanguageHooks', 'processLanguageSelect'),
@@ -223,7 +223,7 @@ return static function (RectorConfig $rectorConfig): void {
     // https://www.drupal.org/node/3566774 (change record)
     // automated_cron_settings_submit() deprecated in drupal:11.4.0, removed in drupal:13.0.0.
     // Config saving is now handled automatically via #config_target on the interval element.
-    // https://www.drupal.org/node/3566782
+    // https://www.drupal.org/node/3566783
     // block_theme_initialize() deprecated in drupal:11.4.0, removed in drupal:13.0.0.
     // Logic moved to protected BlockHooks::themeInitialize(); external callers must drop the call.
     $rectorConfig->ruleWithConfiguration(FunctionCallRemovalRector::class, [
@@ -304,7 +304,7 @@ return static function (RectorConfig $rectorConfig): void {
     ]);
 
     // https://www.drupal.org/node/3557461
-    // https://www.drupal.org/node/3587853 (change record)
+    // https://www.drupal.org/node/3557464 (change record)
     // EntityTypeInterface::getOriginalClass() deprecated in drupal:11.4.0, removed in drupal:12.0.0.
     // Replaced by getDecoratedClasses()[0].
     $rectorConfig->ruleWithConfiguration(GetOriginalClassToGetDecoratedClassesRector::class, [
@@ -329,7 +329,7 @@ return static function (RectorConfig $rectorConfig): void {
     // https://www.drupal.org/node/2907780
     // field_purge_batch() deprecated in drupal:11.4.0, removed in drupal:13.0.0.
     // Replaced by \Drupal::service(FieldPurger::class)->purgeBatch().
-    // https://www.drupal.org/node/3570839
+    // https://www.drupal.org/node/3566774
     // _media_library_media_type_form_submit() and _media_library_views_form_media_library_after_build()
     // deprecated in drupal:11.4.0, removed in drupal:12.0.0. Replaced by MediaLibraryHooks service.
     $rectorConfig->ruleWithConfiguration(FunctionToServiceRector::class, [
@@ -340,7 +340,7 @@ return static function (RectorConfig $rectorConfig): void {
         new FunctionToServiceConfiguration('11.4.0', '_media_library_views_form_media_library_after_build', 'Drupal\media_library\Hook\MediaLibraryHooks', 'viewsFormAfterBuild'),
     ]);
 
-    // https://www.drupal.org/node/3570839
+    // https://www.drupal.org/node/3566774
     // _media_library_configure_form_display() and _media_library_configure_view_display()
     // deprecated in drupal:11.4.0, removed in drupal:12.0.0.
     // Replaced by MediaLibraryDisplayManager static methods.
@@ -352,7 +352,7 @@ return static function (RectorConfig $rectorConfig): void {
     // https://www.drupal.org/node/3574727
     // language_configuration_element_submit() deprecated in 11.4.0, removed in 13.0.0.
     // Replaced by LanguageConfiguration::submit().
-    // https://www.drupal.org/node/3035340
+    // https://www.drupal.org/node/3566774
     // views_ui/admin.inc static trait functions deprecated in 11.4.0, removed in 13.0.0.
     $rectorConfig->ruleWithConfiguration(FunctionToStaticRector::class, [
         new FunctionToStaticConfiguration('11.4.0', 'language_configuration_element_submit', 'Drupal\language\Element\LanguageConfiguration', 'submit'),
@@ -368,7 +368,7 @@ return static function (RectorConfig $rectorConfig): void {
     // https://www.drupal.org/node/3567618
     // image_path_flush() and image_style_options() deprecated in drupal:11.4.0, removed in drupal:13.0.0.
     // Replaced by ImageDerivativeUtilities service.
-    // https://www.drupal.org/node/3577671
+    // https://www.drupal.org/node/3577675
     // locale_translate_get_interface_translation_files() deprecated in drupal:11.4.0, removed in drupal:13.0.0.
     // Replaced by LocaleFileManager::getInterfaceTranslationFiles().
     $rectorConfig->ruleWithConfiguration(FunctionToServiceRector::class, [
@@ -387,7 +387,7 @@ return static function (RectorConfig $rectorConfig): void {
         new FunctionToServiceConfiguration('11.4.0', 'views_add_contextual_links', 'Drupal\views\ContextualLinksHelper', 'addLinks', true),
     ]);
 
-    // https://www.drupal.org/node/3567618
+    // https://www.drupal.org/node/3567619
     // IMAGE_DERIVATIVE_TOKEN deprecated in drupal:11.4.0, removed in drupal:13.0.0.
     // Replaced by \Drupal\image\ImageStyleInterface::TOKEN.
     $rectorConfig->ruleWithConfiguration(ConstantToClassConstantRector::class, [

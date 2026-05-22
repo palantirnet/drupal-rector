@@ -27,20 +27,20 @@ return static function (RectorConfig $rectorConfig): void {
         new FunctionToStaticConfiguration('10.3.0', 'file_icon_map', 'Drupal\file\IconMimeTypes', 'getGenericMimeType'),
     ]);
 
-    // https://www.drupal.org/node/3571068
+    // https://www.drupal.org/node/3413196
     // ThemeHandlerInterface::rebuildThemeData() deprecated in drupal:10.3.0, removed in drupal:12.0.0.
     // Replaced by \Drupal::service('extension.list.theme')->reset()->getList().
     $rectorConfig->ruleWithConfiguration(ReplaceRebuildThemeDataRector::class, [
         new DrupalIntroducedVersionConfiguration('10.3.0'),
     ]);
 
-    // https://www.drupal.org/node/3571063
+    // https://www.drupal.org/node/3310017
     // ModuleHandlerInterface::getName() deprecated in drupal:10.3.0, removed in drupal:12.0.0.
     $rectorConfig->ruleWithConfiguration(ReplaceModuleHandlerGetNameRector::class, [
         new DrupalIntroducedVersionConfiguration('10.3.0'),
     ]);
 
-    // https://www.drupal.org/node/3575575
+    // https://www.drupal.org/node/3426517
     // FileSystemInterface::EXISTS_* deprecated in drupal:10.3.0, removed in drupal:12.0.0.
     // Replaced by \Drupal\Core\File\FileExists enum cases.
     $rectorConfig->ruleWithConfiguration(ClassConstantToClassConstantRector::class, [

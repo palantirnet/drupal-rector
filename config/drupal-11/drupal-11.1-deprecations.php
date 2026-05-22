@@ -23,7 +23,7 @@ return static function (RectorConfig $rectorConfig): void {
         new DrupalIntroducedVersionConfiguration('11.1.0'),
     ]);
 
-    // https://www.drupal.org/node/3151086
+    // https://www.drupal.org/node/3467559
     // AliasWhitelist and AliasWhitelistInterface deprecated in drupal:11.1.0, removed in drupal:12.0.0.
     // Replaced by AliasPrefixList and AliasPrefixListInterface.
     // AliasManager::pathAliasWhitelistRebuild() deprecated in drupal:11.1.0, removed in drupal:12.0.0.
@@ -60,7 +60,7 @@ return static function (RectorConfig $rectorConfig): void {
     // https://www.drupal.org/node/3488176
     // drupal_common_theme() removed in drupal:11.1.0.
     // Replaced by \Drupal\Core\Theme\ThemeCommonElements::commonElements().
-    // https://www.drupal.org/node/3574424
+    // https://www.drupal.org/node/3268441
     // image_filter_keyword() deprecated in drupal:11.1.0, removed in drupal:12.0.0.
     // Replaced by \Drupal\Component\Utility\Image::getKeywordOffset().
     $rectorConfig->ruleWithConfiguration(FunctionToStaticRector::class, [

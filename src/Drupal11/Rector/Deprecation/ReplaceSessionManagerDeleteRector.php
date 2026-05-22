@@ -15,7 +15,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 /**
  * Replaces deprecated SessionManager::delete() with UserSessionRepositoryInterface::deleteAll().
  *
- * @see https://www.drupal.org/node/3577376
+ * @see https://www.drupal.org/node/3570851
  */
 final class ReplaceSessionManagerDeleteRector extends AbstractDrupalCoreRector
 {

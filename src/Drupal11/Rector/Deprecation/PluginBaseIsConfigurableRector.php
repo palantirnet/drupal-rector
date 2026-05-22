@@ -16,7 +16,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  * Replaces deprecated PluginBase::isConfigurable() with an instanceof check.
  *
  * @see https://www.drupal.org/node/3459533
- * @see https://www.drupal.org/node/2946122
+ * @see https://www.drupal.org/node/3198285
  */
 final class PluginBaseIsConfigurableRector extends AbstractDrupalCoreRector
 {

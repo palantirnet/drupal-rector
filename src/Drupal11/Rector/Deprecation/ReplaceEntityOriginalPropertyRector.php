@@ -26,7 +26,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  * Deprecated in drupal:11.2.0, removed in drupal:12.0.0.
  * Skips $this->original to avoid false positives on non-entity classes.
  *
- * @see https://www.drupal.org/node/3571065
+ * @see https://www.drupal.org/node/3295826
  */
 final class ReplaceEntityOriginalPropertyRector extends AbstractDrupalCoreRector
 {

@@ -18,8 +18,8 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  *
  * Deprecated in drupal:11.3.0, removed in drupal:12.0.0.
  *
- * @see https://www.drupal.org/node/3513856
  * @see https://www.drupal.org/node/3513877
+ * @see https://www.drupal.org/node/3513856
  */
 final class ReplaceUserSessionNamePropertyRector extends AbstractDrupalCoreRector
 {

@@ -54,7 +54,7 @@ return static function (RectorConfig $rectorConfig): void {
     // https://www.drupal.org/node/3533083
     // node_mass_update() deprecated in drupal:11.3.0, removed in drupal:13.0.0.
     // Replaced by \Drupal\node\NodeBulkUpdate::process().
-    // https://www.drupal.org/node/1685492
+    // https://www.drupal.org/node/3547356
     // twig_render_template() deprecated in drupal:11.3.0, removed in drupal:12.0.0.
     // Replaced by \Drupal::service(TwigThemeEngine::class)->renderTemplate().
     // twig_extension() is handled by ReplaceTwigExtensionRector below.
@@ -63,7 +63,7 @@ return static function (RectorConfig $rectorConfig): void {
         new FunctionToServiceConfiguration('11.3.0', 'twig_render_template', 'Drupal\Core\Template\TwigThemeEngine', 'renderTemplate'),
     ]);
 
-    // https://www.drupal.org/node/3571382
+    // https://www.drupal.org/node/3504125
     // template_preprocess_layout() deprecated in drupal:11.3.0, removed in drupal:12.0.0.
     // Replaced by \Drupal\layout_discovery\Hook\LayoutDiscoveryThemeHooks::preprocessLayout().
     $rectorConfig->ruleWithConfiguration(FunctionToServiceRector::class, [
@@ -80,7 +80,7 @@ return static function (RectorConfig $rectorConfig): void {
         new DrupalIntroducedVersionConfiguration('11.3.0'),
     ]);
 
-    // https://www.drupal.org/node/3504005
+    // https://www.drupal.org/node/3535528
     // block_content_add_body_field() deprecated in drupal:11.3.0, removed in drupal:13.0.0.
     // The body field is now added via config.
     $rectorConfig->ruleWithConfiguration(FunctionCallRemovalRector::class, [
@@ -90,7 +90,7 @@ return static function (RectorConfig $rectorConfig): void {
     // https://www.drupal.org/node/2010202
     // comment_uri($comment) deprecated in drupal:11.3.0, removed in drupal:12.0.0.
     // Replaced by $comment->permalink().
-    // https://www.drupal.org/node/3531944
+    // https://www.drupal.org/node/3531945
     // node_type_get_description($node_type) deprecated in drupal:11.3.0, removed in drupal:12.0.0.
     // Replaced by $node_type->getDescription().
     $rectorConfig->ruleWithConfiguration(FunctionToFirstArgMethodRector::class, [
@@ -107,7 +107,7 @@ return static function (RectorConfig $rectorConfig): void {
         new DrupalIntroducedVersionConfiguration('11.3.0'),
     ]);
 
-    // https://www.drupal.org/node/3574424
+    // https://www.drupal.org/node/3548329
     // responsive_image_* functions deprecated in drupal:11.3.0, removed in drupal:12.0.0.
     // Replaced by \Drupal::service(ResponsiveImageBuilder::class)->method() calls.
     $rectorConfig->ruleWithConfiguration(FunctionToServiceRector::class, [
@@ -153,7 +153,7 @@ return static function (RectorConfig $rectorConfig): void {
         new DrupalIntroducedVersionConfiguration('11.3.0'),
     ]);
 
-    // https://www.drupal.org/node/3495600
+    // https://www.drupal.org/node/3495601
     // JSONAPI_FILTER_AMONG_* global constants deprecated in drupal:11.3.0, removed in drupal:13.0.0.
     // Replaced by \Drupal\jsonapi\JsonApiFilter::AMONG_* class constants.
     $rectorConfig->ruleWithConfiguration(ConstantToClassConstantRector::class, [
@@ -203,7 +203,7 @@ return static function (RectorConfig $rectorConfig): void {
         new DrupalIntroducedVersionConfiguration('11.3.0'),
     ]);
 
-    // https://www.drupal.org/node/3551446
+    // https://www.drupal.org/node/3551450
     // workspaces.association service and WorkspaceAssociationInterface renamed in drupal:11.3.0.
     // Replaced by workspaces.tracker and WorkspaceTrackerInterface.
     $rectorConfig->ruleWithConfiguration(RenameClassRector::class, [

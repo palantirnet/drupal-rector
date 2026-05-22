@@ -17,7 +17,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  * These methods are no-ops since drupal:11.2.0 and removed in drupal:12.0.0.
  *
  * @see https://www.drupal.org/node/3528899
- * @see https://www.drupal.org/node/3550193
+ * @see https://www.drupal.org/node/3491200
  */
 final class RemoveModuleHandlerAddModuleCallsRector extends AbstractRector
 {

@@ -24,7 +24,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  * node_type_get_names(), node_get_type_label(), and node_mass_update() are
  * deprecated in drupal:11.3.0 and removed in drupal:13.0.0.
  *
- * @see https://www.drupal.org/node/3571623
+ * @see https://www.drupal.org/node/3534849
  */
 final class ReplaceNodeModuleProceduralFunctionsRector extends AbstractDrupalCoreRector
 {

@@ -23,8 +23,8 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  *
  * Deprecated in drupal:11.2.0.
  *
- * @see https://www.drupal.org/node/3518527
  * @see https://www.drupal.org/node/3518914
+ * @see https://www.drupal.org/node/3518527
  */
 final class ReplaceSessionWritesWithRequestSessionRector extends AbstractDrupalCoreRector
 {
