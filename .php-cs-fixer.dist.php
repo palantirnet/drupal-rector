@@ -5,6 +5,7 @@ $finder = (new PhpCsFixer\Finder())
         __DIR__.'/src',
         __DIR__.'/tests',
         __DIR__.'/config/drupal-*',
+        __DIR__.'/scripts',
     ])
     ->exclude([
         'functional/hookconvertrector/fixture',
