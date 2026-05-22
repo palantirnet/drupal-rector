@@ -25,9 +25,8 @@ return static function (RectorConfig $rectorConfig): void {
     ]);
 
     // Configure DrupalRectorSettings to control rule behaviour.
-    // By default, backward-compatibility wrapping is disabled (recommended for
-    // projects that target a single Drupal version). Enable it if you need to
-    // support multiple Drupal versions simultaneously.
+    // By default, backward-compatibility wrapping is enabled. Disable it if
+    // you don't need to support multiple Drupal versions simultaneously.
     $rectorConfig->singleton(DrupalRectorSettings::class, fn () => (new DrupalRectorSettings())
             ->disableBackwardCompatibility()
         // Contrib module developers: set the minimum Drupal version your
