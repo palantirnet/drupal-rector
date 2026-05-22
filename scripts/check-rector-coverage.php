@@ -10,9 +10,10 @@ declare(strict_types=1);
  * how many patch files contain those patterns in their removed (-) lines.
  *
  * Usage (must run with host PHP, not ddev — patches dir is outside the container):
- *   /opt/homebrew/opt/php@8.2/bin/php scripts/check-rector-coverage.php [patches-dir] [--csv]
+ *   /opt/homebrew/opt/php@8.2/bin/php scripts/check-rector-coverage.php <patches-dir> [--csv]
  *
- * Defaults to /Users/bjorn/Downloads/artifacts 6/phpstan-results
+ * The patches directory can also be provided via the RECTOR_PATCHES_DIR
+ * environment variable.
  */
 $rootDir = dirname(__DIR__);
 $patchesDir = null;
@@ -23,11 +24,11 @@ foreach (array_slice($argv, 1) as $arg) {
     if ($arg === '--help' || $arg === '-h') {
         echo <<<'HELP'
 Usage:
-  php scripts/check-rector-coverage.php [patches-dir] [--csv] [--verbose]
+  php scripts/check-rector-coverage.php <patches-dir> [--csv] [--verbose]
 
 Arguments:
   patches-dir   Directory containing <module>/*.patch files.
-                Defaults to: /Users/bjorn/Downloads/artifacts 6/phpstan-results
+                May also be supplied via the RECTOR_PATCHES_DIR env var.
 
 Options:
   --csv         Output results as CSV instead of a human-readable table.
@@ -56,7 +57,12 @@ HELP;
     }
 }
 
-$patchesDir ??= '/Users/bjorn/Downloads/artifacts 6/phpstan-results';
+$patchesDir ??= getenv('RECTOR_PATCHES_DIR') ?: null;
+
+if ($patchesDir === null) {
+    fwrite(STDERR, "Error: patches directory is required.\nRun with: php scripts/check-rector-coverage.php <patches-dir>\nOr set RECTOR_PATCHES_DIR.\n");
+    exit(1);
+}
 
 if (!is_dir($patchesDir)) {
     fwrite(STDERR, "Patches directory not found: $patchesDir\n");
