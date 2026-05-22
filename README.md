@@ -76,7 +76,7 @@ cp vendor/palantirnet/drupal-rector/rector.php .
 ```
 
 By default, Drupal Rector will fix deprecated code for all versions of Drupal. If you want to change this behavior, modify
-the sets used in the `rector.php` config. For example, if your site is still on Drupal 10.3, and you cannot fix deprecations
+the sets used in the `rector.php` config. For example, if your site is still on Drupal 10.3, and you do not want to fix deprecations
 made in Drupal 10.4, use the following configuration:
 
 ```php
@@ -88,7 +88,7 @@ $rectorConfig->sets([
 ]);
 ```
 
-This is more granular than the `Drupal10SetList::DRUPAL_10` set.
+This is more granular than the `Drupal10SetList::DRUPAL_10` set. Since Drupal 10.1 there is not real reason not to include later versions. It will detect the installed Drupal version and supply BC wrappers as needed if you enable it in the config.
 
 ### DrupalRectorSettings
 
