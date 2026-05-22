@@ -6,7 +6,7 @@ namespace DrupalRector\Services;
 
 class DrupalRectorSettings
 {
-    private bool $backwardCompatibilityEnabled = true;
+    private bool $backwardCompatibilityEnabled = false;
 
     private string $minimumCoreVersionSupported = '10.1.0';
 
