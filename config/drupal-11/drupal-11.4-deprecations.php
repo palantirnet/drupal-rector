@@ -372,11 +372,14 @@ return static function (RectorConfig $rectorConfig): void {
     // locale_translate_get_interface_translation_files() deprecated in drupal:11.4.0, removed in drupal:13.0.0.
     // Replaced by LocaleFileManager::getInterfaceTranslationFiles().
     $rectorConfig->ruleWithConfiguration(FunctionToServiceRector::class, [
-        new FunctionToServiceConfiguration('11.4.0', 'contextual_links_to_id', 'Drupal\contextual\ContextualLinksSerializer', 'linksToId'),
-        new FunctionToServiceConfiguration('11.4.0', 'contextual_id_to_links', 'Drupal\contextual\ContextualLinksSerializer', 'idToLinks'),
+        new FunctionToServiceConfiguration('11.4.0', '_contextual_links_to_id', 'Drupal\contextual\ContextualLinksSerializer', 'linksToId'),
+        new FunctionToServiceConfiguration('11.4.0', '_contextual_id_to_links', 'Drupal\contextual\ContextualLinksSerializer', 'idToLinks'),
         new FunctionToServiceConfiguration('11.4.0', 'image_path_flush', 'Drupal\image\ImageDerivativeUtilities', 'pathFlush'),
         new FunctionToServiceConfiguration('11.4.0', 'image_style_options', 'Drupal\image\ImageDerivativeUtilities', 'styleOptions'),
         new FunctionToServiceConfiguration('11.4.0', 'locale_translate_get_interface_translation_files', 'Drupal\locale\File\LocaleFileManager', 'getInterfaceTranslationFiles'),
+        new FunctionToServiceConfiguration('11.4.0', 'locale_translation_http_check', 'Drupal\locale\File\LocaleFileManager', 'checkRemoteFileStatus'),
+        new FunctionToServiceConfiguration('11.4.0', 'locale_translate_delete_translation_files', 'Drupal\locale\File\LocaleFileManager', 'deleteTranslationFiles'),
+        new FunctionToServiceConfiguration('11.4.0', 'locale_translation_download_source', 'Drupal\locale\File\LocaleFileManager', 'downloadTranslationSource'),
     ]);
 
     // https://www.drupal.org/node/2571679
