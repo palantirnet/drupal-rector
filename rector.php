@@ -44,6 +44,13 @@ return static function (RectorConfig $rectorConfig): void {
     //     new DeprecationHelperRemoveConfiguration('10.3.0'),
     // ]);
 
+    // If you wish to remove all DeprecationHelper BC wrappers based on your
+    // installed Drupal version, you can use the following rule instead:
+    //
+    // $rectorConfig->ruleWithConfiguration(DeprecationHelperRemoveRector::class, [
+    //     new DeprecationHelperRemoveConfiguration(\Drupal::VERSION),
+    // ]);
+
     // When phsptan-drupal is available, we should load it to get better type
     // inference to use in rectors.
     $phpstanDrupalExtension = __DIR__.'/vendor/mglaman/phpstan-drupal/extension.neon';
