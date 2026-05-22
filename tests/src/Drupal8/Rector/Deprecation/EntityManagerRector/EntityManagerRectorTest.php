@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Drupal8\Rector\Deprecation\EntityManagerRector;
 
-use Iterator;
 use DrupalRector\Tests\AbstractDrupalRectorTestCase;
+use Iterator;
 
 #[\PHPUnit\Framework\Attributes\CoversFunction('refactor')]
 class EntityManagerRectorTest extends AbstractDrupalRectorTestCase

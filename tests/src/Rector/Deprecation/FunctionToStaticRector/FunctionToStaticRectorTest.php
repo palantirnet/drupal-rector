@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace DrupalRector\Tests\Rector\Deprecation\FunctionToStaticRector;
 
-use Iterator;
 use DrupalRector\Tests\AbstractDrupalRectorTestCase;
+use Iterator;
 
 #[\PHPUnit\Framework\Attributes\CoversFunction('refactor')]
 class FunctionToStaticRectorTest extends AbstractDrupalRectorTestCase

@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace DrupalRector\Tests\Drupal10\Rector\Deprecation\WatchdogExceptionRector;
 
 use DrupalRector\Services\DrupalRectorSettings;
-use Iterator;
 use DrupalRector\Tests\AbstractDrupalRectorTestCase;
+use Iterator;
 
 #[\PHPUnit\Framework\Attributes\CoversFunction('refactor')]
 class WatchdogExceptionRectorTest extends AbstractDrupalRectorTestCase

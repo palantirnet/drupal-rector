@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Drupal9\Rector\Deprecation\FileUrlGeneratorRector;
 
-use Iterator;
 use DrupalRector\Tests\AbstractDrupalRectorTestCase;
+use Iterator;
 
 #[\PHPUnit\Framework\Attributes\CoversFunction('refactor')]
 class FileUrlGeneratorRectorTest extends AbstractDrupalRectorTestCase

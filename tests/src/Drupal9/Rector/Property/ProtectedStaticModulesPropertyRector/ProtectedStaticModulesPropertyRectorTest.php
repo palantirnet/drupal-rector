@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace DrupalRector\Tests\Drupal9\Rector\Property\ProtectedStaticModulesPropertyRector;
 
-use Iterator;
 use DrupalRector\Tests\AbstractDrupalRectorTestCase;
+use Iterator;
 
 final class ProtectedStaticModulesPropertyRectorTest extends AbstractDrupalRectorTestCase
 {

@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace DrupalRector\Tests\Drupal8\Rector\Deprecation\FunctionalTestDefaultThemePropertyRector;
 
-use DrupalRector\Tests\Rector\Class_\FunctionalTestDefaultThemePropertyRector\Iterator;
 use DrupalRector\Tests\AbstractDrupalRectorTestCase;
+use DrupalRector\Tests\Rector\Class_\FunctionalTestDefaultThemePropertyRector\Iterator;
 
 final class FunctionalTestDefaultThemePropertyRectorTest extends AbstractDrupalRectorTestCase
 {

@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Drupal8\Rector\Deprecation\GetMockRector;
 
-use Iterator;
 use DrupalRector\Tests\AbstractDrupalRectorTestCase;
+use Iterator;
 
 class GetMockRectorTest extends AbstractDrupalRectorTestCase
 {

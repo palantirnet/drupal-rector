@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace DrupalRector\Tests\Rector\AbstractDrupalCoreRector;
 
-use Iterator;
 use DrupalRector\Tests\AbstractDrupalRectorTestCase;
+use Iterator;
 
 class AbstractDrupalCoreRectorBcTest extends AbstractDrupalRectorTestCase
 {
