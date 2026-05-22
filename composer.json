@@ -52,7 +52,8 @@
             "stubs"
         ],
         "exclude-from-classmap": [
-            "**/fixture/**"
+            "**/fixture/**",
+            "**/fixture-*/**"
         ]
     },
     "config": {
@@ -91,5 +92,5 @@
         "phpstan": "vendor/bin/phpstan analyse --memory-limit=2G",
         "check-style": "vendor/bin/php-cs-fixer check",
         "fix-style": "vendor/bin/php-cs-fixer fix"
-        }
+    }
 }
