@@ -2,7 +2,10 @@
 
 declare(strict_types=1);
 
+use DrupalRector\Drupal11\Rector\Deprecation\CheckMarkupToProcessedTextRector;
 use DrupalRector\Drupal11\Rector\Deprecation\DeprecatedFilterFunctionsRector;
+use DrupalRector\Drupal11\Rector\Deprecation\RemoveFilterTipsLongParamRector;
+use DrupalRector\Drupal11\Rector\Deprecation\SystemSortThemesRector;
 use DrupalRector\Drupal11\Rector\Deprecation\FilterFormatFunctionsToServiceRector;
 use DrupalRector\Drupal11\Rector\Deprecation\GetOriginalClassToGetDecoratedClassesRector;
 use DrupalRector\Drupal11\Rector\Deprecation\LocaleCompareIncToServiceRector;
@@ -410,6 +413,23 @@ return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->ruleWithConfiguration(SystemRegionFunctionsRector::class, [
         new DrupalIntroducedVersionConfiguration('11.4.0'),
     ]);
+
+    // https://www.drupal.org/node/455724
+    // https://www.drupal.org/node/3588040 (change record)
+    // check_markup() deprecated in drupal:11.4.0, removed in drupal:12.0.0.
+    // Replaced by a processed_text render array.
+    $rectorConfig->rule(CheckMarkupToProcessedTextRector::class);
+
+    // https://www.drupal.org/node/3505370
+    // https://www.drupal.org/node/3567879 (change record)
+    // FilterInterface::tips() $long parameter deprecated in drupal:11.4.0, removed in drupal:12.0.0.
+    $rectorConfig->rule(RemoveFilterTipsLongParamRector::class);
+
+    // https://www.drupal.org/node/3571172
+    // https://www.drupal.org/node/3566774 (change record)
+    // system_sort_themes() string callback deprecated in drupal:11.4.0, removed in drupal:12.0.0.
+    // Replaced by an inline static closure.
+    $rectorConfig->rule(SystemSortThemesRector::class);
 
     // https://www.drupal.org/node/3037031
     // locale_translation_flush_projects(), locale_translation_build_projects(), locale_translation_check_projects(),

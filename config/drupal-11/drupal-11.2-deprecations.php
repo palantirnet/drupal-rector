@@ -2,7 +2,9 @@
 
 declare(strict_types=1);
 
+use DrupalRector\Drupal11\Rector\Deprecation\RemoveCacheTagChecksumAssertionsRector;
 use DrupalRector\Drupal11\Rector\Deprecation\RemoveHandlerBaseDefineExtraOptionsRector;
+use DrupalRector\Drupal11\Rector\Deprecation\RemoveRootFromCreateConnectionOptionsFromUrlRector;
 use DrupalRector\Drupal11\Rector\Deprecation\RemoveModuleHandlerAddModuleCallsRector;
 use DrupalRector\Drupal11\Rector\Deprecation\RemoveTwigNodeTransTagArgumentRector;
 use DrupalRector\Drupal11\Rector\Deprecation\RenameStopProceduralHookScanRector;
@@ -217,6 +219,17 @@ return static function (RectorConfig $rectorConfig): void {
         'Drupal\migrate_drupal\Plugin\migrate\source\ContentEntity' => 'Drupal\migrate\Plugin\migrate\source\ContentEntity',
         'Drupal\migrate_drupal\Plugin\migrate\source\ContentEntityDeriver' => 'Drupal\migrate\Plugin\migrate\source\ContentEntityDeriver',
     ]);
+
+    // https://www.drupal.org/node/3511123
+    // https://www.drupal.org/node/3511149 (change record)
+    // CacheTagChecksumCount and CacheTagIsValidCount deprecated in drupal:11.2.0, removed in drupal:12.0.0. No replacement.
+    $rectorConfig->rule(RemoveCacheTagChecksumAssertionsRector::class);
+
+    // https://www.drupal.org/node/3506931
+    // https://www.drupal.org/node/3511287 (change record)
+    // Connection::createConnectionOptionsFromUrl() $root parameter deprecated in drupal:11.2.0, removed in drupal:12.0.0.
+    // Pass NULL explicitly instead of the root path argument.
+    $rectorConfig->rule(RemoveRootFromCreateConnectionOptionsFromUrlRector::class);
 
     // https://www.drupal.org/node/3410939
     // SystemManager::REQUIREMENT_* deprecated in drupal:11.2.0, removed in drupal:12.0.0.

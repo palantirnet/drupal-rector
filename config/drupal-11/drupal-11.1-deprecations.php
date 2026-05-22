@@ -2,9 +2,12 @@
 
 declare(strict_types=1);
 
+use DrupalRector\Drupal11\Rector\Deprecation\BlockContentTestBaseStringToArrayRector;
+use DrupalRector\Drupal11\Rector\Deprecation\MovePointerToMouseOverRector;
 use DrupalRector\Drupal11\Rector\Deprecation\PluginBaseIsConfigurableRector;
 use DrupalRector\Drupal11\Rector\Deprecation\RemoveModuleHandlerDeprecatedMethodsRector;
 use DrupalRector\Drupal11\Rector\Deprecation\RemoveUpdaterPostInstallMethodsRector;
+use DrupalRector\Drupal11\Rector\Deprecation\ReplaceAddCachedDiscoveryMethodCallRector;
 use DrupalRector\Drupal11\Rector\Deprecation\ReplaceLocaleConfigBatchFunctionsRector;
 use DrupalRector\Rector\Deprecation\FunctionToStaticRector;
 use DrupalRector\Rector\Deprecation\MethodToMethodWithCheckRector;
@@ -56,6 +59,26 @@ return static function (RectorConfig $rectorConfig): void {
     // Updater::postInstall() and postInstallTasks() deprecated in drupal:11.1.0, removed in drupal:12.0.0.
     // The entire install-via-URL flow was eliminated; overrides are dead code.
     $rectorConfig->rule(RemoveUpdaterPostInstallMethodsRector::class);
+
+    // https://www.drupal.org/node/3196937
+    // https://www.drupal.org/node/3473739 (change record)
+    // BlockContentTestBase::createBlockContentType() $values deprecated in drupal:11.1.0, removed in drupal:12.0.0.
+    // Callers must pass an explicit array such as ['id' => 'basic'] instead of a plain string.
+    $rectorConfig->rule(BlockContentTestBaseStringToArrayRector::class);
+
+    // https://www.drupal.org/node/3421202
+    // https://www.drupal.org/node/3460567 (change record)
+    // movePointerTo() deprecated in drupal:11.1.0, removed in drupal:12.0.0.
+    // Replaced by getSession()->getDriver()->mouseOver() with an XPath selector.
+    $rectorConfig->rule(MovePointerToMouseOverRector::class);
+
+    // https://www.drupal.org/node/3432827
+    // https://www.drupal.org/node/3442229 (change record)
+    // addMethodCall('addCachedDiscovery', ...) on plugin.cache_clearer deprecated in drupal:11.1.0, removed in drupal:12.0.0.
+    // Replaced by the plugin_manager_cache_clear tag approach.
+    $rectorConfig->ruleWithConfiguration(ReplaceAddCachedDiscoveryMethodCallRector::class, [
+        new DrupalIntroducedVersionConfiguration('11.1.0'),
+    ]);
 
     // https://www.drupal.org/node/3488176
     // drupal_common_theme() removed in drupal:11.1.0.
