@@ -14,6 +14,7 @@ use PhpParser\Node\Expr\ClassConstFetch;
 use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Name\FullyQualified;
 use PhpParser\Node\Scalar\String_;
+use PHPStan\Type\ObjectType;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\ConfiguredCodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
@@ -128,6 +129,10 @@ final class ReplacePdoFetchConstantsRector extends AbstractDrupalCoreRector
     {
         $methodName = $this->getName($node->name);
         if ($methodName === null || !array_key_exists($methodName, self::DRUPAL_FETCH_METHODS)) {
+            return null;
+        }
+
+        if (!$this->isObjectType($node->var, new ObjectType('Drupal\Core\Database\StatementInterface'))) {
             return null;
         }
 
