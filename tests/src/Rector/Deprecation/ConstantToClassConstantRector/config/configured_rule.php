@@ -34,5 +34,6 @@ return static function (RectorConfig $rectorConfig): void {
         new ConstantToClassConfiguration('JSONAPI_FILTER_AMONG_PUBLISHED', 'Drupal\jsonapi\JsonApiFilter', 'AMONG_PUBLISHED', '11.3.0'),
         new ConstantToClassConfiguration('JSONAPI_FILTER_AMONG_ENABLED', 'Drupal\jsonapi\JsonApiFilter', 'AMONG_ENABLED', '11.3.0'),
         new ConstantToClassConfiguration('JSONAPI_FILTER_AMONG_OWN', 'Drupal\jsonapi\JsonApiFilter', 'AMONG_OWN', '11.3.0'),
+        new ConstantToClassConfiguration('IMAGE_DERIVATIVE_TOKEN', 'Drupal\image\ImageStyleInterface', 'TOKEN', '11.4.0'),
     ]);
 };

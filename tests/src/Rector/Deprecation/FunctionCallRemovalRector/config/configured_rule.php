@@ -20,5 +20,10 @@ return static function (RectorConfig $rectorConfig): void {
         new FunctionCallRemovalConfiguration('views_ui_contextual_links_suppress_push'),
         new FunctionCallRemovalConfiguration('views_ui_contextual_links_suppress_pop'),
         new FunctionCallRemovalConfiguration('automated_cron_settings_submit'),
+        new FunctionCallRemovalConfiguration('block_theme_initialize'),
+        new FunctionCallRemovalConfiguration('syslog_facility_list'),
+        new FunctionCallRemovalConfiguration('syslog_logging_settings_submit'),
+        new FunctionCallRemovalConfiguration('taxonomy_build_node_index'),
+        new FunctionCallRemovalConfiguration('taxonomy_delete_node_index'),
     ]);
 };
