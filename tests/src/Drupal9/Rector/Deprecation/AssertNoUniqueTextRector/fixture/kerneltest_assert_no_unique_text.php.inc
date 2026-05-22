@@ -17,6 +17,8 @@ class KernelTestExampleTest extends \Drupal\KernelTests\KernelTestBase {
 -----
 <?php
 
+namespace Drupal9\Rector\Deprecation\AssertNoUniqueTextRector\fixture;
+
 class KernelTestExampleTest extends \Drupal\KernelTests\KernelTestBase {
 
   /**

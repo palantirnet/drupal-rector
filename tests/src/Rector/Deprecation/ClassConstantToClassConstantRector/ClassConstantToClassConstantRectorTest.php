@@ -2,19 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Drupal9\Rector\Deprecation\AssertNoUniqueTextRector;
+namespace DrupalRector\Tests\Rector\Deprecation\ClassConstantToClassConstantRector;
 
 use DrupalRector\Tests\AbstractDrupalRectorTestCase;
 use Iterator;
 
 #[\PHPUnit\Framework\Attributes\CoversFunction('refactor')]
-class AssertNoUniqueTextRector extends AbstractDrupalRectorTestCase
+class ClassConstantToClassConstantRectorTest extends AbstractDrupalRectorTestCase
 {
-    public function __construct()
-    {
-        parent::__construct(static::class);
-    }
-
     #[\PHPUnit\Framework\Attributes\DataProvider('provideData')]
     public function test(string $filePath): void
     {

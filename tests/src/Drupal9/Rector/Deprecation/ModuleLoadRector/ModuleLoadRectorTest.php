@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Drupal9\Rector\Deprecation\ModuleLoadRector;
+namespace DrupalRector\Tests\Drupal9\Rector\Deprecation\ModuleLoadRector;
 
 use DrupalRector\Tests\AbstractDrupalRectorTestCase;
 use Iterator;

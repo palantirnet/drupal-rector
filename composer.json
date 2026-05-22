@@ -53,7 +53,8 @@
         ],
         "exclude-from-classmap": [
             "**/fixture/**",
-            "**/fixture-*/**"
+            "**/fixture-*/**",
+            "**/Fixture/**"
         ]
     },
     "config": {

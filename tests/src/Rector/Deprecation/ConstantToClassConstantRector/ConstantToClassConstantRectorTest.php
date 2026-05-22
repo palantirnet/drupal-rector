@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace DrupalRector\Rector\Deprecation\ConstantToClassConstantRector;
+namespace DrupalRector\Tests\Rector\Deprecation\ConstantToClassConstantRector;
 
 use DrupalRector\Services\DrupalRectorSettings;
 use DrupalRector\Tests\AbstractDrupalRectorTestCase;

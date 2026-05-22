@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Drupal9\Rector\Deprecation\UiHelperTraitDrupalPostFormRector;
+namespace DrupalRector\Tests\Drupal9\Rector\Deprecation\UiHelperTraitDrupalPostFormRector;
 
 use DrupalRector\Tests\AbstractDrupalRectorTestCase;
 use Iterator;

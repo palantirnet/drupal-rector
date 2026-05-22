@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Drupal8\Rector\Deprecation\EntityManagerRector;
+namespace DrupalRector\Tests\Drupal8\Rector\Deprecation\EntityManagerRector;
 
 use DrupalRector\Tests\AbstractDrupalRectorTestCase;
 use Iterator;

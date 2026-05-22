@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Drupal8\Rector\Deprecation\EntityDeleteMultipleRector;
+namespace DrupalRector\Tests\Drupal8\Rector\Deprecation\EntityDeleteMultipleRector;
 
 use DrupalRector\Tests\AbstractDrupalRectorTestCase;
 use Iterator;
