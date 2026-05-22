@@ -335,6 +335,16 @@ CODE_AFTER
     public function refactor(Node $node): ?Node
     {
         // [copy refactor() body from the digests rule unchanged]
+
+        // TYPE GUARD — required for every MethodCall/NullsafeMethodCall/PropertyFetch handler.
+        // Add an isObjectType() check so unrelated classes with the same method/property name
+        // are not accidentally transformed. Add it *after* the name check:
+        //
+        // if (!$this->isName($node->name, 'theMethod')) { return null; }
+        // if (!$this->isObjectType($node->var, new ObjectType('Fully\Qualified\InterfaceName'))) { return null; }
+        //
+        // Look up the FQCN in repos/drupal-core; prefer the interface over the concrete class.
+        // Omit only for FuncCall (global functions), ClassConst, or class-declaration nodes.
     }
 }
 ```

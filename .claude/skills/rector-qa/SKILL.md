@@ -72,13 +72,7 @@ Only add this fallback when real-world testing shows `isObjectType` silently mis
 
 **Output:** `Pass 1: [SAFE|AT-RISK|EXEMPT] — <reason>`
 
-**If AT-RISK:** Apply the fix (see patterns below), then update `.claude/skills/prompts/rector-type-specificity-checklist.md`:
-
-```bash
-grep -n "<ClassName>" .claude/skills/prompts/rector-type-specificity-checklist.md
-```
-
-Update the verdict column from `⚠️ AT-RISK` to `✅ SAFE` after fixing.
+**If AT-RISK:** Apply the fix (see patterns below).
 
 ### Finding the right class/interface
 
@@ -137,13 +131,13 @@ Place it at `stubs/Drupal/Some/Namespace/ClassName.php`, then run `composer dump
 
 ## Bulk mode (`all`)
 
-When `$ARGUMENTS` is `all`, open `.claude/skills/prompts/rector-type-specificity-checklist.md` and work through every row marked `⚠️ AT-RISK`, one by one. For each:
+When `$ARGUMENTS` is `all`, find every rector in `src/Drupal11/Rector/Deprecation/` and run Pass 1 on each:
 
-1. Locate the rector source with `find src -name "<ClassName>.php"`.
-2. Apply the Pass 1 steps above.
-3. Fix any AT-RISK rectors and tick the checklist row.
+1. List all rector classes: `find src -name "*.php" -path "*/Rector/Deprecation/*"`
+2. For each class, apply the Pass 1 steps above.
+3. Fix any AT-RISK rectors before moving to the next.
 
-Do not run the other three passes in bulk mode.
+Do not run the other passes in bulk mode.
 
 ---
 
@@ -280,9 +274,32 @@ consecutively, issue first:
 
 ---
 
+## Pass 5 — Registration Audit
+
+**Goal:** The rector must be wired into a `config/drupal-11/drupal-11.N-deprecations.php` file so it actually runs when users invoke drupal-rector.
+
+**Steps:**
+
+1. Check if the class is referenced in any config file:
+   ```bash
+   grep -rq "<ClassName>" config/ && echo "REGISTERED" || echo "FAIL — not registered"
+   ```
+
+2. If unregistered, identify the correct config file from the deprecation version in the rector docblock (e.g. `drupal:11.2.0` → `config/drupal-11/drupal-11.2-deprecations.php`).
+
+3. Determine the entry type:
+   - Extends `AbstractDrupalCoreRector` → `$rectorConfig->ruleWithConfiguration(<ClassName>::class, [new DrupalIntroducedVersionConfiguration('11.N.0')])`
+   - Extends `AbstractRector` → `$rectorConfig->rule(<ClassName>::class)`
+
+**Output:** `Pass 5: [PASS|FAIL] — <registered in config/drupal-11/drupal-11.N-deprecations.php | not registered>`
+
+**If FAIL:** Add the `use` statement and `rule`/`ruleWithConfiguration` entry to the correct config file.
+
+---
+
 ## Final Summary
 
-After all four passes, produce a summary checklist:
+After all five passes, produce a summary checklist:
 
 ```
 === QA Summary: <ClassName> ===
@@ -291,6 +308,7 @@ Pass 1 — Type Guard:    [SAFE|AT-RISK|EXEMPT]
 Pass 2 — Fixtures:      [PASS|WARN] — <note>
 Pass 3 — BC Decision:   [PASS|FAIL] — <note>
 Pass 4 — @see URL:      [PASS|WARN|FAIL] — issue:<n> CR:<n> — <present/missing>
+Pass 5 — Registration:  [PASS|FAIL] — <note>
 
 Overall: [PASS — ready to merge | NEEDS FIXES — see above]
 ```
@@ -301,4 +319,4 @@ If any pass shows AT-RISK or FAIL, do not declare the rector ready to merge. App
 
 ## Running on a "known good" rector
 
-To verify the skill works correctly, run it on `ReplaceSessionManagerDeleteRector` — all four passes should be PASS/SAFE.
+To verify the skill works correctly, run it on `ReplaceSessionManagerDeleteRector` — all five passes should be PASS/SAFE.

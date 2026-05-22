@@ -63,18 +63,6 @@ Results report files changed per module and flag zero-match cases with a diagnos
 
 ---
 
-### `/rector-type-check-review [RectorClassName|all]`
-
-Audits rector rules for type-specificity: ensures every `MethodCall`, `NullsafeMethodCall`, and `PropertyFetch` node is guarded by `isObjectType()` so unrelated classes with the same method/property name are not accidentally transformed.
-
-Run on a single rector, or pass `all` (or no argument) to walk through every AT-RISK row in `.claude/skills/prompts/rector-type-specificity-checklist.md`. For each AT-RISK rector it finds the owning Drupal interface in `repos/drupal-core`, creates a stub if needed, adds the guard, and updates fixtures.
-
-```
-/rector-type-check-review ReplaceSessionManagerDeleteRector
-/rector-type-check-review all
-```
-
----
 
 ## Supporting scripts
 
