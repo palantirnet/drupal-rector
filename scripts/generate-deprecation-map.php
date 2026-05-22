@@ -131,17 +131,17 @@ foreach ($customRectorFiles as $absPath) {
     $relPath = relPath($rootDir, $absPath);
 
     $rectorIndex[$className] = [
-        'class'               => $className,
-        'fqcn'                => $fqcn,
-        'file'                => $relPath,
-        'major'               => $major,
-        'issue_id'            => $issueId,
-        'change_record_id'    => $changeRecordId,
-        'type'                => 'custom',
-        'introduced'          => introducedForFile($rootDir, $relPath, $tagCache),
+        'class' => $className,
+        'fqcn' => $fqcn,
+        'file' => $relPath,
+        'major' => $major,
+        'issue_id' => $issueId,
+        'change_record_id' => $changeRecordId,
+        'type' => 'custom',
+        'introduced' => introducedForFile($rootDir, $relPath, $tagCache),
         'configuration_class' => null,
-        'configuration'       => [],
-        'source_content'      => $content,
+        'configuration' => [],
+        'source_content' => $content,
     ];
 }
 
@@ -652,6 +652,7 @@ function extractFunctionName(string $message): string
     if (preg_match('/^([a-z_][a-z0-9_]*?)(?:\(\)|(?=is\s+deprecated)|(?=\s+is\s+deprecated))/', $message, $m)) {
         return $m[1];
     }
+
     return '';
 }
 
