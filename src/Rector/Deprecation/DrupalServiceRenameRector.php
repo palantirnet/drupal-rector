@@ -51,9 +51,10 @@ class DrupalServiceRenameRector extends AbstractDrupalCoreRector
             return null;
         }
 
-        $node->args[0] = new Node\Arg(new Node\Scalar\String_($configuration->getNewService()));
+        $newNode = clone $node;
+        $newNode->args[0] = new Node\Arg(new Node\Scalar\String_($configuration->getNewService()));
 
-        return $node;
+        return $newNode;
     }
 
     public function getRuleDefinition(): RuleDefinition
