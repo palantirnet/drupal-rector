@@ -1,7 +1,7 @@
 ---
 name: rector-implement
 description: Converts a single drupal-digests rule to a drupal-rector-compliant implementation. Follows .claude/skills/prompts/digest-to-rector-prompt.md steps 1–14 and adds quality gates for type guards (QG-A) and version-gating tests (QG-B). Pass the path to the digests rule file as argument.
-argument-hint: "~/projects/drupal-digests/rector/rules/<rule-filename>.php"
+argument-hint: "repos/drupal-digests/rector/rules/<rule-filename>.php"
 allowed-tools: Read, Write, Edit, Bash, Glob
 ---
 

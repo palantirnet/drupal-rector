@@ -13,7 +13,7 @@ Comprehensive four-pass quality review for a drupal-rector implementation.
 
 `$ARGUMENTS` — one of:
 - Rector class name, e.g. `ReplaceSessionManagerDeleteRector` — runs all four passes on that rector.
-- `all` — walks every row marked `AT-RISK` in `.claude/skills/prompts/rector-type-specificity-checklist.md` and runs Pass 1 only, fixing each rector in sequence.
+- `all` — walks every Drupal-rector source file under `src/` and runs Pass 1 (type-guard audit) on each, fixing as it goes.
 
 ## Finding the files
 
