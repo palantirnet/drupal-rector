@@ -12,9 +12,7 @@ use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\Function_;
 use PhpParser\ParserFactory;
 use PHPUnit\Framework\TestCase;
-use Rector\NodeAnalyzer\ExprAnalyzer;
 use Rector\PhpParser\Printer\BetterStandardPrinter;
-use Rector\Util\Reflection\PrivatesAccessor;
 
 class HookConvertRectorTest extends TestCase
 {
@@ -22,7 +20,11 @@ class HookConvertRectorTest extends TestCase
 
     protected function setUp(): void
     {
-        $printer = new BetterStandardPrinter(new ExprAnalyzer(), new PrivatesAccessor());
+        // getLegacyHookFunction() doesn't use the printer; bypassing the
+        // constructor avoids rector's internal dependency chain (>=2.4.5
+        // ExprAnalyzer now requires NodeNameResolver, which transitively
+        // needs ReflectionProvider).
+        $printer = (new \ReflectionClass(BetterStandardPrinter::class))->newInstanceWithoutConstructor();
         $this->rector = new HookConvertRector($printer);
 
         $ref = new \ReflectionClass($this->rector);
