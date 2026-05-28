@@ -28,7 +28,6 @@ use DrupalRector\Rector\ValueObject\FunctionToFirstArgMethodConfiguration;
 use DrupalRector\Rector\ValueObject\FunctionToServiceConfiguration;
 use DrupalRector\Rector\ValueObject\FunctionToStaticConfiguration;
 use Rector\Config\RectorConfig;
-use Rector\Renaming\Rector\Name\RenameClassRector;
 
 return static function (RectorConfig $rectorConfig): void {
     // https://www.drupal.org/node/3543035
@@ -204,10 +203,8 @@ return static function (RectorConfig $rectorConfig): void {
     ]);
 
     // https://www.drupal.org/node/3551450
-    // workspaces.association service and WorkspaceAssociationInterface renamed in drupal:11.3.0.
-    // Replaced by workspaces.tracker and WorkspaceTrackerInterface.
-    $rectorConfig->ruleWithConfiguration(RenameClassRector::class, [
-        'Drupal\workspaces\WorkspaceAssociationInterface' => 'Drupal\workspaces\WorkspaceTrackerInterface',
-        'Drupal\workspaces\WorkspaceAssociation' => 'Drupal\workspaces\WorkspaceTracker',
-    ]);
+    // workspaces\WorkspaceAssociation[Interface] → workspaces\WorkspaceTracker[Interface]
+    // class renames are in the opt-in `drupal-11.3-breaking.php` set
+    // (DRUPAL_113_BREAKING): the replacement classes were introduced in 11.3.0
+    // and do not exist on any Drupal 10.x branch.
 };
