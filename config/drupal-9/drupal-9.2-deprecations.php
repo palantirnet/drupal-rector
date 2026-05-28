@@ -19,6 +19,6 @@ return static function (RectorConfig $rectorConfig): void {
 
     $rectorConfig->ruleWithConfiguration(MethodToMethodWithCheckRector::class, [
         // https://www.drupal.org/node/3187914
-        new MethodToMethodWithCheckConfiguration('Drupal\Core\Session\MetadataBag', 'clearCsrfTokenSeed', 'stampNew'),
+        new MethodToMethodWithCheckConfiguration('Drupal\Core\Session\MetadataBag', 'clearCsrfTokenSeed', 'stampNew', '9.2.0'),
     ]);
 };

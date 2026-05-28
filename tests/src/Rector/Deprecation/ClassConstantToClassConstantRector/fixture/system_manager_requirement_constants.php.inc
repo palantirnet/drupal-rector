@@ -14,8 +14,8 @@ function example() {
 use Drupal\system\SystemManager;
 
 function example() {
-    $requirements['check']['severity'] = \Drupal\Core\Extension\Requirement\RequirementSeverity::OK;
-    $requirements['check']['severity'] = \Drupal\Core\Extension\Requirement\RequirementSeverity::Warning;
-    $requirements['check']['severity'] = \Drupal\Core\Extension\Requirement\RequirementSeverity::Error;
+    $requirements['check']['severity'] = \Drupal\Component\Utility\DeprecationHelper::backwardsCompatibleCall(\Drupal::VERSION, '11.2.0', fn() => \Drupal\Core\Extension\Requirement\RequirementSeverity::OK, fn() => SystemManager::REQUIREMENT_OK);
+    $requirements['check']['severity'] = \Drupal\Component\Utility\DeprecationHelper::backwardsCompatibleCall(\Drupal::VERSION, '11.2.0', fn() => \Drupal\Core\Extension\Requirement\RequirementSeverity::Warning, fn() => SystemManager::REQUIREMENT_WARNING);
+    $requirements['check']['severity'] = \Drupal\Component\Utility\DeprecationHelper::backwardsCompatibleCall(\Drupal::VERSION, '11.2.0', fn() => \Drupal\Core\Extension\Requirement\RequirementSeverity::Error, fn() => SystemManager::REQUIREMENT_ERROR);
 }
 ?>

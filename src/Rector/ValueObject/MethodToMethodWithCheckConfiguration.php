@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace DrupalRector\Rector\ValueObject;
 
-class MethodToMethodWithCheckConfiguration
+use DrupalRector\Contract\VersionedConfigurationInterface;
+
+class MethodToMethodWithCheckConfiguration implements VersionedConfigurationInterface
 {
     protected string $deprecatedMethodName;
 
@@ -12,11 +14,14 @@ class MethodToMethodWithCheckConfiguration
 
     protected string $className;
 
-    public function __construct(string $className, string $deprecatedMethodName, string $methodName)
+    protected string $introducedVersion;
+
+    public function __construct(string $className, string $deprecatedMethodName, string $methodName, string $introducedVersion)
     {
         $this->className = $className;
         $this->deprecatedMethodName = $deprecatedMethodName;
         $this->methodName = $methodName;
+        $this->introducedVersion = $introducedVersion;
     }
 
     public function getDeprecatedMethodName(): string
@@ -32,5 +37,10 @@ class MethodToMethodWithCheckConfiguration
     public function getClassName(): string
     {
         return $this->className;
+    }
+
+    public function getIntroducedVersion(): string
+    {
+        return $this->introducedVersion;
     }
 }

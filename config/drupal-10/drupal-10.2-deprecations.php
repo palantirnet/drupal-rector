@@ -23,8 +23,8 @@ return static function (RectorConfig $rectorConfig): void {
 
     // https://www.drupal.org/node/3265963
     $rectorConfig->ruleWithConfiguration(MethodToMethodWithCheckRector::class, [
-        new MethodToMethodWithCheckConfiguration('Drupal\system\Plugin\ImageToolkit\GDToolkit', 'getResource', 'getImage'),
-        new MethodToMethodWithCheckConfiguration('Drupal\system\Plugin\ImageToolkit\GDToolkit', 'setResource', 'setImage'),
+        new MethodToMethodWithCheckConfiguration('Drupal\system\Plugin\ImageToolkit\GDToolkit', 'getResource', 'getImage', '10.2.0'),
+        new MethodToMethodWithCheckConfiguration('Drupal\system\Plugin\ImageToolkit\GDToolkit', 'setResource', 'setImage', '10.2.0'),
     ]);
 
     // https://www.drupal.org/node/3358337

@@ -18,7 +18,7 @@ return static function (RectorConfig $rectorConfig): void {
     // RendererInterface::renderPlain() deprecated in drupal:10.3.0, removed in drupal:12.0.0.
     // Replaced by RendererInterface::renderInIsolation().
     $rectorConfig->ruleWithConfiguration(MethodToMethodWithCheckRector::class, [
-        new MethodToMethodWithCheckConfiguration('Drupal\Core\Render\RendererInterface', 'renderPlain', 'renderInIsolation'),
+        new MethodToMethodWithCheckConfiguration('Drupal\Core\Render\RendererInterface', 'renderPlain', 'renderInIsolation', '10.3.0'),
     ]);
 
     // https://www.drupal.org/node/3411269 file_icon_class, file_icon_map
@@ -49,18 +49,21 @@ return static function (RectorConfig $rectorConfig): void {
             'EXISTS_RENAME',
             'Drupal\Core\File\FileExists',
             'Rename',
+            '10.3.0',
         ),
         new ClassConstantToClassConstantConfiguration(
             'Drupal\Core\File\FileSystemInterface',
             'EXISTS_REPLACE',
             'Drupal\Core\File\FileExists',
             'Replace',
+            '10.3.0',
         ),
         new ClassConstantToClassConstantConfiguration(
             'Drupal\Core\File\FileSystemInterface',
             'EXISTS_ERROR',
             'Drupal\Core\File\FileExists',
             'Error',
+            '10.3.0',
         ),
     ]);
 };

@@ -25,7 +25,7 @@ function simple_example() {
     $form_state->setRedirectUrl($untranslated_entity->toUrl('canonical'));
 
     $toolkit = new \Drupal\system\Plugin\ImageToolkit\GDToolkit;
-    $toolkit->getImage();
-    $toolkit->setImage();
+    \Drupal\Component\Utility\DeprecationHelper::backwardsCompatibleCall(\Drupal::VERSION, '10.2.0', fn() => $toolkit->getImage(), fn() => $toolkit->getResource());
+    \Drupal\Component\Utility\DeprecationHelper::backwardsCompatibleCall(\Drupal::VERSION, '10.2.0', fn() => $toolkit->setImage(), fn() => $toolkit->setResource());
 }
 ?>

@@ -4,11 +4,10 @@ declare(strict_types=1);
 
 namespace DrupalRector\Rector\Deprecation;
 
+use DrupalRector\Contract\VersionedConfigurationInterface;
+use DrupalRector\Rector\AbstractDrupalCoreRector;
 use DrupalRector\Rector\ValueObject\ClassConstantToClassConstantConfiguration;
-use DrupalRector\Rector\ValueObject\ConstantToClassConfiguration;
 use PhpParser\Node;
-use Rector\Contract\Rector\ConfigurableRectorInterface;
-use Rector\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\ConfiguredCodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
@@ -18,22 +17,17 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  * What is covered:
  * - Replacement with a use statement.
  */
-class ClassConstantToClassConstantRector extends AbstractRector implements ConfigurableRectorInterface
+class ClassConstantToClassConstantRector extends AbstractDrupalCoreRector
 {
-    /**
-     * @var ClassConstantToClassConstantConfiguration[]
-     */
-    private array $constantToClassRenames;
-
     public function configure(array $configuration): void
     {
         foreach ($configuration as $value) {
             if (!$value instanceof ClassConstantToClassConstantConfiguration) {
-                throw new \InvalidArgumentException(sprintf('Each configuration item must be an instance of "%s"', ConstantToClassConfiguration::class));
+                throw new \InvalidArgumentException(sprintf('Each configuration item must be an instance of "%s"', ClassConstantToClassConstantConfiguration::class));
             }
         }
 
-        $this->constantToClassRenames = $configuration;
+        parent::configure($configuration);
     }
 
     /**
@@ -59,18 +53,21 @@ CODE_AFTER,
                         'ROUTE_NAME',
                         'Drupal\Core\Routing\RouteObjectInterface',
                         'ROUTE_NAME',
+                        '9.1.0',
                     ),
                     new ClassConstantToClassConstantConfiguration(
                         'Symfony\Cmf\Component\Routing\RouteObjectInterface',
                         'ROUTE_OBJECT',
                         'Drupal\Core\Routing\RouteObjectInterface',
                         'ROUTE_OBJECT',
+                        '9.1.0',
                     ),
                     new ClassConstantToClassConstantConfiguration(
                         'Symfony\Cmf\Component\Routing\RouteObjectInterface',
                         'CONTROLLER_NAME',
                         'Drupal\Core\Routing\RouteObjectInterface',
                         'CONTROLLER_NAME',
+                        '9.1.0',
                     ),
                 ]
             ),
@@ -87,24 +84,19 @@ CODE_AFTER,
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function refactor(Node $node): ?Node
+    protected function refactorWithConfiguration(Node $node, VersionedConfigurationInterface $configuration): ?Node
     {
         assert($node instanceof Node\Expr\ClassConstFetch);
+        assert($configuration instanceof ClassConstantToClassConstantConfiguration);
 
-        foreach ($this->constantToClassRenames as $constantToClassRename) {
-            if ($this->getName($node->name) === $constantToClassRename->getDeprecated() && $this->getName($node->class) === $constantToClassRename->getDeprecatedClass()) {
-                // We add a fully qualified class name and the parameters in `rector.php` adds the use statement.
-                $fully_qualified_class = new Node\Name\FullyQualified($constantToClassRename->getClass());
-
-                $name = new Node\Identifier($constantToClassRename->getConstant());
-
-                return new Node\Expr\ClassConstFetch($fully_qualified_class, $name);
-            }
+        if ($this->getName($node->name) !== $configuration->getDeprecated() || $this->getName($node->class) !== $configuration->getDeprecatedClass()) {
+            return null;
         }
 
-        return null;
+        // We add a fully qualified class name and the parameters in `rector.php` adds the use statement.
+        return new Node\Expr\ClassConstFetch(
+            new Node\Name\FullyQualified($configuration->getClass()),
+            new Node\Identifier($configuration->getConstant())
+        );
     }
 }

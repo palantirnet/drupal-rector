@@ -10,6 +10,26 @@ Historical entries (≤ 0.21.2) are reproduced from the
 they were originally published; their format and level of detail varies
 release-by-release.
 
+## [Unreleased]
+
+### Changed
+
+- `ClassConstantToClassConstantRector` and `MethodToMethodWithCheckRector` now
+  extend `AbstractDrupalCoreRector` and auto-wrap their `Expr → Expr` rewrites
+  via `DeprecationHelper::backwardsCompatibleCall()`. Their configuration value
+  objects (`ClassConstantToClassConstantConfiguration`,
+  `MethodToMethodWithCheckConfiguration`) gain a required `introducedVersion`
+  constructor argument and now implement `VersionedConfigurationInterface`.
+  This closes three D11 → D10 runtime regressions (Comment* enums in 11.4,
+  `RequirementSeverity` in 11.2, `AliasManager` method rename in 11.1) without
+  moving anything to a `-breaking.php` set.
+- `MethodToMethodWithCheckRector` no longer attaches a "please confirm the
+  receiver type" TODO comment for the `maybe` type-inference case. The
+  comment-on-parent-statement mechanism relied on parent-node tracking that
+  Rector 2.x removed; the BC wrap makes both code paths runtime-safe by
+  selecting the right call based on `\Drupal::VERSION`, which addresses the
+  underlying concern.
+
 ## [1.0.0-beta1] — 2026-05-25
 
 First beta of the 1.0 line. Adds full Drupal 11 deprecation coverage (versions 11.0

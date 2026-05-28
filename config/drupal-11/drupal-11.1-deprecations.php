@@ -37,7 +37,7 @@ return static function (RectorConfig $rectorConfig): void {
         'Drupal\Core\Routing\MatchingRouteNotFoundException' => 'Symfony\Component\Routing\Exception\ResourceNotFoundException',
     ]);
     $rectorConfig->ruleWithConfiguration(MethodToMethodWithCheckRector::class, [
-        new MethodToMethodWithCheckConfiguration('Drupal\path_alias\AliasManager', 'pathAliasWhitelistRebuild', 'pathAliasPrefixListRebuild'),
+        new MethodToMethodWithCheckConfiguration('Drupal\path_alias\AliasManager', 'pathAliasWhitelistRebuild', 'pathAliasPrefixListRebuild', '11.1.0'),
     ]);
 
     // https://www.drupal.org/node/3442009

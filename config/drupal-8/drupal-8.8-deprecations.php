@@ -43,7 +43,7 @@ return static function (RectorConfig $rectorConfig): void {
 
     $rectorConfig->ruleWithConfiguration(MethodToMethodWithCheckRector::class, [
         // https://www.drupal.org/node/3075567
-        new MethodToMethodWithCheckConfiguration('Drupal\Core\Entity\EntityTypeInterface', 'getLowercaseLabel', 'getSingularLabel'),
+        new MethodToMethodWithCheckConfiguration('Drupal\Core\Entity\EntityTypeInterface', 'getLowercaseLabel', 'getSingularLabel', '8.8.0'),
     ]);
 
     // https://www.drupal.org/node/3083055
