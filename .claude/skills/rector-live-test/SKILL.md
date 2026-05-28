@@ -159,6 +159,9 @@ use Rector\Config\RectorConfig;
 
 return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->fileExtensions(['php', 'module', 'theme', 'install', 'profile', 'inc']);
+    $rectorConfig->bootstrapFiles([
+        __DIR__.'/vendor/palantirnet/drupal-rector/config/drupal-phpunit-bootstrap-file.php',
+    ]);
     $rectorConfig->ruleWithConfiguration(<ClassName>::class, [
         new DrupalIntroducedVersionConfiguration('<introduced-version>'),
     ]);
@@ -183,7 +186,84 @@ git -C ~/projects/drupal-rector-test checkout -- web/modules/contrib/
 rm ~/projects/drupal-rector-test/rector-live-test.php
 ```
 
-### 5. Report results
+If the contrib modules are not git-tracked in the test project, `git checkout` won't restore them.
+Use `ddev composer reinstall drupal/<module1> drupal/<module2> --no-interaction` instead.
+
+### 5. Capture the PHPStan deprecation message
+
+While the contrib module is still installed and the pre-transform code is on
+disk, run PHPStan against the file the rector matched and capture the
+deprecation message PHPStan emits for the targeted symbol. This is the literal
+string the rector "covers", and is what upgrade_status's
+`DeprecationAnalyzer::isRectorCovered()` does an exact string match against
+(after a small set of normalizations — see below).
+
+```bash
+cd ~/projects/drupal-rector-test
+ddev exec vendor/bin/phpstan analyse \
+  web/modules/contrib/<module>/<file_the_rector_matched>.php \
+  --level=max --no-progress --error-format=raw 2>&1 \
+  | grep -i "deprecated.*<short_symbol_name>"
+```
+
+If no contrib file matched (or the symbol is already fully removed from
+installed core so PHPStan emits "not found" rather than a deprecation), fall
+back to a synthetic probe — see the `rector-extract-phpstan-error` skill's
+"Synthetic probe" section for templates.
+
+**Normalize and store.** Pipe the raw message through the normalizer (which
+applies the three transforms upgrade_status applies before its `in_array()`
+lookup — whitespace collapse, `: in` → `. Deprecated in`, leading `\Drupal`
+strip):
+
+```bash
+ddev exec php scripts/normalize-phpstan-message.php "<raw multi-line message>"
+# or:
+printf '<raw message>' | ddev exec php scripts/normalize-phpstan-message.php
+```
+
+Add the normalized string to the rector source:
+
+- **Custom rector class** (`src/Drupal*/Rector/Deprecation/<ClassName>.php`)
+  — add or extend the `public const PHPSTAN_MESSAGES` array. One element per
+  distinct call shape the rector handles.
+
+  ```php
+  public const PHPSTAN_MESSAGES = [
+      'Call to deprecated method foo() of class Drupal\Bar. Deprecated in drupal:11.4.0 ...',
+  ];
+  ```
+
+- **Config-only registration** (`config/drupal-*/drupal-*.N-deprecations.php`)
+  — add a `// PHPSTAN_MESSAGES <RectorShortName>:` comment block immediately
+  above the `ruleWithConfiguration(...)` call, one message per `//` line:
+
+  ```php
+  // PHPSTAN_MESSAGES FunctionToServiceRector:
+  //   Call to deprecated function foo(). Deprecated in drupal:11.4.0 and is removed from drupal:12.0.0. Use Drupal\Bar::baz() instead.
+  $rectorConfig->ruleWithConfiguration(FunctionToServiceRector::class, [ /* ... */ ]);
+  ```
+
+Then regenerate the flat registry:
+
+```bash
+ddev exec php scripts/generate-coverage-registry.php
+```
+
+This writes `config/coverage-registry.php` (a `return [...]` file mapping
+rector short name → list of normalized messages). The registry is the
+artifact a future upgrade_status PR will consume to replace its hardcoded
+`$rector_covered` array.
+
+If PHPStan emits no deprecation for the symbol — symbol present but not
+annotated `@deprecated`, or already fully removed — record a `TODO
+PHPSTAN_MESSAGES <RectorShortName>:` comment with the reason instead of
+guessing the message text. Do **not** synthesize the string from the
+`@deprecated` docblock by hand: PHPStan's exact wording differs between
+"Call to deprecated method", "Instantiation of deprecated class", "Class X
+implements deprecated interface", etc.
+
+### 6. Report results
 
 For each tested module, report:
 ```
@@ -192,9 +272,9 @@ For each tested module, report:
 ```
 
 For every module with **zero changes**, do not just say "no match" — always show the actual
-code and explain why. See step 6.
+code and explain why. See step 7.
 
-### 6. Diagnose zero-match results
+### 7. Diagnose zero-match results
 
 For **every** module that produced no changes, you must:
 
