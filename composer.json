@@ -9,7 +9,7 @@
         "ast"
     ],
     "require": {
-        "rector/rector": "^1 || ^2",
+        "rector/rector": "^2",
         "webflo/drupal-finder": "^1.2"
     },
     "license": "MIT",
@@ -50,6 +50,11 @@
         },
         "classmap": [
             "stubs"
+        ],
+        "exclude-from-classmap": [
+            "**/fixture/**",
+            "**/fixture-*/**",
+            "**/Fixture/**"
         ]
     },
     "config": {
@@ -74,17 +79,16 @@
     },
     "require-dev": {
         "php": "^8.2",
-        "cweagans/composer-patches": "^1.7.2",
-        "friendsofphp/php-cs-fixer": "^3.58",
+        "cweagans/composer-patches": "^2.0",
+        "friendsofphp/php-cs-fixer": "^3.95.1",
         "phpstan/extension-installer": "^1.4.3",
-        "phpstan/phpstan": "^1.12 || ^2.0",
-        "phpstan/phpstan-deprecation-rules": "^1.2 || ^2.0",
-        "phpunit/phpunit": "^10.0",
-        "symfony/yaml": "^5 || ^6 || ^7",
-        "symplify/vendor-patches": "^11.0"
+        "phpstan/phpstan": "^2.1.54",
+        "phpstan/phpstan-deprecation-rules": "^2.0.4",
+        "phpunit/phpunit": "^12.5.24",
+        "symfony/yaml": "^5 || ^6 || ^7.4.8",
+        "symplify/vendor-patches": "^12.0.6"
     },
     "scripts": {
-        "docs": "composer remove friendsofphp/php-cs-fixer --dev && composer require symplify/rule-doc-generator  --dev && vendor/bin/rule-doc-generator generate src/ --categorize=3 && composer remove symplify/rule-doc-generator --dev && composer require friendsofphp/php-cs-fixer --dev",
         "test": "vendor/bin/phpunit",
         "phpstan": "vendor/bin/phpstan analyse --memory-limit=2G",
         "check-style": "vendor/bin/php-cs-fixer check",

@@ -2,18 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Drupal8\Rector\Deprecation\EntityManagerRector;
+namespace DrupalRector\Tests\Drupal8\Rector\Deprecation\EntityManagerRector;
 
+use DrupalRector\Tests\AbstractDrupalRectorTestCase;
 use Iterator;
-use Rector\Testing\PHPUnit\AbstractRectorTestCase;
 
-class EntityManagerRectorTest extends AbstractRectorTestCase
+#[\PHPUnit\Framework\Attributes\CoversFunction('refactor')]
+class EntityManagerRectorTest extends AbstractDrupalRectorTestCase
 {
-    /**
-     * @covers ::refactor
-     *
-     * @dataProvider provideData
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideData')]
     public function test(string $filePath): void
     {
         $this->doTestFile($filePath);

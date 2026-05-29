@@ -2,16 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Drupal8\Rector\Deprecation\GetMockRector;
+namespace DrupalRector\Tests\Drupal8\Rector\Deprecation\GetMockRector;
 
+use DrupalRector\Tests\AbstractDrupalRectorTestCase;
 use Iterator;
-use Rector\Testing\PHPUnit\AbstractRectorTestCase;
 
-class GetMockRectorTest extends AbstractRectorTestCase
+class GetMockRectorTest extends AbstractDrupalRectorTestCase
 {
-    /**
-     * @dataProvider provideData
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideData')]
     public function test(string $filePath): void
     {
         $this->doTestFile($filePath);

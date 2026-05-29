@@ -37,5 +37,5 @@ function hookconvertrector_theme_suggestions_form_alter(array &$attachments): vo
 #[LegacyHook]
 function hookconvertrector_page_attachments_alter(array &$page)
 {
-    return \Drupal::service(HookconvertrectorHooks1::class)->pageAttachmentsAlter($page);
+    \Drupal::service(HookconvertrectorHooks1::class)->pageAttachmentsAlter($page);
 }

@@ -4,9 +4,10 @@ declare(strict_types=1);
 
 namespace DrupalRector\Rector\ValueObject;
 
+use DrupalRector\Contract\VersionedConfigurationInterface;
 use Rector\Validation\RectorAssert;
 
-final class ClassConstantToClassConstantConfiguration
+final class ClassConstantToClassConstantConfiguration implements VersionedConfigurationInterface
 {
     private string $deprecated;
     private string $class;
@@ -14,12 +15,15 @@ final class ClassConstantToClassConstantConfiguration
 
     private string $deprecatedClass;
 
-    public function __construct(string $deprecatedClass, string $deprecated, string $class, string $constant)
+    private string $introducedVersion;
+
+    public function __construct(string $deprecatedClass, string $deprecated, string $class, string $constant, string $introducedVersion)
     {
         $this->deprecatedClass = $deprecatedClass;
         $this->deprecated = $deprecated;
         $this->class = $class;
         $this->constant = $constant;
+        $this->introducedVersion = $introducedVersion;
 
         RectorAssert::className($deprecatedClass);
         RectorAssert::className($class);
@@ -45,5 +49,10 @@ final class ClassConstantToClassConstantConfiguration
     public function getDeprecatedClass(): string
     {
         return $this->deprecatedClass;
+    }
+
+    public function getIntroducedVersion(): string
+    {
+        return $this->introducedVersion;
     }
 }

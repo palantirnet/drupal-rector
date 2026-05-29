@@ -117,18 +117,21 @@ return static function (RectorConfig $rectorConfig): void {
             'ROUTE_NAME',
             'Drupal\Core\Routing\RouteObjectInterface',
             'ROUTE_NAME',
+            '9.1.0',
         ),
         new ClassConstantToClassConstantConfiguration(
             'Symfony\Cmf\Component\Routing\RouteObjectInterface',
             'ROUTE_OBJECT',
             'Drupal\Core\Routing\RouteObjectInterface',
             'ROUTE_OBJECT',
+            '9.1.0',
         ),
         new ClassConstantToClassConstantConfiguration(
             'Symfony\Cmf\Component\Routing\RouteObjectInterface',
             'CONTROLLER_NAME',
             'Drupal\Core\Routing\RouteObjectInterface',
             'CONTROLLER_NAME',
+            '9.1.0',
         ),
     ]);
 };

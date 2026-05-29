@@ -19,24 +19,17 @@ jobs:
         strategy:
             matrix:
                 include:
-                    - php-version: "8.2"
-                      rector: "^1"
-                      phpstan-config: phpstan-1.neon
-                    - php-version: "8.2"
+                    - php-version: "8.3"
                       rector: "^2"
                       phpstan-config: phpstan.neon
         steps:
             -   uses: actions/checkout@v3
             -   uses: shivammathur/setup-php@v2
                 with:
-                    php-version: 8.2
+                    php-version: 8.3
                     coverage: none # disable xdebug, pcov
                     tools: composer:v2
                     extensions: dom, curl, libxml, mbstring, zip, pdo, mysql, pdo_mysql, bcmath, gd, exif, iconv
-            # Uncomment to enable SSH access to Github Actions - https://github.com/marketplace/actions/debugging-with-tmate#getting-started
-            # -   name: Debugging with tmate
-            #     uses: mxschmitt/action-tmate@v2
-            # END: SHARED SETUP
 
             - run: composer require rector/rector:${{ matrix.rector }} --dev
             - run: vendor/bin/phpstan analyse -c ${{ matrix.phpstan-config }}

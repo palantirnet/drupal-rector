@@ -25,22 +25,22 @@ return static function (RectorConfig $rectorConfig): void {
      *
      * No change record found.
      */
-    $constantToClassFileCreateDirectory = new ConstantToClassConfiguration('FILE_CREATE_DIRECTORY', 'Drupal\Core\File\FileSystemInterface', 'CREATE_DIRECTORY');
+    $constantToClassFileCreateDirectory = new ConstantToClassConfiguration('FILE_CREATE_DIRECTORY', 'Drupal\Core\File\FileSystemInterface', 'CREATE_DIRECTORY', '8.7.0');
 
     /**
      * Replaces deprecated FILE_EXISTS_REPLACE, FILE_EXISTS_RENAME constant use.
      *
      * See https://www.drupal.org/node/3006851 for change record.
      */
-    $constantToClassFileExistReplace = new ConstantToClassConfiguration('FILE_EXISTS_REPLACE', 'Drupal\Core\File\FileSystemInterface', 'EXISTS_REPLACE');
-    $constantToClassFileExistsRename = new ConstantToClassConfiguration('FILE_EXISTS_RENAME', 'Drupal\Core\File\FileSystemInterface', 'EXISTS_RENAME');
+    $constantToClassFileExistReplace = new ConstantToClassConfiguration('FILE_EXISTS_REPLACE', 'Drupal\Core\File\FileSystemInterface', 'EXISTS_REPLACE', '8.7.0');
+    $constantToClassFileExistsRename = new ConstantToClassConfiguration('FILE_EXISTS_RENAME', 'Drupal\Core\File\FileSystemInterface', 'EXISTS_RENAME', '8.7.0');
 
     /**
      * Replaces deprecated FILE_MODIFY_PERMISSIONS constant use.
      *
      * No change record found.
      */
-    $constantToClassFileModifyPermissions = new ConstantToClassConfiguration('FILE_MODIFY_PERMISSIONS', 'Drupal\Core\File\FileSystemInterface', 'MODIFY_PERMISSIONS');
+    $constantToClassFileModifyPermissions = new ConstantToClassConfiguration('FILE_MODIFY_PERMISSIONS', 'Drupal\Core\File\FileSystemInterface', 'MODIFY_PERMISSIONS', '8.7.0');
 
     $rectorConfig->ruleWithConfiguration(ConstantToClassConstantRector::class, [
         $constantToClassFileCreateDirectory,

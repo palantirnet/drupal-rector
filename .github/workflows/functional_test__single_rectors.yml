@@ -36,7 +36,7 @@ jobs:
                 run: |
                     cd ~/drupal
                     mkdir -p web/modules/custom
-                    cp -R vendor/palantirnet/drupal-rector/tests/functional/hookconvertrector/fixture/hookconvertrector web/modules/custom/hookconvertrector
+                    cp -R ${GITHUB_WORKSPACE}/tests/functional/hookconvertrector/fixture/hookconvertrector web/modules/custom/hookconvertrector
             # dry-run is expected to return exit code 2 if there are changes, which we are expecting to happen, here.
             # an error code of 1 represents other errors.
             # @see \Rector\Core\Console\ExitCode::CHANGED_CODE
@@ -46,7 +46,7 @@ jobs:
                     for d in web/modules/custom/*; do
                         if [ -d "$d" ]; then
                             echo "Processing $d"
-                            cp vendor/palantirnet/drupal-rector/tests/functional/$(basename ${d})/rector.php .
+                            cp ${GITHUB_WORKSPACE}/tests/functional/$(basename ${d})/rector.php .
                             vendor/bin/rector process $d --dry-run --debug || if (($? == 2)); then true; else exit 1; fi
                         fi
                     done
@@ -56,7 +56,7 @@ jobs:
                     for d in web/modules/custom/*; do
                         if [ -d "$d" ]; then
                             echo "Processing $d"
-                            cp vendor/palantirnet/drupal-rector/tests/functional/$(basename ${d})/rector.php .
+                            cp ${GITHUB_WORKSPACE}/tests/functional/$(basename ${d})/rector.php .
                             vendor/bin/rector process $d --debug
                         fi
                     done
@@ -71,6 +71,6 @@ jobs:
                     cd ~/drupal
                     for d in web/modules/custom/*; do
                         if [ -d "$d" ]; then
-                            diff --color -rubB "$d" "vendor/palantirnet/drupal-rector/tests/functional/$(basename ${d})/fixture/$(basename ${d})_updated"
+                            diff --color -rubB "$d" "${GITHUB_WORKSPACE}/tests/functional/$(basename ${d})/fixture/$(basename ${d})_updated"
                         fi
                     done

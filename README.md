@@ -4,36 +4,30 @@ Automate fixing deprecated Drupal code.
 
 ## Status
 
-[![Packagist Version](https://img.shields.io/packagist/v/palantirnet/drupal-rector)](https://packagist.org/packages/palantirnet/drupal-rector) ![Functional test: Rector examples](https://img.shields.io/github/actions/workflow/status/palantirnet/drupal-rector/functional_test__rector_examples.yml?logo=github&label=Functional%20tests) ![Unit tests](https://img.shields.io/github/actions/workflow/status/palantirnet/drupal-rector/phpunit.yml?logo=github&label=Unit%20tests)  ![PHPStan](https://img.shields.io/github/actions/workflow/status/palantirnet/drupal-rector/phpstan.yml?logo=github&label=PHPStan)
+[![Packagist Version](https://img.shields.io/packagist/v/palantirnet/drupal-rector)](https://packagist.org/packages/palantirnet/drupal-rector) ![Functional tests](https://img.shields.io/github/actions/workflow/status/palantirnet/drupal-rector/functional_test__single_rectors.yml?logo=github&label=Functional%20tests) ![Unit tests](https://img.shields.io/github/actions/workflow/status/palantirnet/drupal-rector/phpunit.yml?logo=github&label=Unit%20tests)  ![PHPStan](https://img.shields.io/github/actions/workflow/status/palantirnet/drupal-rector/phpstan.yml?logo=github&label=PHPStan)
 
-### Release notes
-
-* The 0.18.0 and higher releases of drupal-rector will include Rector 0.18+. The upgrade path should be as simple as re-copying the configuration file. `cp vendor/palantirnet/drupal-rector/rector.php`.
-
-* The 0.13.0 and higher releases of drupal-rector will include Rector 0.13.8+. The upgrade path should be as simple as re-copying the configuration file. `cp vendor/palantirnet/drupal-rector/rector.php`
-
-*Note that GitHub does not let us have different default homepage and merge branches. If you checked out the project using packagist/composer, read the docs for your version.*
+If upgrading from an older version, refresh `rector.php` by copying from the vendor copy: `cp vendor/palantirnet/drupal-rector/rector.php .`
 
 ## Introduction
 
-You can read more details in the following blog post:
+Originally created to automate Drupal 9 upgrades; Drupal 8 and 9 rules are still included for legacy projects. You can read more details in the following blog post:
 
 https://www.palantir.net/blog/jumpstart-your-drupal-9-upgrade-drupal-rector
 
 ## Documentation
 
-Development guides, individual deprecation overviews, and other resources can be found here:
+Development guides and other resources:
 
 https://www.palantir.net/rector
 
-List of all rules with examples:
+Changelog and release history:
 
-[Rule overview in docs/rules_overview.md](docs%2Frules_overview.md)
+https://github.com/palantirnet/drupal-rector/releases
 
 
 ## Scope and limitations
 
-The development of this tool is prioritized by the perceived impact of the deprecations and updates. There are many deprecations that often involve several components and for each of these there are several ways to address the deprecation.
+Drupal 10 and 11 are the primary targets (Drupal 8/9 rules are included for legacy projects). The development of this tool is prioritized by the perceived impact of the deprecations and updates. There are many deprecations that often involve several components and for each of these there are several ways to address the deprecation.
 
 We've tried to determine impact based on:
 - The use of the deprecated functionality in the contributed modules on Drupal.org
@@ -61,7 +55,7 @@ For contribution suggestions, please see the later section of this document.
 
 ## Installation
 
-**NOTE**: To have the best experience with Drupal Rector, your Drupal site should be running version 8.9 or higher.
+**NOTE**: To have the best experience with Drupal Rector, your Drupal site should be running Drupal 10 or higher.
 
 ### Install Drupal Rector inside a Drupal project.
 
@@ -82,19 +76,72 @@ cp vendor/palantirnet/drupal-rector/rector.php .
 ```
 
 By default, Drupal Rector will fix deprecated code for all versions of Drupal. If you want to change this behavior, modify
-the sets used in the `rector.php` config. For example, if your site is still on Drupal 9.3, and you cannot fix deprecations
-made in Drupal 9.4, use the following configuration:
+the sets used in the `rector.php` config. For example, if your site is still on Drupal 10.3, and you do not want to fix deprecations
+made in Drupal 10.4, use the following configuration:
 
 ```php
 $rectorConfig->sets([
-    Drupal9SetList::DRUPAL_90,
-    Drupal9SetList::DRUPAL_91,
-    Drupal9SetList::DRUPAL_92,
-    Drupal9SetList::DRUPAL_93,
+    Drupal10SetList::DRUPAL_100,
+    Drupal10SetList::DRUPAL_101,
+    Drupal10SetList::DRUPAL_102,
+    Drupal10SetList::DRUPAL_103,
 ]);
 ```
 
-This is more granular than the `Drupal9SetList::DRUPAL_9` set.
+This is more granular than the `Drupal10SetList::DRUPAL_10` set. Since Drupal 10.1 there is not real reason not to include later versions. It will detect the installed Drupal version and supply BC wrappers as needed if you enable it in the config.
+
+### DrupalRectorSettings
+
+The copied `rector.php` includes a `DrupalRectorSettings` block that controls two behaviours:
+
+**Backward-compatibility wrapping** — when enabled, rule results are wrapped in `DeprecationHelper::backwardsCompatibleCall()` so the code works on both the old and new Drupal API simultaneously. The default in `rector.php` is **disabled** (recommended for most projects). Enable it when you need the output to run on multiple Drupal versions at the same time:
+
+```php
+$rectorConfig->singleton(DrupalRectorSettings::class, fn () =>
+    (new DrupalRectorSettings())
+        ->enableBackwardCompatibility()
+);
+```
+
+**Minimum supported Drupal version** (contrib modules) — if you are running Rector against a contrib module that must stay compatible with an older Drupal release, set `minimumCoreVersionSupported` so BC wrappers are emitted correctly even when your development environment runs a newer Drupal:
+
+```php
+$rectorConfig->singleton(DrupalRectorSettings::class, fn () =>
+    (new DrupalRectorSettings())
+        ->enableBackwardCompatibility()
+        ->setMinimumCoreVersionSupported('10.5.0')
+);
+```
+
+### Cleaning up BC wrappers (contrib modules)
+
+If you previously used backward-compatibility wrapping and have since raised your module's minimum supported Drupal version, use `DeprecationHelperRemoveRector` to strip the now-redundant wrappers. It replaces each `DeprecationHelper::backwardsCompatibleCall()` with the new API call directly, for any deprecation introduced before your configured minimum version.
+
+```php
+use DrupalRector\Rector\Deprecation\DeprecationHelperRemoveRector;
+use DrupalRector\Rector\ValueObject\DeprecationHelperRemoveConfiguration;
+
+$rectorConfig->ruleWithConfiguration(DeprecationHelperRemoveRector::class, [
+    new DeprecationHelperRemoveConfiguration('10.3.0'),
+]);
+```
+
+With the above, a wrapper like:
+
+```php
+DeprecationHelper::backwardsCompatibleCall(\Drupal::VERSION, '9.1.0',
+    fn() => \Drupal::service('password_generator')->generate(),
+    fn() => user_password()
+);
+```
+
+becomes:
+
+```php
+\Drupal::service('password_generator')->generate();
+```
+
+Wrappers for deprecations introduced at or after your minimum version are left untouched. The rule is commented out in `rector.php` — uncomment and set the version when you are ready to clean up.
 
 ## Suggested workflow
 
@@ -112,87 +159,28 @@ $ vendor/bin/rector process web/modules/contrib/[YOUR_MODULE]
 
 You can find more information about Rector [here](https://github.com/rectorphp/rector).
 
-## Troubleshooting
-
-### PhpStan composer issues
-
-You may need to upgrade `phpstan/phpstan` with Composer before installing this package.
-
-Rector itself has conflicts with older versions of PhpStan.
-
-### Unable to find Rector rule classes
-
-If you are getting errors like
-
-`[ERROR] Class "DrupalRector\Drupal8\Rector\Deprecation\EntityManagerRector" was not found while loading`
-
-You may need to rebuild your autoload file.
-
-`composer dump-autoload`
-
-### FileLocator::locate() must be compatible with FileLocatorInterface::locate()
-
-If you are getting errors like
-
-```
-PHP Fatal error:  Declaration of _HumbugBox3630ef99eac4\Symfony\Component\HttpKernel\Config\FileLocator::locate($file, $currentPath = NULL, $first = true) must be compatible with _HumbugBox3630ef99eac4\Symfony\Component\Config\FileLocatorInterface::locate(string $name, ?string $currentPath = NULL, bool $first = true) in phar:///var/www/html/vendor/rector/rector-prefixed/rector/vendor/symfony/http-kernel/Config/FileLocator.php on line 20
-Fatal error: Declaration of _HumbugBox3630ef99eac4\Symfony\Component\HttpKernel\Config\FileLocator::locate($file, $currentPath = NULL, $first = true) must be compatible with _HumbugBox3630ef99eac4\Symfony\Component\Config\FileLocatorInterface::locate(string $name, ?string $currentPath = NULL, bool $first = true) in phar:///var/www/html/vendor/rector/rector-prefixed/rector/vendor/symfony/http-kernel/Config/FileLocator.php on line 20
-```
-
-You may need to check that you are
-- Running `composer install` from an environment that supports Php 7.2 or greater
-- Running Drupal Rector from an environment that supports Php 7.2 or greater
-
-Sometimes people install composer dependencies from one machine (host machine) and run Drupal Rector from another (such as a Lando VM).
-
-If you are having these issues try running Rector from the environment that has Php 7.2 or greater. Drupal Rector does not need a fully functional web server, it only (more or less) needs Php and access to a standard Drupal set of files.
-
-### Iconv error when running Rector in Alpine Docker
-
-If you are getting errors like
-
-`iconv(): Wrong charset, conversion from UTF-8 to ASCII//TRANSLIT//IGNORE is not allowed`
-
-You can fix it in Dockerfile with
-
-```
-# fix work iconv library with alphine
-RUN apk add --no-cache --repository http://dl-cdn.alpinelinux.org/alpine/edge/community/ --allow-untrusted gnu-libiconv
-ENV LD_PRELOAD /usr/lib/preloadable_libiconv.so php
-```
-
-Credits to @zolotov88 in https://github.com/nunomaduro/phpinsights/issues/43#issuecomment-498108857
-
 ## Development and contribution suggestions
 
 Thanks for your interest in contributing!
 
 Our goal is to make contributing to this project easy for people. While we've made certain architectural decisions here to hopefully achieve that goal, it's a work in progress and feedback is appreciated.
 
-### Development environment
-
-See the instructions in [README](https://github.com/palantirnet/drupal-rector-sandbox/blob/master/README.md#developing-with-drupal-rector)
-
 ### Adding a Rector rule
 
 If you would like to submit a Rector rule, we are looking for the following:
 
-- A Rector rule class, see `/src/Rector/Deprecation` for existing rules
-- An example file or files that show(s) the before and after, see `/rector_examples` and `/rector_examples_updated`
-- An updated configuration file that registers the Rector rule, see `/config/drupal-8`
-- A listing in the index file, see `/deprecation-index.yml`
+- A Rector rule class, see `src/Rector/Deprecation` for existing rules. Copy an existing class as a starting point.
+- A test class in `tests/src/Drupal{8,9,10,11}/Rector/` and fixture files in `tests/src/Drupal*/Rector/**/fixture/`
+- An updated configuration file that registers the Rector rule, see `config/drupal-{8,9,10,11}/`
 
 #### Guides
 
 A few guides are currently available and we encourage people to create additional guides to provide their perspective and help us better understand this tool together.
 
-##### Video guide on creating a rector rule
-[https://www.palantir.net/rector/creating-drupal-rector-rule](https://www.palantir.net/rector/creating-drupal-rector-rule)
-
 ##### Additional documentation and links
 [https://www.palantir.net/rector](https://www.palantir.net/rector)
 
-#### Quick(?) overview
+#### Quick overview
 
 ##### Create a Rector rule class
 
@@ -203,39 +191,23 @@ Rector rules should be named after the deprecation, including the class name.
 
 We would like one Rector rule per deprecation. Some deprecations include updating multiple things and those would be separate rules.
 
-To avoid duplication, we have created base classes for simple repeated patterns where possible. These end in `Base.php` and are located in `/src/Rector/Deprecation/Base`. In many of these rules, you will extend the base class, define class properties, add a class comment, and define the definition.
+All drupal-rector rules extend `AbstractDrupalCoreRector` (found in `src/Rector/AbstractDrupalCoreRector.php`) rather than Rector's own `AbstractRector`. This base class provides three things automatically:
+
+- **Version gating** — skips the rule if the installed Drupal version predates the deprecation via `rectorShouldApplyToDrupalVersion()`
+- **BC wrapping** — when backward-compatibility mode is enabled, wraps `Expr`→`Expr` results in `DeprecationHelper::backwardsCompatibleCall()` automatically
+- **Configuration pattern** — you implement `refactorWithConfiguration(Node $node, VersionedConfigurationInterface $configuration)` instead of `refactor()`
+
+To avoid duplication, we have created base classes for simple repeated patterns where possible. These end in `Base.php` and are located in `src/Rector/Deprecation/Base`. In many of these rules, you will extend the base class, define class properties, add a class comment, and define the definition.
 
 Rector supports passing parameters to rules and you can also define your rules in a variety of ways. To avoid confusion for new developers, we're trying to avoid these advanced features so that someone with limited familiarity with the tool can easily determine where things are located and what they are doing. If the copy & paste challenge isn't worth this trade-off, we can re-evaluate it as we go. Suggestions appreciated.
 
-##### Create examples
-
-We are creating pairs of example files.
-
-These should be named the same thing as the deprecation. So, `DrupalUrlRector` has a `rector_examples/drupal_url.php` example. An example `rector_examples_updated/drupal_url.php` should also be created to show the updated code. You can run Drupal Rector on this file to show the update.
-
-Example
-
-`DrupalUrlRector` -> `rector_examples/drupal_url.php` and `rector_examples_updated/drupal_url.php`
-
-If you would like to show how the code is used in a class, you can add the class to the appropriate place in the `/rector_examples/src` or `/rector_examples/test` directories. Most of the examples in the example module are `services` in that they are stand alone classes.
-
-Since these classes can use static calls, dependency injection, or traits to get access to services, constants, etc, we have added more details to some class names. For example, `*Static` to indicate that the class is not using dependency injection.
-
-Example
-
-`DrupalUrlRector` -> `rector_examples/src/DrupalUrlStatic.php` and `rector_examples_updated/src/DrupalUrlStatic.php`
-
 ##### Create / Update a configuration file
 
-The configuration files in `/config/drupal-8` are broken down by Drupal minor versions.
+The configuration files in `config/drupal-{8,9,10,11}/` are broken down by Drupal minor versions.
 
-Add your Rector rule to the relevant file.
+Add your Rector rule to the relevant file. Always add a comment with a link to the issue and change record.
 
 The key is the fully qualified class name of the Rector rule. The key is the yaml null value `~`.
-
-##### Update the index file
-
-The index file is used in part to provide automated updates to https://dev.acquia.com/drupal9/deprecation_status/errors which is a helpful way to track coverage. The `PHPStan` messages are listed there as well as in the change record comments throughout the Drupal codebase.
 
 ## Pinning dev dependencies
 
@@ -246,5 +218,6 @@ If there are conflicts with Rector, the package version can be conflicted with `
 
 ## Credits
 
+Current development is sponsored by [SWIS.nl](https://www.swis.nl).<br/>
 Current development is sponsored by [Palantir.net](https://www.palantir.net).<br/>
 Initial development is sponsored by [Pronovix](https://pronovix.com).

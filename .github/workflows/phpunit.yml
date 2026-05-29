@@ -18,9 +18,7 @@ jobs:
         strategy:
             matrix:
                 include:
-                    - php-version: "8.2"
-                      rector: "^1"
-                    - php-version: "8.2"
+                    - php-version: "8.3"
                       rector: "^2"
         steps:
             -   uses: actions/checkout@v3

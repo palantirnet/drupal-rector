@@ -4,21 +4,18 @@ declare(strict_types=1);
 
 namespace DrupalRector\Tests\Drupal10\Rector\Deprecation\ActionAnnotationToAttributeRector;
 
+use DrupalRector\Tests\AbstractDrupalRectorTestCase;
 use Iterator;
-use Rector\Testing\PHPUnit\AbstractRectorTestCase;
 
 class Drupal
 {
     public const VERSION = '11.0.x-dev';
 }
 
-class BackwardsCompatibilityActionAnnotationToAttributeRectorTest extends AbstractRectorTestCase
+#[\PHPUnit\Framework\Attributes\CoversFunction('refactor')]
+class BackwardsCompatibilityActionAnnotationToAttributeRectorTest extends AbstractDrupalRectorTestCase
 {
-    /**
-     * @covers ::refactor
-     *
-     * @dataProvider provideData
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideData')]
     public function test(string $filePath): void
     {
         $this->doTestFile($filePath);

@@ -366,7 +366,8 @@ CODE_SAMPLE
     public function getLegacyHookFunction(Function_ $node): Function_
     {
         $methodCall = new Node\Expr\MethodCall($this->drupalServiceCall, $this->getMethodName($node), self::convertParamsToArgs($node));
-        $hasReturn = (new NodeFinder())->findFirstInstanceOf([$node], Node\Stmt\Return_::class);
+        $isVoid = $node->returnType instanceof Node\Identifier && $node->returnType->toString() === 'void';
+        $hasReturn = !$isVoid && (new NodeFinder())->findFirst([$node], fn (Node $n) => $n instanceof Node\Stmt\Return_ && $n->expr !== null);
         $node->stmts = [$hasReturn ? new Node\Stmt\Return_($methodCall) : new Node\Stmt\Expression($methodCall)];
         // Mark this function as a legacy hook.
         $node->attrGroups[] = new Node\AttributeGroup([new Node\Attribute(new FullyQualified('Drupal\Core\Hook\Attribute\LegacyHook'))]);

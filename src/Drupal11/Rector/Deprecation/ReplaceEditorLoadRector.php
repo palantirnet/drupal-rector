@@ -1,0 +1,75 @@
+<?php
+
+declare(strict_types=1);
+
+namespace DrupalRector\Drupal11\Rector\Deprecation;
+
+use DrupalRector\Contract\VersionedConfigurationInterface;
+use DrupalRector\Rector\AbstractDrupalCoreRector;
+use DrupalRector\Rector\ValueObject\DrupalIntroducedVersionConfiguration;
+use PhpParser\Node;
+use PhpParser\Node\Expr\FuncCall;
+use PhpParser\Node\Expr\MethodCall;
+use PhpParser\Node\Scalar\String_;
+use Symplify\RuleDocGenerator\ValueObject\CodeSample\ConfiguredCodeSample;
+use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
+
+/**
+ * Replaces deprecated editor_load($format_id) with entityTypeManager()->getStorage('editor')->load().
+ *
+ * Deprecated in drupal:11.2.0, removed in drupal:12.0.0.
+ *
+ * @see https://www.drupal.org/node/3447794
+ * @see https://www.drupal.org/node/3509245
+ */
+final class ReplaceEditorLoadRector extends AbstractDrupalCoreRector
+{
+    /**
+     * @var array|DrupalIntroducedVersionConfiguration[]
+     */
+    protected array $configuration;
+
+    public function configure(array $configuration): void
+    {
+        foreach ($configuration as $value) {
+            if (!$value instanceof DrupalIntroducedVersionConfiguration) {
+                throw new \InvalidArgumentException(sprintf('Each configuration item must be an instance of "%s"', DrupalIntroducedVersionConfiguration::class));
+            }
+        }
+        parent::configure($configuration);
+    }
+
+    public function getNodeTypes(): array
+    {
+        return [FuncCall::class];
+    }
+
+    public function refactorWithConfiguration(Node $node, VersionedConfigurationInterface $configuration): ?Node
+    {
+        assert($node instanceof FuncCall);
+
+        if (!$this->isName($node, 'editor_load')) {
+            return null;
+        }
+
+        if (count($node->args) !== 1) {
+            return null;
+        }
+
+        $entityTypeManager = $this->nodeFactory->createStaticCall('Drupal', 'entityTypeManager');
+        $getStorage = $this->nodeFactory->createMethodCall($entityTypeManager, 'getStorage', [new String_('editor')]);
+
+        return new MethodCall($getStorage, 'load', $node->args);
+    }
+
+    public function getRuleDefinition(): RuleDefinition
+    {
+        return new RuleDefinition('Replace deprecated editor_load($format_id) with entityTypeManager()->getStorage(\'editor\')->load() (drupal:11.2.0)', [
+            new ConfiguredCodeSample(
+                '$editor = editor_load($format_id);',
+                '$editor = \Drupal::entityTypeManager()->getStorage(\'editor\')->load($format_id);',
+                [new DrupalIntroducedVersionConfiguration('11.2.0')]
+            ),
+        ]);
+    }
+}

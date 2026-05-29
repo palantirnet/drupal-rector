@@ -4,14 +4,12 @@ declare(strict_types=1);
 
 namespace DrupalRector\Tests\Drupal8\Rector\Deprecation\FunctionalTestDefaultThemePropertyRector;
 
+use DrupalRector\Tests\AbstractDrupalRectorTestCase;
 use DrupalRector\Tests\Rector\Class_\FunctionalTestDefaultThemePropertyRector\Iterator;
-use Rector\Testing\PHPUnit\AbstractRectorTestCase;
 
-final class FunctionalTestDefaultThemePropertyRectorTest extends AbstractRectorTestCase
+final class FunctionalTestDefaultThemePropertyRectorTest extends AbstractDrupalRectorTestCase
 {
-    /**
-     * @dataProvider provideData()
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideData')]
     public function test(string $filePath): void
     {
         $this->doTestFile($filePath);

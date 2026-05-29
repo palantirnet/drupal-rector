@@ -2,18 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Drupal9\Rector\Deprecation\TaxonomyRectorCollection;
+namespace DrupalRector\Tests\Drupal9\Rector\Deprecation\TaxonomyRectorCollection;
 
+use DrupalRector\Tests\AbstractDrupalRectorTestCase;
 use Iterator;
-use Rector\Testing\PHPUnit\AbstractRectorTestCase;
 
-class TaxonomyRectorCollectionTest extends AbstractRectorTestCase
+#[\PHPUnit\Framework\Attributes\CoversFunction('refactor')]
+class TaxonomyRectorCollectionTest extends AbstractDrupalRectorTestCase
 {
-    /**
-     * @covers ::refactor
-     *
-     * @dataProvider provideData
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideData')]
     public function test(string $filePath): void
     {
         $this->doTestFile($filePath);

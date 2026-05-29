@@ -4,16 +4,13 @@ declare(strict_types=1);
 
 namespace DrupalRector\Tests\Rector\Deprecation\FunctionToStaticRector;
 
+use DrupalRector\Tests\AbstractDrupalRectorTestCase;
 use Iterator;
-use Rector\Testing\PHPUnit\AbstractRectorTestCase;
 
-class FunctionToStaticRectorTest extends AbstractRectorTestCase
+#[\PHPUnit\Framework\Attributes\CoversFunction('refactor')]
+class FunctionToStaticRectorTest extends AbstractDrupalRectorTestCase
 {
-    /**
-     * @covers ::refactor
-     *
-     * @dataProvider provideData
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideData')]
     public function test(string $filePath): void
     {
         $this->doTestFile($filePath);

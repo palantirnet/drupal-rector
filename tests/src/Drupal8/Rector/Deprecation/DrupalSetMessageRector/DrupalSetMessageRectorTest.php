@@ -2,18 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Drupal8\Rector\Deprecation\DrupalSetMessageRector;
+namespace DrupalRector\Tests\Drupal8\Rector\Deprecation\DrupalSetMessageRector;
 
+use DrupalRector\Tests\AbstractDrupalRectorTestCase;
 use Iterator;
-use Rector\Testing\PHPUnit\AbstractRectorTestCase;
 
-class DrupalSetMessageRectorTest extends AbstractRectorTestCase
+#[\PHPUnit\Framework\Attributes\CoversFunction('refactor')]
+class DrupalSetMessageRectorTest extends AbstractDrupalRectorTestCase
 {
-    /**
-     * @covers ::refactor
-     *
-     * @dataProvider provideData
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideData')]
     public function test(string $filePath): void
     {
         $this->doTestFile($filePath);

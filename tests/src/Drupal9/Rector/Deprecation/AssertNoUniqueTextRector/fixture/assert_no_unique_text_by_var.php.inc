@@ -20,6 +20,10 @@ class BrowserTestBaseGetMock extends BrowserTestBase {
 -----
 <?php
 
+namespace Drupal9\Rector\Deprecation\AssertNoUniqueTextRector\fixture;
+
+use Drupal\Tests\BrowserTestBase;
+
 class BrowserTestBaseGetMock extends BrowserTestBase {
 
   /**

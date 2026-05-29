@@ -56,7 +56,7 @@ return static function (RectorConfig $rectorConfig): void {
 
     $rectorConfig->ruleWithConfiguration(MethodToMethodWithCheckRector::class, [
         // https://www.drupal.org/node/2614344
-        new MethodToMethodWithCheckConfiguration('Drupal\Core\Entity\EntityInterface', 'urlInfo', 'toUrl'),
+        new MethodToMethodWithCheckConfiguration('Drupal\Core\Entity\EntityInterface', 'urlInfo', 'toUrl', '8.0.0'),
     ]);
 
     $rectorConfig->ruleWithConfiguration(EntityLoadRector::class, [

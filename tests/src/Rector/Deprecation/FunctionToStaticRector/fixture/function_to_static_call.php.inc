@@ -33,7 +33,7 @@ function simple_example_file_icon_class() {
 function simple_example() {
     $settings = [];
     $filename = 'simple_filename.yaml';
-    \Drupal\Component\Utility\DeprecationHelper::backwardsCompatibleCall(\Drupal::VERSION, '10.1.0', fn() => \Drupal\Core\Site\SettingsEditor::rewrite($filename, $settings), fn() => drupal_rewrite_settings($settings, $filename));
+    \Drupal\Core\Site\SettingsEditor::rewrite($filename, $settings);
 }
 
 /**

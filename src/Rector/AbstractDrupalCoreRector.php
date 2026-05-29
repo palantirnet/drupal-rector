@@ -6,6 +6,7 @@ namespace DrupalRector\Rector;
 
 use Drupal\Component\Utility\DeprecationHelper;
 use DrupalRector\Contract\VersionedConfigurationInterface;
+use DrupalRector\Services\DrupalRectorSettings;
 use PhpParser\Node;
 use PhpParser\Node\Expr\ArrowFunction;
 use PHPStan\Reflection\MethodReflection;
@@ -19,6 +20,10 @@ abstract class AbstractDrupalCoreRector extends AbstractRector implements Config
      * @var array|VersionedConfigurationInterface[]
      */
     protected array $configuration = [];
+
+    public function __construct(private readonly DrupalRectorSettings $drupalRectorSettings)
+    {
+    }
 
     public function configure(array $configuration): void
     {
@@ -39,21 +44,21 @@ abstract class AbstractDrupalCoreRector extends AbstractRector implements Config
 
         $scope = $node->getAttribute(AttributeKey::SCOPE);
 
-        $callStack = $scope->getFunctionCallStackWithParameters();
-        if (count($callStack) === 0) {
-            return false;
-        }
-        [$function, $parameter] = $callStack[0];
-        if (!$function instanceof MethodReflection) {
-            return false;
-        }
-        if ($function->getName() !== 'backwardsCompatibleCall'
-            || $function->getDeclaringClass()->getName() !== DeprecationHelper::class
-        ) {
-            return false;
+        foreach ($scope->getFunctionCallStackWithParameters() as [$function, $parameter]) {
+            if (!$function instanceof MethodReflection) {
+                continue;
+            }
+            if ($function->getName() !== 'backwardsCompatibleCall'
+                || $function->getDeclaringClass()->getName() !== DeprecationHelper::class
+            ) {
+                continue;
+            }
+            if ($parameter !== null && $parameter->getName() === 'deprecatedCallable') {
+                return true;
+            }
         }
 
-        return $parameter !== null && $parameter->getName() === 'deprecatedCallable';
+        return false;
     }
 
     public function refactor(Node $node)
@@ -84,9 +89,8 @@ abstract class AbstractDrupalCoreRector extends AbstractRector implements Config
                 return $result;
             }
 
-            // Create a backwards compatible call if the node is a call-like expression.
-            if ($node instanceof Node\Expr\CallLike && $result instanceof Node\Expr\CallLike) {
-                return $this->createBcCallOnCallLike($node, $result, $configuration->getIntroducedVersion());
+            if ($node instanceof Node\Expr && $result instanceof Node\Expr) {
+                return $this->createBcCallOnExpr($node, $result, $configuration->getIntroducedVersion());
             }
 
             return $result;
@@ -102,7 +106,7 @@ abstract class AbstractDrupalCoreRector extends AbstractRector implements Config
      */
     abstract protected function refactorWithConfiguration(Node $node, VersionedConfigurationInterface $configuration);
 
-    private function createBcCallOnCallLike(Node\Expr\CallLike $node, Node\Expr\CallLike $result, string $introducedVersion): Node\Expr\StaticCall
+    protected function createBcCallOnExpr(Node\Expr $node, Node\Expr $result, string $introducedVersion): Node\Expr\StaticCall
     {
         $clonedNode = clone $node;
 
@@ -132,7 +136,7 @@ abstract class AbstractDrupalCoreRector extends AbstractRector implements Config
         return str_replace([
             '.x-dev',
             '-dev',
-        ], '.0', \Drupal::VERSION);
+        ], '.0', $this->drupalRectorSettings->getDrupalVersion() ?? \Drupal::VERSION);
     }
 
     /**
@@ -149,6 +153,12 @@ abstract class AbstractDrupalCoreRector extends AbstractRector implements Config
      */
     public function supportBackwardsCompatibility(VersionedConfigurationInterface $configuration): bool
     {
-        return !(version_compare($this->installedDrupalVersion(), '10.1.0', '<') || version_compare($configuration->getIntroducedVersion(), '10.0.0', '<'));
+        if (!$this->drupalRectorSettings->isBackwardCompatibilityEnabled()) {
+            return false;
+        }
+
+        $minimumVersion = $this->drupalRectorSettings->getMinimumCoreVersionSupported();
+
+        return !(version_compare($minimumVersion, '10.1.0', '<') || version_compare($configuration->getIntroducedVersion(), '10.0.0', '<') || version_compare($minimumVersion, $configuration->getIntroducedVersion(), '>='));
     }
 }

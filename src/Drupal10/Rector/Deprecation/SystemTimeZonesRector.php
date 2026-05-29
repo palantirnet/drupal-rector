@@ -7,6 +7,7 @@ namespace DrupalRector\Drupal10\Rector\Deprecation;
 use DrupalRector\Contract\VersionedConfigurationInterface;
 use DrupalRector\Rector\AbstractDrupalCoreRector;
 use DrupalRector\Rector\ValueObject\DrupalIntroducedVersionConfiguration;
+use DrupalRector\Services\DrupalRectorSettings;
 use PhpParser\Node;
 use PhpParser\Node\Expr\ConstFetch;
 use Rector\PhpParser\Node\Value\ValueResolver;
@@ -25,8 +26,9 @@ class SystemTimeZonesRector extends AbstractDrupalCoreRector
      */
     private ValueResolver $valueResolver;
 
-    public function __construct(ValueResolver $valueResolver)
+    public function __construct(DrupalRectorSettings $drupalRectorSettings, ValueResolver $valueResolver)
     {
+        parent::__construct($drupalRectorSettings);
         $this->valueResolver = $valueResolver;
     }
 
@@ -61,6 +63,15 @@ class SystemTimeZonesRector extends AbstractDrupalCoreRector
 
         if (count($args) == 2 && $args[1]->value instanceof ConstFetch && $this->valueResolver->isTrue($args[1]->value)) {
             return $this->nodeFactory->createStaticCall('Drupal\Core\Datetime\TimeZoneFormHelper', 'getOptionsListByRegion');
+        }
+
+        if (count($args) == 2 && !($args[1]->value instanceof ConstFetch && $this->valueResolver->isFalse($args[1]->value))) {
+            // Second arg is dynamic or not a literal FALSE — emit a ternary so the grouped flag is preserved.
+            return new Node\Expr\Ternary(
+                $args[1]->value,
+                $this->nodeFactory->createStaticCall('Drupal\Core\Datetime\TimeZoneFormHelper', 'getOptionsListByRegion', [$args[0]]),
+                $this->nodeFactory->createStaticCall('Drupal\Core\Datetime\TimeZoneFormHelper', 'getOptionsList', [$args[0]])
+            );
         }
 
         if (count($args) == 0) {

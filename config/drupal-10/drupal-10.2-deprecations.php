@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-use DrupalRector\Drupal10\Rector\Deprecation\VersionedFunctionToServiceRector;
-use DrupalRector\Drupal10\Rector\ValueObject\VersionedFunctionToServiceConfiguration;
+use DrupalRector\Rector\Deprecation\FunctionToServiceRector;
 use DrupalRector\Rector\Deprecation\FunctionToStaticRector;
 use DrupalRector\Rector\Deprecation\MethodToMethodWithCheckRector;
+use DrupalRector\Rector\ValueObject\FunctionToServiceConfiguration;
 use DrupalRector\Rector\ValueObject\FunctionToStaticConfiguration;
 use DrupalRector\Rector\ValueObject\MethodToMethodWithCheckConfiguration;
 use Rector\Config\RectorConfig;
@@ -23,12 +23,12 @@ return static function (RectorConfig $rectorConfig): void {
 
     // https://www.drupal.org/node/3265963
     $rectorConfig->ruleWithConfiguration(MethodToMethodWithCheckRector::class, [
-        new MethodToMethodWithCheckConfiguration('Drupal\system\Plugin\ImageToolkit\GDToolkit', 'getResource', 'getImage'),
-        new MethodToMethodWithCheckConfiguration('Drupal\system\Plugin\ImageToolkit\GDToolkit', 'setResource', 'setImage'),
+        new MethodToMethodWithCheckConfiguration('Drupal\system\Plugin\ImageToolkit\GDToolkit', 'getResource', 'getImage', '10.2.0'),
+        new MethodToMethodWithCheckConfiguration('Drupal\system\Plugin\ImageToolkit\GDToolkit', 'setResource', 'setImage', '10.2.0'),
     ]);
 
     // https://www.drupal.org/node/3358337
-    $rectorConfig->ruleWithConfiguration(VersionedFunctionToServiceRector::class, [
-        new VersionedFunctionToServiceConfiguration('10.2.0', '_drupal_flush_css_js', 'asset.query_string', 'reset'),
+    $rectorConfig->ruleWithConfiguration(FunctionToServiceRector::class, [
+        new FunctionToServiceConfiguration('10.2.0', '_drupal_flush_css_js', 'asset.query_string', 'reset'),
     ]);
 };
