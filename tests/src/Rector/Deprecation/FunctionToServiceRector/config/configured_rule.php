@@ -54,9 +54,9 @@ return static function (RectorConfig $rectorConfig): void {
         new FunctionToServiceConfiguration('11.4.0', 'locale_translation_http_check', 'Drupal\locale\File\LocaleFileManager', 'checkRemoteFileStatus'),
         new FunctionToServiceConfiguration('11.4.0', 'locale_translate_delete_translation_files', 'Drupal\locale\File\LocaleFileManager', 'deleteTranslationFiles'),
         new FunctionToServiceConfiguration('11.4.0', 'locale_translation_download_source', 'Drupal\locale\File\LocaleFileManager', 'downloadTranslationSource'),
-        // https://www.drupal.org/node/3566774 (Drupal 11.4)
-        new FunctionToServiceConfiguration('11.4.0', '_media_library_media_type_form_submit', 'Drupal\media_library\Hook\MediaLibraryHooks', 'mediaTypeFormSubmit'),
-        new FunctionToServiceConfiguration('11.4.0', '_media_library_views_form_media_library_after_build', 'Drupal\media_library\Hook\MediaLibraryHooks', 'viewsFormAfterBuild'),
+        // https://www.drupal.org/node/3570839 (Drupal 11.4)
+        new FunctionToServiceConfiguration('11.4.0', '_media_library_media_type_form_submit', 'Drupal\media_library\Hook\MediaLibraryHooks', 'mediaTypeFormSubmit', true),
+        new FunctionToServiceConfiguration('11.4.0', '_media_library_views_form_media_library_after_build', 'Drupal\media_library\Hook\MediaLibraryHooks', 'viewsFormAfterBuild', true),
         // https://www.drupal.org/node/3574727 (Drupal 11.4)
         new FunctionToServiceConfiguration('11.4.0', 'language_process_language_select', 'Drupal\language\Hook\LanguageHooks', 'processLanguageSelect'),
         // https://www.drupal.org/node/3566792 (Drupal 11.4)

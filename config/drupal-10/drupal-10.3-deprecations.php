@@ -41,6 +41,7 @@ return static function (RectorConfig $rectorConfig): void {
     ]);
 
     // https://www.drupal.org/node/3426517
+    // https://www.drupal.org/node/3575575
     // FileSystemInterface::EXISTS_* deprecated in drupal:10.3.0, removed in drupal:12.0.0.
     // Replaced by \Drupal\Core\File\FileExists enum cases.
     $rectorConfig->ruleWithConfiguration(ClassConstantToClassConstantRector::class, [
