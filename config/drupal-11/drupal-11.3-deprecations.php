@@ -8,6 +8,7 @@ use DrupalRector\Drupal11\Rector\Deprecation\FileSystemBasenameToNativeRector;
 use DrupalRector\Drupal11\Rector\Deprecation\LoadAllIncludesRector;
 use DrupalRector\Drupal11\Rector\Deprecation\NodeStorageDeprecatedMethodsRector;
 use DrupalRector\Drupal11\Rector\Deprecation\RemoveRootFromConvertDbUrlRector;
+use DrupalRector\Drupal11\Rector\Deprecation\ReplaceCommentPreviewConstantsRector;
 use DrupalRector\Drupal11\Rector\Deprecation\ReplaceCommentManagerGetCountNewCommentsRector;
 use DrupalRector\Drupal11\Rector\Deprecation\ReplaceNodeAccessViewAllNodesRector;
 use DrupalRector\Drupal11\Rector\Deprecation\ReplaceNodeAddBodyFieldRector;
@@ -16,6 +17,7 @@ use DrupalRector\Drupal11\Rector\Deprecation\ReplaceNodeSetPreviewModeRector;
 use DrupalRector\Drupal11\Rector\Deprecation\ReplaceThemeGetSettingRector;
 use DrupalRector\Drupal11\Rector\Deprecation\ReplaceTwigExtensionRector;
 use DrupalRector\Drupal11\Rector\Deprecation\ReplaceUserSessionNamePropertyRector;
+use DrupalRector\Drupal11\Rector\Deprecation\ViewsConfigUpdaterClassResolverToServiceRector;
 use DrupalRector\Rector\Deprecation\ConstantToClassConstantRector;
 use DrupalRector\Rector\Deprecation\FunctionCallRemovalRector;
 use DrupalRector\Rector\Deprecation\FunctionToFirstArgMethodRector;
@@ -206,8 +208,38 @@ return static function (RectorConfig $rectorConfig): void {
     // https://www.drupal.org/node/3551450
     // workspaces.association service and WorkspaceAssociationInterface renamed in drupal:11.3.0.
     // Replaced by workspaces.tracker and WorkspaceTrackerInterface.
+    //
+    // https://www.drupal.org/node/3571874
+    // https://www.drupal.org/node/3527501 (change record)
+    // block_content\Access\* aliases removed in drupal:11.3.0. Canonical homes
+    // are in Drupal\Core\Access\*. The shims remained as deprecated aliases
+    // through 11.3.x. Listed here together with workspaces because both are
+    // BC-safe aliases of pre-existing canonical classes — type-hint changes
+    // only, runtime semantics unchanged.
     $rectorConfig->ruleWithConfiguration(RenameClassRector::class, [
         'Drupal\workspaces\WorkspaceAssociationInterface' => 'Drupal\workspaces\WorkspaceTrackerInterface',
         'Drupal\workspaces\WorkspaceAssociation' => 'Drupal\workspaces\WorkspaceTracker',
+        'Drupal\block_content\Access\AccessGroupAnd' => 'Drupal\Core\Access\AccessGroupAnd',
+        'Drupal\block_content\Access\DependentAccessInterface' => 'Drupal\Core\Access\DependentAccessInterface',
+        'Drupal\block_content\Access\RefinableDependentAccessInterface' => 'Drupal\Core\Access\RefinableDependentAccessInterface',
+        'Drupal\block_content\Access\RefinableDependentAccessTrait' => 'Drupal\Core\Access\RefinableDependentAccessTrait',
+    ]);
+
+    // https://www.drupal.org/node/3538660
+    // https://www.drupal.org/node/3538678 (change record)
+    // Passing an int to CommentTestBase::setCommentPreview() deprecated in drupal:11.3.0, removed in drupal:13.0.0.
+    // Replaced by Drupal\comment\CommentPreviewMode enum cases.
+    $rectorConfig->ruleWithConfiguration(ReplaceCommentPreviewConstantsRector::class, [
+        new DrupalIntroducedVersionConfiguration('11.3.0'),
+    ]);
+
+    // https://www.drupal.org/node/3529274
+    // https://www.drupal.org/node/3530638 (change record)
+    // ViewsConfigUpdater registered as a service in drupal:11.3.0. Replace
+    // \Drupal::classResolver(ViewsConfigUpdater::class) with
+    // \Drupal::service(ViewsConfigUpdater::class) so state set via
+    // setDeprecationsEnabled(FALSE) persists across hook invocations.
+    $rectorConfig->ruleWithConfiguration(ViewsConfigUpdaterClassResolverToServiceRector::class, [
+        new DrupalIntroducedVersionConfiguration('11.3.0'),
     ]);
 };
