@@ -12,6 +12,129 @@ release-by-release.
 
 ## [Unreleased]
 
+### Added
+
+- **`TaxonomyTermPageVariableToViewModeRector`** — replaces reads of
+  `$variables['page']` with `$variables['view_mode'] === 'full'` inside
+  taxonomy term preprocess hooks (procedural
+  `*_preprocess_taxonomy_term()` functions and class-based
+  `preprocessTaxonomyTerm()` methods). The `$variables['page']` template
+  variable for taxonomy terms was deprecated in drupal:11.3.0 and is
+  removed in drupal:13.0.0. Assignment targets (`$variables['page'] = …`)
+  are intentionally left untouched so legacy initialisation continues to
+  work, and unrelated preprocess hooks are not scanned. The replacement
+  is a pure-PHP `===` comparison, so the transformed code runs on every
+  Drupal version — no BC wrapping needed.
+  [#3535439](https://www.drupal.org/i/3535439) /
+  [CR](https://www.drupal.org/node/3542527).
+- **`ReplaceNonBoolAccessRector`** — rewrites integer-literal `#access`
+  values inside render arrays to proper booleans: `1` (or any non-zero
+  integer) becomes `true`, and `0` becomes `false`. Passing non-boolean,
+  non-`AccessResultInterface` values to `#access` was deprecated in
+  drupal:11.4.0 and will be removed in drupal:13.0.0. The rule matches
+  on `ArrayItem` nodes whose key is the string literal `'#access'` and
+  whose value is an integer literal — it deliberately ignores booleans,
+  variables, function/method calls, and any other expression, because
+  the correct boolean replacement for those cannot be determined
+  statically. The replacement is pure PHP (`true` / `false`), so no BC
+  wrapping is needed; the transformed code runs on every Drupal version.
+  [#3526250](https://www.drupal.org/i/3526250).
+- **`ReplaceDialogClassOptionRector`** — rewrites the removed
+  `$dialog_options['dialogClass']` key to
+  `$dialog_options['classes']['ui-dialog']` in `new OpenDialogCommand(...)` and
+  `new OpenOffCanvasDialogCommand(...)` calls. `dialogClass` was deprecated in
+  drupal:11.3.0 and removed in drupal:12.0.0. Receiver narrowing is by FQCN
+  match on the resolved `New_->class` (`Drupal\Core\Ajax\OpenDialogCommand` or
+  `Drupal\Core\Ajax\OpenOffCanvasDialogCommand`), so unrelated constructors
+  with similarly-shaped option arrays are left alone. Handles three array
+  shapes: (a) no existing `classes` key → adds `'classes' => ['ui-dialog' => $value]`;
+  (b) `classes` exists without `ui-dialog` → adds `'ui-dialog' => $value` inside
+  it; (c) `classes['ui-dialog']` already present and both old/new values are
+  string literals → concatenates with a space. Non-literal values (variables,
+  function calls, dynamic arrays) at any position cause the rule to skip
+  rather than guess. The replacement form `classes['ui-dialog']` has existed
+  in core since 10.3.x, so the transformed output runs on every
+  drupal-rector–supported Drupal minor (D10.3+) — no BC wrapping needed.
+  [#3571054](https://www.drupal.org/i/3571054) /
+  [CR](https://www.drupal.org/node/3440844).
+- **`RemoveToolkitArgFromImageToolkitOperationConstructorRector`** —
+  removes the deprecated `ImageToolkitInterface $toolkit` 4th argument
+  from `ImageToolkitOperationBase` subclass constructors and strips it
+  from the matching `parent::__construct()` call. The parameter was
+  deprecated in drupal:11.4.0 and will be removed in drupal:13.0.0; the
+  plugin manager now injects the toolkit via `setToolkit()` after
+  instantiation, enabling constructor autowiring. The rector only fires
+  when the subclass directly extends `ImageToolkitOperationBase`, the
+  constructor has at least five parameters, the 4th is typed exactly as
+  `\Drupal\Core\ImageToolkit\ImageToolkitInterface`, and `$toolkit`
+  appears exactly once in the constructor body (as the 4th argument of
+  `parent::__construct()`). The usage-count walk skips nested closures
+  and arrow-functions so a `$toolkit`-shadowing inner scope cannot
+  inflate the count. No BC wrapping is needed: the parent signature
+  accepts the union `LoggerInterface|ImageToolkitInterface`, so the
+  transformed code runs on every drupal:11.4.x+ version.
+  [#3559481](https://www.drupal.org/i/3559481) /
+  [CR](https://www.drupal.org/node/3562304).
+- **`RemoveRendererAddCacheableDependencyNonObjectRector`** — deletes calls
+  to `RendererInterface::addCacheableDependency($elements, $dependency)`
+  whose second argument is statically provable to be a non-object
+  (`bool`, `int`, `float`, `string`, `null`, or `array`). Passing such
+  values was deprecated in drupal:11.3.0 and will throw in
+  drupal:13.0.0; at runtime it silently sets `max-age = 0` on the
+  render array, making the page uncacheable for no useful gain. The
+  rector matches at statement level so the entire expression is
+  removed, never partially rewritten. The receiver is type-guarded to
+  `\Drupal\Core\Render\RendererInterface` (catching the concrete
+  `Renderer` and any other implementer), and the argument count must
+  be exactly two — this distinguishes the call from the single-argument
+  `addCacheableDependency()` defined on `BubbleableMetadata` and
+  `RefinableCacheableDependencyInterface`. The PHPStan type of the
+  dependency must satisfy `isObject()->no()`, so any call where the
+  argument might be an object at runtime (variables typed as configs,
+  entities, or `mixed`) is left untouched — the rector targets only
+  the unambiguous primitive-passing mistake the deprecation was added
+  to flag. No BC wrapping is needed because the removed call is a
+  silent uncacheability bug on every Drupal version.
+  [#3525388](https://www.drupal.org/i/3525388) /
+  [CR](https://www.drupal.org/node/3525389).
+- **`DrupalGetHeadersAssocArrayRector`** — converts the two deprecated
+  `UiHelperTrait::drupalGet()` `$headers` argument shapes to the documented
+  associative format: integer-keyed colon-separated strings
+  (`['X-Requested-With: XMLHttpRequest']`) are split to
+  `['X-Requested-With' => 'XMLHttpRequest']`, and `null` values
+  (`['Accept-Language' => NULL]`) become empty strings
+  (`['Accept-Language' => '']`). The integer-keyed path requires the
+  conventional `Name: value` (colon-space) form and a name part matching
+  `[A-Za-z][A-Za-z0-9-]*`, so incidental colon-containing strings (URLs,
+  paths) are not silently split. Guarded against `Drupal\Tests\BrowserTestBase`
+  so `KernelTestBase` (which uses `HttpKernelUiHelperTrait` and does not
+  emit this deprecation) is left alone. Deprecated in drupal:11.1.0,
+  removed in drupal:12.0.0; replacement is plain PHP so no BC wrapping
+  is needed. Live-tested against `pager_serializer`.
+  [#3440169](https://www.drupal.org/i/3440169) /
+  [CR (indexed headers)](https://www.drupal.org/node/3456178) /
+  [CR (null values)](https://www.drupal.org/node/3456233).
+- **`ReplaceHideShowWithPrintedRector`** — replaces statement-level calls to the
+  deprecated global `hide()` and `show()` functions (deprecated in drupal:11.4.0,
+  removed in drupal:13.0.0) with direct `$element['#printed'] = TRUE/FALSE`
+  assignment. Expression-context uses (where the return value is captured) are
+  intentionally skipped because the original returns the element while the
+  rewrite would not. Live-tested against `fpa`, `saml_sp`, `vertical_tabs_config`,
+  and `field_group_background_image`.
+  [#2258355](https://www.drupal.org/i/2258355) /
+  [CR](https://www.drupal.org/node/3261271).
+- **`GetDrupalRootToRootPropertyRector`** — rewrites calls to
+  `DrupalKernelInterface::getDrupalRoot()` to direct access of the
+  `$this->root` property on Drupal base test classes (BrowserTestBase,
+  KernelTestBase, UnitTestCase). `getDrupalRoot()` was deprecated in
+  drupal:11.4.0 and removed in drupal:13.0.0. The receiver is
+  type-guarded to the listed base classes (and their subclasses), so
+  unrelated `getDrupalRoot()` methods on other classes are left alone.
+  No BC wrapping is needed — the `$root` property has existed on the
+  trait since Drupal 10.x.
+  [#3589047](https://www.drupal.org/i/3589047) /
+  [CR](https://www.drupal.org/node/3574112).
+
 ### Changed
 
 - `ClassConstantToClassConstantRector` and `MethodToMethodWithCheckRector` now

@@ -5,6 +5,7 @@ declare(strict_types=1);
 use DrupalRector\Drupal11\Rector\Deprecation\CheckMarkupToProcessedTextRector;
 use DrupalRector\Drupal11\Rector\Deprecation\DeprecatedFilterFunctionsRector;
 use DrupalRector\Drupal11\Rector\Deprecation\FilterFormatFunctionsToServiceRector;
+use DrupalRector\Drupal11\Rector\Deprecation\GetDrupalRootToRootPropertyRector;
 use DrupalRector\Drupal11\Rector\Deprecation\GetOriginalClassToGetDecoratedClassesRector;
 use DrupalRector\Drupal11\Rector\Deprecation\LocaleCompareIncToServiceRector;
 use DrupalRector\Drupal11\Rector\Deprecation\MediaFilterFormatEditFormValidateRector;
@@ -15,9 +16,12 @@ use DrupalRector\Drupal11\Rector\Deprecation\RemoveConfigSaveTrustedDataArgRecto
 use DrupalRector\Drupal11\Rector\Deprecation\RemoveFilterTipsLongParamRector;
 use DrupalRector\Drupal11\Rector\Deprecation\RemoveLinkWidgetValidateTitleElementRector;
 use DrupalRector\Drupal11\Rector\Deprecation\RemoveSetUriCallbackRector;
+use DrupalRector\Drupal11\Rector\Deprecation\RemoveToolkitArgFromImageToolkitOperationConstructorRector;
 use DrupalRector\Drupal11\Rector\Deprecation\RemoveTrustDataCallRector;
 use DrupalRector\Drupal11\Rector\Deprecation\RemoveViewsRowCacheKeysRector;
 use DrupalRector\Drupal11\Rector\Deprecation\ReplaceEntityReferenceRecursiveLimitRector;
+use DrupalRector\Drupal11\Rector\Deprecation\ReplaceHideShowWithPrintedRector;
+use DrupalRector\Drupal11\Rector\Deprecation\ReplaceNonBoolAccessRector;
 use DrupalRector\Drupal11\Rector\Deprecation\ReplaceRecipeRunnerInstallModuleRector;
 use DrupalRector\Drupal11\Rector\Deprecation\ReplaceSessionManagerDeleteRector;
 use DrupalRector\Drupal11\Rector\Deprecation\ReplaceSystemPerformanceGzipKeyRector;
@@ -446,4 +450,29 @@ return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->ruleWithConfiguration(LocaleCompareIncToServiceRector::class, [
         new DrupalIntroducedVersionConfiguration('11.4.0'),
     ]);
+
+    // https://www.drupal.org/node/3559481
+    // https://www.drupal.org/node/3562304 (change record)
+    // ImageToolkitOperationBase::__construct() $toolkit argument deprecated in drupal:11.4.0,
+    // removed in drupal:13.0.0. Plugin manager now injects via setToolkit() for autowiring.
+    $rectorConfig->rule(RemoveToolkitArgFromImageToolkitOperationConstructorRector::class);
+
+    // https://www.drupal.org/node/2258355
+    // https://www.drupal.org/node/3261271 (change record)
+    // hide() and show() deprecated in drupal:11.4.0, removed in drupal:13.0.0.
+    // Replaced by direct $element['#printed'] = TRUE/FALSE assignment.
+    $rectorConfig->rule(ReplaceHideShowWithPrintedRector::class);
+
+    // https://www.drupal.org/node/3526250
+    // Integer values for #access render array key deprecated in drupal:11.4.0,
+    // removed in drupal:13.0.0. Replaced by boolean or AccessResultInterface.
+    // Only integer literals are rewritten (1 → true, 0 → false); variables and
+    // typed expressions are left for manual review.
+    $rectorConfig->rule(ReplaceNonBoolAccessRector::class);
+
+    // https://www.drupal.org/node/3589047
+    // https://www.drupal.org/node/3574112 (change record)
+    // DrupalTestCaseTrait::getDrupalRoot() deprecated in drupal:11.4.0, removed in drupal:13.0.0.
+    // Replaced by direct access to the $this->root property on Drupal base test classes.
+    $rectorConfig->rule(GetDrupalRootToRootPropertyRector::class);
 };

@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use DrupalRector\Drupal11\Rector\Deprecation\BlockContentTestBaseStringToArrayRector;
+use DrupalRector\Drupal11\Rector\Deprecation\DrupalGetHeadersAssocArrayRector;
 use DrupalRector\Drupal11\Rector\Deprecation\MovePointerToMouseOverRector;
 use DrupalRector\Drupal11\Rector\Deprecation\PluginBaseIsConfigurableRector;
 use DrupalRector\Drupal11\Rector\Deprecation\RemoveModuleHandlerDeprecatedMethodsRector;
@@ -90,4 +91,12 @@ return static function (RectorConfig $rectorConfig): void {
         new FunctionToStaticConfiguration('11.1.0', 'drupal_common_theme', 'Drupal\Core\Theme\ThemeCommonElements', 'commonElements'),
         new FunctionToStaticConfiguration('11.1.0', 'image_filter_keyword', 'Drupal\Component\Utility\Image', 'getKeywordOffset'),
     ]);
+
+    // https://www.drupal.org/node/3440169
+    // https://www.drupal.org/node/3456178 (change record: integer-keyed headers)
+    // https://www.drupal.org/node/3456233 (change record: null header values)
+    // UiHelperTrait::drupalGet() $headers as indexed colon-separated strings or null values
+    // deprecated in drupal:11.1.0, removed in drupal:12.0.0. Replaced by the associative array
+    // format ['Header-Name' => 'value'], with empty strings in place of null.
+    $rectorConfig->rule(DrupalGetHeadersAssocArrayRector::class);
 };
