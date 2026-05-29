@@ -7,6 +7,7 @@ use DrupalRector\Drupal11\Rector\Deprecation\FileManagedFileSubmitRector;
 use DrupalRector\Drupal11\Rector\Deprecation\FileSystemBasenameToNativeRector;
 use DrupalRector\Drupal11\Rector\Deprecation\LoadAllIncludesRector;
 use DrupalRector\Drupal11\Rector\Deprecation\NodeStorageDeprecatedMethodsRector;
+use DrupalRector\Drupal11\Rector\Deprecation\RemoveAliasManagerCacheMethodCallsRector;
 use DrupalRector\Drupal11\Rector\Deprecation\RemoveRootFromConvertDbUrlRector;
 use DrupalRector\Drupal11\Rector\Deprecation\ReplaceCommentManagerGetCountNewCommentsRector;
 use DrupalRector\Drupal11\Rector\Deprecation\ReplaceNodeAccessViewAllNodesRector;
@@ -210,4 +211,10 @@ return static function (RectorConfig $rectorConfig): void {
         'Drupal\workspaces\WorkspaceAssociationInterface' => 'Drupal\workspaces\WorkspaceTrackerInterface',
         'Drupal\workspaces\WorkspaceAssociation' => 'Drupal\workspaces\WorkspaceTracker',
     ]);
+
+    // https://www.drupal.org/node/3496369
+    // https://www.drupal.org/node/3532412 (change record)
+    // AliasManager::setCacheKey() and AliasManager::writeCache() deprecated in drupal:11.3.0,
+    // removed in drupal:13.0.0 with no replacement (they are no-ops).
+    $rectorConfig->rule(RemoveAliasManagerCacheMethodCallsRector::class);
 };

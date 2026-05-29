@@ -12,6 +12,89 @@ release-by-release.
 
 ## [Unreleased]
 
+### Added
+
+- **`RemoveDrupalToStringTraitRector`** — removes
+  `use Drupal\Component\Utility\ToStringTrait;` from a class body and inserts
+  an inline `public function __toString(): string { return (string)
+  $this->render(); }` in its place. The trait was a PHP 7.x workaround for
+  fatal errors thrown from `__toString()`; on PHP 8+ exceptions inside
+  `__toString()` propagate normally, so the trait is deprecated in
+  drupal:11.4.0 and removed in drupal:13.0.0. The rector preserves an
+  existing `__toString()` if the class already defines one (only the
+  composition is removed) and keeps any sibling traits in a comma-separated
+  `use` list. The file-level `use Drupal\Component\Utility\ToStringTrait;`
+  import is intentionally left in place — Rector's generic unused-import
+  cleanup is a separate concern. The replacement body is pure PHP, so the
+  transformed code runs on every Drupal version — no BC wrapping needed.
+  [#3548957](https://www.drupal.org/i/3548957) /
+  [CR](https://www.drupal.org/node/3548961).
+- **`RemoveInstallSchemaSystemSequencesRector`** — removes deprecated
+  `KernelTestBase::installSchema('system', 'sequences')` calls in test
+  classes. The `sequences` table was deprecated in drupal:10.2.0 and
+  fully removed in drupal:12.0.0 via [#3335756](https://www.drupal.org/i/3335756);
+  the call now throws a `LogicException` on Drupal 12. The rule removes
+  the entire statement when the second argument is the string
+  `'sequences'` or an array containing only `'sequences'`; when the
+  array also lists other tables, only the `'sequences'` entry is
+  stripped. Receiver is type-guarded to `Drupal\KernelTests\KernelTestBase`,
+  so unrelated `installSchema()` methods on other classes are left
+  untouched. See change record
+  [#3349345](https://www.drupal.org/node/3349345).
+- **`GroupLegacyToIgnoreDeprecationsRector`** — replaces the
+  `@group legacy` PHPDoc annotation with PHPUnit 10's native
+  `#[\PHPUnit\Framework\Attributes\IgnoreDeprecations]` attribute on
+  both method- and class-level test declarations. Drupal 11 dropped the
+  `symfony/phpunit-bridge` dependency and adopted PHPUnit 10, whose
+  attribute supersedes the bridge's docblock annotation. A Drupal shim
+  preserves the annotation form for BC, so the rewrite is purely a
+  forward-compatibility cleanup rather than a hard requirement, but
+  test classes that already declare the attribute are skipped so the
+  rule is idempotent. The rector strips just the `@group legacy` line
+  from the docblock — surrounding annotations (`@covers`, `@dataProvider`,
+  description text) are preserved — and inserts the attribute
+  immediately above the method or class declaration. PHPStan cannot
+  surface this deprecation because `@group legacy` is a docblock
+  convention, not a code-level `@deprecated` symbol; this rule must be
+  applied proactively as part of a PHPUnit 10 migration.
+  [#3417066](https://www.drupal.org/i/3417066) /
+  [related: #3365413](https://www.drupal.org/i/3365413).
+- **`RemoveAliasManagerCacheMethodCallsRector`** — deletes calls to
+  `AliasManager::setCacheKey()` and `AliasManager::writeCache()`. Both
+  methods were deprecated in drupal:11.3.0 and are removed in
+  drupal:13.0.0 with no replacement — they became no-ops when the path
+  alias preload cache was replaced by a Fiber-based bulk-lookup strategy.
+  The receiver must be typed as `\Drupal\path_alias\AliasManager` or
+  `AliasManagerInterface`; this guard prevents accidentally removing
+  unrelated methods that share the name (notably
+  `ModuleHandler::writeCache()`). Removes the entire expression
+  statement, leaving surrounding code intact. No BC wrapping is needed
+  since dropping a no-op call is safe on every Drupal version.
+  [#3496369](https://www.drupal.org/i/3496369) /
+  [CR](https://www.drupal.org/node/3532412).
+- **`EntityFormModeEmptyDescriptionToNullRector`** — rewrites
+  `EntityFormMode::create([..., 'description' => '', ...])` to use `NULL`
+  instead of the empty string. Setting the description property of an
+  `EntityFormMode` to `''` was deprecated in drupal:11.2.0 and must be `NULL`
+  in drupal:12.0.0. Matches both the short class name (`use`-imported) and
+  the fully-qualified `\Drupal\Core\Entity\Entity\EntityFormMode::create()`
+  form, and leaves unrelated classes (e.g. `EntityViewMode`), non-empty
+  descriptions, and already-migrated NULL values untouched. The replacement
+  is plain PHP, so no BC wrapping is needed.
+  [#3448457](https://www.drupal.org/i/3448457) /
+  [CR](https://www.drupal.org/node/3452144).
+- **`ViewsBlockItemsPerPageNoneToNullRector`** — rewrites
+  `ViewsBlockBase::setConfigurationValue('items_per_page', 'none')` to
+  `setConfigurationValue('items_per_page', NULL)`. The string `'none'`
+  was deprecated in drupal:11.2.0 and is removed in drupal:12.0.0; `NULL`
+  is the canonical value for inheriting the items-per-page setting from
+  the underlying view. The receiver is type-guarded to `ViewsBlockBase`
+  (or any subclass), so unrelated `setConfigurationValue()` calls on
+  other plugin types are left untouched. The replacement is plain PHP,
+  so no BC wrapping is needed.
+  [#3520946](https://www.drupal.org/i/3520946) /
+  [CR](https://www.drupal.org/node/3522240).
+
 ### Changed
 
 - `ClassConstantToClassConstantRector` and `MethodToMethodWithCheckRector` now
