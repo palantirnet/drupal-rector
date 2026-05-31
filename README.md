@@ -176,7 +176,7 @@ $ vendor/bin/rector process web/modules/contrib/[YOUR_MODULE]
 
 # Pass 2 — convert hooks to OOP hook classes
 $ vendor/bin/rector process web/modules/contrib/[YOUR_MODULE] \
-    --config=vendor/palantirnet/drupal-rector/config/convert/hook-convert.php
+    --config=vendor/palantirnet/drupal-rector/rector-hook-convert.php
 ```
 
 **Why two passes?** `HookConvertRector` moves each hook body into a brand-new

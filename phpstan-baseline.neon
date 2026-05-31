@@ -8,7 +8,7 @@ parameters:
 			'''
 			identifier: method.deprecatedClass
 			count: 1
-			path: config/convert/hook-convert.php
+			path: rector-hook-convert.php
 
 		-
 			message: '''
@@ -18,7 +18,7 @@ parameters:
 			'''
 			identifier: method.deprecatedClass
 			count: 1
-			path: config/convert/hook-convert.php
+			path: rector-hook-convert.php
 
 		-
 			message: '''
@@ -28,7 +28,7 @@ parameters:
 			'''
 			identifier: method.deprecatedClass
 			count: 1
-			path: config/convert/hook-convert.php
+			path: rector-hook-convert.php
 
 		-
 			message: '''
@@ -38,7 +38,7 @@ parameters:
 			'''
 			identifier: new.deprecatedClass
 			count: 1
-			path: config/convert/hook-convert.php
+			path: rector-hook-convert.php
 
 		-
 			message: '''
