@@ -68,6 +68,13 @@ Real-world validated end-to-end:
 ### Added
 
 #### Infrastructure
+- **`config/convert/hook-convert.php`** — dedicated configuration that registers
+  only `HookConvertRector`, for running hook conversion as a separate second
+  pass. `HookConvertRector` writes the generated `src/Hook/*Hooks.php` to disk
+  outside Rector's file pipeline, so bundling it with the deprecation sets would
+  copy un-fixed hook bodies into the new class. Documented in the README
+  ("Converting hooks to OOP hook classes"): run deprecations first, then this
+  config.
 - **`DrupalRectorSettings`** (`src/Services/DrupalRectorSettings.php`) — container-
   managed settings object with `enableBackwardCompatibility()` /
   `disableBackwardCompatibility()` / `setMinimumCoreVersionSupported(string)` /
