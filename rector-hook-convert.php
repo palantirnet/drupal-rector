@@ -23,7 +23,7 @@ use Rector\Config\RectorConfig;
  *
  *   vendor/bin/rector process modules/contrib/my_module                       # pass 1: deprecations
  *   vendor/bin/rector process modules/contrib/my_module \
- *     --config=vendor/palantirnet/drupal-rector/config/convert/hook-convert.php # pass 2: hook conversion
+ *     --config=vendor/palantirnet/drupal-rector/rector-hook-convert.php # pass 2: hook conversion
  */
 return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->rule(HookConvertRector::class);
