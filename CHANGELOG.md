@@ -12,167 +12,14 @@ release-by-release.
 
 ## [Unreleased]
 
-### Added
-
-- **`ReplaceLocaleTranslationPathConfigRector`** — rewrites chained
-  `\Drupal::config('locale.settings')->get('translation.path')` (and
-  equivalents via `configFactory()->get('locale.settings')->get(...)`,
-  `$this->config('locale.settings')->get(...)`, and similar) to
-  `\Drupal\Core\Site\Settings::get('locale_translation_path', 'public://translations')`.
-  The `locale.settings:translation.path` config key was deprecated in
-  drupal:11.4.0 and is removed in drupal:13.0.0; the interface
-  translations directory path must now be set as
-  `$settings['locale_translation_path']` in `settings.php`. On older
-  Drupal the value still lives in config, so the replacement is
-  BC-wrapped with `DeprecationHelper::backwardsCompatibleCall()`.
-  Matching is purely structural — two literal keys
-  (`'locale.settings'` and `'translation.path'`) must both appear in the
-  expected positions, so unrelated config reads and standalone
-  `$config->get('translation.path')` calls are left untouched.
-  **Caveat:** the BC wrapper gates on `\Drupal::VERSION`, not on where
-  the value is stored. Before running this rule, confirm that any
-  customised translation path has been moved to
-  `$settings['locale_translation_path']` in `settings.php`; otherwise
-  the new branch silently returns the default
-  `'public://translations'` even when the config still holds the
-  customised value. PHPStan / upgrade_status cannot detect this
-  deprecation — the deprecated symbol is the config key, not a PHP API
-  with `@deprecated` or `trigger_error()`, so this rule must be applied
-  proactively as part of an 11.4 → 13 migration plan.
-  [#3571593](https://www.drupal.org/i/3571593) /
-  [CR](https://www.drupal.org/node/3571594).
-- **`ViewsConfigUpdaterClassResolverToServiceRector`** — rewrites
-  `\Drupal::classResolver(\Drupal\views\ViewsConfigUpdater::class)` to
-  `\Drupal::service(\Drupal\views\ViewsConfigUpdater::class)`. In
-  drupal:11.3.0 `ViewsConfigUpdater` was registered as a service;
-  `classResolver()` returns a fresh instance on each call, so state set via
-  `setDeprecationsEnabled(FALSE)` was lost across hook invocations. The new
-  call only resolves on Drupal ≥ 11.3.0 (the service isn't registered on
-  older versions), so the replacement is BC-wrapped with
-  `DeprecationHelper::backwardsCompatibleCall()`. Three layered guards
-  ensure only the targeted call shape is touched: receiver must be
-  `\Drupal`, method must be `classResolver`, and the single argument must be
-  `\Drupal\views\ViewsConfigUpdater::class`.
-  [#3529274](https://www.drupal.org/i/3529274) /
-  [CR](https://www.drupal.org/node/3530638).
-- **`ReplaceExpectDeprecationRector`** — migrates removed test framework methods
-  to their PHPUnit 11+ replacements. Renames are BC-wrapped with
-  `DeprecationHelper::backwardsCompatibleCall()` so tests keep passing on both
-  pre-11.4 (old methods) and 11.4+ (new methods). Covers:
-  `$this->expectDeprecation($msg)` and `$this->expectDeprecationMessage($msg)` →
-  `$this->expectUserDeprecationMessage($msg)`;
-  `$this->expectDeprecationMessageMatches($p)` →
-  `$this->expectUserDeprecationMessageMatches($p)`; bare
-  `$this->expectDeprecation()` (no-arg PHPUnit form) → removed.
-  `ExpectDeprecationTrait` is deprecated in drupal:11.4.0 and removed in
-  drupal:12.0.0.
-  [#3550268](https://www.drupal.org/i/3550268) /
-  [CR](https://www.drupal.org/node/3545276).
-- **`ReplaceCommentPreviewConstantsRector`** — rewrites integer arguments
-  to `CommentTestBase::setCommentPreview()` to the corresponding
-  `Drupal\comment\CommentPreviewMode` enum case. Passing an int was
-  deprecated in drupal:11.3.0 and is removed in drupal:13.0.0. BC-wrapped
-  via `DeprecationHelper::backwardsCompatibleCall()` so the rewrite still
-  runs on pre-11.3 Drupal where the enum doesn't yet exist.
-  [#3538660](https://www.drupal.org/i/3538660) /
-  [CR](https://www.drupal.org/node/3538678).
-- **`RemovePhpUnitCompatibilityTraitRector`** — removes
-  `use Drupal\Tests\PhpUnitCompatibilityTrait;` from test class
-  declarations. The trait was a forward-compatibility shim for PHPUnit
-  API differences across versions; it is **deleted from Drupal core in
-  Drupal 12** via [#3582118](https://www.drupal.org/i/3582118), at which
-  point any test class still composing the trait fatal-errors at
-  autoload time because the trait class no longer exists.
-
-  **Gated to Drupal 12 only — and deliberately off by default.** The
-  trait still exists on Drupal 10 (and may still hold shim methods that
-  tests depend on) and is an empty no-op on Drupal 11. Because the
-  trait composition is a structural `Class_` change, not an Expr → Expr
-  rewrite, it cannot be BC-wrapped with `DeprecationHelper`. Running
-  the rule prematurely on a D10-only codebase risks silently stripping
-  a composition that the tests still rely on. The rector therefore only
-  fires when the consumer explicitly sets the target Drupal version to
-  `12.0.0` or higher via
-  `DrupalRectorSettings::setDrupalVersion('12.0.0')`. The orphan
-  top-of-file `use Drupal\Tests\PhpUnitCompatibilityTrait;` import is
-  left in place — PHP never resolves an unused alias, so it remains
-  harmless on D12; cleanup is optional and out of scope.
-- Class-rename entries for the four `Drupal\block_content\Access\*` aliases
-  (`AccessGroupAnd`, `DependentAccessInterface`,
-  `RefinableDependentAccessInterface`, `RefinableDependentAccessTrait`) →
-  their canonical `Drupal\Core\Access\*` homes. Deprecated in drupal:11.3.0,
-  removed in drupal:12.0.0; registered via Rector's built-in
-  `RenameClassRector` in `drupal-11.3-deprecations.php`. The canonical
-  classes have existed in `Drupal\Core\Access\*` since pre-11.3, so the
-  rewrite is BC-safe across all supported Drupal 10 and 11 minors.
-  [#3571874](https://www.drupal.org/i/3571874) /
-  [CR](https://www.drupal.org/node/3527501).
-- Class-rename entry for `LibraryDiscovery`:
-  `Drupal\Core\Asset\LibraryDiscovery` → `Drupal\Core\Asset\LibraryDiscoveryInterface`.
-  The concrete class was deprecated in drupal:11.1.0 and removed in drupal:12.0.0;
-  the `library.discovery` service is now backed by `LibraryDiscoveryCollector`,
-  so consumer code should type-hint the interface. Registered via Rector's
-  built-in `RenameClassRector` in `drupal-11.1-deprecations.php`.
-  `LibraryDiscoveryInterface` has existed since Drupal 10.0.x, so the rewrite is
-  safe across all supported Drupal 10 and 11 minors.
-  [#3462871](https://www.drupal.org/i/3462871) (deprecation) /
-  [#3571057](https://www.drupal.org/i/3571057) (removal) /
-  [CR](https://www.drupal.org/node/3462970).
-- Class-rename entry for `EntityPermissionsRouteProviderWithCheck`:
-  `Drupal\user\Entity\EntityPermissionsRouteProviderWithCheck` →
-  `Drupal\user\Entity\EntityPermissionsRouteProvider`. The `WithCheck` variant was
-  deprecated in drupal:11.1.0 and removed in drupal:12.0.0; the base provider has
-  existed since Drupal 10.0.x, so the rewrite is safe across all supported Drupal
-  10 and 11 minors. Registered via Rector's built-in `RenameClassRector` in
-  `drupal-11.1-deprecations.php`. **Access-check semantics:** the `WithCheck`
-  variant layered a `_custom_access` requirement (`EntityPermissionsForm::access`,
-  also removed) on top of the base route to deny access when an entity type had
-  no entity-specific permissions; the base provider already enforces
-  `_permission: administer permissions`, so the security boundary is preserved
-  and only the "no permissions defined → deny" convenience check is dropped.
-  Subclass overrides that re-added the custom check are NOT rewritten —
-  `RenameClassRector` only updates the parent class reference, so owners of such
-  subclasses must port any remaining access logic into the route definition
-  (the new model adds permission requirements directly on the route).
-  **Limitation — doctrine annotation strings are not rewritten.** Real-world
-  contrib usage is almost exclusively the entity-annotation form
-  (`"permissions" = "Drupal\user\Entity\EntityPermissionsRouteProviderWithCheck"`
-  inside a `@ContentEntityType` / `@ConfigEntityType` docblock).
-  `RenameClassRector` only touches PHP `Name` nodes (`use`, `extends`,
-  `implements`, `::class`, typehints, `instanceof`) — it does **not** scan
-  string literals inside doctrine annotations. Audited against Drupal contrib
-  (api.tresbien.tech, 2026-05-27): three modules reference the class — all via
-  the annotation form — and zero contrib modules use it in PHP code. Owners of
-  those modules must hand-edit the annotation string; this rector is a safety
-  net for `use` / `extends` patterns and for entity types that switch to
-  PHP-attribute syntax.
-  [#3573870](https://www.drupal.org/i/3573870) /
-  [CR](https://www.drupal.org/node/3384745).
+## [1.0.0-alpha1] — 2026-06-01
 
 ### Changed
 
-- `ClassConstantToClassConstantRector` and `MethodToMethodWithCheckRector` now
-  extend `AbstractDrupalCoreRector` and auto-wrap their `Expr → Expr` rewrites
-  via `DeprecationHelper::backwardsCompatibleCall()`. Their configuration value
-  objects (`ClassConstantToClassConstantConfiguration`,
-  `MethodToMethodWithCheckConfiguration`) gain a required `introducedVersion`
-  constructor argument and now implement `VersionedConfigurationInterface`.
-  This closes three D11 → D10 runtime regressions (Comment* enums in 11.4,
-  `RequirementSeverity` in 11.2, `AliasManager` method rename in 11.1) without
-  moving anything to a `-breaking.php` set.
-- `MethodToMethodWithCheckRector` no longer attaches a "please confirm the
-  receiver type" TODO comment for the `maybe` type-inference case. The
-  comment-on-parent-statement mechanism relied on parent-node tracking that
-  Rector 2.x removed; the BC wrap makes both code paths runtime-safe by
-  selecting the right call based on `\Drupal::VERSION`, which addresses the
-  underlying concern.
-
-## [1.0.0-beta1] — 2026-05-25
-
-First beta of the 1.0 line. Adds full Drupal 11 deprecation coverage (versions 11.0
-through 11.4), a new container-managed settings service that gives users explicit
-control over backward-compatibility wrapping, a documented set of Claude Code skills
-for building further rectors, and drops support for Rector 1.
+This will be the first alpha of the 1.0 line. Adds full Drupal 11 deprecation coverage 
+(versions 11.0 through 11.4), a new container-managed settings service that gives users 
+explicit control over backward-compatibility wrapping, a documented set of Claude Code 
+skills for building further rectors, and drops support for Rector 1.
 
 Real-world validated end-to-end:
 
@@ -223,6 +70,13 @@ Real-world validated end-to-end:
 ### Added
 
 #### Infrastructure
+- **`rector-hook-convert.php`** — dedicated configuration that registers
+  only `HookConvertRector`, for running hook conversion as a separate second
+  pass. `HookConvertRector` writes the generated `src/Hook/*Hooks.php` to disk
+  outside Rector's file pipeline, so bundling it with the deprecation sets would
+  copy un-fixed hook bodies into the new class. Documented in the README
+  ("Converting hooks to OOP hook classes"): run deprecations first, then this
+  config.
 - **`DrupalRectorSettings`** (`src/Services/DrupalRectorSettings.php`) — container-
   managed settings object with `enableBackwardCompatibility()` /
   `disableBackwardCompatibility()` / `setMinimumCoreVersionSupported(string)` /
@@ -431,6 +285,22 @@ configs.
 
 ### Changed
 
+
+- `ClassConstantToClassConstantRector` and `MethodToMethodWithCheckRector` now
+  extend `AbstractDrupalCoreRector` and auto-wrap their `Expr → Expr` rewrites
+  via `DeprecationHelper::backwardsCompatibleCall()`. Their configuration value
+  objects (`ClassConstantToClassConstantConfiguration`,
+  `MethodToMethodWithCheckConfiguration`) gain a required `introducedVersion`
+  constructor argument and now implement `VersionedConfigurationInterface`.
+  This closes three D11 → D10 runtime regressions (Comment* enums in 11.4,
+  `RequirementSeverity` in 11.2, `AliasManager` method rename in 11.1) without
+  moving anything to a `-breaking.php` set.
+- `MethodToMethodWithCheckRector` no longer attaches a "please confirm the
+  receiver type" TODO comment for the `maybe` type-inference case. The
+  comment-on-parent-statement mechanism relied on parent-node tracking that
+  Rector 2.x removed; the BC wrap makes both code paths runtime-safe by
+  selecting the right call based on `\Drupal::VERSION`, which addresses the
+  underlying concern.
 - **Shipped `rector.php` disables BC wrapping by default.** New users get clean
   one-version rewrites out of the box. Contrib modules and projects that need to
   run on multiple Drupal versions should call `->enableBackwardCompatibility()`
@@ -573,7 +443,7 @@ Still included for legacy projects. The classes
 `Drupal9\Rector\Deprecation\FunctionToFirstArgMethodRector` are thin subclasses
 re-validating their D8/D9 configuration value objects; behaviour is unchanged.
 
-[1.0.0-beta1]: https://github.com/palantirnet/drupal-rector/releases/tag/1.0.0-beta1
+[1.0.0-alpha1]: https://github.com/palantirnet/drupal-rector/releases/tag/1.0.0-alpha1
 ## [0.21.2] — 2026-05-08
 
 ### What's Changed
