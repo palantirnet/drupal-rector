@@ -12,9 +12,11 @@ release-by-release.
 
 ## [Unreleased]
 
+## [1.0.0-alpha1] — 2026-06-01
+
 ### Changed
 
-This will be the first beta of the 1.0 line. Adds full Drupal 11 deprecation coverage 
+This will be the first alpha of the 1.0 line. Adds full Drupal 11 deprecation coverage 
 (versions 11.0 through 11.4), a new container-managed settings service that gives users 
 explicit control over backward-compatibility wrapping, a documented set of Claude Code 
 skills for building further rectors, and drops support for Rector 1.
@@ -441,7 +443,7 @@ Still included for legacy projects. The classes
 `Drupal9\Rector\Deprecation\FunctionToFirstArgMethodRector` are thin subclasses
 re-validating their D8/D9 configuration value objects; behaviour is unchanged.
 
-[1.0.0-beta1]: https://github.com/palantirnet/drupal-rector/releases/tag/1.0.0-beta1
+[1.0.0-alpha1]: https://github.com/palantirnet/drupal-rector/releases/tag/1.0.0-alpha1
 ## [0.21.2] — 2026-05-08
 
 ### What's Changed
