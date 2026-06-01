@@ -12,30 +12,14 @@ release-by-release.
 
 ## [Unreleased]
 
+## [1.0.0-alpha1] — 2026-06-01
+
 ### Changed
 
-- `ClassConstantToClassConstantRector` and `MethodToMethodWithCheckRector` now
-  extend `AbstractDrupalCoreRector` and auto-wrap their `Expr → Expr` rewrites
-  via `DeprecationHelper::backwardsCompatibleCall()`. Their configuration value
-  objects (`ClassConstantToClassConstantConfiguration`,
-  `MethodToMethodWithCheckConfiguration`) gain a required `introducedVersion`
-  constructor argument and now implement `VersionedConfigurationInterface`.
-  This closes three D11 → D10 runtime regressions (Comment* enums in 11.4,
-  `RequirementSeverity` in 11.2, `AliasManager` method rename in 11.1) without
-  moving anything to a `-breaking.php` set.
-- `MethodToMethodWithCheckRector` no longer attaches a "please confirm the
-  receiver type" TODO comment for the `maybe` type-inference case. The
-  comment-on-parent-statement mechanism relied on parent-node tracking that
-  Rector 2.x removed; the BC wrap makes both code paths runtime-safe by
-  selecting the right call based on `\Drupal::VERSION`, which addresses the
-  underlying concern.
-
-## [1.0.0-beta1] — 2026-05-25
-
-First beta of the 1.0 line. Adds full Drupal 11 deprecation coverage (versions 11.0
-through 11.4), a new container-managed settings service that gives users explicit
-control over backward-compatibility wrapping, a documented set of Claude Code skills
-for building further rectors, and drops support for Rector 1.
+This will be the first alpha of the 1.0 line. Adds full Drupal 11 deprecation coverage 
+(versions 11.0 through 11.4), a new container-managed settings service that gives users 
+explicit control over backward-compatibility wrapping, a documented set of Claude Code 
+skills for building further rectors, and drops support for Rector 1.
 
 Real-world validated end-to-end:
 
@@ -86,6 +70,13 @@ Real-world validated end-to-end:
 ### Added
 
 #### Infrastructure
+- **`rector-hook-convert.php`** — dedicated configuration that registers
+  only `HookConvertRector`, for running hook conversion as a separate second
+  pass. `HookConvertRector` writes the generated `src/Hook/*Hooks.php` to disk
+  outside Rector's file pipeline, so bundling it with the deprecation sets would
+  copy un-fixed hook bodies into the new class. Documented in the README
+  ("Converting hooks to OOP hook classes"): run deprecations first, then this
+  config.
 - **`DrupalRectorSettings`** (`src/Services/DrupalRectorSettings.php`) — container-
   managed settings object with `enableBackwardCompatibility()` /
   `disableBackwardCompatibility()` / `setMinimumCoreVersionSupported(string)` /
@@ -294,6 +285,22 @@ configs.
 
 ### Changed
 
+
+- `ClassConstantToClassConstantRector` and `MethodToMethodWithCheckRector` now
+  extend `AbstractDrupalCoreRector` and auto-wrap their `Expr → Expr` rewrites
+  via `DeprecationHelper::backwardsCompatibleCall()`. Their configuration value
+  objects (`ClassConstantToClassConstantConfiguration`,
+  `MethodToMethodWithCheckConfiguration`) gain a required `introducedVersion`
+  constructor argument and now implement `VersionedConfigurationInterface`.
+  This closes three D11 → D10 runtime regressions (Comment* enums in 11.4,
+  `RequirementSeverity` in 11.2, `AliasManager` method rename in 11.1) without
+  moving anything to a `-breaking.php` set.
+- `MethodToMethodWithCheckRector` no longer attaches a "please confirm the
+  receiver type" TODO comment for the `maybe` type-inference case. The
+  comment-on-parent-statement mechanism relied on parent-node tracking that
+  Rector 2.x removed; the BC wrap makes both code paths runtime-safe by
+  selecting the right call based on `\Drupal::VERSION`, which addresses the
+  underlying concern.
 - **Shipped `rector.php` disables BC wrapping by default.** New users get clean
   one-version rewrites out of the box. Contrib modules and projects that need to
   run on multiple Drupal versions should call `->enableBackwardCompatibility()`
@@ -436,7 +443,7 @@ Still included for legacy projects. The classes
 `Drupal9\Rector\Deprecation\FunctionToFirstArgMethodRector` are thin subclasses
 re-validating their D8/D9 configuration value objects; behaviour is unchanged.
 
-[1.0.0-beta1]: https://github.com/palantirnet/drupal-rector/releases/tag/1.0.0-beta1
+[1.0.0-alpha1]: https://github.com/palantirnet/drupal-rector/releases/tag/1.0.0-alpha1
 ## [0.21.2] — 2026-05-08
 
 ### What's Changed

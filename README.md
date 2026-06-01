@@ -27,7 +27,7 @@ https://github.com/palantirnet/drupal-rector/releases
 
 ## Scope and limitations
 
-Drupal 10 and 11 are the primary targets (Drupal 8/9 rules are included for legacy projects). The development of this tool is prioritized by the perceived impact of the deprecations and updates. There are many deprecations that often involve several components and for each of these there are several ways to address the deprecation.
+Drupal 10 and 11 are the primary targets — deprecation coverage spans Drupal 10.0 through 11.4 (Drupal 8/9 rules are included for legacy projects). The development of this tool is prioritized by the perceived impact of the deprecations and updates. There are many deprecations that often involve several components and for each of these there are several ways to address the deprecation.
 
 We've tried to determine impact based on:
 - The use of the deprecated functionality in the contributed modules on Drupal.org
@@ -62,6 +62,12 @@ For contribution suggestions, please see the later section of this document.
 ```bash
 $ composer require --dev palantirnet/drupal-rector
 ```
+
+> **Trying the 1.0 pre-release?** The 1.0.x line is currently published as an alpha. Until a stable `1.0.0` is tagged, the command above resolves to the latest stable release — request the pre-release explicitly instead:
+>
+> ```bash
+> $ composer require --dev "palantirnet/drupal-rector:^1.0@alpha"
+> ```
 
 ### Create a configuration file in your project
 
@@ -158,6 +164,35 @@ $ vendor/bin/rector process web/modules/contrib/[YOUR_MODULE]
 ```
 
 You can find more information about Rector [here](https://github.com/rectorphp/rector).
+
+## Converting hooks to OOP hook classes (run as a separate pass)
+
+Drupal Rector ships `HookConvertRector`, which converts procedural hook
+implementations (`mymodule_form_alter()`, …) into a `#[Hook]`-attributed class
+under `src/Hook/`. **This rule must be run on its own, as a second pass, after
+your normal deprecation run — never in the same configuration as the deprecation
+sets.**
+
+To convert hooks, run your deprecation pass first, then point Rector at the
+dedicated config that registers only `HookConvertRector`:
+
+```sh
+# Pass 1 — fix deprecations in place (your normal config)
+$ vendor/bin/rector process web/modules/contrib/[YOUR_MODULE]
+
+# Pass 2 — convert hooks to OOP hook classes
+$ vendor/bin/rector process web/modules/contrib/[YOUR_MODULE] \
+    --config=vendor/palantirnet/drupal-rector/rector-hook-convert.php
+```
+
+**Why two passes?** `HookConvertRector` moves each hook body into a brand-new
+`src/Hook/*Hooks.php` file that it writes directly to disk. Rector (2.x) cannot
+feed a newly-created file back through the rule pipeline within the same run, so
+a deprecated API call that lives inside a hook body would be copied into the new
+class **unchanged** if hook conversion ran together with the deprecation sets.
+Running deprecations first means the bodies are already fixed before they are
+moved. For this reason the example `rector.php` above intentionally does **not**
+register `HookConvertRector`.
 
 ## Development and contribution suggestions
 
