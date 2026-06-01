@@ -12,6 +12,403 @@ release-by-release.
 
 ## [Unreleased]
 
+### Added
+
+- **`RemoveDrupalToStringTraitRector`** — removes
+  `use Drupal\Component\Utility\ToStringTrait;` from a class body and inserts
+  an inline `public function __toString(): string { return (string)
+  $this->render(); }` in its place. The trait was a PHP 7.x workaround for
+  fatal errors thrown from `__toString()`; on PHP 8+ exceptions inside
+  `__toString()` propagate normally, so the trait is deprecated in
+  drupal:11.4.0 and removed in drupal:13.0.0. The rector preserves an
+  existing `__toString()` if the class already defines one (only the
+  composition is removed) and keeps any sibling traits in a comma-separated
+  `use` list. The file-level `use Drupal\Component\Utility\ToStringTrait;`
+  import is intentionally left in place — Rector's generic unused-import
+  cleanup is a separate concern. The replacement body is pure PHP, so the
+  transformed code runs on every Drupal version — no BC wrapping needed.
+  [#3548957](https://www.drupal.org/i/3548957) /
+  [CR](https://www.drupal.org/node/3548961).
+- **`RemoveInstallSchemaSystemSequencesRector`** — removes deprecated
+  `KernelTestBase::installSchema('system', 'sequences')` calls in test
+  classes. The `sequences` table was deprecated in drupal:10.2.0 and
+  fully removed in drupal:12.0.0 via [#3335756](https://www.drupal.org/i/3335756);
+  the call now throws a `LogicException` on Drupal 12. The rule removes
+  the entire statement when the second argument is the string
+  `'sequences'` or an array containing only `'sequences'`; when the
+  array also lists other tables, only the `'sequences'` entry is
+  stripped. Receiver is type-guarded to `Drupal\KernelTests\KernelTestBase`,
+  so unrelated `installSchema()` methods on other classes are left
+  untouched. See change record
+  [#3349345](https://www.drupal.org/node/3349345).
+- **`GroupLegacyToIgnoreDeprecationsRector`** — replaces the
+  `@group legacy` PHPDoc annotation with PHPUnit 10's native
+  `#[\PHPUnit\Framework\Attributes\IgnoreDeprecations]` attribute on
+  both method- and class-level test declarations. Drupal 11 dropped the
+  `symfony/phpunit-bridge` dependency and adopted PHPUnit 10, whose
+  attribute supersedes the bridge's docblock annotation. A Drupal shim
+  preserves the annotation form for BC, so the rewrite is purely a
+  forward-compatibility cleanup rather than a hard requirement, but
+  test classes that already declare the attribute are skipped so the
+  rule is idempotent. The rector strips just the `@group legacy` line
+  from the docblock — surrounding annotations (`@covers`, `@dataProvider`,
+  description text) are preserved — and inserts the attribute
+  immediately above the method or class declaration. PHPStan cannot
+  surface this deprecation because `@group legacy` is a docblock
+  convention, not a code-level `@deprecated` symbol; this rule must be
+  applied proactively as part of a PHPUnit 10 migration.
+  [#3417066](https://www.drupal.org/i/3417066) /
+  [related: #3365413](https://www.drupal.org/i/3365413).
+- **`RemoveAliasManagerCacheMethodCallsRector`** — deletes calls to
+  `AliasManager::setCacheKey()` and `AliasManager::writeCache()`. Both
+  methods were deprecated in drupal:11.3.0 and are removed in
+  drupal:13.0.0 with no replacement — they became no-ops when the path
+  alias preload cache was replaced by a Fiber-based bulk-lookup strategy.
+  The receiver must be typed as `\Drupal\path_alias\AliasManager` or
+  `AliasManagerInterface`; this guard prevents accidentally removing
+  unrelated methods that share the name (notably
+  `ModuleHandler::writeCache()`). Removes the entire expression
+  statement, leaving surrounding code intact. No BC wrapping is needed
+  since dropping a no-op call is safe on every Drupal version.
+  [#3496369](https://www.drupal.org/i/3496369) /
+  [CR](https://www.drupal.org/node/3532412).
+- **`EntityFormModeEmptyDescriptionToNullRector`** — rewrites
+  `EntityFormMode::create([..., 'description' => '', ...])` to use `NULL`
+  instead of the empty string. Setting the description property of an
+  `EntityFormMode` to `''` was deprecated in drupal:11.2.0 and must be `NULL`
+  in drupal:12.0.0. Matches both the short class name (`use`-imported) and
+  the fully-qualified `\Drupal\Core\Entity\Entity\EntityFormMode::create()`
+  form, and leaves unrelated classes (e.g. `EntityViewMode`), non-empty
+  descriptions, and already-migrated NULL values untouched. The replacement
+  is plain PHP, so no BC wrapping is needed.
+  [#3448457](https://www.drupal.org/i/3448457) /
+  [CR](https://www.drupal.org/node/3452144).
+- **`ViewsBlockItemsPerPageNoneToNullRector`** — rewrites
+  `ViewsBlockBase::setConfigurationValue('items_per_page', 'none')` to
+  `setConfigurationValue('items_per_page', NULL)`. The string `'none'`
+  was deprecated in drupal:11.2.0 and is removed in drupal:12.0.0; `NULL`
+  is the canonical value for inheriting the items-per-page setting from
+  the underlying view. The receiver is type-guarded to `ViewsBlockBase`
+  (or any subclass), so unrelated `setConfigurationValue()` calls on
+  other plugin types are left untouched. The replacement is plain PHP,
+  so no BC wrapping is needed.
+  [#3520946](https://www.drupal.org/i/3520946) /
+  [CR](https://www.drupal.org/node/3522240).
+- **`TaxonomyTermPageVariableToViewModeRector`** — replaces reads of
+  `$variables['page']` with `$variables['view_mode'] === 'full'` inside
+  taxonomy term preprocess hooks (procedural
+  `*_preprocess_taxonomy_term()` functions and class-based
+  `preprocessTaxonomyTerm()` methods). The `$variables['page']` template
+  variable for taxonomy terms was deprecated in drupal:11.3.0 and is
+  removed in drupal:13.0.0. Assignment targets (`$variables['page'] = …`)
+  are intentionally left untouched so legacy initialisation continues to
+  work, and unrelated preprocess hooks are not scanned. The replacement
+  is a pure-PHP `===` comparison, so the transformed code runs on every
+  Drupal version — no BC wrapping needed.
+  [#3535439](https://www.drupal.org/i/3535439) /
+  [CR](https://www.drupal.org/node/3542527).
+- **`ReplaceNonBoolAccessRector`** — rewrites integer-literal `#access`
+  values inside render arrays to proper booleans: `1` (or any non-zero
+  integer) becomes `true`, and `0` becomes `false`. Passing non-boolean,
+  non-`AccessResultInterface` values to `#access` was deprecated in
+  drupal:11.4.0 and will be removed in drupal:13.0.0. The rule matches
+  on `ArrayItem` nodes whose key is the string literal `'#access'` and
+  whose value is an integer literal — it deliberately ignores booleans,
+  variables, function/method calls, and any other expression, because
+  the correct boolean replacement for those cannot be determined
+  statically. The replacement is pure PHP (`true` / `false`), so no BC
+  wrapping is needed; the transformed code runs on every Drupal version.
+  [#3526250](https://www.drupal.org/i/3526250).
+- **`ReplaceDialogClassOptionRector`** — rewrites the removed
+  `$dialog_options['dialogClass']` key to
+  `$dialog_options['classes']['ui-dialog']` in `new OpenDialogCommand(...)` and
+  `new OpenOffCanvasDialogCommand(...)` calls. `dialogClass` was deprecated in
+  drupal:11.3.0 and removed in drupal:12.0.0. Receiver narrowing is by FQCN
+  match on the resolved `New_->class` (`Drupal\Core\Ajax\OpenDialogCommand` or
+  `Drupal\Core\Ajax\OpenOffCanvasDialogCommand`), so unrelated constructors
+  with similarly-shaped option arrays are left alone. Handles three array
+  shapes: (a) no existing `classes` key → adds `'classes' => ['ui-dialog' => $value]`;
+  (b) `classes` exists without `ui-dialog` → adds `'ui-dialog' => $value` inside
+  it; (c) `classes['ui-dialog']` already present and both old/new values are
+  string literals → concatenates with a space. Non-literal values (variables,
+  function calls, dynamic arrays) at any position cause the rule to skip
+  rather than guess. The replacement form `classes['ui-dialog']` has existed
+  in core since 10.3.x, so the transformed output runs on every
+  drupal-rector–supported Drupal minor (D10.3+) — no BC wrapping needed.
+  [#3571054](https://www.drupal.org/i/3571054) /
+  [CR](https://www.drupal.org/node/3440844).
+- **`RemoveToolkitArgFromImageToolkitOperationConstructorRector`** —
+  removes the deprecated `ImageToolkitInterface $toolkit` 4th argument
+  from `ImageToolkitOperationBase` subclass constructors and strips it
+  from the matching `parent::__construct()` call. The parameter was
+  deprecated in drupal:11.4.0 and will be removed in drupal:13.0.0; the
+  plugin manager now injects the toolkit via `setToolkit()` after
+  instantiation, enabling constructor autowiring. The rector only fires
+  when the subclass directly extends `ImageToolkitOperationBase`, the
+  constructor has at least five parameters, the 4th is typed exactly as
+  `\Drupal\Core\ImageToolkit\ImageToolkitInterface`, and `$toolkit`
+  appears exactly once in the constructor body (as the 4th argument of
+  `parent::__construct()`). The usage-count walk skips nested closures
+  and arrow-functions so a `$toolkit`-shadowing inner scope cannot
+  inflate the count. No BC wrapping is needed: the parent signature
+  accepts the union `LoggerInterface|ImageToolkitInterface`, so the
+  transformed code runs on every drupal:11.4.x+ version.
+  [#3559481](https://www.drupal.org/i/3559481) /
+  [CR](https://www.drupal.org/node/3562304).
+- **`RemoveRendererAddCacheableDependencyNonObjectRector`** — deletes calls
+  to `RendererInterface::addCacheableDependency($elements, $dependency)`
+  whose second argument is statically provable to be a non-object
+  (`bool`, `int`, `float`, `string`, `null`, or `array`). Passing such
+  values was deprecated in drupal:11.3.0 and will throw in
+  drupal:13.0.0; at runtime it silently sets `max-age = 0` on the
+  render array, making the page uncacheable for no useful gain. The
+  rector matches at statement level so the entire expression is
+  removed, never partially rewritten. The receiver is type-guarded to
+  `\Drupal\Core\Render\RendererInterface` (catching the concrete
+  `Renderer` and any other implementer), and the argument count must
+  be exactly two — this distinguishes the call from the single-argument
+  `addCacheableDependency()` defined on `BubbleableMetadata` and
+  `RefinableCacheableDependencyInterface`. The PHPStan type of the
+  dependency must satisfy `isObject()->no()`, so any call where the
+  argument might be an object at runtime (variables typed as configs,
+  entities, or `mixed`) is left untouched — the rector targets only
+  the unambiguous primitive-passing mistake the deprecation was added
+  to flag. No BC wrapping is needed because the removed call is a
+  silent uncacheability bug on every Drupal version.
+  [#3525388](https://www.drupal.org/i/3525388) /
+  [CR](https://www.drupal.org/node/3525389).
+- **`DrupalGetHeadersAssocArrayRector`** — converts the two deprecated
+  `UiHelperTrait::drupalGet()` `$headers` argument shapes to the documented
+  associative format: integer-keyed colon-separated strings
+  (`['X-Requested-With: XMLHttpRequest']`) are split to
+  `['X-Requested-With' => 'XMLHttpRequest']`, and `null` values
+  (`['Accept-Language' => NULL]`) become empty strings
+  (`['Accept-Language' => '']`). The integer-keyed path requires the
+  conventional `Name: value` (colon-space) form and a name part matching
+  `[A-Za-z][A-Za-z0-9-]*`, so incidental colon-containing strings (URLs,
+  paths) are not silently split. Guarded against `Drupal\Tests\BrowserTestBase`
+  so `KernelTestBase` (which uses `HttpKernelUiHelperTrait` and does not
+  emit this deprecation) is left alone. Deprecated in drupal:11.1.0,
+  removed in drupal:12.0.0; replacement is plain PHP so no BC wrapping
+  is needed. Live-tested against `pager_serializer`.
+  [#3440169](https://www.drupal.org/i/3440169) /
+  [CR (indexed headers)](https://www.drupal.org/node/3456178) /
+  [CR (null values)](https://www.drupal.org/node/3456233).
+- **`ReplaceHideShowWithPrintedRector`** — replaces statement-level calls to the
+  deprecated global `hide()` and `show()` functions (deprecated in drupal:11.4.0,
+  removed in drupal:13.0.0) with direct `$element['#printed'] = TRUE/FALSE`
+  assignment. Expression-context uses (where the return value is captured) are
+  intentionally skipped because the original returns the element while the
+  rewrite would not. Live-tested against `fpa`, `saml_sp`, `vertical_tabs_config`,
+  and `field_group_background_image`.
+  [#2258355](https://www.drupal.org/i/2258355) /
+  [CR](https://www.drupal.org/node/3261271).
+- **`GetDrupalRootToRootPropertyRector`** — rewrites calls to
+  `DrupalKernelInterface::getDrupalRoot()` to direct access of the
+  `$this->root` property on Drupal base test classes (BrowserTestBase,
+  KernelTestBase, UnitTestCase). `getDrupalRoot()` was deprecated in
+  drupal:11.4.0 and removed in drupal:13.0.0. The receiver is
+  type-guarded to the listed base classes (and their subclasses), so
+  unrelated `getDrupalRoot()` methods on other classes are left alone.
+  No BC wrapping is needed — the `$root` property has existed on the
+  trait since Drupal 10.x.
+  [#3589047](https://www.drupal.org/i/3589047) /
+  [CR](https://www.drupal.org/node/3574112).
+- **`ReplaceLocaleTranslationPathConfigRector`** — rewrites chained
+  `\Drupal::config('locale.settings')->get('translation.path')` (and
+  equivalents via `configFactory()->get('locale.settings')->get(...)`,
+  `$this->config('locale.settings')->get(...)`, and similar) to
+  `\Drupal\Core\Site\Settings::get('locale_translation_path', 'public://translations')`.
+  The `locale.settings:translation.path` config key was deprecated in
+  drupal:11.4.0 and is removed in drupal:13.0.0; the interface
+  translations directory path must now be set as
+  `$settings['locale_translation_path']` in `settings.php`. On older
+  Drupal the value still lives in config, so the replacement is
+  BC-wrapped with `DeprecationHelper::backwardsCompatibleCall()`.
+  Matching is purely structural — two literal keys
+  (`'locale.settings'` and `'translation.path'`) must both appear in the
+  expected positions, so unrelated config reads and standalone
+  `$config->get('translation.path')` calls are left untouched.
+  **Caveat:** the BC wrapper gates on `\Drupal::VERSION`, not on where
+  the value is stored. Before running this rule, confirm that any
+  customised translation path has been moved to
+  `$settings['locale_translation_path']` in `settings.php`; otherwise
+  the new branch silently returns the default
+  `'public://translations'` even when the config still holds the
+  customised value. PHPStan / upgrade_status cannot detect this
+  deprecation — the deprecated symbol is the config key, not a PHP API
+  with `@deprecated` or `trigger_error()`, so this rule must be applied
+  proactively as part of an 11.4 → 13 migration plan.
+  [#3571593](https://www.drupal.org/i/3571593) /
+  [CR](https://www.drupal.org/node/3571594).
+- **`ViewsConfigUpdaterClassResolverToServiceRector`** — rewrites
+  `\Drupal::classResolver(\Drupal\views\ViewsConfigUpdater::class)` to
+  `\Drupal::service(\Drupal\views\ViewsConfigUpdater::class)`. In
+  drupal:11.3.0 `ViewsConfigUpdater` was registered as a service;
+  `classResolver()` returns a fresh instance on each call, so state set via
+  `setDeprecationsEnabled(FALSE)` was lost across hook invocations. The new
+  call only resolves on Drupal ≥ 11.3.0 (the service isn't registered on
+  older versions), so the replacement is BC-wrapped with
+  `DeprecationHelper::backwardsCompatibleCall()`. Three layered guards
+  ensure only the targeted call shape is touched: receiver must be
+  `\Drupal`, method must be `classResolver`, and the single argument must be
+  `\Drupal\views\ViewsConfigUpdater::class`.
+  [#3529274](https://www.drupal.org/i/3529274) /
+  [CR](https://www.drupal.org/node/3530638).
+- **`ReplaceExpectDeprecationRector`** — migrates removed test framework methods
+  to their PHPUnit 11+ replacements. Renames are BC-wrapped with
+  `DeprecationHelper::backwardsCompatibleCall()` so tests keep passing on both
+  pre-11.4 (old methods) and 11.4+ (new methods). Covers:
+  `$this->expectDeprecation($msg)` and `$this->expectDeprecationMessage($msg)` →
+  `$this->expectUserDeprecationMessage($msg)`;
+  `$this->expectDeprecationMessageMatches($p)` →
+  `$this->expectUserDeprecationMessageMatches($p)`; bare
+  `$this->expectDeprecation()` (no-arg PHPUnit form) → removed.
+  `ExpectDeprecationTrait` is deprecated in drupal:11.4.0 and removed in
+  drupal:12.0.0.
+  [#3550268](https://www.drupal.org/i/3550268) /
+  [CR](https://www.drupal.org/node/3545276).
+- **`ReplaceCommentPreviewConstantsRector`** — rewrites integer arguments
+  to `CommentTestBase::setCommentPreview()` to the corresponding
+  `Drupal\comment\CommentPreviewMode` enum case. Passing an int was
+  deprecated in drupal:11.3.0 and is removed in drupal:13.0.0. BC-wrapped
+  via `DeprecationHelper::backwardsCompatibleCall()` so the rewrite still
+  runs on pre-11.3 Drupal where the enum doesn't yet exist.
+  [#3538660](https://www.drupal.org/i/3538660) /
+  [CR](https://www.drupal.org/node/3538678).
+- **`RemovePhpUnitCompatibilityTraitRector`** — removes
+  `use Drupal\Tests\PhpUnitCompatibilityTrait;` from test class
+  declarations. The trait was a forward-compatibility shim for PHPUnit
+  API differences across versions; it is **deleted from Drupal core in
+  Drupal 12** via [#3582118](https://www.drupal.org/i/3582118), at which
+  point any test class still composing the trait fatal-errors at
+  autoload time because the trait class no longer exists.
+
+  **Gated to Drupal 12 only — and deliberately off by default.** The
+  trait still exists on Drupal 10 (and may still hold shim methods that
+  tests depend on) and is an empty no-op on Drupal 11. Because the
+  trait composition is a structural `Class_` change, not an Expr → Expr
+  rewrite, it cannot be BC-wrapped with `DeprecationHelper`. Running
+  the rule prematurely on a D10-only codebase risks silently stripping
+  a composition that the tests still rely on. The rector therefore only
+  fires when the consumer explicitly sets the target Drupal version to
+  `12.0.0` or higher via
+  `DrupalRectorSettings::setDrupalVersion('12.0.0')`. The orphan
+  top-of-file `use Drupal\Tests\PhpUnitCompatibilityTrait;` import is
+  left in place — PHP never resolves an unused alias, so it remains
+  harmless on D12; cleanup is optional and out of scope.
+- **New opt-in "breaking" sets**, one per Drupal 11 minor:
+  `Drupal11SetList::DRUPAL_111_BREAKING`, `DRUPAL_112_BREAKING`,
+  `DRUPAL_113_BREAKING`, `DRUPAL_114_BREAKING`. Each is loaded from
+  `config/drupal-11/drupal-11.X-breaking.php`. Rules in these sets rewrite
+  code into a form that does NOT run on every drupal-rector-supported minor —
+  typically because the replacement symbol was introduced *together with* the
+  deprecation and does not exist on older minors, and the rewrite (class
+  rename, trait composition, etc.) is structural and cannot be BC-wrapped.
+  None of the breaking sets is included in `DRUPAL_11X` or `DRUPAL_11`;
+  consumers must load each one explicitly after committing to drop the older
+  minor(s) named in that file's docblock.
+- **Reclassified existing `RenameClassRector` entries as breaking**, moved
+  out of the default `drupal-11.X-deprecations.php` files and into the new
+  per-minor breaking sets. Targets verified missing on Drupal 10.6.x:
+  - `DRUPAL_111_BREAKING`: `path_alias\AliasWhitelist[Interface]` →
+    `path_alias\AliasPrefixList[Interface]`
+    ([#3151086](https://www.drupal.org/i/3151086) /
+    [CR](https://www.drupal.org/node/3467559)).
+  - `DRUPAL_112_BREAKING`: `Core\Entity\Query\Sql\pgsql\{QueryFactory,Condition}`
+    → `pgsql\EntityQuery\*`
+    ([#3488572](https://www.drupal.org/i/3488572) /
+    [CR](https://www.drupal.org/node/3488580));
+    `migrate_drupal\Plugin\migrate\source\{ContentEntity,ContentEntityDeriver}`
+    → `migrate\Plugin\migrate\source\*`
+    ([#3498915](https://www.drupal.org/i/3498915) /
+    [CR](https://www.drupal.org/node/3498916)).
+  - `DRUPAL_113_BREAKING`: `workspaces\WorkspaceAssociation[Interface]` →
+    `workspaces\WorkspaceTracker[Interface]`
+    ([#3551446](https://www.drupal.org/i/3551446) /
+    [CR](https://www.drupal.org/node/3551450)).
+  - `DRUPAL_114_BREAKING`: `menu_link_content\Plugin\migrate\process\{LinkOptions,LinkUri}`
+    → `migrate\Plugin\migrate\process\*`
+    ([#3560075](https://www.drupal.org/i/3560075) /
+    [CR](https://www.drupal.org/node/3572239)).
+- **Dropped**: the planned `Drupal\jsonapi\EventSubscriber\ResourceResponseValidator`
+  → `Drupal\jsonapi_response_validator\…` rename (#3472008) is **not shipped**
+  in any set. The replacement lives in `core/modules/jsonapi/tests/modules/`,
+  i.e. a core test module that production code cannot rely on being loaded;
+  rewriting the production FQCN to that test-module FQCN would fatal on D10
+  AND on any production D11 site that does not enable that test module.
+- Class-rename entries for the four `Drupal\block_content\Access\*` aliases
+  (`AccessGroupAnd`, `DependentAccessInterface`,
+  `RefinableDependentAccessInterface`, `RefinableDependentAccessTrait`) →
+  their canonical `Drupal\Core\Access\*` homes. Deprecated in drupal:11.3.0,
+  removed in drupal:12.0.0; registered via Rector's built-in
+  `RenameClassRector` in `drupal-11.3-deprecations.php`. The canonical
+  classes have existed in `Drupal\Core\Access\*` since pre-11.3, so the
+  rewrite is BC-safe across all supported Drupal 10 and 11 minors.
+  [#3571874](https://www.drupal.org/i/3571874) /
+  [CR](https://www.drupal.org/node/3527501).
+- Class-rename entry for `LibraryDiscovery`:
+  `Drupal\Core\Asset\LibraryDiscovery` → `Drupal\Core\Asset\LibraryDiscoveryInterface`.
+  The concrete class was deprecated in drupal:11.1.0 and removed in drupal:12.0.0;
+  the `library.discovery` service is now backed by `LibraryDiscoveryCollector`,
+  so consumer code should type-hint the interface. Registered via Rector's
+  built-in `RenameClassRector` in `drupal-11.1-deprecations.php`.
+  `LibraryDiscoveryInterface` has existed since Drupal 10.0.x, so the rewrite is
+  safe across all supported Drupal 10 and 11 minors.
+  [#3462871](https://www.drupal.org/i/3462871) (deprecation) /
+  [#3571057](https://www.drupal.org/i/3571057) (removal) /
+  [CR](https://www.drupal.org/node/3462970).
+- Class-rename entry for `EntityPermissionsRouteProviderWithCheck`:
+  `Drupal\user\Entity\EntityPermissionsRouteProviderWithCheck` →
+  `Drupal\user\Entity\EntityPermissionsRouteProvider`. The `WithCheck` variant was
+  deprecated in drupal:11.1.0 and removed in drupal:12.0.0; the base provider has
+  existed since Drupal 10.0.x, so the rewrite is safe across all supported Drupal
+  10 and 11 minors. Registered via Rector's built-in `RenameClassRector` in
+  `drupal-11.1-deprecations.php`. **Access-check semantics:** the `WithCheck`
+  variant layered a `_custom_access` requirement (`EntityPermissionsForm::access`,
+  also removed) on top of the base route to deny access when an entity type had
+  no entity-specific permissions; the base provider already enforces
+  `_permission: administer permissions`, so the security boundary is preserved
+  and only the "no permissions defined → deny" convenience check is dropped.
+  Subclass overrides that re-added the custom check are NOT rewritten —
+  `RenameClassRector` only updates the parent class reference, so owners of such
+  subclasses must port any remaining access logic into the route definition
+  (the new model adds permission requirements directly on the route).
+  **Limitation — doctrine annotation strings are not rewritten.** Real-world
+  contrib usage is almost exclusively the entity-annotation form
+  (`"permissions" = "Drupal\user\Entity\EntityPermissionsRouteProviderWithCheck"`
+  inside a `@ContentEntityType` / `@ConfigEntityType` docblock).
+  `RenameClassRector` only touches PHP `Name` nodes (`use`, `extends`,
+  `implements`, `::class`, typehints, `instanceof`) — it does **not** scan
+  string literals inside doctrine annotations. Audited against Drupal contrib
+  (api.tresbien.tech, 2026-05-27): three modules reference the class — all via
+  the annotation form — and zero contrib modules use it in PHP code. Owners of
+  those modules must hand-edit the annotation string; this rector is a safety
+  net for `use` / `extends` patterns and for entity types that switch to
+  PHP-attribute syntax.
+  [#3573870](https://www.drupal.org/i/3573870) /
+  [CR](https://www.drupal.org/node/3384745).
+
+### Changed
+
+- **Migration note for existing consumers of `Drupal11SetList::DRUPAL_111` /
+  `DRUPAL_112` / `DRUPAL_113`**: the class-rename entries listed above have
+  been moved out of the per-minor `DRUPAL_11X` aggregates into new opt-in
+  `*_BREAKING` sets. If you currently rely on rector rewriting any of these
+  symbols, add the matching `*_BREAKING` set to your rector config alongside
+  your existing `DRUPAL_11X` include — otherwise the rewrites silently stop:
+  - `DRUPAL_111`: `AliasWhitelist[Interface]` → `AliasPrefixList[Interface]`
+    now requires `DRUPAL_111_BREAKING`.
+  - `DRUPAL_112`: `Core\Entity\Query\Sql\pgsql\{QueryFactory,Condition}` →
+    `pgsql\EntityQuery\*` and the `migrate_drupal` → `migrate` source-plugin
+    moves now require `DRUPAL_112_BREAKING`.
+  - `DRUPAL_113`: `WorkspaceAssociation[Interface]` →
+    `WorkspaceTracker[Interface]` now requires `DRUPAL_113_BREAKING`.
+
+  The breaking sets are not transitively included by `DRUPAL_11X` or
+  `DRUPAL_11`; consumers must load each one explicitly after committing to
+  drop the older minor(s) named in that file's docblock.
+
 ## [1.0.0-alpha1] — 2026-06-01
 
 ### Changed
