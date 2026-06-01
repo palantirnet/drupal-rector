@@ -12,6 +12,23 @@ release-by-release.
 
 ## [Unreleased]
 
+### Added
+
+- Guide: [Running against a Drupal 10 project](docs/running-against-drupal-10.md) — covers the
+  direct install and a standalone-runner recipe for sites whose PHPStan 1 tooling conflicts with
+  Rector 2's PHPStan 2 requirement.
+
+### Fixed
+
+- Loading the Drupal 9 and Drupal 11 sets together no longer crashes at
+  container-build time. The Drupal 9 `FunctionToFirstArgMethodRector` (and the
+  Drupal 8 `DrupalServiceRenameRector`) subclass the generic rule, so Rector
+  delivered the generic rule's configuration to the subclass instance as well
+  (`afterResolving` callbacks match by `instanceof`); the subclass' strict type
+  guard then threw. The subclasses now ignore configuration that is not their own.
+  This unblocks running the full, bundled rule set — including the D10-era
+  deprecations that live in the Drupal 11 set — against Drupal 10 sites.
+
 ## [1.0.0-alpha1] — 2026-06-01
 
 ### Changed

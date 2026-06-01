@@ -10,12 +10,19 @@ class DrupalServiceRenameRector extends \DrupalRector\Rector\Deprecation\DrupalS
 {
     public function configure(array $configuration): void
     {
-        foreach ($configuration as $value) {
-            if (!$value instanceof DrupalServiceRenameConfiguration) {
-                throw new \InvalidArgumentException(sprintf('Each configuration item must be an instance of "%s"', DrupalServiceRenameConfiguration::class));
-            }
+        // This rule subclasses the generic DrupalServiceRenameRector, so Rector's
+        // container also fires the generic rule's configuration callback on this
+        // instance (afterResolving callbacks match by instanceof). Keep only our
+        // own configuration; the generic rule instance applies the rest itself.
+        $ownConfiguration = array_values(array_filter(
+            $configuration,
+            static fn ($value): bool => $value instanceof DrupalServiceRenameConfiguration
+        ));
+
+        if ($ownConfiguration === []) {
+            return;
         }
 
-        parent::configure($configuration);
+        parent::configure($ownConfiguration);
     }
 }
