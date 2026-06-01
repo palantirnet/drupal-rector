@@ -12,70 +12,11 @@ release-by-release.
 
 ## [Unreleased]
 
-### Added
-
-- **New opt-in "breaking" sets**, one per Drupal 11 minor:
-  `Drupal11SetList::DRUPAL_111_BREAKING`, `DRUPAL_112_BREAKING`,
-  `DRUPAL_113_BREAKING`, `DRUPAL_114_BREAKING`. Each is loaded from
-  `config/drupal-11/drupal-11.X-breaking.php`. Rules in these sets rewrite
-  code into a form that does NOT run on every drupal-rector-supported minor —
-  typically because the replacement symbol was introduced *together with* the
-  deprecation and does not exist on older minors, and the rewrite (class
-  rename, trait composition, etc.) is structural and cannot be BC-wrapped.
-  None of the breaking sets is included in `DRUPAL_11X` or `DRUPAL_11`;
-  consumers must load each one explicitly after committing to drop the older
-  minor(s) named in that file's docblock.
-- **Reclassified existing `RenameClassRector` entries as breaking**, moved
-  out of the default `drupal-11.X-deprecations.php` files and into the new
-  per-minor breaking sets. Targets verified missing on Drupal 10.6.x:
-  - `DRUPAL_111_BREAKING`: `path_alias\AliasWhitelist[Interface]` →
-    `path_alias\AliasPrefixList[Interface]`
-    ([#3151086](https://www.drupal.org/i/3151086) /
-    [CR](https://www.drupal.org/node/3467559)).
-  - `DRUPAL_112_BREAKING`: `Core\Entity\Query\Sql\pgsql\{QueryFactory,Condition}`
-    → `pgsql\EntityQuery\*`
-    ([#3488572](https://www.drupal.org/i/3488572) /
-    [CR](https://www.drupal.org/node/3488580));
-    `migrate_drupal\Plugin\migrate\source\{ContentEntity,ContentEntityDeriver}`
-    → `migrate\Plugin\migrate\source\*`
-    ([#3498915](https://www.drupal.org/i/3498915) /
-    [CR](https://www.drupal.org/node/3498916)).
-  - `DRUPAL_113_BREAKING`: `workspaces\WorkspaceAssociation[Interface]` →
-    `workspaces\WorkspaceTracker[Interface]`
-    ([#3551446](https://www.drupal.org/i/3551446) /
-    [CR](https://www.drupal.org/node/3551450)).
-  - `DRUPAL_114_BREAKING`: `menu_link_content\Plugin\migrate\process\{LinkOptions,LinkUri}`
-    → `migrate\Plugin\migrate\process\*`
-    ([#3560075](https://www.drupal.org/i/3560075) /
-    [CR](https://www.drupal.org/node/3572239)).
-- **Dropped**: the planned `Drupal\jsonapi\EventSubscriber\ResourceResponseValidator`
-  → `Drupal\jsonapi_response_validator\…` rename (#3472008) is **not shipped**
-  in any set. The replacement lives in `core/modules/jsonapi/tests/modules/`,
-  i.e. a core test module that production code cannot rely on being loaded;
-  rewriting the production FQCN to that test-module FQCN would fatal on D10
-  AND on any production D11 site that does not enable that test module.
+## [1.0.0-alpha1] — 2026-06-01
 
 ### Changed
 
-- **Migration note for existing consumers of `Drupal11SetList::DRUPAL_111` /
-  `DRUPAL_112` / `DRUPAL_113`**: the class-rename entries listed above have
-  been moved out of the per-minor `DRUPAL_11X` aggregates into new opt-in
-  `*_BREAKING` sets. If you currently rely on rector rewriting any of these
-  symbols, add the matching `*_BREAKING` set to your rector config alongside
-  your existing `DRUPAL_11X` include — otherwise the rewrites silently stop:
-  - `DRUPAL_111`: `AliasWhitelist[Interface]` → `AliasPrefixList[Interface]`
-    now requires `DRUPAL_111_BREAKING`.
-  - `DRUPAL_112`: `Core\Entity\Query\Sql\pgsql\{QueryFactory,Condition}` →
-    `pgsql\EntityQuery\*` and the `migrate_drupal` → `migrate` source-plugin
-    moves now require `DRUPAL_112_BREAKING`.
-  - `DRUPAL_113`: `WorkspaceAssociation[Interface]` →
-    `WorkspaceTracker[Interface]` now requires `DRUPAL_113_BREAKING`.
-
-  The breaking sets are not transitively included by `DRUPAL_11X` or
-  `DRUPAL_11`; consumers must load each one explicitly after committing to
-  drop the older minor(s) named in that file's docblock.
-
-This will be the first beta of the 1.0 line. Adds full Drupal 11 deprecation coverage 
+This will be the first alpha of the 1.0 line. Adds full Drupal 11 deprecation coverage 
 (versions 11.0 through 11.4), a new container-managed settings service that gives users 
 explicit control over backward-compatibility wrapping, a documented set of Claude Code 
 skills for building further rectors, and drops support for Rector 1.
@@ -129,6 +70,13 @@ Real-world validated end-to-end:
 ### Added
 
 #### Infrastructure
+- **`rector-hook-convert.php`** — dedicated configuration that registers
+  only `HookConvertRector`, for running hook conversion as a separate second
+  pass. `HookConvertRector` writes the generated `src/Hook/*Hooks.php` to disk
+  outside Rector's file pipeline, so bundling it with the deprecation sets would
+  copy un-fixed hook bodies into the new class. Documented in the README
+  ("Converting hooks to OOP hook classes"): run deprecations first, then this
+  config.
 - **`DrupalRectorSettings`** (`src/Services/DrupalRectorSettings.php`) — container-
   managed settings object with `enableBackwardCompatibility()` /
   `disableBackwardCompatibility()` / `setMinimumCoreVersionSupported(string)` /
@@ -495,7 +443,7 @@ Still included for legacy projects. The classes
 `Drupal9\Rector\Deprecation\FunctionToFirstArgMethodRector` are thin subclasses
 re-validating their D8/D9 configuration value objects; behaviour is unchanged.
 
-[1.0.0-beta1]: https://github.com/palantirnet/drupal-rector/releases/tag/1.0.0-beta1
+[1.0.0-alpha1]: https://github.com/palantirnet/drupal-rector/releases/tag/1.0.0-alpha1
 ## [0.21.2] — 2026-05-08
 
 ### What's Changed
