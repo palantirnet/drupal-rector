@@ -27,7 +27,7 @@ https://github.com/palantirnet/drupal-rector/releases
 
 ## Scope and limitations
 
-Drupal 10 and 11 are the primary targets (Drupal 8/9 rules are included for legacy projects). The development of this tool is prioritized by the perceived impact of the deprecations and updates. There are many deprecations that often involve several components and for each of these there are several ways to address the deprecation.
+Drupal 10 and 11 are the primary targets — deprecation coverage spans Drupal 10.0 through 11.4 (Drupal 8/9 rules are included for legacy projects). The development of this tool is prioritized by the perceived impact of the deprecations and updates. There are many deprecations that often involve several components and for each of these there are several ways to address the deprecation.
 
 We've tried to determine impact based on:
 - The use of the deprecated functionality in the contributed modules on Drupal.org
@@ -62,6 +62,12 @@ For contribution suggestions, please see the later section of this document.
 ```bash
 $ composer require --dev palantirnet/drupal-rector
 ```
+
+> **Trying the 1.0 pre-release?** The 1.0.x line is currently published as an alpha. Until a stable `1.0.0` is tagged, the command above resolves to the latest stable release — request the pre-release explicitly instead:
+>
+> ```bash
+> $ composer require --dev "palantirnet/drupal-rector:^1.0@alpha"
+> ```
 
 ### Create a configuration file in your project
 
