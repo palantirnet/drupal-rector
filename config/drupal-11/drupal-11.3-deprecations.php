@@ -8,8 +8,10 @@ use DrupalRector\Drupal11\Rector\Deprecation\FileSystemBasenameToNativeRector;
 use DrupalRector\Drupal11\Rector\Deprecation\LoadAllIncludesRector;
 use DrupalRector\Drupal11\Rector\Deprecation\NodeStorageDeprecatedMethodsRector;
 use DrupalRector\Drupal11\Rector\Deprecation\RemoveAliasManagerCacheMethodCallsRector;
+use DrupalRector\Drupal11\Rector\Deprecation\RemoveRendererAddCacheableDependencyNonObjectRector;
 use DrupalRector\Drupal11\Rector\Deprecation\RemoveRootFromConvertDbUrlRector;
 use DrupalRector\Drupal11\Rector\Deprecation\ReplaceCommentManagerGetCountNewCommentsRector;
+use DrupalRector\Drupal11\Rector\Deprecation\ReplaceDialogClassOptionRector;
 use DrupalRector\Drupal11\Rector\Deprecation\ReplaceNodeAccessViewAllNodesRector;
 use DrupalRector\Drupal11\Rector\Deprecation\ReplaceNodeAddBodyFieldRector;
 use DrupalRector\Drupal11\Rector\Deprecation\ReplaceNodeModuleProceduralFunctionsRector;
@@ -17,6 +19,7 @@ use DrupalRector\Drupal11\Rector\Deprecation\ReplaceNodeSetPreviewModeRector;
 use DrupalRector\Drupal11\Rector\Deprecation\ReplaceThemeGetSettingRector;
 use DrupalRector\Drupal11\Rector\Deprecation\ReplaceTwigExtensionRector;
 use DrupalRector\Drupal11\Rector\Deprecation\ReplaceUserSessionNamePropertyRector;
+use DrupalRector\Drupal11\Rector\Deprecation\TaxonomyTermPageVariableToViewModeRector;
 use DrupalRector\Rector\Deprecation\ConstantToClassConstantRector;
 use DrupalRector\Rector\Deprecation\FunctionCallRemovalRector;
 use DrupalRector\Rector\Deprecation\FunctionToFirstArgMethodRector;
@@ -214,4 +217,29 @@ return static function (RectorConfig $rectorConfig): void {
     // AliasManager::setCacheKey() and AliasManager::writeCache() deprecated in drupal:11.3.0,
     // removed in drupal:13.0.0 with no replacement (they are no-ops).
     $rectorConfig->rule(RemoveAliasManagerCacheMethodCallsRector::class);
+
+    // https://www.drupal.org/node/3525388
+    // https://www.drupal.org/node/3525389 (change record)
+    // RendererInterface::addCacheableDependency() deprecated in drupal:11.3.0,
+    // throws in drupal:13.0.0, when the dependency cannot implement
+    // CacheableDependencyInterface. Removes calls whose dependency argument is
+    // provably a primitive/array (bool, int, float, string, null, array).
+    $rectorConfig->rule(RemoveRendererAddCacheableDependencyNonObjectRector::class);
+
+    // https://www.drupal.org/node/3571054
+    // https://www.drupal.org/node/3440844 (change record)
+    // OpenDialogCommand / OpenOffCanvasDialogCommand $dialog_options['dialogClass']
+    // deprecated in drupal:11.3.0, removed in drupal:12.0.0. Replaced by
+    // $dialog_options['classes']['ui-dialog']. The replacement form has existed in
+    // core since 10.3.x, so the transformed output is safe on every drupal-rector–
+    // supported Drupal minor (D10.3+); no BC wrapper needed.
+    $rectorConfig->rule(ReplaceDialogClassOptionRector::class);
+
+    // https://www.drupal.org/node/3535439
+    // https://www.drupal.org/node/3542527 (change record)
+    // $variables['page'] in taxonomy term preprocess hooks deprecated in
+    // drupal:11.3.0, removed in drupal:13.0.0. Reads replaced with
+    // $variables['view_mode'] === 'full'; the comparison is pure PHP and works
+    // on every Drupal version, so no BC wrapper is needed.
+    $rectorConfig->rule(TaxonomyTermPageVariableToViewModeRector::class);
 };
