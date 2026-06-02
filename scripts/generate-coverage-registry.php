@@ -17,7 +17,7 @@ declare(strict_types=1);
  *       FunctionToServiceRector, RenameClassRector) where there is no
  *       custom rector class to attach a const to.
  *
- * Output: config/coverage-registry.php is a `return [ ... ]` file mapping
+ * Output: docs/coverage-registry.php is a `return [ ... ]` file mapping
  * each rector class name (short, e.g. "ReplaceSessionManagerDeleteRector")
  * to an array of normalized PHPStan deprecation message strings.
  *
@@ -103,7 +103,7 @@ foreach ($registry as $rector => $messages) {
 ksort($registry);
 
 // Emit the registry file.
-$outPath = $repoRoot.'/config/coverage-registry.php';
+$outPath = $repoRoot.'/docs/coverage-registry.php';
 $header = <<<'PHP'
 <?php
 
