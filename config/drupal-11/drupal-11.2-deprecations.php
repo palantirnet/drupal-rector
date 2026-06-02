@@ -34,7 +34,6 @@ use DrupalRector\Rector\ValueObject\FunctionToServiceConfiguration;
 use DrupalRector\Rector\ValueObject\FunctionToStaticConfiguration;
 use DrupalRector\Rector\ValueObject\MethodToMethodWithCheckConfiguration;
 use Rector\Config\RectorConfig;
-use Rector\Renaming\Rector\Name\RenameClassRector;
 
 return static function (RectorConfig $rectorConfig): void {
     // https://www.drupal.org/node/3490200
@@ -207,20 +206,23 @@ return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->rule(RenameStopProceduralHookScanRector::class);
 
     // https://www.drupal.org/node/3488572
-    // Drupal\Core\Entity\Query\Sql\pgsql\* deprecated in drupal:11.2.0, removed in drupal:12.0.0.
-    // Moved to Drupal\pgsql\EntityQuery\*.
-    // https://www.drupal.org/node/3472008
-    // Drupal\jsonapi\EventSubscriber\ResourceResponseValidator moved to jsonapi_response_validator submodule.
+    // Drupal\Core\Entity\Query\Sql\pgsql\{QueryFactory,Condition} → Drupal\pgsql\EntityQuery\* class renames
+    // are in the opt-in `drupal-11.2-breaking.php` set (DRUPAL_112_BREAKING):
+    // the replacement classes live in the pgsql module and do not exist on
+    // any Drupal 10.x branch.
+    //
     // https://www.drupal.org/node/3498916
-    // Drupal\migrate_drupal\Plugin\migrate\source\ContentEntity/ContentEntityDeriver deprecated in drupal:11.2.0,
-    // removed in drupal:12.0.0. Moved to Drupal\migrate namespace.
-    $rectorConfig->ruleWithConfiguration(RenameClassRector::class, [
-        'Drupal\Core\Entity\Query\Sql\pgsql\QueryFactory' => 'Drupal\pgsql\EntityQuery\QueryFactory',
-        'Drupal\Core\Entity\Query\Sql\pgsql\Condition' => 'Drupal\pgsql\EntityQuery\Condition',
-        'Drupal\jsonapi\EventSubscriber\ResourceResponseValidator' => 'Drupal\jsonapi_response_validator\EventSubscriber\ResourceResponseValidator',
-        'Drupal\migrate_drupal\Plugin\migrate\source\ContentEntity' => 'Drupal\migrate\Plugin\migrate\source\ContentEntity',
-        'Drupal\migrate_drupal\Plugin\migrate\source\ContentEntityDeriver' => 'Drupal\migrate\Plugin\migrate\source\ContentEntityDeriver',
-    ]);
+    // Drupal\migrate_drupal\Plugin\migrate\source\{ContentEntity,ContentEntityDeriver}
+    // → Drupal\migrate\Plugin\migrate\source\* class renames are also in
+    // DRUPAL_112_BREAKING: the replacement classes were introduced in 11.2.0
+    // and do not exist on any Drupal 10.x branch.
+    //
+    // https://www.drupal.org/node/3472008
+    // The Drupal\jsonapi\EventSubscriber\ResourceResponseValidator → jsonapi_response_validator
+    // rename has been intentionally dropped: the replacement lives in
+    // core/modules/jsonapi/tests/modules/ — a test-only module that production
+    // sites do not load. There is no Drupal version where rewriting the
+    // production FQCN to the test-module FQCN is safe at runtime.
 
     // https://www.drupal.org/node/3511123
     // https://www.drupal.org/node/3511149 (change record)

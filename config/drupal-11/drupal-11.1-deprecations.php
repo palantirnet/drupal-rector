@@ -27,13 +27,13 @@ return static function (RectorConfig $rectorConfig): void {
     ]);
 
     // https://www.drupal.org/node/3467559
-    // AliasWhitelist and AliasWhitelistInterface deprecated in drupal:11.1.0, removed in drupal:12.0.0.
-    // Replaced by AliasPrefixList and AliasPrefixListInterface.
-    // AliasManager::pathAliasWhitelistRebuild() deprecated in drupal:11.1.0, removed in drupal:12.0.0.
-    // Replaced by pathAliasPrefixListRebuild().
+    // AliasWhitelist[Interface] → AliasPrefixList[Interface] class renames
+    // are in the opt-in `drupal-11.1-breaking.php` set (DRUPAL_111_BREAKING):
+    // the replacement classes were introduced in 11.1.0 and do not exist on
+    // any Drupal 10.x branch. The MethodToMethodWithCheckRector entry below
+    // for AliasManager::pathAliasWhitelistRebuild() → pathAliasPrefixListRebuild()
+    // is BC-wrapped and remains in this default set.
     $rectorConfig->ruleWithConfiguration(RenameClassRector::class, [
-        'Drupal\path_alias\AliasWhitelist' => 'Drupal\path_alias\AliasPrefixList',
-        'Drupal\path_alias\AliasWhitelistInterface' => 'Drupal\path_alias\AliasPrefixListInterface',
         'Drupal\Core\Routing\MatchingRouteNotFoundException' => 'Symfony\Component\Routing\Exception\ResourceNotFoundException',
     ]);
     $rectorConfig->ruleWithConfiguration(MethodToMethodWithCheckRector::class, [
