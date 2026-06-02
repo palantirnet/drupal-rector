@@ -11,8 +11,8 @@ use DrupalRector\Drupal11\Rector\Deprecation\RemoveAliasManagerCacheMethodCallsR
 use DrupalRector\Drupal11\Rector\Deprecation\RemoveRendererAddCacheableDependencyNonObjectRector;
 use DrupalRector\Drupal11\Rector\Deprecation\RemoveRootFromConvertDbUrlRector;
 use DrupalRector\Drupal11\Rector\Deprecation\ReplaceCommentManagerGetCountNewCommentsRector;
-use DrupalRector\Drupal11\Rector\Deprecation\ReplaceDialogClassOptionRector;
 use DrupalRector\Drupal11\Rector\Deprecation\ReplaceCommentPreviewConstantsRector;
+use DrupalRector\Drupal11\Rector\Deprecation\ReplaceDialogClassOptionRector;
 use DrupalRector\Drupal11\Rector\Deprecation\ReplaceNodeAccessViewAllNodesRector;
 use DrupalRector\Drupal11\Rector\Deprecation\ReplaceNodeAddBodyFieldRector;
 use DrupalRector\Drupal11\Rector\Deprecation\ReplaceNodeModuleProceduralFunctionsRector;
@@ -34,6 +34,7 @@ use DrupalRector\Rector\ValueObject\FunctionToFirstArgMethodConfiguration;
 use DrupalRector\Rector\ValueObject\FunctionToServiceConfiguration;
 use DrupalRector\Rector\ValueObject\FunctionToStaticConfiguration;
 use Rector\Config\RectorConfig;
+use Rector\Renaming\Rector\Name\RenameClassRector;
 
 return static function (RectorConfig $rectorConfig): void {
     // https://www.drupal.org/node/3543035
