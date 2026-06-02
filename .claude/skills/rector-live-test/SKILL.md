@@ -250,7 +250,7 @@ Then regenerate the flat registry:
 ddev exec php scripts/generate-coverage-registry.php
 ```
 
-This writes `config/coverage-registry.php` (a `return [...]` file mapping
+This writes `docs/coverage-registry.php` (a `return [...]` file mapping
 rector short name → list of normalized messages). The registry is the
 artifact a future upgrade_status PR will consume to replace its hardcoded
 `$rector_covered` array.

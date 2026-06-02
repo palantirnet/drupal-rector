@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 /**
  * Walk src/ + config/ for PHPSTAN_MESSAGES declarations and emit a
- * normalized registry at config/coverage-registry.php.
+ * normalized registry at docs/coverage-registry.php.
  *
  * Sources scanned:
  *
