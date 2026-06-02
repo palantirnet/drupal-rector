@@ -32,6 +32,13 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  * keep passing on both pre-11.4 (where the old methods still exist) and
  * 11.4+ (where the new PHPUnit 11+ replacements must be used).
  *
+ * Note: the no-arg expectDeprecation() form has no PHPUnit 11+ equivalent, so it
+ * is dropped via NodeVisitor::REMOVE_NODE. Unlike the renames, a removal cannot
+ * be BC-wrapped — it deletes the call unconditionally on every Drupal version,
+ * including pre-11.4 where the method still exists. The test therefore loses
+ * that deprecation assertion outright; review such cases manually if the
+ * assertion still carries weight.
+ *
  * Note: the Drupal trait method internally treats $message as a regex fragment
  * with %A boundaries. Renaming to expectUserDeprecationMessage() switches to
  * exact-match semantics, which matches how Drupal core itself migrated its

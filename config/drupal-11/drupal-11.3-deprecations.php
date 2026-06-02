@@ -34,7 +34,6 @@ use DrupalRector\Rector\ValueObject\FunctionToFirstArgMethodConfiguration;
 use DrupalRector\Rector\ValueObject\FunctionToServiceConfiguration;
 use DrupalRector\Rector\ValueObject\FunctionToStaticConfiguration;
 use Rector\Config\RectorConfig;
-use Rector\Renaming\Rector\Name\RenameClassRector;
 
 return static function (RectorConfig $rectorConfig): void {
     // https://www.drupal.org/node/3543035
@@ -217,17 +216,11 @@ return static function (RectorConfig $rectorConfig): void {
 
     // https://www.drupal.org/node/3571874
     // https://www.drupal.org/node/3527501 (change record)
-    // block_content\Access\* aliases removed in drupal:11.3.0. Canonical homes
-    // are in Drupal\Core\Access\*. The shims remained as deprecated aliases
-    // through 11.3.x. Listed here they are
-    // BC-safe aliases of pre-existing canonical classes — type-hint changes
-    // only, runtime semantics unchanged.
-    $rectorConfig->ruleWithConfiguration(RenameClassRector::class, [
-        'Drupal\block_content\Access\AccessGroupAnd' => 'Drupal\Core\Access\AccessGroupAnd',
-        'Drupal\block_content\Access\DependentAccessInterface' => 'Drupal\Core\Access\DependentAccessInterface',
-        'Drupal\block_content\Access\RefinableDependentAccessInterface' => 'Drupal\Core\Access\RefinableDependentAccessInterface',
-        'Drupal\block_content\Access\RefinableDependentAccessTrait' => 'Drupal\Core\Access\RefinableDependentAccessTrait',
-    ]);
+    // block_content\Access\* → Core\Access\* class renames are in the opt-in
+    // `drupal-11.3-breaking.php` set (DRUPAL_113_BREAKING): the canonical
+    // Drupal\Core\Access\* homes were added in 11.3.0 and do not exist on any
+    // Drupal 10.x branch, so the (non-BC-wrappable) RenameClassRector rewrite
+    // would fatal there.
 
     // https://www.drupal.org/node/3496369
     // https://www.drupal.org/node/3532412 (change record)
