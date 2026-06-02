@@ -7,8 +7,8 @@ use DrupalRector\Drupal11\Rector\Deprecation\FileManagedFileSubmitRector;
 use DrupalRector\Drupal11\Rector\Deprecation\FileSystemBasenameToNativeRector;
 use DrupalRector\Drupal11\Rector\Deprecation\LoadAllIncludesRector;
 use DrupalRector\Drupal11\Rector\Deprecation\NodeStorageDeprecatedMethodsRector;
-use DrupalRector\Drupal11\Rector\Deprecation\RemoveRendererAddCacheableDependencyNonObjectRector;
 use DrupalRector\Drupal11\Rector\Deprecation\RemoveAliasManagerCacheMethodCallsRector;
+use DrupalRector\Drupal11\Rector\Deprecation\RemoveRendererAddCacheableDependencyNonObjectRector;
 use DrupalRector\Drupal11\Rector\Deprecation\RemoveRootFromConvertDbUrlRector;
 use DrupalRector\Drupal11\Rector\Deprecation\ReplaceCommentManagerGetCountNewCommentsRector;
 use DrupalRector\Drupal11\Rector\Deprecation\ReplaceDialogClassOptionRector;
@@ -243,4 +243,3 @@ return static function (RectorConfig $rectorConfig): void {
     // on every Drupal version, so no BC wrapper is needed.
     $rectorConfig->rule(TaxonomyTermPageVariableToViewModeRector::class);
 };
-
