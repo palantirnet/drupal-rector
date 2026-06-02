@@ -307,17 +307,27 @@ configs.
   extend `AbstractDrupalCoreRector` and auto-wrap their `Expr → Expr` rewrites
   via `DeprecationHelper::backwardsCompatibleCall()`. Their configuration value
   objects (`ClassConstantToClassConstantConfiguration`,
-  `MethodToMethodWithCheckConfiguration`) gain a required `introducedVersion`
-  constructor argument and now implement `VersionedConfigurationInterface`.
-  This closes three D11 → D10 runtime regressions (Comment* enums in 11.4,
+  `MethodToMethodWithCheckConfiguration`) gain an optional `introducedVersion`
+  constructor argument (default `'0.0.0'`) and now implement
+  `VersionedConfigurationInterface`. The default falls outside the BC-wrap
+  gate (`< 10.0.0`), so consumers that instantiate these value objects without
+  passing the new argument keep pre-refactor behaviour (no wrapping). This
+  closes three D11 → D10 runtime regressions (Comment* enums in 11.4,
   `RequirementSeverity` in 11.2, `AliasManager` method rename in 11.1) without
   moving anything to a `-breaking.php` set.
 - `MethodToMethodWithCheckRector` no longer attaches a "please confirm the
   receiver type" TODO comment for the `maybe` type-inference case. The
   comment-on-parent-statement mechanism relied on parent-node tracking that
-  Rector 2.x removed; the BC wrap makes both code paths runtime-safe by
-  selecting the right call based on `\Drupal::VERSION`, which addresses the
-  underlying concern.
+  Rector 2.x removed. For configurations whose `introducedVersion ≥ 10.0.0`,
+  the BC wrap selects the right call at runtime via `\Drupal::VERSION` and
+  fully addresses the underlying concern. Configurations with an older
+  introduced version (e.g. `urlInfo` → `toUrl` @ 8.0.0,
+  `getLowercaseLabel` → `getSingularLabel` @ 8.8.0,
+  `clearCsrfTokenSeed` → `stampNew` @ 9.2.0) fall outside the BC-wrap gate
+  and rewrite unconditionally on a `maybe`-typed receiver. Contrib audit
+  (api.tresbien.tech, 2026-05-28) found zero live callers of those three
+  methods on receivers PHPStan cannot resolve to a concrete type, so the
+  residual risk is theoretical.
 - **Shipped `rector.php` disables BC wrapping by default.** New users get clean
   one-version rewrites out of the box. Contrib modules and projects that need to
   run on multiple Drupal versions should call `->enableBackwardCompatibility()`
