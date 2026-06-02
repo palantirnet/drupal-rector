@@ -5,6 +5,7 @@ declare(strict_types=1);
 use DrupalRector\Drupal11\Rector\Deprecation\CheckMarkupToProcessedTextRector;
 use DrupalRector\Drupal11\Rector\Deprecation\DeprecatedFilterFunctionsRector;
 use DrupalRector\Drupal11\Rector\Deprecation\FilterFormatFunctionsToServiceRector;
+use DrupalRector\Drupal11\Rector\Deprecation\GetDrupalRootToRootPropertyRector;
 use DrupalRector\Drupal11\Rector\Deprecation\GetOriginalClassToGetDecoratedClassesRector;
 use DrupalRector\Drupal11\Rector\Deprecation\LocaleCompareIncToServiceRector;
 use DrupalRector\Drupal11\Rector\Deprecation\MediaFilterFormatEditFormValidateRector;
@@ -12,15 +13,20 @@ use DrupalRector\Drupal11\Rector\Deprecation\NodeAccessRebuildFunctionsRector;
 use DrupalRector\Drupal11\Rector\Deprecation\RemoveAutomatedCronSubmitHandlerRector;
 use DrupalRector\Drupal11\Rector\Deprecation\RemoveCacheExpireOverrideRector;
 use DrupalRector\Drupal11\Rector\Deprecation\RemoveConfigSaveTrustedDataArgRector;
+use DrupalRector\Drupal11\Rector\Deprecation\RemoveDrupalToStringTraitRector;
 use DrupalRector\Drupal11\Rector\Deprecation\RemoveFilterTipsLongParamRector;
+use DrupalRector\Drupal11\Rector\Deprecation\RemoveInstallSchemaSystemSequencesRector;
 use DrupalRector\Drupal11\Rector\Deprecation\RemoveLinkWidgetValidateTitleElementRector;
 use DrupalRector\Drupal11\Rector\Deprecation\RemovePhpUnitCompatibilityTraitRector;
 use DrupalRector\Drupal11\Rector\Deprecation\RemoveSetUriCallbackRector;
+use DrupalRector\Drupal11\Rector\Deprecation\RemoveToolkitArgFromImageToolkitOperationConstructorRector;
 use DrupalRector\Drupal11\Rector\Deprecation\RemoveTrustDataCallRector;
 use DrupalRector\Drupal11\Rector\Deprecation\RemoveViewsRowCacheKeysRector;
 use DrupalRector\Drupal11\Rector\Deprecation\ReplaceEntityReferenceRecursiveLimitRector;
 use DrupalRector\Drupal11\Rector\Deprecation\ReplaceExpectDeprecationRector;
 use DrupalRector\Drupal11\Rector\Deprecation\ReplaceLocaleTranslationPathConfigRector;
+use DrupalRector\Drupal11\Rector\Deprecation\ReplaceHideShowWithPrintedRector;
+use DrupalRector\Drupal11\Rector\Deprecation\ReplaceNonBoolAccessRector;
 use DrupalRector\Drupal11\Rector\Deprecation\ReplaceRecipeRunnerInstallModuleRector;
 use DrupalRector\Drupal11\Rector\Deprecation\ReplaceSessionManagerDeleteRector;
 use DrupalRector\Drupal11\Rector\Deprecation\ReplaceSystemPerformanceGzipKeyRector;
@@ -449,6 +455,49 @@ return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->ruleWithConfiguration(LocaleCompareIncToServiceRector::class, [
         new DrupalIntroducedVersionConfiguration('11.4.0'),
     ]);
+
+    // https://www.drupal.org/node/3335756
+    // https://www.drupal.org/node/3349345 (change record)
+    // KernelTestBase::installSchema('system', 'sequences') deprecated in
+    // drupal:10.2.0 and removed in drupal:12.0.0. The sequences table no
+    // longer exists in core; the call throws a LogicException on D12 and
+    // must be removed (or have 'sequences' stripped from its array form).
+    $rectorConfig->rule(RemoveInstallSchemaSystemSequencesRector::class);
+
+    // https://www.drupal.org/node/3548957
+    // https://www.drupal.org/node/3548961 (change record)
+    // Drupal\Component\Utility\ToStringTrait deprecated in drupal:11.4.0 and
+    // removed in drupal:13.0.0. The trait was a PHP 7 workaround for fatal
+    // errors thrown inside __toString(); on PHP 8+ exceptions propagate
+    // normally. Inline `public function __toString(): string { return (string)
+    // $this->render(); }` replaces it. Pure PHP — runs on every supported
+    // Drupal version, no BC wrapper.
+    $rectorConfig->rule(RemoveDrupalToStringTraitRector::class);
+
+    // https://www.drupal.org/node/3559481
+    // https://www.drupal.org/node/3562304 (change record)
+    // ImageToolkitOperationBase::__construct() $toolkit argument deprecated in drupal:11.4.0,
+    // removed in drupal:13.0.0. Plugin manager now injects via setToolkit() for autowiring.
+    $rectorConfig->rule(RemoveToolkitArgFromImageToolkitOperationConstructorRector::class);
+
+    // https://www.drupal.org/node/2258355
+    // https://www.drupal.org/node/3261271 (change record)
+    // hide() and show() deprecated in drupal:11.4.0, removed in drupal:13.0.0.
+    // Replaced by direct $element['#printed'] = TRUE/FALSE assignment.
+    $rectorConfig->rule(ReplaceHideShowWithPrintedRector::class);
+
+    // https://www.drupal.org/node/3526250
+    // Integer values for #access render array key deprecated in drupal:11.4.0,
+    // removed in drupal:13.0.0. Replaced by boolean or AccessResultInterface.
+    // Only integer literals are rewritten (1 → true, 0 → false); variables and
+    // typed expressions are left for manual review.
+    $rectorConfig->rule(ReplaceNonBoolAccessRector::class);
+
+    // https://www.drupal.org/node/3589047
+    // https://www.drupal.org/node/3574112 (change record)
+    // DrupalTestCaseTrait::getDrupalRoot() deprecated in drupal:11.4.0, removed in drupal:13.0.0.
+    // Replaced by direct access to the $this->root property on Drupal base test classes.
+    $rectorConfig->rule(GetDrupalRootToRootPropertyRector::class);
 
     // https://www.drupal.org/node/3550268
     // https://www.drupal.org/node/3545276 (change record)
