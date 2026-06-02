@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use DrupalRector\Drupal10\Rector\Deprecation\ReplaceRequestTimeConstantRector;
 use DrupalRector\Drupal11\Rector\Deprecation\GetNameToNameRector;
+use DrupalRector\Drupal11\Rector\Deprecation\GroupLegacyToIgnoreDeprecationsRector;
 use DrupalRector\Drupal11\Rector\Deprecation\MigrateSqlGetMigrationPluginManagerRector;
 use DrupalRector\Drupal11\Rector\Deprecation\RemoveStateCacheSettingRector;
 use DrupalRector\Drupal11\Rector\Deprecation\StripMigrationDependenciesExpandArgRector;
@@ -44,4 +45,10 @@ return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->ruleWithConfiguration(MigrateSqlGetMigrationPluginManagerRector::class, [
         new DrupalIntroducedVersionConfiguration('11.0.0'),
     ]);
+
+    // https://www.drupal.org/node/3417066
+    // @group legacy docblock annotation deprecated in drupal:10.3.0, removed in drupal:11.0.0.
+    // Drupal 11 drops symfony/phpunit-bridge in favour of PHPUnit 10, whose native
+    // #[\PHPUnit\Framework\Attributes\IgnoreDeprecations] attribute supersedes it.
+    $rectorConfig->rule(GroupLegacyToIgnoreDeprecationsRector::class);
 };

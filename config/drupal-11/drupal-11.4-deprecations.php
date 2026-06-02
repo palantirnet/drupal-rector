@@ -13,7 +13,9 @@ use DrupalRector\Drupal11\Rector\Deprecation\NodeAccessRebuildFunctionsRector;
 use DrupalRector\Drupal11\Rector\Deprecation\RemoveAutomatedCronSubmitHandlerRector;
 use DrupalRector\Drupal11\Rector\Deprecation\RemoveCacheExpireOverrideRector;
 use DrupalRector\Drupal11\Rector\Deprecation\RemoveConfigSaveTrustedDataArgRector;
+use DrupalRector\Drupal11\Rector\Deprecation\RemoveDrupalToStringTraitRector;
 use DrupalRector\Drupal11\Rector\Deprecation\RemoveFilterTipsLongParamRector;
+use DrupalRector\Drupal11\Rector\Deprecation\RemoveInstallSchemaSystemSequencesRector;
 use DrupalRector\Drupal11\Rector\Deprecation\RemoveLinkWidgetValidateTitleElementRector;
 use DrupalRector\Drupal11\Rector\Deprecation\RemoveSetUriCallbackRector;
 use DrupalRector\Drupal11\Rector\Deprecation\RemoveToolkitArgFromImageToolkitOperationConstructorRector;
@@ -450,6 +452,24 @@ return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->ruleWithConfiguration(LocaleCompareIncToServiceRector::class, [
         new DrupalIntroducedVersionConfiguration('11.4.0'),
     ]);
+
+    // https://www.drupal.org/node/3335756
+    // https://www.drupal.org/node/3349345 (change record)
+    // KernelTestBase::installSchema('system', 'sequences') deprecated in
+    // drupal:10.2.0 and removed in drupal:12.0.0. The sequences table no
+    // longer exists in core; the call throws a LogicException on D12 and
+    // must be removed (or have 'sequences' stripped from its array form).
+    $rectorConfig->rule(RemoveInstallSchemaSystemSequencesRector::class);
+
+    // https://www.drupal.org/node/3548957
+    // https://www.drupal.org/node/3548961 (change record)
+    // Drupal\Component\Utility\ToStringTrait deprecated in drupal:11.4.0 and
+    // removed in drupal:13.0.0. The trait was a PHP 7 workaround for fatal
+    // errors thrown inside __toString(); on PHP 8+ exceptions propagate
+    // normally. Inline `public function __toString(): string { return (string)
+    // $this->render(); }` replaces it. Pure PHP — runs on every supported
+    // Drupal version, no BC wrapper.
+    $rectorConfig->rule(RemoveDrupalToStringTraitRector::class);
 
     // https://www.drupal.org/node/3559481
     // https://www.drupal.org/node/3562304 (change record)
