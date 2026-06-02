@@ -17,6 +17,7 @@
 /features/tmp/*
 !/features/tmp/.placeholder
 
+/.claude/cache
 /.phpunit.cache
 .worktrees/
 rector-decision.log
