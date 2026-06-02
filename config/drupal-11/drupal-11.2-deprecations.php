@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use DrupalRector\Drupal11\Rector\Deprecation\EntityFormModeEmptyDescriptionToNullRector;
 use DrupalRector\Drupal11\Rector\Deprecation\RemoveCacheTagChecksumAssertionsRector;
 use DrupalRector\Drupal11\Rector\Deprecation\RemoveHandlerBaseDefineExtraOptionsRector;
 use DrupalRector\Drupal11\Rector\Deprecation\RemoveModuleHandlerAddModuleCallsRector;
@@ -16,6 +17,7 @@ use DrupalRector\Drupal11\Rector\Deprecation\ReplaceFieldgroupToFieldsetRector;
 use DrupalRector\Drupal11\Rector\Deprecation\ReplacePdoFetchConstantsRector;
 use DrupalRector\Drupal11\Rector\Deprecation\ReplaceSessionWritesWithRequestSessionRector;
 use DrupalRector\Drupal11\Rector\Deprecation\StatementPrefetchIteratorFetchColumnRector;
+use DrupalRector\Drupal11\Rector\Deprecation\ViewsBlockItemsPerPageNoneToNullRector;
 use DrupalRector\Rector\Deprecation\ClassConstantToClassConstantRector;
 use DrupalRector\Rector\Deprecation\ConstantToClassConstantRector;
 use DrupalRector\Rector\Deprecation\FunctionCallRemovalRector;
@@ -259,4 +261,18 @@ return static function (RectorConfig $rectorConfig): void {
             '11.2.0',
         ),
     ]);
+
+    // https://www.drupal.org/node/3520946
+    // https://www.drupal.org/node/3522240 (change record)
+    // ViewsBlockBase::setConfigurationValue('items_per_page', 'none') deprecated in drupal:11.2.0,
+    // removed in drupal:12.0.0. Replaced by NULL, which is the canonical value for inheriting
+    // the items-per-page setting from the view.
+    $rectorConfig->rule(ViewsBlockItemsPerPageNoneToNullRector::class);
+
+    // https://www.drupal.org/node/3448457
+    // https://www.drupal.org/node/3452144 (change record)
+    // EntityFormMode::create() with 'description' => '' deprecated in drupal:11.2.0,
+    // removed in drupal:12.0.0. Replaced by NULL, which is the canonical "no description" value
+    // for entity display modes.
+    $rectorConfig->rule(EntityFormModeEmptyDescriptionToNullRector::class);
 };
