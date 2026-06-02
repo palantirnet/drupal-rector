@@ -80,7 +80,14 @@ CODE_AFTER
         }
 
         $docText = $docComment->getText();
-        if (!str_contains($docText, '@group legacy')) {
+        // Cheap pre-filter first, then a boundary-aware check that mirrors the
+        // removal regex below. Without the boundary, a group such as
+        // `@group legacy-kernel` would pass the gate and get an unwanted
+        // `#[IgnoreDeprecations]` appended while the regex left its annotation
+        // line untouched.
+        if (!str_contains($docText, '@group legacy')
+            || preg_match('/^[ \t]*\*[ \t]*@group legacy[ \t]*\r?$/m', $docText) !== 1
+        ) {
             return null;
         }
 
