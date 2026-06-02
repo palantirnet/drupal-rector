@@ -17,7 +17,7 @@ final class ClassConstantToClassConstantConfiguration implements VersionedConfig
 
     private string $introducedVersion;
 
-    public function __construct(string $deprecatedClass, string $deprecated, string $class, string $constant, string $introducedVersion)
+    public function __construct(string $deprecatedClass, string $deprecated, string $class, string $constant, string $introducedVersion = '0.0.0')
     {
         $this->deprecatedClass = $deprecatedClass;
         $this->deprecated = $deprecated;

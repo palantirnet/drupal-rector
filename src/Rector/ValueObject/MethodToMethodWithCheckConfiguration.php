@@ -16,7 +16,7 @@ class MethodToMethodWithCheckConfiguration implements VersionedConfigurationInte
 
     protected string $introducedVersion;
 
-    public function __construct(string $className, string $deprecatedMethodName, string $methodName, string $introducedVersion)
+    public function __construct(string $className, string $deprecatedMethodName, string $methodName, string $introducedVersion = '0.0.0')
     {
         $this->className = $className;
         $this->deprecatedMethodName = $deprecatedMethodName;
