@@ -36,6 +36,7 @@ function main(array $argv): void
 {
     $repoRoot = dirname(dirname(__DIR__));
     $digestsPath = $repoRoot . '/repos/drupal-digests';
+    $drupalCorePath = $repoRoot . '/repos/drupal-core';
 
     foreach (array_slice($argv, 1) as $arg) {
         if ($arg === '--help') {
@@ -44,6 +45,9 @@ function main(array $argv): void
         }
         if (str_starts_with($arg, '--digests-path=')) {
             $digestsPath = expandPath(substr($arg, 15));
+        }
+        if (str_starts_with($arg, '--drupal-core-path=')) {
+            $drupalCorePath = expandPath(substr($arg, 19));
         }
     }
     $rulesDir = $digestsPath . '/rector/rules';
@@ -72,17 +76,36 @@ function main(array $argv): void
     // Used in Step 3 so config files can link pending issues to existing custom rectors.
     $implementedClasses = buildClassMap($entries, $unmatched);
 
-    // Step 3: Mark config-only / implemented entries found in any config/* subdir.
-    scanConfigFiles($repoRoot . '/config', $entries, $implementedClasses);
+    // Step 3a: Resolve "sibling" issues for config-cited change records.
+    // A config block may cite a CR; the CR's field_issues names the underlying
+    // deprecation issue(s). Expanding via that link lets us mark digest entries
+    // whose number matches the deprecation issue (not the CR cited in config).
+    $cacheDir = $repoRoot . '/.claude/cache/drupal-issues';
+    $citedSiblings = buildCitedSiblingMap($repoRoot . '/config', $cacheDir);
+
+    // Step 3b: Mark config-only / implemented entries found in any config/* subdir.
+    scanConfigFiles($repoRoot . '/config', $entries, $implementedClasses, $citedSiblings);
 
     // Step 4: Add unmatched custom classes (no digest file found).
     foreach ($unmatched as $className => $data) {
         $entries['class_' . $className] = $data;
     }
 
-    // Step 5: Write YAML.
+    // Step 5: Look up merge dates by issue number from drupal-core commit log.
+    $issueDates = buildIssueDateMap($drupalCorePath);
+
+    // Step 6: For issues whose number isn't referenced in any commit subject
+    // (CRs, meta-issues, multi-issue rollups), fall back to the drupal.org API
+    // and use the last status-change date as the merge proxy.
+    $issueDates = enrichDatesFromApi($entries, $issueDates, $cacheDir);
+
+    // Step 6b: Build per-entry related-issue metadata (title/uid/type) from
+    // the API cache + sibling map for inclusion in the YAML output.
+    $relatedIssues = buildRelatedIssuesMap($entries, $citedSiblings, $cacheDir);
+
+    // Step 7: Write YAML.
     $outputFile = $repoRoot . '/docs/rector-index.yml';
-    writeYaml($entries, $outputFile);
+    writeYaml($entries, $outputFile, $issueDates, $relatedIssues);
 
     $counts = countByStatus($entries);
     printf(
@@ -390,8 +413,9 @@ function buildClassMap(array $entries, array $unmatched): array
  *
  * @param array<string, array<string, mixed>> $entries
  * @param array<string, array<string, mixed>> $implementedClasses
+ * @param array<string, list<string>> $citedSiblings  citedIssue → [siblingIssueIds]
  */
-function scanConfigFiles(string $configRoot, array &$entries, array $implementedClasses): void
+function scanConfigFiles(string $configRoot, array &$entries, array $implementedClasses, array $citedSiblings = []): void
 {
     foreach (glob($configRoot . '/*/', GLOB_ONLYDIR) as $configDir) {
         $dirName = basename(rtrim($configDir, '/'));
@@ -402,7 +426,7 @@ function scanConfigFiles(string $configRoot, array &$entries, array $implemented
             }
             $content = file_get_contents($configFile);
             $relFile  = 'config/' . $dirName . '/' . basename($configFile);
-            parseConfigBlock($content, $relFile, $entries, $implementedClasses);
+            parseConfigBlock($content, $relFile, $entries, $implementedClasses, $citedSiblings);
         }
     }
 }
@@ -415,8 +439,9 @@ function scanConfigFiles(string $configRoot, array &$entries, array $implemented
  *
  * @param array<string, array<string, mixed>> $entries
  * @param array<string, array<string, mixed>> $implementedClasses  shortClassName => {class, files}
+ * @param array<string, list<string>> $citedSiblings  citedIssue → [siblingIssueIds]
  */
-function parseConfigBlock(string $content, string $relFile, array &$entries, array $implementedClasses): void
+function parseConfigBlock(string $content, string $relFile, array &$entries, array $implementedClasses, array $citedSiblings = []): void
 {
     $lines = explode("\n", $content);
     $pendingIssues = [];
@@ -436,11 +461,12 @@ function parseConfigBlock(string $content, string $relFile, array &$entries, arr
 
         if ($isRuleCall) {
             $shortClass = extractShortClassName($m[1]);
+            $expandedIssues = expandIssuesViaSiblings($pendingIssues, $citedSiblings);
 
             if (isset(GENERIC_RECTORS[$shortClass])) {
                 // Generic rector — mark as config-only.
                 $phase = GENERIC_RECTORS[$shortClass];
-                foreach ($pendingIssues as $issue) {
+                foreach ($expandedIssues as $issue) {
                     if (isset($entries[$issue]) && $entries[$issue]['status'] === 'pending') {
                         $entries[$issue]['status'] = 'config-only';
                         $entries[$issue]['phase']  = $entries[$issue]['phase'] === 'unknown' ? $phase : $entries[$issue]['phase'];
@@ -452,7 +478,7 @@ function parseConfigBlock(string $content, string $relFile, array &$entries, arr
             } elseif (isset($implementedClasses[$shortClass])) {
                 // Custom rector already implemented in src/ — mark as implemented.
                 $classData = $implementedClasses[$shortClass];
-                foreach ($pendingIssues as $issue) {
+                foreach ($expandedIssues as $issue) {
                     if (isset($entries[$issue]) && $entries[$issue]['status'] === 'pending') {
                         $entries[$issue]['status'] = 'implemented';
                         $entries[$issue]['class']  = $classData['class'];
@@ -483,11 +509,362 @@ function extractShortClassName(string $fqcn): string
 }
 
 /**
+ * Pre-scans config files for every `// drupal.org/node/N` citation, fetches
+ * each node from the drupal.org API (cached), and returns a map from cited
+ * change-record ID → list of deprecation issue IDs the CR documents.
+ *
+ * The CR's `field_issues` is an authoritative backlink: it names the
+ * project_issue(s) where the deprecation actually landed. Config files
+ * typically cite the CR, while digest filenames typically use the
+ * deprecation issue — this map bridges the two so config marks can apply
+ * to the matching digest entry.
+ *
+ * @return array<string, list<string>>  citedNodeId → [depIssueId, ...]
+ */
+function buildCitedSiblingMap(string $configRoot, string $cacheDir): array
+{
+    $cited = [];
+    foreach (glob($configRoot . '/*/', GLOB_ONLYDIR) as $configDir) {
+        foreach (glob($configDir . '*.php') as $configFile) {
+            if (preg_match('/drupal-\d+-all-deprecations\.php$/', basename($configFile))) {
+                continue;
+            }
+            $content = file_get_contents($configFile);
+            if (preg_match_all('#//\s+https?://www\.drupal\.org/node/(\d+)#', $content, $m)) {
+                foreach ($m[1] as $id) {
+                    $cited[$id] = true;
+                }
+            }
+        }
+    }
+
+    if (!is_dir($cacheDir) && !mkdir($cacheDir, 0755, true) && !is_dir($cacheDir)) {
+        fprintf(STDERR, "Note: could not create cache dir %s — skipping sibling resolution.\n", $cacheDir);
+        return [];
+    }
+
+    $siblings = [];
+    foreach (array_keys($cited) as $citedId) {
+        $citedId = (string) $citedId;
+        $node = loadIssueNodeCached($citedId, $cacheDir);
+        if ($node === null) {
+            continue;
+        }
+        if (($node['type'] ?? null) !== 'changenotice') {
+            continue;
+        }
+        foreach (($node['field_issues'] ?? []) as $link) {
+            $depId = (string) ($link['id'] ?? '');
+            if (ctype_digit($depId) && $depId !== $citedId) {
+                $siblings[$citedId][] = $depId;
+            }
+        }
+    }
+    return $siblings;
+}
+
+/**
+ * Expands a list of cited issue IDs with the deprecation issues each cited
+ * change record documents. Preserves order and de-duplicates.
+ *
+ * @param list<string> $citedIssues
+ * @param array<string, list<string>> $citedSiblings
+ * @return list<string>
+ */
+function expandIssuesViaSiblings(array $citedIssues, array $citedSiblings): array
+{
+    $expanded = [];
+    foreach ($citedIssues as $issue) {
+        $expanded[$issue] = true;
+        foreach ($citedSiblings[$issue] ?? [] as $siblingId) {
+            $expanded[$siblingId] = true;
+        }
+    }
+    return array_keys($expanded);
+}
+
+/**
+ * Loads a drupal.org node from local cache or fetches it from the API
+ * and writes the response to cache. Returns the decoded JSON or null on
+ * failure.
+ *
+ * @return array<string, mixed>|null
+ */
+function loadIssueNodeCached(string $issueId, string $cacheDir): ?array
+{
+    $cacheFile = $cacheDir . '/' . $issueId . '.json';
+    if (!file_exists($cacheFile)) {
+        $url = sprintf('https://www.drupal.org/api-d7/node/%s.json', $issueId);
+        $ctx = stream_context_create([
+            'http' => [
+                'user_agent'   => 'drupal-rector-index-generator (+https://github.com/palantirnet/drupal-rector)',
+                'timeout'      => 15,
+                'ignore_errors'=> true,
+            ],
+        ]);
+        $json = @file_get_contents($url, false, $ctx);
+        if ($json === false || $json === '') {
+            return null;
+        }
+        file_put_contents($cacheFile, $json);
+    } else {
+        $json = file_get_contents($cacheFile);
+    }
+
+    $data = json_decode($json, true);
+    return is_array($data) ? $data : null;
+}
+
+/**
+ * Builds a per-entry related-issue metadata map. For each index entry, looks
+ * up cluster siblings from the drupal.org API and returns title/uid/type for
+ * each related node.
+ *
+ * Sources of relatedness:
+ *   - The entry's own `field_issue_related` (project_issue siblings).
+ *   - The entry's own `field_issues` (when the entry IS a change record).
+ *   - Any CR that lists this entry's issue in its `field_issues` (the CR
+ *     and the CR's other linked deprecations are siblings).
+ *
+ * @param array<string, array<string, mixed>> $entries
+ * @param array<string, list<string>> $citedSiblings  citedCR → [depIssueId]
+ * @return array<string, array<string, array{title:string, uid:string, type:string}>>
+ *         entryIssue → relatedId → {title, uid, type}
+ */
+function buildRelatedIssuesMap(array $entries, array $citedSiblings, string $cacheDir): array
+{
+    // Reverse: depIssue → [citedCRs that name it].
+    $depToCRs = [];
+    foreach ($citedSiblings as $crId => $deps) {
+        foreach ($deps as $depId) {
+            $depToCRs[$depId][] = $crId;
+        }
+    }
+
+    $result = [];
+    foreach ($entries as $entry) {
+        $issue = (string) ($entry['issue'] ?? '');
+        if (!ctype_digit($issue)) {
+            continue;
+        }
+
+        $relatedIds = [];
+        $ownNode = loadIssueNodeCached($issue, $cacheDir);
+        if ($ownNode !== null) {
+            $ownType = $ownNode['type'] ?? null;
+            $fromOwn = $ownType === 'changenotice'
+                ? ($ownNode['field_issues'] ?? [])
+                : ($ownNode['field_issue_related'] ?? []);
+            foreach ($fromOwn as $link) {
+                $id = (string) ($link['id'] ?? '');
+                if (ctype_digit($id)) {
+                    $relatedIds[$id] = true;
+                }
+            }
+        }
+
+        foreach ($depToCRs[$issue] ?? [] as $crId) {
+            $relatedIds[$crId] = true;
+            foreach ($citedSiblings[$crId] ?? [] as $clusterDep) {
+                if ($clusterDep !== $issue) {
+                    $relatedIds[$clusterDep] = true;
+                }
+            }
+        }
+
+        unset($relatedIds[$issue]);
+        if (empty($relatedIds)) {
+            continue;
+        }
+
+        $details = [];
+        foreach (array_keys($relatedIds) as $relId) {
+            $relId = (string) $relId;
+            $relNode = loadIssueNodeCached($relId, $cacheDir);
+            if ($relNode === null) {
+                continue;
+            }
+            $type = ($relNode['type'] ?? null) === 'changenotice' ? 'change_record' : 'issue';
+            $details[$relId] = [
+                'title' => (string) ($relNode['title'] ?? ''),
+                'uid'   => $relId,
+                'type'  => $type,
+            ];
+        }
+        if (!empty($details)) {
+            ksort($details);
+            $result[$issue] = $details;
+        }
+    }
+    return $result;
+}
+
+/**
+ * Builds an issue-number → YYYY-MM-DD map from drupal-core's commit log.
+ *
+ * One git log pass; for each commit subject, every "#NNNN" reference is
+ * recorded with that commit's date. Walks reverse-chronological by default,
+ * so the last write wins — yielding the OLDEST commit date per issue
+ * (i.e. when the deprecation first landed).
+ *
+ * @return array<string, string>
+ */
+function buildIssueDateMap(string $drupalCoreRepo): array
+{
+    if (!is_dir($drupalCoreRepo . '/.git') && !is_dir($drupalCoreRepo) ) {
+        fprintf(STDERR, "Note: drupal-core repo not found at %s — merge dates will be omitted.\n", $drupalCoreRepo);
+        return [];
+    }
+
+    $cmd = sprintf('git -C %s log --format=%%cs%%x09%%s 2>/dev/null', escapeshellarg($drupalCoreRepo));
+    $output = shell_exec($cmd);
+    if (!$output) {
+        return [];
+    }
+
+    $map = [];
+    foreach (explode("\n", $output) as $line) {
+        $tab = strpos($line, "\t");
+        if ($tab === false) {
+            continue;
+        }
+        $date = substr($line, 0, $tab);
+        $subject = substr($line, $tab + 1);
+
+        if (preg_match_all('/#(\d{4,8})\b/', $subject, $matches)) {
+            foreach ($matches[1] as $issueNum) {
+                // Last write wins; git log is reverse-chronological so this
+                // ends up holding the oldest date for the issue.
+                $map[$issueNum] = $date;
+            }
+        }
+    }
+    return $map;
+}
+
+/**
+ * Fills in merge dates for issues missing from the git-log map by fetching
+ * https://www.drupal.org/api-d7/node/{nid}.json and reading
+ * field_issue_last_status_change. Caches each response under $cacheDir so
+ * repeat runs are offline.
+ *
+ * Only issues with status 2 (Fixed) or 7 (Closed (fixed)) contribute a date —
+ * other statuses (active, postponed, won't fix, etc.) stay null because
+ * "last status change" is not a merge for those.
+ *
+ * @param array<string, array<string, mixed>> $entries
+ * @param array<string, string> $issueDates
+ * @return array<string, string>
+ */
+function enrichDatesFromApi(array $entries, array $issueDates, string $cacheDir): array
+{
+    if (!is_dir($cacheDir) && !mkdir($cacheDir, 0755, true) && !is_dir($cacheDir)) {
+        fprintf(STDERR, "Note: could not create cache dir %s — skipping API fallback.\n", $cacheDir);
+        return $issueDates;
+    }
+
+    $missing = [];
+    foreach ($entries as $entry) {
+        $issue = $entry['issue'];
+        if (!is_string($issue) || !ctype_digit($issue)) {
+            continue;
+        }
+        if (isset($issueDates[$issue])) {
+            continue;
+        }
+        $missing[$issue] = true;
+    }
+    $missing = array_keys($missing);
+
+    if (empty($missing)) {
+        return $issueDates;
+    }
+
+    fprintf(STDERR, "Fetching %d missing issue dates from drupal.org…\n", count($missing));
+    $filled = 0;
+    foreach ($missing as $i => $issue) {
+        $issue = (string) $issue;
+        if (isset($issueDates[$issue])) {
+            // Already resolved by a sibling change-record fetch earlier in the loop.
+            $filled++;
+        } else {
+            $date = fetchIssueDateFromApi($issue, $cacheDir, $issueDates);
+            if ($date !== null) {
+                $issueDates[$issue] = $date;
+                $filled++;
+            }
+        }
+        if (($i + 1) % 10 === 0 || $i + 1 === count($missing)) {
+            fprintf(STDERR, "  %d/%d (%d filled)\n", $i + 1, count($missing), $filled);
+        }
+    }
+
+    return $issueDates;
+}
+
+/**
+ * Resolves a single node ID to a YYYY-MM-DD merge date.
+ *
+ * - changenotice → follow field_issues[] to the underlying issue(s) and resolve
+ *   the first one with a known date (checking $issueDates first, then the API).
+ * - project_issue → field_issue_last_status_change if status is Fixed (2) or
+ *   Closed (fixed) (7); null otherwise.
+ *
+ * @param array<string, string> $issueDates  passed by ref so recursive lookups
+ *                                            populate the shared map.
+ */
+function fetchIssueDateFromApi(string $issue, string $cacheDir, array &$issueDates): ?string
+{
+    $data = loadIssueNodeCached($issue, $cacheDir);
+    if ($data === null) {
+        return null;
+    }
+
+    $type = $data['type'] ?? null;
+
+    // Change records carry no merge date of their own — follow the linked
+    // issue(s) and use the first one we can resolve.
+    if ($type === 'changenotice') {
+        $links = $data['field_issues'] ?? [];
+        foreach ($links as $link) {
+            $linkedId = (string) ($link['id'] ?? '');
+            if (!ctype_digit($linkedId)) {
+                continue;
+            }
+            if (isset($issueDates[$linkedId])) {
+                return $issueDates[$linkedId];
+            }
+            $date = fetchIssueDateFromApi($linkedId, $cacheDir, $issueDates);
+            if ($date !== null) {
+                $issueDates[$linkedId] = $date;
+                return $date;
+            }
+        }
+        return null;
+    }
+
+    // Project issues — only Fixed (2) / Closed (fixed) (7) yield a merge date.
+    $status = $data['field_issue_status'] ?? null;
+    if (!in_array((string) $status, ['2', '7'], true)) {
+        return null;
+    }
+
+    $ts = $data['field_issue_last_status_change'] ?? null;
+    if ($ts === null || !ctype_digit((string) $ts)) {
+        return null;
+    }
+
+    return date('Y-m-d', (int) $ts);
+}
+
+/**
  * Writes the index as YAML.
  *
  * @param array<string, array<string, mixed>> $entries
+ * @param array<string, string> $issueDates  issue number → YYYY-MM-DD merge date
+ * @param array<string, array<string, array{title:string,uid:string,type:string}>> $relatedIssues
  */
-function writeYaml(array $entries, string $outputFile): void
+function writeYaml(array $entries, string $outputFile, array $issueDates = [], array $relatedIssues = []): void
 {
     $counts = countByStatus($entries);
 
@@ -506,6 +883,8 @@ function writeYaml(array $entries, string $outputFile): void
         $out .= sprintf("    digest_file: %s\n", $entry['digest_file'] === null ? 'null' : "'" . $entry['digest_file'] . "'");
         $out .= sprintf("    phase: '%s'\n", $entry['phase']);
         $out .= sprintf("    status: %s\n", $entry['status']);
+        $mergedDate = $issueDates[$entry['issue']] ?? null;
+        $out .= sprintf("    merged: %s\n", $mergedDate === null ? 'null' : "'" . $mergedDate . "'");
         if ($entry['class'] === null) {
             $out .= "    class: null\n";
         } elseif (is_array($entry['class'])) {
@@ -525,9 +904,27 @@ function writeYaml(array $entries, string $outputFile): void
                 $out .= sprintf("      - %s\n", $file);
             }
         }
+
+        $issueId = (string) ($entry['issue'] ?? '');
+        $related = $relatedIssues[$issueId] ?? [];
+        if (!empty($related)) {
+            $out .= "    related_issues:\n";
+            foreach ($related as $relId => $info) {
+                $out .= sprintf("      '%s':\n", $relId);
+                $out .= sprintf("        title: %s\n", yamlScalarSingleLine($info['title'] ?? ''));
+                $out .= sprintf("        uid: '%s'\n", $info['uid'] ?? $relId);
+                $out .= sprintf("        type: %s\n", $info['type'] ?? 'issue');
+            }
+        }
     }
 
     file_put_contents($outputFile, $out);
+}
+
+function yamlScalarSingleLine(string $s): string
+{
+    $s = preg_replace('/\s+/', ' ', trim($s));
+    return "'" . str_replace("'", "''", $s) . "'";
 }
 
 /**
