@@ -146,16 +146,41 @@ Ask: *Could the transformed code run unchanged on a Drupal version that predates
   > Example: `locale_config_batch_set_config_langcodes()` → `locale_config_batch_update_default_config_langcodes()`.
   > The new function only exists on Drupal ≥ 11.1.0; calling it on 11.0.x would fail.
 
-- **No, the replacement is version-agnostic** → BC wrapping is **NOT** needed — use `AbstractRector`.
+- **No, the replacement is version-agnostic** → continue to Q4b before concluding.
   The replacement is pure PHP, uses only native PHP functions, or uses Drupal APIs that existed
   long before this deprecation. The transformed code is safe to run on any Drupal version, so
   there is nothing to guard with a version check.
   > Example: `uasort($arr, 'system_sort_themes')` → `uasort($arr, static function ($a, $b) { … })`.
   > The inline closure is pure PHP and works on every Drupal version; BC wrapping adds no value.
 
+**Q4b: Even if it won't fatal, is the replacement behaviorally equivalent on pre-deprecation versions?**
+
+This catches the case Q4 misses: the replacement uses only old symbols (so it won't fatal), but
+its *effect* depends on infrastructure introduced **alongside** the deprecation — a new cache bin
+or cache tag, a new service that now owns the data, a new storage location, a changed default.
+On an older Drupal the symbols resolve fine but the call does **nothing** (or something different)
+compared to the original. A silent no-op is a real BC break, just a quieter one than a fatal.
+
+Ask: *On a Drupal version that predates the deprecation, does the replacement produce the same
+observable effect as the original — not just "does it run"?*
+
+- **No — it silently no-ops or diverges on old versions** → BC wrapping IS needed.
+  Even though no symbol is missing, wrap it so the original call runs on old versions and the new
+  call runs on new ones. Use `AbstractDrupalCoreRector`.
+  > Example: `drupal_static_reset('file_get_file_references')` →
+  > `\Drupal::service('cache.memory')->invalidateTags(['file_references'])`. The `cache.memory`
+  > service and `invalidateTags()` existed long before 11.4.0 (no fatal), but the `file_references`
+  > cache tag was introduced *with* the deprecation — so on 11.3 the new call invalidates a tag
+  > nothing uses and never resets the `drupal_static()` the old code path actually relies on.
+  > Behaviorally equivalent only on 11.4+. BC-wrap it.
+
+- **Yes — same effect on every supported version** → BC wrapping is **NOT** needed — use `AbstractRector`.
+  > Example: the `system_sort_themes` closure above — pure PHP, identical behavior everywhere.
+
 **Decision:**
-- Q2 eligible AND Q3 >= 10.1.0 AND Q4 = new API → Use `AbstractDrupalCoreRector` + `DrupalIntroducedVersionConfiguration`
-- Q4 = version-agnostic replacement (or Q2/Q3 not met) → Use `AbstractRector`
+- Q2 eligible AND Q3 >= 10.1.0 AND (Q4 = new API **OR** Q4b = silent divergence on old versions)
+  → Use `AbstractDrupalCoreRector` + `DrupalIntroducedVersionConfiguration`
+- Q4b = truly version-agnostic (same observable effect everywhere), or Q2/Q3 not met → Use `AbstractRector`
 
 **Quick reference:**
 
