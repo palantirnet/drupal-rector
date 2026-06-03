@@ -14,6 +14,21 @@ release-by-release.
 
 ### Added
 
+- **`ReplaceDrupalStaticResetFileReferencesRector`** — rewrites
+  `drupal_static_reset('file_get_file_references')` and
+  `drupal_static_reset('file_get_file_references:field_columns')` to
+  `\Drupal::service('cache.memory')->invalidateTags(['file_references'])`.
+  Both static-cache keys were deprecated in drupal:11.4.0 (removed in
+  drupal:13.0.0) when the file-reference lookup moved to the new
+  `FileReferenceResolver` service, which uses the `file_references`
+  memory-cache tag instead of `drupal_static()`. Only those two literal keys
+  are matched; other `drupal_static_reset()` calls, calls to
+  `file_get_file_references()` itself, and named/unpacked argument forms are
+  intentionally left for manual review. BC-wrapped via `DeprecationHelper`:
+  the `file_references` cache tag does not exist before drupal:11.4.0, so the
+  new call would be a silent no-op there — the wrapper keeps the original
+  `drupal_static_reset()` on older versions and only switches to the
+  `cache.memory` invalidation on drupal:11.4.0 and above.
 - **`RemoveDrupalToStringTraitRector`** — removes
   `use Drupal\Component\Utility\ToStringTrait;` from a class body and inserts
   an inline `public function __toString(): string { return (string)
