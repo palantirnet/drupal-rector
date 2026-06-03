@@ -14,6 +14,16 @@ release-by-release.
 
 ### Added
 
+- **`HookRequirementsAlterRenameRector`** — renames procedural
+  `{module}_requirements_alter()` hook implementations to
+  `{module}_runtime_requirements_alter()`, deprecated in drupal:11.3.0 and
+  removed in drupal:13.0.0. The runtime hook is only invoked on Drupal minors
+  where it exists, so the renamed function is a silent no-op on older Drupal;
+  this is a non-BC rewrite and ships in the opt-in `DRUPAL_113_BREAKING` set, not
+  the default deprecation set. The rule only renames functions with a single
+  by-reference parameter, skips the `hook_requirements_alter()` API-doc function,
+  and is idempotent — the `_runtime_`/`_update_requirements_alter()` hooks are
+  left untouched.
 - **`RemoveDrupalToStringTraitRector`** — removes
   `use Drupal\Component\Utility\ToStringTrait;` from a class body and inserts
   an inline `public function __toString(): string { return (string)
