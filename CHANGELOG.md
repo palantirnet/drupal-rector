@@ -104,6 +104,19 @@ release-by-release.
   rewritten (PHP silently discards the extra arguments).
   [#3589630](https://www.drupal.org/i/3589630) /
   [CR](https://www.drupal.org/node/3589636).
+- **`RenameHookRankingRector`** — renames the deprecated OOP hook attribute
+  `#[Hook('ranking')]` to `#[Hook('node_search_ranking')]`. Only the
+  `Drupal\Core\Hook\Attribute\Hook` attribute is targeted (an attribute of the
+  same short name from another namespace is left untouched), and only the
+  `'ranking'` argument is rewritten — the implementing method name and any
+  docblocks are unchanged. `hook_ranking()` is deprecated in drupal:11.3.0 and
+  removed in drupal:12.0.0; use `hook_node_search_ranking()` instead. Because
+  the `node_search_ranking` hook is only invoked on Drupal minors where it
+  exists, a plain rename is a silent no-op on older Drupal, and an attribute is
+  not an `Expr → Expr` transformation so it cannot be BC-wrapped. The rule
+  therefore lives in the opt-in `Drupal11SetList::DRUPAL_113_BREAKING` set, not
+  the default deprecation set. [#1019966](https://www.drupal.org/i/1019966) /
+  [change record](https://www.drupal.org/node/2690393)
 - **`RemoveDrupalToStringTraitRector`** — removes
   `use Drupal\Component\Utility\ToStringTrait;` from a class body and inserts
   an inline `public function __toString(): string { return (string)

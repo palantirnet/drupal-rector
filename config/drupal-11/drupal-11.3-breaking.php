@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 
 use DrupalRector\Drupal11\Rector\Deprecation\HookRequirementsAlterRenameRector;
+use DrupalRector\Drupal11\Rector\Deprecation\RenameHookRankingRector;
 use Rector\Config\RectorConfig;
 use Rector\Renaming\Rector\Name\RenameClassRector;
 
@@ -31,6 +32,27 @@ return static function (RectorConfig $rectorConfig): void {
     // breaking set. Apply only after dropping support for Drupal minors that
     // predate hook_runtime_requirements_alter().
     $rectorConfig->rule(HookRequirementsAlterRenameRector::class);
+
+    // https://www.drupal.org/node/1019966
+    // https://www.drupal.org/node/2690393 (change record)
+    // hook_ranking() deprecated in drupal:11.3.0, removed in drupal:12.0.0.
+    // Renames the OOP hook attribute #[Hook('ranking')] to
+    // #[Hook('node_search_ranking')]. The node_search_ranking hook is only
+    // invoked on Drupal minors where it exists, so on older Drupal the renamed
+    // attribute is never invoked (a silent no-op) — a non-BC rewrite. It cannot
+    // be BC-wrapped (an Attribute is not an Expr → Expr transformation), hence
+    // the breaking set. Apply only after dropping support for Drupal minors that
+    // predate hook_node_search_ranking().
+    //
+    // TODO PHPSTAN_MESSAGES RenameHookRankingRector: none. The hook_ranking()
+    //   deprecation is a @deprecated docblock on the node.api.php documentation
+    //   function; the hook system resolves hook names as runtime strings, so
+    //   phpstan-deprecation-rules has nothing to attach to the 'ranking' string
+    //   literal inside #[Hook('ranking')]. Verified against contrib
+    //   download_statistics 1.0.x (the rector transforms it correctly, but
+    //   PHPStan emits no deprecation for the attribute). Runtime-only
+    //   deprecation — intentionally no coverage message.
+    $rectorConfig->rule(RenameHookRankingRector::class);
 
     // https://www.drupal.org/node/3551446
     // https://www.drupal.org/node/3551450 (change record)
