@@ -194,14 +194,35 @@ Do not run the other passes in bulk mode.
      - Ask: could this replacement code run unchanged on a Drupal version that predates the deprecation?
      - **New Drupal API** (function/method/class introduced alongside the deprecation) → BC needed.
      - **Pure PHP or version-agnostic** (native functions, inline closures, no new Drupal symbols) → BC NOT needed.
+   - **Q4b (silent-divergence check — do NOT skip):** If Q4 said "version-agnostic", confirm the
+     replacement is also *behaviorally equivalent* on old versions, not merely non-fatal. A
+     replacement can use only old symbols yet still depend on infrastructure shipped **with** the
+     deprecation — a new cache bin/tag, a new service that now owns the data, a new storage
+     location, a changed default. On older Drupal it runs without error but produces a **different
+     effect (often a silent no-op)** than the original. That is a BC break and requires wrapping.
+     - **Verify against core history**, do not eyeball it. Find the commit that introduced the
+       deprecation and check whether the thing the replacement targets (the cache tag, service,
+       bin, option) existed *before* it:
+       ```bash
+       cd repos/drupal-core
+       git log --oneline -3 -- <path/to/new/Service.php>          # find the introducing commit <sha>
+       git grep -n "<tag-or-service-or-symbol>" <sha>~1 -- core/  # was it there BEFORE? empty = no
+       ```
+       If the target only appears at `<sha>` and not `<sha>~1`, the replacement silently diverges
+       on older versions → **BC needed** even though Q4 found no missing symbol.
+     - Reference case: `ReplaceDrupalStaticResetFileReferencesRector` — `cache.memory`/`invalidateTags()`
+       are old (no fatal), but the `file_references` cache tag was introduced with the 11.4.0
+       deprecation, so the new call is a no-op on 11.3. It is correctly `AbstractDrupalCoreRector`.
 
 3. Expected base class:
-   - Q2 = Expr → Expr AND Q3 = version >= 10.1.0 AND **Q4 = new Drupal API** → **`AbstractDrupalCoreRector`**
-   - Q4 = version-agnostic replacement (or Q2/Q3 not met) → **`AbstractRector`**
+   - Q2 = Expr → Expr AND Q3 = version >= 10.1.0 AND (**Q4 = new Drupal API** OR **Q4b = silent
+     divergence on old versions**) → **`AbstractDrupalCoreRector`**
+   - Q4b = truly version-agnostic (identical observable effect on every supported version), or
+     Q2/Q3 not met → **`AbstractRector`**
 
 4. Compare expected vs actual.
 
-**Output:** `Pass 3: [PASS|FAIL] — expected <base class>, found <base class>`
+**Output:** `Pass 3: [PASS|FAIL] — expected <base class>, found <base class> (note Q4b result)`
 
 **If FAIL:** The base class is wrong. Propose the corrected class and note that `configure()`, `refactorWithConfiguration()`, and the test class will need updating.
 
