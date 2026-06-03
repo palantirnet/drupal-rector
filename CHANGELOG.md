@@ -326,7 +326,16 @@ release-by-release.
   - `DRUPAL_113_BREAKING`: `workspaces\WorkspaceAssociation[Interface]` →
     `workspaces\WorkspaceTracker[Interface]`
     ([#3551446](https://www.drupal.org/i/3551446) /
-    [CR](https://www.drupal.org/node/3551450)).
+    [CR](https://www.drupal.org/node/3551450)); the four
+    `block_content\Access\*` aliases (`AccessGroupAnd`,
+    `DependentAccessInterface`, `RefinableDependentAccessInterface`,
+    `RefinableDependentAccessTrait`) → their canonical `Core\Access\*` homes.
+    The canonical classes were introduced in drupal:11.3.0 (not earlier) and
+    do not exist on any Drupal 10 branch, and `RenameClassRector` rewrites
+    structural `use`/`extends`/`implements`/`::class` nodes that cannot be
+    BC-wrapped, so the rewrite fatals on Drupal 10
+    ([#3571874](https://www.drupal.org/i/3571874) /
+    [CR](https://www.drupal.org/node/3527501)).
   - `DRUPAL_114_BREAKING`: `menu_link_content\Plugin\migrate\process\{LinkOptions,LinkUri}`
     → `migrate\Plugin\migrate\process\*`
     ([#3560075](https://www.drupal.org/i/3560075) /
@@ -337,16 +346,6 @@ release-by-release.
   i.e. a core test module that production code cannot rely on being loaded;
   rewriting the production FQCN to that test-module FQCN would fatal on D10
   AND on any production D11 site that does not enable that test module.
-- Class-rename entries for the four `Drupal\block_content\Access\*` aliases
-  (`AccessGroupAnd`, `DependentAccessInterface`,
-  `RefinableDependentAccessInterface`, `RefinableDependentAccessTrait`) →
-  their canonical `Drupal\Core\Access\*` homes. Deprecated in drupal:11.3.0,
-  removed in drupal:12.0.0; registered via Rector's built-in
-  `RenameClassRector` in `drupal-11.3-deprecations.php`. The canonical
-  classes have existed in `Drupal\Core\Access\*` since pre-11.3, so the
-  rewrite is BC-safe across all supported Drupal 10 and 11 minors.
-  [#3571874](https://www.drupal.org/i/3571874) /
-  [CR](https://www.drupal.org/node/3527501).
 - Class-rename entry for `LibraryDiscovery`:
   `Drupal\Core\Asset\LibraryDiscovery` → `Drupal\Core\Asset\LibraryDiscoveryInterface`.
   The concrete class was deprecated in drupal:11.1.0 and removed in drupal:12.0.0;
@@ -408,6 +407,20 @@ release-by-release.
   The breaking sets are not transitively included by `DRUPAL_11X` or
   `DRUPAL_11`; consumers must load each one explicitly after committing to
   drop the older minor(s) named in that file's docblock.
+- Guide: [Running against a Drupal 10 project](docs/running-against-drupal-10.md) — covers the
+  direct install and a standalone-runner recipe for sites whose PHPStan 1 tooling conflicts with
+  Rector 2's PHPStan 2 requirement.
+
+### Fixed
+
+- Loading the Drupal 9 and Drupal 11 sets together no longer crashes at
+  container-build time. The Drupal 9 `FunctionToFirstArgMethodRector` (and the
+  Drupal 8 `DrupalServiceRenameRector`) subclass the generic rule, so Rector
+  delivered the generic rule's configuration to the subclass instance as well
+  (`afterResolving` callbacks match by `instanceof`); the subclass' strict type
+  guard then threw. The subclasses now ignore configuration that is not their own.
+  This unblocks running the full, bundled rule set — including the D10-era
+  deprecations that live in the Drupal 11 set — against Drupal 10 sites.
 
 ## [1.0.0-alpha1] — 2026-06-01
 
@@ -687,17 +700,27 @@ configs.
   extend `AbstractDrupalCoreRector` and auto-wrap their `Expr → Expr` rewrites
   via `DeprecationHelper::backwardsCompatibleCall()`. Their configuration value
   objects (`ClassConstantToClassConstantConfiguration`,
-  `MethodToMethodWithCheckConfiguration`) gain a required `introducedVersion`
-  constructor argument and now implement `VersionedConfigurationInterface`.
-  This closes three D11 → D10 runtime regressions (Comment* enums in 11.4,
+  `MethodToMethodWithCheckConfiguration`) gain an optional `introducedVersion`
+  constructor argument (default `'0.0.0'`) and now implement
+  `VersionedConfigurationInterface`. The default falls outside the BC-wrap
+  gate (`< 10.0.0`), so consumers that instantiate these value objects without
+  passing the new argument keep pre-refactor behaviour (no wrapping). This
+  closes three D11 → D10 runtime regressions (Comment* enums in 11.4,
   `RequirementSeverity` in 11.2, `AliasManager` method rename in 11.1) without
   moving anything to a `-breaking.php` set.
 - `MethodToMethodWithCheckRector` no longer attaches a "please confirm the
   receiver type" TODO comment for the `maybe` type-inference case. The
   comment-on-parent-statement mechanism relied on parent-node tracking that
-  Rector 2.x removed; the BC wrap makes both code paths runtime-safe by
-  selecting the right call based on `\Drupal::VERSION`, which addresses the
-  underlying concern.
+  Rector 2.x removed. For configurations whose `introducedVersion ≥ 10.0.0`,
+  the BC wrap selects the right call at runtime via `\Drupal::VERSION` and
+  fully addresses the underlying concern. Configurations with an older
+  introduced version (e.g. `urlInfo` → `toUrl` @ 8.0.0,
+  `getLowercaseLabel` → `getSingularLabel` @ 8.8.0,
+  `clearCsrfTokenSeed` → `stampNew` @ 9.2.0) fall outside the BC-wrap gate
+  and rewrite unconditionally on a `maybe`-typed receiver. Contrib audit
+  (api.tresbien.tech, 2026-05-28) found zero live callers of those three
+  methods on receivers PHPStan cannot resolve to a concrete type, so the
+  residual risk is theoretical.
 - **Shipped `rector.php` disables BC wrapping by default.** New users get clean
   one-version rewrites out of the box. Contrib modules and projects that need to
   run on multiple Drupal versions should call `->enableBackwardCompatibility()`

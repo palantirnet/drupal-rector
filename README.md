@@ -57,6 +57,12 @@ For contribution suggestions, please see the later section of this document.
 
 **NOTE**: To have the best experience with Drupal Rector, your Drupal site should be running Drupal 10 or higher.
 
+> **On Drupal 10 preparing for Drupal 11?** You can run Drupal Rector against a D10 site to clean up
+> deprecations before upgrading. If your project pins PHPStan 1 (e.g. via `mglaman/phpstan-drupal`)
+> the direct install below will conflict — see
+> [Running against a Drupal 10 project](docs/running-against-drupal-10.md) for the standalone-runner
+> recipe that avoids it.
+
 ### Install Drupal Rector inside a Drupal project.
 
 ```bash

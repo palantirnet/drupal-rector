@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use DrupalRector\Drupal11\Rector\Deprecation\BlockContentTestBaseStringToArrayRector;
+use DrupalRector\Drupal11\Rector\Deprecation\DrupalGetHeadersAssocArrayRector;
 use DrupalRector\Drupal11\Rector\Deprecation\MovePointerToMouseOverRector;
 use DrupalRector\Drupal11\Rector\Deprecation\PluginBaseIsConfigurableRector;
 use DrupalRector\Drupal11\Rector\Deprecation\RemoveModuleHandlerDeprecatedMethodsRector;
@@ -27,15 +28,38 @@ return static function (RectorConfig $rectorConfig): void {
     ]);
 
     // https://www.drupal.org/node/3467559
-    // AliasWhitelist and AliasWhitelistInterface deprecated in drupal:11.1.0, removed in drupal:12.0.0.
-    // Replaced by AliasPrefixList and AliasPrefixListInterface.
-    // AliasManager::pathAliasWhitelistRebuild() deprecated in drupal:11.1.0, removed in drupal:12.0.0.
-    // Replaced by pathAliasPrefixListRebuild().
+    // AliasWhitelist[Interface] → AliasPrefixList[Interface] class renames
+    // are in the opt-in `drupal-11.1-breaking.php` set (DRUPAL_111_BREAKING):
+    // the replacement classes were introduced in 11.1.0 and do not exist on
+    // any Drupal 10.x branch.
+    //
+    // https://www.drupal.org/node/3462871 (deprecation)
+    // https://www.drupal.org/node/3571057 (removal)
+    // https://www.drupal.org/node/3462970 (change record)
+    // Drupal\Core\Asset\LibraryDiscovery deprecated in drupal:11.1.0, removed in drupal:12.0.0.
+    // Consumer code should type-hint LibraryDiscoveryInterface; the library.discovery
+    // service is now backed by LibraryDiscoveryCollector.
+    //
+    // https://www.drupal.org/node/3573870
+    // https://www.drupal.org/node/3384745 (change record)
+    // Drupal\user\Entity\EntityPermissionsRouteProviderWithCheck deprecated in
+    // drupal:11.1.0, removed in drupal:12.0.0. Use EntityPermissionsRouteProvider
+    // instead. The base provider already enforces the `administer permissions`
+    // permission requirement, so the convenience access-check the `WithCheck`
+    // variant added is dropped. Owners of custom subclasses that re-added the
+    // custom check must port any remaining access logic into the route
+    // definition. Doctrine annotation-string references (the dominant real-world
+    // pattern) are NOT rewritten — RenameClassRector only touches PHP Name nodes
+    // (use/extends/implements/::class/typehints), not strings inside annotations.
+
     $rectorConfig->ruleWithConfiguration(RenameClassRector::class, [
-        'Drupal\path_alias\AliasWhitelist' => 'Drupal\path_alias\AliasPrefixList',
-        'Drupal\path_alias\AliasWhitelistInterface' => 'Drupal\path_alias\AliasPrefixListInterface',
         'Drupal\Core\Routing\MatchingRouteNotFoundException' => 'Symfony\Component\Routing\Exception\ResourceNotFoundException',
+        'Drupal\Core\Asset\LibraryDiscovery' => 'Drupal\Core\Asset\LibraryDiscoveryInterface',
+        'Drupal\user\Entity\EntityPermissionsRouteProviderWithCheck' => 'Drupal\user\Entity\EntityPermissionsRouteProvider',
     ]);
+    // The MethodToMethodWithCheckRector entry below
+    // for AliasManager::pathAliasWhitelistRebuild() → pathAliasPrefixListRebuild()
+    // is BC-wrapped and remains in this default set.
     $rectorConfig->ruleWithConfiguration(MethodToMethodWithCheckRector::class, [
         new MethodToMethodWithCheckConfiguration('Drupal\path_alias\AliasManager', 'pathAliasWhitelistRebuild', 'pathAliasPrefixListRebuild', '11.1.0'),
     ]);
@@ -90,4 +114,12 @@ return static function (RectorConfig $rectorConfig): void {
         new FunctionToStaticConfiguration('11.1.0', 'drupal_common_theme', 'Drupal\Core\Theme\ThemeCommonElements', 'commonElements'),
         new FunctionToStaticConfiguration('11.1.0', 'image_filter_keyword', 'Drupal\Component\Utility\Image', 'getKeywordOffset'),
     ]);
+
+    // https://www.drupal.org/node/3440169
+    // https://www.drupal.org/node/3456178 (change record: integer-keyed headers)
+    // https://www.drupal.org/node/3456233 (change record: null header values)
+    // UiHelperTrait::drupalGet() $headers as indexed colon-separated strings or null values
+    // deprecated in drupal:11.1.0, removed in drupal:12.0.0. Replaced by the associative array
+    // format ['Header-Name' => 'value'], with empty strings in place of null.
+    $rectorConfig->rule(DrupalGetHeadersAssocArrayRector::class);
 };
