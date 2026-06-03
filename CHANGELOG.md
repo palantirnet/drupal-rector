@@ -14,6 +14,23 @@ release-by-release.
 
 ### Added
 
+- **`RemoveSourceModuleFromMigrateSourceAttributeRector`** — removes the
+  `source_module` named argument from `#[MigrateSource]` attribute usages. Only
+  the `Drupal\migrate\Attribute\MigrateSource` attribute is targeted (an
+  attribute of the same short name from another namespace is left untouched).
+  The `source_module` constructor parameter was removed from the attribute in
+  drupal:11.2.0; passing `#[MigrateSource(source_module: '...')]` now raises an
+  "Unknown named parameter" error at plugin discovery time. The rewrite cannot
+  be BC-wrapped (an attribute is not an `Expr → Expr` transformation) and the
+  argument is mutually exclusive across minors, so the rule lives in the opt-in
+  `Drupal11SetList::DRUPAL_112_BREAKING` set, not the default deprecation set.
+  For plugins extending `DrupalSqlBase` the `source_module` value must be
+  re-declared via the `@MigrateSource` annotation or the migration YAML after
+  removal — a manual follow-up this rule does not automate. Apply only after
+  dropping support for Drupal minors that predate 11.2.0.
+  [#3009349](https://www.drupal.org/i/3009349) /
+  [change record](https://www.drupal.org/node/3306373)
+
 - **`RemoveDrupalToStringTraitRector`** — removes
   `use Drupal\Component\Utility\ToStringTrait;` from a class body and inserts
   an inline `public function __toString(): string { return (string)
