@@ -14,6 +14,14 @@ release-by-release.
 
 ### Added
 
+- **`CommentLinkBuilderConstructorRector`** — rewrites the deprecated
+  5-argument `new \Drupal\comment\CommentLinkBuilder(...)` constructor call to
+  the new 3-argument form, dropping the `$module_handler` and
+  `$entity_type_manager` arguments (deprecated in drupal:11.3.0, removed in
+  drupal:12.0.0). Because the 3-argument signature only exists on Drupal >=
+  11.3.0, the rewrite is BC-wrapped with `DeprecationHelper::backwardsCompatibleCall()`
+  so the original 5-argument call still runs on older Drupal. Only calls with
+  exactly 5 positional arguments are rewritten.
 - **`RemoveDrupalToStringTraitRector`** — removes
   `use Drupal\Component\Utility\ToStringTrait;` from a class body and inserts
   an inline `public function __toString(): string { return (string)
