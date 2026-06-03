@@ -121,12 +121,16 @@ release-by-release.
   [#3526250](https://www.drupal.org/i/3526250).
 - **`ReplaceDialogClassOptionRector`** — rewrites the removed
   `$dialog_options['dialogClass']` key to
-  `$dialog_options['classes']['ui-dialog']` in `new OpenDialogCommand(...)` and
-  `new OpenOffCanvasDialogCommand(...)` calls. `dialogClass` was deprecated in
-  drupal:11.3.0 and removed in drupal:12.0.0. Receiver narrowing is by FQCN
-  match on the resolved `New_->class` (`Drupal\Core\Ajax\OpenDialogCommand` or
-  `Drupal\Core\Ajax\OpenOffCanvasDialogCommand`), so unrelated constructors
-  with similarly-shaped option arrays are left alone. Handles three array
+  `$dialog_options['classes']['ui-dialog']` in `new OpenDialogCommand(...)`,
+  `new OpenModalDialogCommand(...)`, and `new OpenOffCanvasDialogCommand(...)`
+  calls. `dialogClass` was deprecated in drupal:11.3.0 and removed in
+  drupal:12.0.0. Receiver narrowing is by FQCN match on the resolved
+  `New_->class` (`Drupal\Core\Ajax\OpenDialogCommand`,
+  `Drupal\Core\Ajax\OpenModalDialogCommand`, or
+  `Drupal\Core\Ajax\OpenOffCanvasDialogCommand`), and the `$dialog_options`
+  argument is located per-class (4th argument for `OpenDialogCommand`, 3rd for
+  the modal/off-canvas commands), so unrelated constructors with
+  similarly-shaped option arrays are left alone. Handles three array
   shapes: (a) no existing `classes` key → adds `'classes' => ['ui-dialog' => $value]`;
   (b) `classes` exists without `ui-dialog` → adds `'ui-dialog' => $value` inside
   it; (c) `classes['ui-dialog']` already present and both old/new values are
@@ -268,9 +272,12 @@ release-by-release.
   drupal:12.0.0.
   [#3550268](https://www.drupal.org/i/3550268) /
   [CR](https://www.drupal.org/node/3545276).
-- **`ReplaceCommentPreviewConstantsRector`** — rewrites integer arguments
+- **`ReplaceCommentPreviewConstantsRector`** — rewrites the legacy
+  `DRUPAL_DISABLED` / `DRUPAL_OPTIONAL` / `DRUPAL_REQUIRED` constant arguments
   to `CommentTestBase::setCommentPreview()` to the corresponding
-  `Drupal\comment\CommentPreviewMode` enum case. Passing an int was
+  `Drupal\comment\CommentPreviewMode` enum case. Only these named constants are
+  matched (`ConstFetch` nodes) — a bare integer literal such as
+  `setCommentPreview(0)` is left untouched. Passing the constants was
   deprecated in drupal:11.3.0 and is removed in drupal:13.0.0. BC-wrapped
   via `DeprecationHelper::backwardsCompatibleCall()` so the rewrite still
   runs on pre-11.3 Drupal where the enum doesn't yet exist.
@@ -290,13 +297,15 @@ release-by-release.
   trait composition is a structural `Class_` change, not an Expr → Expr
   rewrite, it cannot be BC-wrapped with `DeprecationHelper`. Running
   the rule prematurely on a D10-only codebase risks silently stripping
-  a composition that the tests still rely on. The rector therefore only
-  fires when the consumer explicitly sets the target Drupal version to
-  `12.0.0` or higher via
-  `DrupalRectorSettings::setDrupalVersion('12.0.0')`. The orphan
+  a composition that the tests still rely on. It is registered in the
+  default `drupal-11.4-deprecations.php` set but gated with
+  `DrupalIntroducedVersionConfiguration('12.0.0')`, so it never fires unless
+  the consumer explicitly sets the target Drupal version to `12.0.0` or higher
+  via `DrupalRectorSettings::setDrupalVersion('12.0.0')`. The orphan
   top-of-file `use Drupal\Tests\PhpUnitCompatibilityTrait;` import is
   left in place — PHP never resolves an unused alias, so it remains
   harmless on D12; cleanup is optional and out of scope.
+  [#3582118](https://www.drupal.org/i/3582118).
 - **New opt-in "breaking" sets**, one per Drupal 11 minor:
   `Drupal11SetList::DRUPAL_111_BREAKING`, `DRUPAL_112_BREAKING`,
   `DRUPAL_113_BREAKING`, `DRUPAL_114_BREAKING`. Each is loaded from
