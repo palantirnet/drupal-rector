@@ -83,8 +83,15 @@ function main(array $argv): void
     $cacheDir = $repoRoot . '/.claude/cache/drupal-issues';
     $citedSiblings = buildCitedSiblingMap($repoRoot . '/config', $cacheDir);
 
-    // Step 3b: Mark config-only / implemented entries found in any config/* subdir.
-    scanConfigFiles($repoRoot . '/config', $entries, $implementedClasses, $citedSiblings);
+    // Step 3b: Bridge config ↔ digest via shared citations. A config block often
+    // cites the change record (CR), while a digest filename uses a follow-up/cleanup
+    // issue the CR's field_issues never lists (so Step 3a cannot reach it). The digest
+    // file itself usually @see's that same CR, so matching on the shared citation
+    // connects them when the field_issues path comes up empty.
+    $digestCitations = buildDigestCitationMap($entries, $rulesDir, $cacheDir);
+
+    // Step 3c: Mark config-only / implemented entries found in any config/* subdir.
+    scanConfigFiles($repoRoot . '/config', $entries, $implementedClasses, $citedSiblings, $digestCitations);
 
     // Step 4: Add unmatched custom classes (no digest file found).
     foreach ($unmatched as $className => $data) {
@@ -414,8 +421,9 @@ function buildClassMap(array $entries, array $unmatched): array
  * @param array<string, array<string, mixed>> $entries
  * @param array<string, array<string, mixed>> $implementedClasses
  * @param array<string, list<string>> $citedSiblings  citedIssue → [siblingIssueIds]
+ * @param array<string, list<string>> $digestCitations  citedNodeId → [digestIssueId]
  */
-function scanConfigFiles(string $configRoot, array &$entries, array $implementedClasses, array $citedSiblings = []): void
+function scanConfigFiles(string $configRoot, array &$entries, array $implementedClasses, array $citedSiblings = [], array $digestCitations = []): void
 {
     foreach (glob($configRoot . '/*/', GLOB_ONLYDIR) as $configDir) {
         $dirName = basename(rtrim($configDir, '/'));
@@ -426,7 +434,7 @@ function scanConfigFiles(string $configRoot, array &$entries, array $implemented
             }
             $content = file_get_contents($configFile);
             $relFile  = 'config/' . $dirName . '/' . basename($configFile);
-            parseConfigBlock($content, $relFile, $entries, $implementedClasses, $citedSiblings);
+            parseConfigBlock($content, $relFile, $entries, $implementedClasses, $citedSiblings, $digestCitations);
         }
     }
 }
@@ -440,8 +448,9 @@ function scanConfigFiles(string $configRoot, array &$entries, array $implemented
  * @param array<string, array<string, mixed>> $entries
  * @param array<string, array<string, mixed>> $implementedClasses  shortClassName => {class, files}
  * @param array<string, list<string>> $citedSiblings  citedIssue → [siblingIssueIds]
+ * @param array<string, list<string>> $digestCitations  citedNodeId → [digestIssueId]
  */
-function parseConfigBlock(string $content, string $relFile, array &$entries, array $implementedClasses, array $citedSiblings = []): void
+function parseConfigBlock(string $content, string $relFile, array &$entries, array $implementedClasses, array $citedSiblings = [], array $digestCitations = []): void
 {
     $lines = explode("\n", $content);
     $pendingIssues = [];
@@ -461,7 +470,7 @@ function parseConfigBlock(string $content, string $relFile, array &$entries, arr
 
         if ($isRuleCall) {
             $shortClass = extractShortClassName($m[1]);
-            $expandedIssues = expandIssuesViaSiblings($pendingIssues, $citedSiblings);
+            $expandedIssues = expandIssuesViaSiblings($pendingIssues, $citedSiblings, $digestCitations);
 
             if (isset(GENERIC_RECTORS[$shortClass])) {
                 // Generic rector — mark as config-only.
@@ -569,18 +578,81 @@ function buildCitedSiblingMap(string $configRoot, string $cacheDir): array
  *
  * @param list<string> $citedIssues
  * @param array<string, list<string>> $citedSiblings
+ * @param array<string, list<string>> $digestCitations  citedNodeId → [digestIssueId]
  * @return list<string>
  */
-function expandIssuesViaSiblings(array $citedIssues, array $citedSiblings): array
+function expandIssuesViaSiblings(array $citedIssues, array $citedSiblings, array $digestCitations = []): array
 {
     $expanded = [];
     foreach ($citedIssues as $issue) {
         $expanded[$issue] = true;
+        // CR → the deprecation issue(s) named in its field_issues.
         foreach ($citedSiblings[$issue] ?? [] as $siblingId) {
             $expanded[$siblingId] = true;
         }
+        // Any digest entry whose own @see citations name this node (e.g. the
+        // digest @see's the CR the config cites). Bridges the case where the
+        // digest's filename issue is not in the CR's field_issues.
+        foreach ($digestCitations[$issue] ?? [] as $digestId) {
+            $expanded[$digestId] = true;
+        }
     }
     return array_keys($expanded);
+}
+
+/**
+ * Builds a map from every drupal.org node ID cited inside a digest file (via
+ * @see URLs or issue links) to the digest entries that cite it.
+ *
+ * Config blocks usually cite the change record (CR), while a digest filename
+ * often uses a follow-up/cleanup issue the CR's field_issues never lists — so
+ * the CR→field_issues bridge (buildCitedSiblingMap) cannot reach it. The digest
+ * file itself, however, typically @see's that same CR. Matching on the shared
+ * citation connects config ↔ digest in exactly those cases.
+ *
+ * A digest's own issue number is skipped (it already matches the entry key
+ * directly), so this only adds genuinely indirect links. Only change records
+ * (changenotice nodes) are kept as bridge keys — the same authoritative-grouping
+ * philosophy as buildCitedSiblingMap. A shared plain-issue citation is too weak
+ * a signal and would risk false positives; the CR is the deliberate grouping.
+ *
+ * @param array<string, array<string, mixed>> $entries
+ * @return array<string, list<string>>  citedCrNodeId → [digestIssueId, ...]
+ */
+function buildDigestCitationMap(array $entries, string $rulesDir, string $cacheDir): array
+{
+    $map = [];
+    $isChangeRecord = [];
+    foreach ($entries as $issueId => $entry) {
+        $file = $entry['digest_file'] ?? null;
+        if (!is_string($file)) {
+            continue;
+        }
+        $path = $rulesDir . '/' . $file;
+        if (!is_file($path)) {
+            continue;
+        }
+        $content = file_get_contents($path);
+        if (!preg_match_all('#drupal\.org/(?:node|project/[\w-]+/issues)/(\d+)#', $content, $m)) {
+            continue;
+        }
+        foreach (array_unique($m[1]) as $citedId) {
+            $citedId = (string) $citedId;
+            if ($citedId === (string) $issueId) {
+                continue; // self-citation already matches the entry key directly
+            }
+            // Only bridge through change records, not coincidental shared issues.
+            if (!array_key_exists($citedId, $isChangeRecord)) {
+                $node = loadIssueNodeCached($citedId, $cacheDir);
+                $isChangeRecord[$citedId] = $node !== null && ($node['type'] ?? null) === 'changenotice';
+            }
+            if (!$isChangeRecord[$citedId]) {
+                continue;
+            }
+            $map[$citedId][] = (string) $issueId;
+        }
+    }
+    return $map;
 }
 
 /**
