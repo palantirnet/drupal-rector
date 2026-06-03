@@ -17,12 +17,15 @@ use DrupalRector\Drupal11\Rector\Deprecation\RemoveDrupalToStringTraitRector;
 use DrupalRector\Drupal11\Rector\Deprecation\RemoveFilterTipsLongParamRector;
 use DrupalRector\Drupal11\Rector\Deprecation\RemoveInstallSchemaSystemSequencesRector;
 use DrupalRector\Drupal11\Rector\Deprecation\RemoveLinkWidgetValidateTitleElementRector;
+use DrupalRector\Drupal11\Rector\Deprecation\RemovePhpUnitCompatibilityTraitRector;
 use DrupalRector\Drupal11\Rector\Deprecation\RemoveSetUriCallbackRector;
 use DrupalRector\Drupal11\Rector\Deprecation\RemoveToolkitArgFromImageToolkitOperationConstructorRector;
 use DrupalRector\Drupal11\Rector\Deprecation\RemoveTrustDataCallRector;
 use DrupalRector\Drupal11\Rector\Deprecation\RemoveViewsRowCacheKeysRector;
 use DrupalRector\Drupal11\Rector\Deprecation\ReplaceEntityReferenceRecursiveLimitRector;
+use DrupalRector\Drupal11\Rector\Deprecation\ReplaceExpectDeprecationRector;
 use DrupalRector\Drupal11\Rector\Deprecation\ReplaceHideShowWithPrintedRector;
+use DrupalRector\Drupal11\Rector\Deprecation\ReplaceLocaleTranslationPathConfigRector;
 use DrupalRector\Drupal11\Rector\Deprecation\ReplaceNonBoolAccessRector;
 use DrupalRector\Drupal11\Rector\Deprecation\ReplaceRecipeRunnerInstallModuleRector;
 use DrupalRector\Drupal11\Rector\Deprecation\ReplaceSessionManagerDeleteRector;
@@ -495,4 +498,37 @@ return static function (RectorConfig $rectorConfig): void {
     // DrupalTestCaseTrait::getDrupalRoot() deprecated in drupal:11.4.0, removed in drupal:13.0.0.
     // Replaced by direct access to the $this->root property on Drupal base test classes.
     $rectorConfig->rule(GetDrupalRootToRootPropertyRector::class);
+
+    // https://www.drupal.org/node/3550268
+    // https://www.drupal.org/node/3545276 (change record)
+    // ExpectDeprecationTrait deprecated in drupal:11.4.0, removed in drupal:12.0.0.
+    // Replaced by PHPUnit 11+ expectUserDeprecationMessage() / expectUserDeprecationMessageMatches().
+    $rectorConfig->ruleWithConfiguration(ReplaceExpectDeprecationRector::class, [
+        new DrupalIntroducedVersionConfiguration('11.4.0'),
+    ]);
+
+    // https://www.drupal.org/node/3571593
+    // https://www.drupal.org/node/3571594 (change record)
+    // locale.settings:translation.path config key deprecated in drupal:11.4.0, removed in drupal:13.0.0.
+    // Replaced by \Drupal\Core\Site\Settings::get('locale_translation_path', 'public://translations').
+    $rectorConfig->ruleWithConfiguration(ReplaceLocaleTranslationPathConfigRector::class, [
+        new DrupalIntroducedVersionConfiguration('11.4.0'),
+    ]);
+
+    // https://www.drupal.org/node/3582118
+    // PhpUnitCompatibilityTrait is DELETED FROM CORE in Drupal 12 — any test
+    // class still composing the trait fatal-errors at autoload on D12.
+    //
+    // GATED TO 12.0.0 INTENTIONALLY. The trait still exists (and may still
+    // hold shim methods) on Drupal 10. On Drupal 11 it is an empty no-op but
+    // removing the composition is harmless. On Drupal 12 the trait class is
+    // gone and the composition MUST be removed. Because the trait composition
+    // cannot be BC-wrapped (it's a structural Class_ change, not an Expr →
+    // Expr rewrite), the rector is deliberately OFF by default and only fires
+    // when the consumer sets DrupalRectorSettings::setDrupalVersion('12.0.0')
+    // or higher. This prevents accidentally stripping a still-functional
+    // trait composition from a D10/D11-only codebase.
+    $rectorConfig->ruleWithConfiguration(RemovePhpUnitCompatibilityTraitRector::class, [
+        new DrupalIntroducedVersionConfiguration('12.0.0'),
+    ]);
 };

@@ -11,6 +11,7 @@ use DrupalRector\Drupal11\Rector\Deprecation\RemoveAliasManagerCacheMethodCallsR
 use DrupalRector\Drupal11\Rector\Deprecation\RemoveRendererAddCacheableDependencyNonObjectRector;
 use DrupalRector\Drupal11\Rector\Deprecation\RemoveRootFromConvertDbUrlRector;
 use DrupalRector\Drupal11\Rector\Deprecation\ReplaceCommentManagerGetCountNewCommentsRector;
+use DrupalRector\Drupal11\Rector\Deprecation\ReplaceCommentPreviewConstantsRector;
 use DrupalRector\Drupal11\Rector\Deprecation\ReplaceDialogClassOptionRector;
 use DrupalRector\Drupal11\Rector\Deprecation\ReplaceNodeAccessViewAllNodesRector;
 use DrupalRector\Drupal11\Rector\Deprecation\ReplaceNodeAddBodyFieldRector;
@@ -20,6 +21,7 @@ use DrupalRector\Drupal11\Rector\Deprecation\ReplaceThemeGetSettingRector;
 use DrupalRector\Drupal11\Rector\Deprecation\ReplaceTwigExtensionRector;
 use DrupalRector\Drupal11\Rector\Deprecation\ReplaceUserSessionNamePropertyRector;
 use DrupalRector\Drupal11\Rector\Deprecation\TaxonomyTermPageVariableToViewModeRector;
+use DrupalRector\Drupal11\Rector\Deprecation\ViewsConfigUpdaterClassResolverToServiceRector;
 use DrupalRector\Rector\Deprecation\ConstantToClassConstantRector;
 use DrupalRector\Rector\Deprecation\FunctionCallRemovalRector;
 use DrupalRector\Rector\Deprecation\FunctionToFirstArgMethodRector;
@@ -212,6 +214,14 @@ return static function (RectorConfig $rectorConfig): void {
     // (DRUPAL_113_BREAKING): the replacement classes were introduced in 11.3.0
     // and do not exist on any Drupal 10.x branch.
 
+    // https://www.drupal.org/node/3571874
+    // https://www.drupal.org/node/3527501 (change record)
+    // block_content\Access\* → Core\Access\* class renames are in the opt-in
+    // `drupal-11.3-breaking.php` set (DRUPAL_113_BREAKING): the canonical
+    // Drupal\Core\Access\* homes were added in 11.3.0 and do not exist on any
+    // Drupal 10.x branch, so the (non-BC-wrappable) RenameClassRector rewrite
+    // would fatal there.
+
     // https://www.drupal.org/node/3496369
     // https://www.drupal.org/node/3532412 (change record)
     // AliasManager::setCacheKey() and AliasManager::writeCache() deprecated in drupal:11.3.0,
@@ -242,4 +252,22 @@ return static function (RectorConfig $rectorConfig): void {
     // $variables['view_mode'] === 'full'; the comparison is pure PHP and works
     // on every Drupal version, so no BC wrapper is needed.
     $rectorConfig->rule(TaxonomyTermPageVariableToViewModeRector::class);
+
+    // https://www.drupal.org/node/3538660
+    // https://www.drupal.org/node/3538678 (change record)
+    // Passing an int to CommentTestBase::setCommentPreview() deprecated in drupal:11.3.0, removed in drupal:13.0.0.
+    // Replaced by Drupal\comment\CommentPreviewMode enum cases.
+    $rectorConfig->ruleWithConfiguration(ReplaceCommentPreviewConstantsRector::class, [
+        new DrupalIntroducedVersionConfiguration('11.3.0'),
+    ]);
+
+    // https://www.drupal.org/node/3529274
+    // https://www.drupal.org/node/3530638 (change record)
+    // ViewsConfigUpdater registered as a service in drupal:11.3.0. Replace
+    // \Drupal::classResolver(ViewsConfigUpdater::class) with
+    // \Drupal::service(ViewsConfigUpdater::class) so state set via
+    // setDeprecationsEnabled(FALSE) persists across hook invocations.
+    $rectorConfig->ruleWithConfiguration(ViewsConfigUpdaterClassResolverToServiceRector::class, [
+        new DrupalIntroducedVersionConfiguration('11.3.0'),
+    ]);
 };
