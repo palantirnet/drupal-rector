@@ -151,6 +151,15 @@ release-by-release.
   `class … extends …` declaration cannot be BC-wrapped.
   [#2987159](https://www.drupal.org/i/2987159) /
   [CR](https://www.drupal.org/node/3521459).
+- **`RemoveRouteBuilderDeprecatedArgsRector`** — rewrites the deprecated
+  6-argument `new \Drupal\Core\Routing\RouteBuilder(...)` instantiation to the
+  new 4-argument form (deprecated in drupal:11.4.0, removed in drupal:12.0.0).
+  The `$module_handler` (arg 3) and `$controller_resolver` (arg 4) arguments
+  were removed and `$check_provider` shifted from position 5 to position 3;
+  YAML route discovery moved to the new `YamlRouteDiscovery` service. Only
+  6-argument positional calls to `RouteBuilder` are matched; the new signature
+  only exists on Drupal ≥ 11.4, so the change is BC-wrapped via
+  `DeprecationHelper::backwardsCompatibleCall()`.
 - **`RemoveDrupalToStringTraitRector`** — removes
   `use Drupal\Component\Utility\ToStringTrait;` from a class body and inserts
   an inline `public function __toString(): string { return (string)
