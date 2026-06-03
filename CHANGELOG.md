@@ -14,6 +14,16 @@ release-by-release.
 
 ### Added
 
+- **`DRUPAL_114_BREAKING`: `HelpSearch` → `SearchHelpSearch` class rename.**
+  `Drupal\help\Plugin\Search\HelpSearch` was moved out of the `help` module and
+  renamed to `Drupal\search_help\Plugin\Search\SearchHelpSearch` in the new
+  `search_help` core sub-module (`system_update_11400()`, drupal:11.4.0). Added
+  as a `RenameClassRector` entry to `drupal-11.4-breaking.php`: the
+  `SearchHelpSearch` class does not exist on any Drupal minor below 11.4, and a
+  `use` / `::class` rename is structural and cannot be BC-wrapped, so applying
+  it against code that still needs to run on an older minor would fatal there.
+  Opt in via `Drupal11SetList::DRUPAL_114_BREAKING` only after dropping support
+  for Drupal < 11.4 ([#3581109](https://www.drupal.org/i/3581109)).
 - **`RemoveDrupalToStringTraitRector`** — removes
   `use Drupal\Component\Utility\ToStringTrait;` from a class body and inserts
   an inline `public function __toString(): string { return (string)
