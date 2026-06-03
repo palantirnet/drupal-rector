@@ -14,6 +14,18 @@ release-by-release.
 
 ### Added
 
+- **`UploadedFileConstraintArrayOptionsToNamedArgsRector`** — replaces the
+  deprecated options-array argument of `UploadedFileConstraint` with explicit
+  named constructor arguments (e.g. `new UploadedFileConstraint(['maxSize' => 1024000])`
+  → `new UploadedFileConstraint(maxSize: 1024000)`). Passing an options array is
+  deprecated in drupal:11.4.0 and removed in drupal:12.0.0. The transformation is
+  BC-wrapped: the named-argument constructor was introduced alongside the
+  deprecation, so the new form would fatal (`Unknown named parameter`) on
+  Drupal < 11.4. The rector therefore wraps the `new` expression in
+  `DeprecationHelper::backwardsCompatibleCall()`, using named arguments on
+  Drupal ≥ 11.4 and the original options array on older versions. See
+  [#3561135](https://www.drupal.org/node/3561135) and the
+  [change record](https://www.drupal.org/node/3554746).
 - **`RemoveDrupalToStringTraitRector`** — removes
   `use Drupal\Component\Utility\ToStringTrait;` from a class body and inserts
   an inline `public function __toString(): string { return (string)
