@@ -25,6 +25,7 @@ use DrupalRector\Drupal11\Rector\Deprecation\RemoveViewsRowCacheKeysRector;
 use DrupalRector\Drupal11\Rector\Deprecation\ReplaceEntityReferenceRecursiveLimitRector;
 use DrupalRector\Drupal11\Rector\Deprecation\ReplaceExpectDeprecationRector;
 use DrupalRector\Drupal11\Rector\Deprecation\ReplaceHideShowWithPrintedRector;
+use DrupalRector\Drupal11\Rector\Deprecation\ReplaceItemAttributesWithAttributesRector;
 use DrupalRector\Drupal11\Rector\Deprecation\ReplaceLocaleTranslationPathConfigRector;
 use DrupalRector\Drupal11\Rector\Deprecation\ReplaceNonBoolAccessRector;
 use DrupalRector\Drupal11\Rector\Deprecation\ReplaceRecipeRunnerInstallModuleRector;
@@ -530,5 +531,16 @@ return static function (RectorConfig $rectorConfig): void {
     // trait composition from a D10/D11-only codebase.
     $rectorConfig->ruleWithConfiguration(RemovePhpUnitCompatibilityTraitRector::class, [
         new DrupalIntroducedVersionConfiguration('12.0.0'),
+    ]);
+
+    // https://www.drupal.org/node/3554447
+    // https://www.drupal.org/node/3554585 (change record)
+    // The '#item_attributes' property of the image_formatter and
+    // responsive_image_formatter theme hooks deprecated in drupal:11.4.0,
+    // removed in drupal:12.0.0. Replaced by '#attributes'. BC-wrapped because
+    // the '#attributes' variable was only added to these hooks in 11.4.0, so a
+    // plain rename silently drops the attributes on Drupal < 11.4.
+    $rectorConfig->ruleWithConfiguration(ReplaceItemAttributesWithAttributesRector::class, [
+        new DrupalIntroducedVersionConfiguration('11.4.0'),
     ]);
 };
