@@ -419,6 +419,16 @@ release-by-release.
 - Guide: [Running against a Drupal 10 project](docs/running-against-drupal-10.md) — covers the
   direct install and a standalone-runner recipe for sites whose PHPStan 1 tooling conflicts with
   Rector 2's PHPStan 2 requirement.
+- **`HookConvertRector`** now produces lint-clean hook classes:
+  - Methods whose body never references `$this` are declared `static`
+    (satisfies the `canvas.requireStaticMethods` / "method does not use `$this`
+    and should be declared static" check). The body originates from a
+    procedural function, so this is safe by construction.
+  - Global `t()` calls are rewritten to `$this->t()` and the generated class
+    gains `use Drupal\Core\StringTranslation\StringTranslationTrait;` (clears
+    the `DrupalPractice.Objects.GlobalFunction.GlobalFunction` warning). Because
+    `$this->t()` introduces `$this`, those methods correctly remain
+    non-static — the two rules compose rather than conflict.
 
 ### Fixed
 
