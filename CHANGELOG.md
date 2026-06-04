@@ -14,6 +14,17 @@ release-by-release.
 
 ### Added
 
+- **`template_preprocess_*()` family (Drupal 11.3, [#3504125](https://www.drupal.org/node/3504125))** —
+  extended `FunctionToServiceRector` coverage with 14 more `template_preprocess_*()`
+  functions deprecated in drupal:11.3.0 and removed in drupal:12.0.0. Each is
+  rewritten (BC-wrapped via `DeprecationHelper`) to the equivalent `*Preprocess`
+  service method: `table`, `tablesort_indicator`, `item_list`, `region`,
+  `maintenance_page`, `maintenance_task_list`, `install_page` → `ThemePreprocess`;
+  `image` → `ImagePreprocess`; `breadcrumb` → `BreadcrumbPreprocess`;
+  `pager` → `PagerPreprocess`; `field`, `field_multiple_value_form` →
+  `FieldPreprocess`; `menu_local_task`, `menu_local_action` → `MenuPreprocess`.
+  (`template_preprocess_authorize_report()` has no replacement and is
+  intentionally excluded.)
 - **`RemoveDrupalToStringTraitRector`** — removes
   `use Drupal\Component\Utility\ToStringTrait;` from a class body and inserts
   an inline `public function __toString(): string { return (string)
