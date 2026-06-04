@@ -171,7 +171,7 @@ CODE);
             fn (Node $n) => $n instanceof Node\Expr\MethodCall
                 && $n->var instanceof Node\Expr\Variable
                 && $n->var->name === 'this'
-                && $n->name instanceof Node\Identifier
+                && $n->name instanceof Identifier
                 && $n->name->toString() === 't'
         );
         $this->assertNotNull($thisT, 'Expected t() to be rewritten to $this->t().');
@@ -239,7 +239,7 @@ CODE);
             fn (Node $n) => $n instanceof Node\Expr\MethodCall
                 && $n->var instanceof Node\Expr\Variable
                 && $n->var->name === 'this'
-                && $n->name instanceof Node\Identifier
+                && $n->name instanceof Identifier
                 && $n->name->toString() === 't'
         );
         $this->assertCount(2, $thisCalls, 'Both t() calls should be rewritten to $this->t().');
