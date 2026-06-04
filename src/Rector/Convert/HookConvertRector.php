@@ -41,6 +41,14 @@ class HookConvertRector extends AbstractRector
     protected string $moduleDir = '';
 
     /**
+     * Whether any converted method needed StringTranslationTrait.
+     *
+     * Set when a t() call is rewritten to $this->t(); consumed when the hook
+     * class is assembled to add the trait import and use statement.
+     */
+    protected bool $needsTranslationTrait = false;
+
+    /**
      * The Drupal service call.
      *
      * For example \Drupal::service(UserHooks::CLASS)
@@ -209,6 +217,7 @@ CODE_SAMPLE
             $classConst = new Node\Expr\ClassConstFetch(new FullyQualified("$namespace\\$candidate"), 'class');
             $this->drupalServiceCall = new Node\Expr\StaticCall(new FullyQualified('Drupal'), 'service', [new Node\Arg($classConst)]);
             $this->useStmts = [];
+            $this->needsTranslationTrait = false;
         }
     }
 
@@ -216,19 +225,8 @@ CODE_SAMPLE
     {
         if ($this->module && $this->hookClass->stmts) {
             $className = $this->hookClass->name->toString();
-            // Put the file together.
             $namespace = "Drupal\\$this->module\\Hook";
-            $hookClassStmts = [
-                new Node\Stmt\Namespace_(new Node\Name($namespace)),
-                ...$this->useStmts,
-                new Use_([
-                    class_exists('PhpParser\Node\UseItem')
-                    ? new Node\UseItem(new Node\Name('Drupal\Core\Hook\Attribute\Hook'))
-                    : new Node\Stmt\UseUse(new Node\Name('Drupal\Core\Hook\Attribute\Hook')),
-                ]),
-                $this->hookClass,
-            ];
-            $this->hookClass->setDocComment(new \PhpParser\Comment\Doc("/**\n * Hook implementations for $this->module.\n */"));
+            $hookClassStmts = $this->buildHookClassStmts();
             // Write it out if not a dry run
             if ($this->isDryRun === false) {
                 @mkdir("$this->moduleDir/src");
@@ -241,6 +239,43 @@ CODE_SAMPLE
             }
         }
         $this->module = '';
+    }
+
+    /**
+     * Assembles the statements for the generated hook class file.
+     *
+     * Adds the Hook attribute import, the class doc comment, and - when any
+     * converted method needed it - the StringTranslationTrait import plus a
+     * `use StringTranslationTrait;` statement at the top of the class body.
+     *
+     * @return Node\Stmt[]
+     */
+    protected function buildHookClassStmts(): array
+    {
+        $namespace = "Drupal\\$this->module\\Hook";
+        $useImports = [
+            new Use_([
+                class_exists('PhpParser\Node\UseItem')
+                ? new Node\UseItem(new Node\Name('Drupal\Core\Hook\Attribute\Hook'))
+                : new Node\Stmt\UseUse(new Node\Name('Drupal\Core\Hook\Attribute\Hook')),
+            ]),
+        ];
+        if ($this->needsTranslationTrait) {
+            $useImports[] = new Use_([
+                class_exists('PhpParser\Node\UseItem')
+                ? new Node\UseItem(new Node\Name('Drupal\Core\StringTranslation\StringTranslationTrait'))
+                : new Node\Stmt\UseUse(new Node\Name('Drupal\Core\StringTranslation\StringTranslationTrait')),
+            ]);
+            array_unshift($this->hookClass->stmts, new Node\Stmt\TraitUse([new Node\Name('StringTranslationTrait')]));
+        }
+        $this->hookClass->setDocComment(new \PhpParser\Comment\Doc("/**\n * Hook implementations for $this->module.\n */"));
+
+        return [
+            new Node\Stmt\Namespace_(new Node\Name($namespace)),
+            ...$this->useStmts,
+            ...$useImports,
+            $this->hookClass,
+        ];
     }
 
     protected function createMethodFromFunction(Function_ $node): ?ClassMethod
@@ -266,12 +301,27 @@ CODE_SAMPLE
             // Resolve __FUNCTION__ and unqualify things so TRUE doesn't
             // become \TRUE.
             $visitor = new class(new String_($node->name->toString())) extends NodeVisitorAbstract {
+                /**
+                 * Whether a t() call was rewritten to $this->t().
+                 */
+                public bool $usedTranslation = false;
+
                 public function __construct(protected String_ $functionName)
                 {
                 }
 
                 public function leaveNode(Node $node)
                 {
+                    // Rewrite the global t() to $this->t() so the method uses
+                    // StringTranslationTrait. This intentionally introduces
+                    // $this, which keeps the method non-static. Matches both
+                    // t() and \t().
+                    if ($node instanceof Node\Expr\FuncCall && $node->name instanceof Node\Name && $node->name->toString() === 't') {
+                        $this->usedTranslation = true;
+
+                        return new Node\Expr\MethodCall(new Node\Expr\Variable('this'), new Node\Identifier('t'), $node->args);
+                    }
+
                     if (isset($node->name) && $node->name instanceof FullyQualified) {
                         $name = new Node\Name($node->name);
                         if ($name->isUnqualified()) {
@@ -291,9 +341,20 @@ CODE_SAMPLE
             $traverser = new NodeTraverser();
             $traverser->addVisitor($visitor);
             $traverser->traverse([$node]);
+            if ($visitor->usedTranslation) {
+                $this->needsTranslationTrait = true;
+            }
             // Convert the function to a method.
             $method = new ClassMethod($this->getMethodName($node), get_object_vars($node), $node->getAttributes());
-            $method->flags = Modifiers::PUBLIC;
+            // Declare the method static when its body never touches $this. The
+            // body comes from a procedural function, so the only $this it can
+            // contain is the one introduced by the t() -> $this->t() rewrite
+            // above; that case correctly keeps the method non-static.
+            $usesThis = (bool) (new NodeFinder())->findFirst(
+                $method->stmts ?? [],
+                fn (Node $n) => $n instanceof Node\Expr\Variable && \is_string($n->name) && $n->name === 'this'
+            );
+            $method->flags = $usesThis ? Modifiers::PUBLIC : Modifiers::PUBLIC | Modifiers::STATIC;
             // Assemble the arguments for the #[Hook] attribute.
             $arguments = [new Node\Arg(new String_($hook))];
             if ($implementsModule !== $this->module) {
