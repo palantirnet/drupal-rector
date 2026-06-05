@@ -1,0 +1,648 @@
+# Implemented digests — authoritative, hand-maintained record.
+#
+# This file is the SOURCE OF TRUTH for which drupal-digests rules are implemented.
+# It is NOT generated — append to it directly and never let a tool overwrite it.
+# (The rector-index.yml matcher is unstable; this file is what survives.)
+#
+# rector-implement appends an entry here after each implementation;
+# rector-discover reads it to exclude these issues from the pending list.
+#
+# Keyed by drupal.org issue number. Each entry:
+#   status:      implemented | config-only
+#   phase:       implementation phase (1a/1b/1c/2/3/4/unknown)
+#   class:       Rector class name, or list; omit for config-only
+#   digest_file: digest filename in repos/drupal-digests
+#   note:        optional — PR/merge state or why the matcher missed it
+digests:
+  '455724':
+    status: implemented
+    phase: '1b'
+    class: CheckMarkupToProcessedTextRector
+    digest_file: replace-check-markup-with-processed-text-render-array-455724.php
+  '1019966':
+    status: implemented
+    phase: '?'
+    class: RenameHookRankingRector
+    digest_file: rename-hook-ranking-to-hook-node-search-ranking-1019966.php
+    note: 'Implemented in open PR #352 (not yet merged to main).'
+  '1685492':
+    status: config-only
+    phase: '1a'
+    digest_file: replace-deprecated-twig-extension-and-twig-render-template-1685492.php
+  '2010202':
+    status: config-only
+    phase: '1b'
+    digest_file: replace-comment-uri-with-comment-permalink-2010202.php
+  '2258355':
+    status: implemented
+    phase: '3'
+    class: ReplaceHideShowWithPrintedRector
+    digest_file: replace-deprecated-hide-and-show-with-printed-assignment-2258355.php
+  '2340341':
+    status: config-only
+    phase: '?'
+    digest_file: remove-deprecated-template-preprocess-calls-2340341.php
+    note: 'Covered on main via FunctionCallRemovalRector config (drupal-11.2-deprecations.php). Dedicated digest class not needed.'
+  '2473041':
+    status: config-only
+    phase: '1a'
+    digest_file: replace-node-access-grants-with-nodegrantshelper-2473041.php
+  '2536594':
+    status: implemented
+    phase: '1a'
+    class: FilterFormatFunctionsToServiceRector
+    digest_file: replace-deprecated-filter-procedural-functions-with-2536594.php
+  '2571679':
+    status: config-only
+    phase: '1a'
+    digest_file: replace-views-add-contextual-links-with-2571679.php
+  '2907780':
+    status: config-only
+    phase: '1a'
+    digest_file: replace-deprecated-field-purge-batch-with-fieldpurger-2907780.php
+  '2987159':
+    status: implemented
+    phase: '?'
+    class: BlockContentSelectionExtendsRector
+    digest_file: replace-defaultselection-with-blockcontentselection-for-2987159.php
+    note: 'Implemented in open PR #354 (DRUPAL_114_BREAKING; not yet merged to main).'
+  '3009349':
+    status: implemented
+    phase: '?'
+    class: RemoveSourceModuleFromMigrateSourceAttributeRector
+    digest_file: remove-source-module-from-migratesource-attribute-drupal-11-3009349.php
+    note: 'Implemented in open PR #353 (not yet merged to main).'
+  '3015812':
+    status: implemented
+    phase: '1a'
+    class: SystemRegionFunctionsRector
+    digest_file: replace-system-region-list-and-system-default-region-with-3015812.php
+  '3037031':
+    status: implemented
+    phase: '1a'
+    class: LocaleCompareIncToServiceRector
+    digest_file: replace-deprecated-locale-compare-inc-functions-with-3037031.php
+  '3038908':
+    status: implemented
+    phase: '1b'
+    class: ReplaceNodeAccessViewAllNodesRector
+    digest_file: replace-node-access-view-all-nodes-with-3038908.php
+  '3069442':
+    status: config-only
+    phase: '1a'
+    digest_file: replace-views-entity-field-label-with-entityfieldmanager-3069442.php
+  '3093118':
+    status: implemented
+    phase: '3'
+    class: RemoveLinkWidgetValidateTitleElementRector
+    digest_file: remove-deprecated-linkwidget-validatetitleelement-calls-3093118.php
+  '3151086':
+    status: config-only
+    phase: 'unknown'
+    digest_file: replace-aliaswhitelist-aliaswhitelistinterface-with-3151086.php
+  '3184242':
+    status: implemented
+    phase: '2'
+    class: ReplaceSystemPerformanceGzipKeyRector
+    digest_file: replace-deprecated-system-performance-css-gzip-js-gzip-3184242.php
+  '3196937':
+    status: implemented
+    phase: '2'
+    class: BlockContentTestBaseStringToArrayRector
+    digest_file: replace-deprecated-string-argument-in-3196937.php
+  '3226806':
+    status: implemented
+    phase: '1a'
+    class: DeprecatedFilterFunctionsRector
+    digest_file: replace-deprecated-filter-procedural-functions-with-plugin-3226806.php
+  '3258581':
+    status: config-only
+    phase: 'unknown'
+    digest_file: replace-deprecated-i18nquerytrait-from-content-translation-3258581.php
+  '3311365':
+    status: implemented
+    phase: '?'
+    class: RemoveRouteBuilderDeprecatedArgsRector
+    digest_file: remove-deprecated-module-handler-controller-resolver-args-3311365.php
+    note: 'Implemented in open PR #355 (not yet merged to main).'
+  '3335756':
+    status: implemented
+    phase: '3'
+    class: RemoveInstallSchemaSystemSequencesRector
+    digest_file: remove-deprecated-installschema-system-sequences-calls-for-3335756.php
+  '3347842':
+    status: implemented
+    phase: '2'
+    class: [RemoveConfigSaveTrustedDataArgRector, RemoveTrustDataCallRector]
+    digest_file: remove-deprecated-trusted-data-concept-from-drupal-config-3347842.php
+  '3396062':
+    status: implemented
+    phase: '2'
+    class: NodeStorageDeprecatedMethodsRector
+    digest_file: replace-deprecated-nodestorage-revisionids-and-3396062.php
+  '3410938':
+    status: config-only
+    phase: '1b'
+    digest_file: replace-deprecated-drupal-requirements-severity-and-3410938.php
+  '3417066':
+    status: implemented
+    phase: '4'
+    class: GroupLegacyToIgnoreDeprecationsRector
+    digest_file: replace-group-legacy-annotation-with-ignoredeprecations-3417066.php
+  '3417136':
+    status: implemented
+    phase: '4'
+    class: RemoveUpdaterPostInstallMethodsRector
+    digest_file: remove-deprecated-updater-postinstall-postinstalltasks-3417136.php
+  '3421202':
+    status: implemented
+    phase: '2'
+    class: MovePointerToMouseOverRector
+    digest_file: replace-deprecated-movepointerto-with-getdriver-mouseover-3421202.php
+  '3432827':
+    status: implemented
+    phase: '2'
+    class: ReplaceAddCachedDiscoveryMethodCallRector
+    digest_file: replace-addcacheddiscovery-method-call-with-plugin-manager-3432827.php
+  '3436954':
+    status: implemented
+    phase: '3'
+    class: RemoveStateCacheSettingRector
+    digest_file: remove-deprecated-settings-state-cache-assignment-3436954.php
+  '3439369':
+    status: implemented
+    phase: '2'
+    class: MigrateSqlGetMigrationPluginManagerRector
+    digest_file: replace-deprecated-sql-getmigrationpluginmanager-with-3439369.php
+  '3440169':
+    status: implemented
+    phase: '2'
+    class: DrupalGetHeadersAssocArrayRector
+    digest_file: convert-drupalget-headers-to-associative-array-format-3440169.php
+  '3442009':
+    status: implemented
+    phase: '3'
+    class: RemoveModuleHandlerDeprecatedMethodsRector
+    digest_file: remove-deprecated-modulehandlerinterface-writecache-and-3442009.php
+  '3442810':
+    status: implemented
+    phase: '2'
+    class: ReplaceAlphadecimalToIntNullRector
+    digest_file: replace-deprecated-number-alphadecimaltoint-null-calls-with-3442810.php
+  '3447794':
+    status: implemented
+    phase: '1b'
+    class: ReplaceEditorLoadRector
+    digest_file: replace-editor-load-with-editor-load-3447794.php
+  '3448457':
+    status: implemented
+    phase: '2'
+    class: EntityFormModeEmptyDescriptionToNullRector
+    digest_file: replace-empty-string-description-with-null-in-3448457.php
+  '3459533':
+    status: implemented
+    phase: '2'
+    class: PluginBaseIsConfigurableRector
+    digest_file: replace-pluginbase-isconfigurable-with-instanceof-3459533.php
+  '3472008':
+    status: implemented
+    phase: '4'
+    class: RemoveCacheTagChecksumAssertionsRector
+    digest_file: rename-resourceresponsevalidator-namespace-from-jsonapi-to-3472008.php
+  '3477277':
+    status: config-only
+    phase: '1c'
+    digest_file: replace-deprecated-locale-translation-default-server-3477277.php
+  '3485084':
+    status: implemented
+    phase: '4'
+    class: RemoveHandlerBaseDefineExtraOptionsRector
+    digest_file: remove-overrides-of-deprecated-handlerbase-3485084.php
+  '3488572':
+    status: config-only
+    phase: 'unknown'
+    digest_file: rename-deprecated-pgsql-entity-query-classes-to-new-module-3488572.php
+  '3489266':
+    status: implemented
+    phase: '3'
+    class: ReplaceNodeAddBodyFieldRector
+    digest_file: replace-deprecated-node-add-body-field-with-createbodyfield-3489266.php
+  '3489415':
+    status: config-only
+    phase: '1a'
+    digest_file: replace-deprecated-views-field-default-views-data-and-views-3489415.php
+  '3490200':
+    status: implemented
+    phase: '2'
+    class: StatementPrefetchIteratorFetchColumnRector
+    digest_file: replace-deprecated-statementprefetchiterator-fetchcolumn-3490200.php
+  '3490846':
+    status: implemented
+    phase: '?'
+    class: HookRequirementsAlterRenameRector
+    digest_file: rename-hook-requirements-alter-implementations-to-hook-3490846.php
+    note: 'Implemented in open PR #346 (breaking set; not yet merged to main).'
+  '3494126':
+    status: config-only
+    phase: '1b'
+    digest_file: replace-file-get-content-headers-with-fileinterface-3494126.php
+  '3495600':
+    status: config-only
+    phase: '1c'
+    digest_file: replace-deprecated-jsonapi-filter-among-constants-with-3495600.php
+  '3495943':
+    status: implemented
+    phase: '4'
+    class: RenameStopProceduralHookScanRector
+    digest_file: rename-stopproceduralhookscan-attribute-to-3495943.php
+  '3495966':
+    status: config-only
+    phase: '1b'
+    digest_file: replace-entity-test-create-bundle-and-entity-test-delete-3495966.php
+  '3496369':
+    status: implemented
+    phase: '3'
+    class: RemoveAliasManagerCacheMethodCallsRector
+    digest_file: remove-aliasmanager-setcachekey-and-writecache-calls-3496369.php
+  '3498026':
+    status: implemented
+    phase: '2'
+    class: ReplaceRecipeRunnerInstallModuleRector
+    digest_file: replace-deprecated-reciperunner-installmodule-with-3498026.php
+  '3498915':
+    status: config-only
+    phase: 'unknown'
+    digest_file: replace-deprecated-migrate-drupal-contententity-source-3498915.php
+  '3498947':
+    status: config-only
+    phase: '2'
+    digest_file: replace-cachebackendinterface-invalidateall-with-deleteall-3498947.php
+  '3501136':
+    status: config-only
+    phase: '1a'
+    digest_file: replace-deprecated-template-preprocess-calls-with-service-3501136.php
+  '3505370':
+    status: implemented
+    phase: '1b'
+    class: RemoveFilterTipsLongParamRector
+    digest_file: remove-deprecated-long-parameter-from-filterinterface-tips-3505370.php
+  '3506931':
+    status: implemented
+    phase: '4'
+    class: RemoveRootFromCreateConnectionOptionsFromUrlRector
+    digest_file: replace-deprecated-root-argument-in-connection-3506931.php
+  '3511123':
+    status: implemented
+    phase: '2'
+    class: RemoveCacheTagChecksumAssertionsRector
+    digest_file: remove-deprecated-cachetagchecksumcount-3511123.php
+  '3513856':
+    status: implemented
+    phase: '4'
+    class: ReplaceUserSessionNamePropertyRector
+    digest_file: replace-deprecated-usersession-name-property-read-with-3513856.php
+  '3518527':
+    status: implemented
+    phase: '4'
+    class: ReplaceSessionWritesWithRequestSessionRector
+    digest_file: replace-deprecated-session-writes-with-drupal-request-3518527.php
+  '3520946':
+    status: implemented
+    phase: '2'
+    class: ViewsBlockItemsPerPageNoneToNullRector
+    digest_file: replace-views-block-items-per-page-none-with-null-in-3520946.php
+  '3521059':
+    status: config-only
+    phase: '3'
+    digest_file: remove-deprecated-update-manager-function-calls-with-no-3521059.php
+  '3525077':
+    status: implemented
+    phase: '2'
+    class: ReplacePdoFetchConstantsRector
+    digest_file: replace-removed-mysql-pgsql-sqlite-driver-query-subclass-3525077.php
+  '3525388':
+    status: implemented
+    phase: '3'
+    class: RemoveRendererAddCacheableDependencyNonObjectRector
+    digest_file: remove-rendererinterface-addcacheabledependency-calls-with-3525388.php
+  '3526250':
+    status: implemented
+    phase: '4'
+    class: ReplaceNonBoolAccessRector
+    digest_file: replace-integer-access-values-with-booleans-in-render-arrays-3526250.php
+  '3528899':
+    status: implemented
+    phase: '3'
+    class: RemoveModuleHandlerAddModuleCallsRector
+    digest_file: remove-deprecated-modulehandlerinterface-addmodule-and-3528899.php
+  '3529274':
+    status: implemented
+    phase: '2'
+    class: ViewsConfigUpdaterClassResolverToServiceRector
+    digest_file: replace-classresolver-viewsconfigupdater-class-with-service-3529274.php
+  '3530461':
+    status: implemented
+    phase: '2'
+    class: FileSystemBasenameToNativeRector
+    digest_file: replace-filesysteminterface-basename-with-native-basename-3530461.php
+  '3531944':
+    status: config-only
+    phase: '1b'
+    digest_file: replace-node-type-get-description-with-nodetypeinterface-3531944.php
+  '3533083':
+    status: config-only
+    phase: '1a'
+    digest_file: replace-node-mass-update-with-nodebulkupdate-service-3533083.php
+  '3533299':
+    status: implemented
+    phase: '1a'
+    class: NodeAccessRebuildFunctionsRector
+    digest_file: replace-deprecated-node-access-rebuild-and-node-access-3533299.php
+  '3534089':
+    status: implemented
+    phase: '1b'
+    class: FileManagedFileSubmitRector
+    digest_file: replace-deprecated-file-managed-file-submit-with-3534089.php
+  '3534092':
+    status: config-only
+    phase: '1b'
+    digest_file: replace-deprecated-file-system-settings-submit-with-3534092.php
+  '3535439':
+    status: implemented
+    phase: '4'
+    class: TaxonomyTermPageVariableToViewModeRector
+    digest_file: replace-variables-page-with-view-mode-check-in-taxonomy-3535439.php
+  '3535526':
+    status: config-only
+    phase: '3'
+    digest_file: remove-deprecated-block-content-add-body-field-calls-3535526.php
+  '3536431':
+    status: implemented
+    phase: '3'
+    class: LoadAllIncludesRector
+    digest_file: replace-deprecated-modulehandler-loadallincludes-with-3536431.php
+  '3538277':
+    status: implemented
+    phase: '2'
+    class: ReplaceNodeSetPreviewModeRector
+    digest_file: replace-deprecated-constants-with-nodepreviewmode-enum-in-3538277.php
+  '3538660':
+    status: implemented
+    phase: '2'
+    class: ReplaceCommentPreviewConstantsRector
+    digest_file: replace-drupal-disabled-optional-required-with-3538660.php
+  '3544308':
+    status: implemented
+    phase: '4'
+    class: CommentLinkBuilderConstructorRector
+    digest_file: remove-deprecated-arguments-from-commentlinkbuilder-3544308.php
+  '3548957':
+    status: implemented
+    phase: '4'
+    class: RemoveDrupalToStringTraitRector
+    digest_file: replace-deprecated-tostringtrait-with-direct-tostring-method-3548957.php
+  '3550268':
+    status: implemented
+    phase: '3'
+    class: ReplaceExpectDeprecationRector
+    digest_file: replace-deprecated-expectdeprecation-with-phpunit-11-3550268.php
+  '3551446':
+    status: config-only
+    phase: '4'
+    digest_file: replace-deprecated-workspaces-association-service-with-3551446.php
+  '3554447':
+    status: implemented
+    phase: '?'
+    class: ReplaceItemAttributesWithAttributesRector
+    digest_file: replace-item-attributes-with-attributes-in-image-render-3554447.php
+    note: 'Implemented in open PR #348 (not yet merged to main).'
+  '3557461':
+    status: implemented
+    phase: '2'
+    class: GetOriginalClassToGetDecoratedClassesRector
+    digest_file: replace-entitytypeinterface-getoriginalclass-with-3557461.php
+  '3559481':
+    status: implemented
+    phase: '4'
+    class: RemoveToolkitArgFromImageToolkitOperationConstructorRector
+    digest_file: remove-deprecated-toolkit-argument-from-3559481.php
+  '3560075':
+    status: config-only
+    phase: 'unknown'
+    digest_file: replace-deprecated-menu-link-content-migrate-process-3560075.php
+  '3560398':
+    status: config-only
+    phase: '1a'
+    digest_file: replace-deprecated-dblog-procedural-functions-with-3560398.php
+  '3561135':
+    status: implemented
+    phase: '?'
+    class: UploadedFileConstraintArrayOptionsToNamedArgsRector
+    digest_file: replace-uploadedfileconstraint-options-array-with-named-3561135.php
+    note: 'Implemented in open PR #350 (not yet merged to main).'
+  '3564937':
+    status: implemented
+    phase: '4'
+    class: RemoveViewsRowCacheKeysRector
+    digest_file: remove-deprecated-cachepluginbase-getrowcachekeys-and-3564937.php
+  '3566424':
+    status: implemented
+    phase: '2'
+    class: ViewsPluginHandlerManagerRector
+    digest_file: replace-deprecated-views-pluginmanager-and-views-3566424.php
+  '3566768':
+    status: implemented
+    phase: '3'
+    class: RemoveAutomatedCronSubmitHandlerRector
+    digest_file: remove-deprecated-automated-cron-settings-submit-calls-and-3566768.php
+  '3566782':
+    status: config-only
+    phase: '3'
+    digest_file: remove-deprecated-block-theme-initialize-calls-3566782.php
+  '3566792':
+    status: implemented
+    phase: '1a'
+    class: MediaFilterFormatEditFormValidateRector
+    digest_file: replace-deprecated-ckeditor5-procedural-functions-with-3566792.php
+  '3566801':
+    status: implemented
+    phase: '2'
+    class: UseEntityTypeHasIntegerIdRector
+    digest_file: replace-deprecated-entity-type-integer-id-helpers-with-3566801.php
+  '3566888':
+    status: implemented
+    phase: '1a'
+    class: MediaFilterFormatEditFormValidateRector
+    digest_file: replace-deprecated-contact-module-procedural-submit-3566888.php
+  '3567163':
+    status: implemented
+    phase: '1a'
+    class: MediaFilterFormatEditFormValidateRector
+    digest_file: replace-field-ui-form-manage-field-form-submit-with-3567163.php
+  '3567618':
+    status: config-only
+    phase: '4'
+    digest_file: replace-deprecated-image-path-flush-image-style-options-and-3567618.php
+  '3568087':
+    status: config-only
+    phase: '1a'
+    digest_file: replace-contextual-links-to-id-and-contextual-id-to-links-3568087.php
+  '3568124':
+    status: implemented
+    phase: '1a'
+    class: MediaFilterFormatEditFormValidateRector
+    digest_file: replace-deprecated-media-filter-format-edit-form-validate-3568124.php
+  '3568144':
+    status: config-only
+    phase: '1a'
+    digest_file: replace-deprecated-editor-filter-xss-with-element-editor-3568144.php
+  '3569328':
+    status: config-only
+    phase: '1a'
+    digest_file: replace-deprecated-locale-translation-inc-functions-with-3569328.php
+  '3570235':
+    status: implemented
+    phase: '3'
+    class: MediaFilterFormatEditFormValidateRector
+    digest_file: remove-deprecated-syslog-facility-list-and-syslog-logging-3570235.php
+  '3570238':
+    status: implemented
+    phase: '3'
+    class: MediaFilterFormatEditFormValidateRector
+    digest_file: remove-deprecated-taxonomy-build-node-index-and-taxonomy-3570238.php
+  '3570839':
+    status: implemented
+    phase: '1a'
+    class: MediaFilterFormatEditFormValidateRector
+    digest_file: replace-deprecated-media-library-module-underscore-3570839.php
+  '3570917':
+    status: config-only
+    phase: '1a'
+    digest_file: replace-deprecated-editor-image-upload-settings-form-with-3570917.php
+  '3571054':
+    status: implemented
+    phase: '4'
+    class: ReplaceDialogClassOptionRector
+    digest_file: replace-removed-dialogclass-option-with-classes-ui-dialog-3571054.php
+  '3571057':
+    status: config-only
+    phase: '4'
+    digest_file: replace-removed-librarydiscovery-class-with-3571057.php
+  '3571065':
+    status: implemented
+    phase: '4'
+    class: ReplaceEntityOriginalPropertyRector
+    digest_file: replace-deprecated-entity-original-magic-property-with-3571065.php
+  '3571172':
+    status: implemented
+    phase: '1b'
+    class: SystemSortThemesRector
+    digest_file: replace-deprecated-system-sort-themes-callback-with-inline-3571172.php
+  '3571382':
+    status: config-only
+    phase: '1a'
+    digest_file: replace-removed-template-preprocess-layout-with-3571382.php
+  '3571400':
+    status: implemented
+    phase: '1a'
+    class: MediaFilterFormatEditFormValidateRector
+    digest_file: replace-deprecated-menu-ui-module-procedural-functions-with-3571400.php
+  '3571593':
+    status: implemented
+    phase: '2'
+    class: ReplaceLocaleTranslationPathConfigRector
+    digest_file: replace-deprecated-locale-settings-translation-path-config-3571593.php
+  '3571874':
+    status: config-only
+    phase: 'unknown'
+    digest_file: replace-removed-block-content-access-class-aliases-with-3571874.php
+  '3572243':
+    status: implemented
+    phase: '1b'
+    class: ReplaceViewsProceduralFunctionsRector
+    digest_file: replace-deprecated-views-procedural-functions-with-oo-3572243.php
+  '3572339':
+    status: config-only
+    phase: '1a'
+    digest_file: replace-deprecated-locale-fetch-procedural-functions-with-3572339.php
+  '3573870':
+    status: config-only
+    phase: 'unknown'
+    digest_file: replace-removed-entitypermissionsrouteproviderwithcheck-3573870.php
+  '3573896':
+    status: implemented
+    phase: '1a'
+    class: ReplaceThemeGetSettingRector
+    digest_file: replace-deprecated-theme-get-setting-and-system-default-3573896.php
+  '3573954':
+    status: implemented
+    phase: 'unknown'
+    class: GetDrupalRootToRootPropertyRector
+    digest_file: replace-testrequirementstrait-with-drupaltestcasetrait-3573954.php
+  '3574424':
+    status: config-only
+    phase: '?'
+    digest_file: replace-removed-image-filter-keyword-and-responsive-image-3574424.php
+    note: 'Covered on main via FunctionToServiceRector config (drupal-11.1/11.3-deprecations.php); completion in open PR #344.'
+  '3574717':
+    status: implemented
+    phase: '2'
+    class: StripMigrationDependenciesExpandArgRector
+    digest_file: strip-removed-expand-argument-from-getmigrationdependencies-3574717.php
+  '3574727':
+    status: implemented
+    phase: '1a'
+    class: MediaFilterFormatEditFormValidateRector
+    digest_file: replace-deprecated-language-module-procedural-functions-3574727.php
+  '3575254':
+    status: implemented
+    phase: 'unknown'
+    class: ReplaceLocaleConfigBatchFunctionsRector
+    digest_file: replace-deprecated-locale-batch-functions-with-their-3575254.php
+  '3575575':
+    status: config-only
+    phase: '1c'
+    digest_file: replace-removed-filesysteminterface-exists-constants-with-3575575.php
+  '3575841':
+    status: config-only
+    phase: '1c'
+    digest_file: replace-removed-requirement-constants-with-3575841.php
+  '3576556':
+    status: implemented
+    phase: '4'
+    class: RemoveCacheExpireOverrideRector
+    digest_file: remove-deprecated-cacheexpire-overrides-from-views-3576556.php
+  '3577376':
+    status: implemented
+    phase: '?'
+    class: ReplaceSessionManagerDeleteRector
+    digest_file: replace-deprecated-sessionmanager-delete-with-3577376.php
+    note: 'Class exists in src/ but @see cites change-record 3570851, not issue 3577376, so the matcher leaves the digest pending.'
+  '3577671':
+    status: config-only
+    phase: '1a'
+    digest_file: replace-locale-translate-get-interface-translation-files-3577671.php
+  '3581109':
+    status: config-only
+    phase: '?'
+    digest_file: rename-helpsearch-to-searchhelpsearch-in-search-help-sub-3581109.php
+    note: 'HelpSearch→SearchHelpSearch via RenameClassRector in DRUPAL_114_BREAKING config; open PR #349.'
+  '3582106':
+    status: config-only
+    phase: '1a'
+    digest_file: replace-deprecated-user-form-process-password-confirm-with-3582106.php
+  '3582118':
+    status: implemented
+    phase: '3'
+    class: RemovePhpUnitCompatibilityTraitRector
+    digest_file: remove-deprecated-phpunitcompatibilitytrait-from-test-3582118.php
+  '3589047':
+    status: implemented
+    phase: '2'
+    class: GetDrupalRootToRootPropertyRector
+    digest_file: replace-getdrupalroot-with-this-root-in-drupal-test-classes-3589047.php
+  '3589630':
+    status: implemented
+    phase: '4'
+    class: ReplaceNodeViewControllerRector
+    digest_file: replace-nodeviewcontroller-with-entityviewcontroller-3589630.php

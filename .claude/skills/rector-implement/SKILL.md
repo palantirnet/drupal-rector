@@ -181,15 +181,39 @@ transformation.
 
 ---
 
-### After Step 14: Update the index (if it exists)
+### After Step 14: Record the implemented digest
 
-```bash
-if [ -f docs/rector-index.yml ]; then
-  php .claude/scripts/generate-rector-index.php
-fi
+`docs/implemented-digests.yml` is the **authoritative, hand-maintained** record of
+which digests are implemented (keyed by issue number). It is NOT generated — append to
+it directly. Do **not** run `generate-rector-index.php` to "record" the work: that
+matcher is unstable and can mark this very rule `pending`. This file is what survives.
+
+You already have ground truth in hand (issue number, class name from Step 5, digest
+filename = basename of `$ARGUMENTS`). Add one entry under `digests:`, keyed by the issue
+number, kept in natural issue-number order.
+
+For a custom rector class:
+```yaml
+  '3577376':
+    status: implemented
+    phase: '2'
+    class: ReplaceSessionManagerDeleteRector
+    digest_file: replace-deprecated-sessionmanager-delete-with-3577376.php
+    note: 'Implemented in <branch/PR>.'   # optional
 ```
 
-This marks the newly implemented rule as `implemented` in the index.
+For a config-only rule (Step 4b path — no custom class), use `status: config-only` and
+omit `class`:
+```yaml
+  '1685492':
+    status: config-only
+    phase: '1a'
+    digest_file: replace-deprecated-twig-extension-and-twig-render-template-1685492.php
+    note: 'Handled via drupal-11.3-deprecations.php.'
+```
+
+If an entry for that issue already exists, update it in place rather than duplicating.
+No regeneration step — the edit is the record.
 
 ---
 
@@ -212,6 +236,7 @@ Before declaring the implementation complete, verify all items from `.claude/ski
 - [ ] `ddev composer phpstan` reports no new errors
 - [ ] `ddev composer fix-style` produces no changes
 - [ ] rector-qa reports **Overall: PASS** (all four passes green)
+- [ ] Digest recorded in `docs/implemented-digests.yml` (append-only source of truth)
 
 ## Quick Reference: Phase 1 (config-only) path
 
