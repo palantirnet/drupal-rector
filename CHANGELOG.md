@@ -14,6 +14,17 @@ release-by-release.
 
 ### Added
 
+- **`DRUPAL_114_BREAKING`: `user\Controller\UserAuthenticationController` →
+  `rest\Controller\RestAuthenticationController`** — new `RenameClassRector`
+  entry in the opt-in `drupal-11.4-breaking.php` set. The old controller is
+  deprecated in drupal:11.4.0 and removed in drupal:12.0.0; its replacement was
+  added to the `rest` module in the same commit (drupal-core `c0e71efe93`, 11.x
+  only) and does not exist on any older minor, so the structural
+  `use`/`extends`/`::class` rewrite fatals on Drupal < 11.4 and cannot be
+  BC-wrapped. The `rest` module must also be enabled at runtime. Route name
+  strings (`user.login.http` → `rest.login`, etc.) are not rewritten and must be
+  updated manually. ([#3530640](https://www.drupal.org/i/3530640) /
+  [CR](https://www.drupal.org/node/3552724)).
 - **`RemoveDrupalToStringTraitRector`** — removes
   `use Drupal\Component\Utility\ToStringTrait;` from a class body and inserts
   an inline `public function __toString(): string { return (string)
