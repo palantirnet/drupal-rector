@@ -432,6 +432,27 @@ release-by-release.
 
 ### Fixed
 
+- **`ReplaceEntityOriginalPropertyRector`** now handles `isset()` and `unset()`
+  correctly instead of producing a parse-time fatal. Those constructs accept
+  only a variable, so blindly rewriting `$entity->original` to the
+  `$entity->getOriginal()` method call (e.g. `isset($entity->getOriginal())`)
+  was invalid PHP. Mirroring `EntityBase`'s magic methods:
+  - `isset($entity->original)` → `$entity->getOriginal() !== NULL`
+    (`__isset()` returns `getOriginal()`), BC-wrapped in `DeprecationHelper`.
+  - `unset($entity->original)` → `$entity->setOriginal(NULL)` (`__unset()` calls
+    `setOriginal(NULL)`), BC-wrapped with `$entity->original = NULL` as the
+    pre-11.2 path. In a multi-operand `unset()`, only the `->original` operand
+    is rewritten; the rest stay in a residual `unset()`.
+
+  Only the *direct/outermost* operand is fatal as a method call, so nested
+  fetches are rewritten normally: `isset($entity->original->field)` →
+  `isset($entity->getOriginal()->field)` and likewise for `unset()` (both parse
+  fine — only a bare method call as the outermost operand is fatal). A fetch
+  used as an array key, e.g. `isset($map[$entity->original])`, and `empty()`
+  (which accepts arbitrary expressions) are also rewritten. The only form left
+  untouched is the direct operand of a multi-operand `isset()` —
+  `isset($entity->original, $other)` — where rewriting `->original` would
+  produce the fatal `isset($entity->getOriginal(), $other)`.
 - Loading the Drupal 9 and Drupal 11 sets together no longer crashes at
   container-build time. The Drupal 9 `FunctionToFirstArgMethodRector` (and the
   Drupal 8 `DrupalServiceRenameRector`) subclass the generic rule, so Rector
