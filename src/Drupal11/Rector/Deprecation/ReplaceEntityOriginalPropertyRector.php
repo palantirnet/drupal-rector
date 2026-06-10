@@ -10,7 +10,6 @@ use DrupalRector\Rector\ValueObject\DrupalIntroducedVersionConfiguration;
 use PhpParser\Node;
 use PhpParser\Node\Arg;
 use PhpParser\Node\Expr;
-use PhpParser\Node\Expr\ArrayDimFetch;
 use PhpParser\Node\Expr\Assign;
 use PhpParser\Node\Expr\BinaryOp\NotIdentical;
 use PhpParser\Node\Expr\ConstFetch;
@@ -53,12 +52,6 @@ final class ReplaceEntityOriginalPropertyRector extends AbstractDrupalCoreRector
         parent::configure($configuration);
     }
 
-    /**
-     * Attribute flag marking a $entity->original fetch that sits in the
-     * variable position of isset()/unset() and must not be rewritten.
-     */
-    private const SKIP_IN_ISSET_UNSET = 'drupal_rector_skip_original_in_isset_unset';
-
     public function getNodeTypes(): array
     {
         // Isset_/Unset_ are visited before their children (pre-order) so Steps
@@ -76,19 +69,22 @@ final class ReplaceEntityOriginalPropertyRector extends AbstractDrupalCoreRector
         // Core's EntityBase::__isset('original') returns getOriginal(), so this
         // is the faithful equivalent. Isset_ is an Expr, so the parent wraps the
         // result in DeprecationHelper automatically, with the original isset() as
-        // the deprecated callable. Only the single, direct form has a clean
-        // equivalent; nested or multi-operand forms are left in place (with their
-        // inner ->original fetches tagged so they are not rewritten into a fatal).
+        // the deprecated callable.
+        //
+        // This only fires for the single, direct operand form. A nested operand
+        // such as isset($entity->original->field) is left for the leaf handler:
+        // its inner ->original is not the direct isset() variable (the ->field
+        // fetch is), so it is rewritten to isset($entity->getOriginal()->field),
+        // which is valid PHP — only a bare method call as the outermost operand
+        // would be fatal. Multi-operand isset() is likewise left for the leaf
+        // handler, where the IS_ISSET_VAR guard keeps the direct ->original
+        // operand in place (rewriting it would be the fatal bare-call form).
         if ($node instanceof Isset_) {
             if (count($node->vars) === 1 && $this->isEntityOriginalFetch($node->vars[0])) {
                 $fetch = $node->vars[0];
                 assert($fetch instanceof PropertyFetch);
 
                 return new NotIdentical(new MethodCall($fetch->var, 'getOriginal'), $this->createNull());
-            }
-
-            foreach ($node->vars as $var) {
-                $this->tagOriginalFetchesInVariableChain($var);
             }
 
             return null;
@@ -179,21 +175,21 @@ final class ReplaceEntityOriginalPropertyRector extends AbstractDrupalCoreRector
     }
 
     /**
-     * Whether this ->original fetch must be left alone because it lives in an
-     * isset()/unset() variable position.
+     * Whether this ->original fetch is the *direct* operand of isset()/unset()
+     * and so must be left alone.
      *
-     * Rector flags the *direct* operands of isset()/unset() with IS_ISSET_VAR /
-     * IS_UNSET_VAR (see ContextNodeVisitor). Those are owned by Steps 0a/0b.
-     * Operands nested deeper in the chain — e.g. the inner `$entity->original`
-     * of `isset($entity->original->field)` — are not flagged, so Steps 0a/0b tag
-     * them with SKIP_IN_ISSET_UNSET instead. Either way, rewriting them to a
-     * method call would be a fatal in that context.
+     * Rector flags the direct operands of isset()/unset() with IS_ISSET_VAR /
+     * IS_UNSET_VAR (see ContextNodeVisitor); it does not flag operands nested
+     * deeper in the chain. Rewriting a direct operand to a method call would be
+     * a fatal — isset($entity->getOriginal()) / unset($entity->getOriginal()) —
+     * whereas a nested fetch such as the inner ->original of
+     * isset($entity->original->field) becomes isset($entity->getOriginal()->field),
+     * which is valid PHP and is left for the leaf handler to rewrite normally.
      */
     private function isInIssetOrUnsetContext(Node $node): bool
     {
         return $node->getAttribute(AttributeKey::IS_ISSET_VAR) === true
-            || $node->getAttribute(AttributeKey::IS_UNSET_VAR) === true
-            || $node->getAttribute(self::SKIP_IN_ISSET_UNSET) === true;
+            || $node->getAttribute(AttributeKey::IS_UNSET_VAR) === true;
     }
 
     /**
@@ -212,9 +208,10 @@ final class ReplaceEntityOriginalPropertyRector extends AbstractDrupalCoreRector
                 continue;
             }
 
-            // Keep this operand in a residual unset() and make sure a nested
-            // ->original fetch within it is not rewritten into a fatal.
-            $this->tagOriginalFetchesInVariableChain($var);
+            // Keep this operand in a residual unset(). A nested ->original fetch
+            // within it (e.g. unset($foo->original->bar)) is left for the leaf
+            // handler — unset($foo->getOriginal()->bar) is valid PHP, since only
+            // a bare method call as the outermost operand is fatal.
             $remaining[] = $var;
         }
 
@@ -256,30 +253,6 @@ final class ReplaceEntityOriginalPropertyRector extends AbstractDrupalCoreRector
     private function createNull(): ConstFetch
     {
         return new ConstFetch(new Name('NULL'));
-    }
-
-    /**
-     * Tags every $entity->original fetch sitting in the variable chain of an
-     * isset()/unset() operand so the PropertyFetch handlers leave it in place.
-     *
-     * isset()/unset() accept only a variable: a base variable followed by
-     * property/array-access links. We descend that chain (->var only) so nested
-     * forms like isset($entity->original->field) are covered, while a fetch used
-     * as an array key — the dim of an ArrayDimFetch — is a normal expression slot
-     * and is intentionally left to be rewritten.
-     */
-    private function tagOriginalFetchesInVariableChain(Node $node): void
-    {
-        $current = $node;
-        while ($current instanceof PropertyFetch || $current instanceof NullsafePropertyFetch || $current instanceof ArrayDimFetch) {
-            if (($current instanceof PropertyFetch || $current instanceof NullsafePropertyFetch)
-                && $this->isName($current->name, 'original')
-            ) {
-                $current->setAttribute(self::SKIP_IN_ISSET_UNSET, true);
-            }
-
-            $current = $current->var;
-        }
     }
 
     public function getRuleDefinition(): RuleDefinition

@@ -444,12 +444,15 @@ release-by-release.
     pre-11.2 path. In a multi-operand `unset()`, only the `->original` operand
     is rewritten; the rest stay in a residual `unset()`.
 
-  Forms with no clean, valid equivalent are intentionally left untouched (rather
-  than rewritten into a fatal): nested chains such as
-  `isset($entity->original->field)` / `unset($entity->original->field)` and
-  multi-operand `isset()`. A fetch used as an array key, e.g.
-  `isset($map[$entity->original])`, is a normal expression slot and is still
-  rewritten. `empty()` accepts arbitrary expressions and is also rewritten.
+  Only the *direct/outermost* operand is fatal as a method call, so nested
+  fetches are rewritten normally: `isset($entity->original->field)` →
+  `isset($entity->getOriginal()->field)` and likewise for `unset()` (both parse
+  fine — only a bare method call as the outermost operand is fatal). A fetch
+  used as an array key, e.g. `isset($map[$entity->original])`, and `empty()`
+  (which accepts arbitrary expressions) are also rewritten. The only form left
+  untouched is the direct operand of a multi-operand `isset()` —
+  `isset($entity->original, $other)` — where rewriting `->original` would
+  produce the fatal `isset($entity->getOriginal(), $other)`.
 - Loading the Drupal 9 and Drupal 11 sets together no longer crashes at
   container-build time. The Drupal 9 `FunctionToFirstArgMethodRector` (and the
   Drupal 8 `DrupalServiceRenameRector`) subclass the generic rule, so Rector
