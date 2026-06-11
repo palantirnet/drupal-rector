@@ -82,6 +82,28 @@ release-by-release.
   new call would be a silent no-op there — the wrapper keeps the original
   `drupal_static_reset()` on older versions and only switches to the
   `cache.memory` invalidation on drupal:11.4.0 and above.
+- **`ReplaceNodeViewControllerRector`** (+ a companion `RenameClassRector`
+  entry) — migrates the deprecated
+  `Drupal\node\Controller\NodeViewController` to
+  `Drupal\Core\Entity\Controller\EntityViewController` (deprecated in
+  drupal:11.4.0, removed in drupal:13.0.0). The custom rector rewrites
+  `new NodeViewController($etm, $renderer, $currentUser, $entityRepository)`
+  to `new EntityViewController($etm, $renderer)`, dropping the two extra
+  constructor arguments that `EntityViewController` does not accept; it matches
+  both the old and new class names so the argument trim is order-independent
+  w.r.t. the rename pass. The `RenameClassRector` entry handles the structural
+  references (`use` / `extends` / `::class` / type hints). Ships in the opt-in
+  `DRUPAL_114_BREAKING` set: unlike the other entries there, the replacement
+  class exists on every supported minor (so it never fatals on a missing
+  symbol), but reparenting `extends NodeViewController` to
+  `extends EntityViewController` is *behaviorally* breaking on every minor —
+  subclasses lose the node-specific `create()` / `currentUser` /
+  `entityRepository` / `title()` / `view()` members and can throw an
+  `ArgumentCountError` or call an undefined `title()`, so it needs manual
+  review. A subclass's own `parent::__construct($a, $b, $c, $d)` is not
+  rewritten (PHP silently discards the extra arguments).
+  [#3589630](https://www.drupal.org/i/3589630) /
+  [CR](https://www.drupal.org/node/3589636).
 - **`RemoveDrupalToStringTraitRector`** — removes
   `use Drupal\Component\Utility\ToStringTrait;` from a class body and inserts
   an inline `public function __toString(): string { return (string)
