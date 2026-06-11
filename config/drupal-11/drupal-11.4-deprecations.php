@@ -35,6 +35,7 @@ use DrupalRector\Drupal11\Rector\Deprecation\ReplaceSystemPerformanceGzipKeyRect
 use DrupalRector\Drupal11\Rector\Deprecation\ReplaceViewsProceduralFunctionsRector;
 use DrupalRector\Drupal11\Rector\Deprecation\SystemRegionFunctionsRector;
 use DrupalRector\Drupal11\Rector\Deprecation\SystemSortThemesRector;
+use DrupalRector\Drupal11\Rector\Deprecation\UploadedFileConstraintArrayOptionsToNamedArgsRector;
 use DrupalRector\Drupal11\Rector\Deprecation\UseEntityTypeHasIntegerIdRector;
 use DrupalRector\Drupal11\Rector\Deprecation\ViewsPluginHandlerManagerRector;
 use DrupalRector\Rector\Deprecation\ClassConstantToClassConstantRector;
@@ -550,6 +551,17 @@ return static function (RectorConfig $rectorConfig): void {
     // trait composition from a D10/D11-only codebase.
     $rectorConfig->ruleWithConfiguration(RemovePhpUnitCompatibilityTraitRector::class, [
         new DrupalIntroducedVersionConfiguration('12.0.0'),
+    ]);
+
+    // https://www.drupal.org/node/3561135
+    // https://www.drupal.org/node/3554746 (change record)
+    // Passing an options array to the UploadedFileConstraint constructor is
+    // deprecated in drupal:11.4.0, removed in drupal:12.0.0. Replaced by named
+    // constructor arguments. BC-wrapped because the named-argument constructor
+    // was introduced alongside the deprecation, so the new form would fatal on
+    // Drupal < 11.4.
+    $rectorConfig->ruleWithConfiguration(UploadedFileConstraintArrayOptionsToNamedArgsRector::class, [
+        new DrupalIntroducedVersionConfiguration('11.4.0'),
     ]);
 
     // https://www.drupal.org/node/3554447
