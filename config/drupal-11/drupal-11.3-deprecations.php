@@ -113,14 +113,15 @@ return static function (RectorConfig $rectorConfig): void {
         new DrupalIntroducedVersionConfiguration('11.3.0'),
     ]);
 
-    // https://www.drupal.org/node/3548329
+    // https://www.drupal.org/node/3574424 (digest issue)
+    // https://www.drupal.org/node/3548329 (change record)
     // responsive_image_* functions deprecated in drupal:11.3.0, removed in drupal:12.0.0.
     // Replaced by \Drupal::service(ResponsiveImageBuilder::class)->method() calls.
     $rectorConfig->ruleWithConfiguration(FunctionToServiceRector::class, [
-        new FunctionToServiceConfiguration('11.3.0', '_responsive_image_build_source_attributes', 'Drupal\responsive_image\ResponsiveImageBuilder', 'buildSourceAttributes'),
-        new FunctionToServiceConfiguration('11.3.0', 'responsive_image_get_image_dimensions', 'Drupal\responsive_image\ResponsiveImageBuilder', 'getImageDimensions'),
-        new FunctionToServiceConfiguration('11.3.0', 'responsive_image_get_mime_type', 'Drupal\responsive_image\ResponsiveImageBuilder', 'getMimeType'),
-        new FunctionToServiceConfiguration('11.3.0', '_responsive_image_image_style_url', 'Drupal\responsive_image\ResponsiveImageBuilder', 'getImageStyleUrl'),
+        new FunctionToServiceConfiguration('11.3.0', '_responsive_image_build_source_attributes', 'Drupal\responsive_image\ResponsiveImageBuilder', 'buildSourceAttributes', true),
+        new FunctionToServiceConfiguration('11.3.0', 'responsive_image_get_image_dimensions', 'Drupal\responsive_image\ResponsiveImageBuilder', 'getImageDimensions', true),
+        new FunctionToServiceConfiguration('11.3.0', 'responsive_image_get_mime_type', 'Drupal\responsive_image\ResponsiveImageBuilder', 'getMimeType', true),
+        new FunctionToServiceConfiguration('11.3.0', '_responsive_image_image_style_url', 'Drupal\responsive_image\ResponsiveImageBuilder', 'getImageStyleUrl', true),
     ]);
 
     // https://www.drupal.org/node/3489266

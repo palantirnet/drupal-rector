@@ -13,7 +13,7 @@ class HookconvertrectorHooks
      * Implements hook_user_cancel().
      */
     #[Hook('user_cancel')]
-    public function userCancel($edit, \UserInterface $account, $method)
+    public static function userCancel($edit, \UserInterface $account, $method)
     {
         $red = 'red';
         $method = [
@@ -32,7 +32,7 @@ class HookconvertrectorHooks
      * Implements hook_page_attachments().
      */
     #[Hook('page_attachments')]
-    public function pageAttachments(array &$page)
+    public static function pageAttachments(array &$page)
     {
         // Routes that don't use BigPipe also don't need no-JS detection.
         if (\Drupal::routeMatch()->getRouteObject()->getOption('_no_big_pipe')) {

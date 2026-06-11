@@ -15,10 +15,23 @@ declare(strict_types=1);
  * Opt in via `Drupal11SetList::DRUPAL_113_BREAKING`.
  */
 
+use DrupalRector\Drupal11\Rector\Deprecation\HookRequirementsAlterRenameRector;
 use Rector\Config\RectorConfig;
 use Rector\Renaming\Rector\Name\RenameClassRector;
 
 return static function (RectorConfig $rectorConfig): void {
+    // https://www.drupal.org/node/3490846
+    // https://www.drupal.org/node/3549685 (change record)
+    // hook_requirements_alter() deprecated in drupal:11.3.0, removed in
+    // drupal:13.0.0. Renames procedural {module}_requirements_alter() to
+    // {module}_runtime_requirements_alter(). The runtime hook is only invoked on
+    // Drupal minors where it exists, so on older Drupal the renamed function is
+    // never called (a silent no-op) — a non-BC rewrite. It cannot be BC-wrapped
+    // (a function declaration is not an Expr → Expr transformation), hence the
+    // breaking set. Apply only after dropping support for Drupal minors that
+    // predate hook_runtime_requirements_alter().
+    $rectorConfig->rule(HookRequirementsAlterRenameRector::class);
+
     // https://www.drupal.org/node/3551446
     // https://www.drupal.org/node/3551450 (change record)
     // workspaces.association service / WorkspaceAssociationInterface renamed
