@@ -70,10 +70,26 @@ return static function (RectorConfig $rectorConfig): void {
     ]);
 
     // https://www.drupal.org/node/3504125
-    // template_preprocess_layout() deprecated in drupal:11.3.0, removed in drupal:12.0.0.
-    // Replaced by \Drupal\layout_discovery\Hook\LayoutDiscoveryThemeHooks::preprocessLayout().
+    // The template_preprocess_*() functions deprecated in drupal:11.3.0,
+    // removed in drupal:12.0.0. Initial template_preprocess functions are now
+    // registered directly in hook_theme(); each is replaced by the equivalent
+    // *Preprocess service method.
     $rectorConfig->ruleWithConfiguration(FunctionToServiceRector::class, [
         new FunctionToServiceConfiguration('11.3.0', 'template_preprocess_layout', 'Drupal\layout_discovery\Hook\LayoutDiscoveryThemeHooks', 'preprocessLayout', true),
+        new FunctionToServiceConfiguration('11.3.0', 'template_preprocess_table', 'Drupal\Core\Theme\ThemePreprocess', 'preprocessTable'),
+        new FunctionToServiceConfiguration('11.3.0', 'template_preprocess_tablesort_indicator', 'Drupal\Core\Theme\ThemePreprocess', 'preprocessTablesortIndicator'),
+        new FunctionToServiceConfiguration('11.3.0', 'template_preprocess_item_list', 'Drupal\Core\Theme\ThemePreprocess', 'preprocessItemList'),
+        new FunctionToServiceConfiguration('11.3.0', 'template_preprocess_region', 'Drupal\Core\Theme\ThemePreprocess', 'preprocessRegion'),
+        new FunctionToServiceConfiguration('11.3.0', 'template_preprocess_maintenance_page', 'Drupal\Core\Theme\ThemePreprocess', 'preprocessMaintenancePage'),
+        new FunctionToServiceConfiguration('11.3.0', 'template_preprocess_maintenance_task_list', 'Drupal\Core\Theme\ThemePreprocess', 'preprocessMaintenanceTaskList'),
+        new FunctionToServiceConfiguration('11.3.0', 'template_preprocess_install_page', 'Drupal\Core\Theme\ThemePreprocess', 'preprocessInstallPage'),
+        new FunctionToServiceConfiguration('11.3.0', 'template_preprocess_image', 'Drupal\Core\Theme\ImagePreprocess', 'preprocessImage'),
+        new FunctionToServiceConfiguration('11.3.0', 'template_preprocess_breadcrumb', 'Drupal\Core\Breadcrumb\BreadcrumbPreprocess', 'preprocessBreadcrumb'),
+        new FunctionToServiceConfiguration('11.3.0', 'template_preprocess_pager', 'Drupal\Core\Pager\PagerPreprocess', 'preprocessPager'),
+        new FunctionToServiceConfiguration('11.3.0', 'template_preprocess_field', 'Drupal\Core\Field\FieldPreprocess', 'preprocessField'),
+        new FunctionToServiceConfiguration('11.3.0', 'template_preprocess_field_multiple_value_form', 'Drupal\Core\Field\FieldPreprocess', 'preprocessFieldMultipleValueForm'),
+        new FunctionToServiceConfiguration('11.3.0', 'template_preprocess_menu_local_task', 'Drupal\Core\Menu\MenuPreprocess', 'preprocessMenuLocalTask'),
+        new FunctionToServiceConfiguration('11.3.0', 'template_preprocess_menu_local_action', 'Drupal\Core\Menu\MenuPreprocess', 'preprocessMenuLocalAction'),
     ]);
 
     // https://www.drupal.org/node/1685492
