@@ -69,10 +69,10 @@ For contribution suggestions, please see the later section of this document.
 $ composer require --dev palantirnet/drupal-rector
 ```
 
-> **Trying the 1.0 pre-release?** The 1.0.x line is currently published as an alpha. Until a stable `1.0.0` is tagged, the command above resolves to the latest stable release — request the pre-release explicitly instead:
+> **Trying the 1.0 pre-release?** The 1.0.x line is currently published as a beta. Until a stable `1.0.0` is tagged, the command above resolves to the latest stable release — request the pre-release explicitly instead:
 >
 > ```bash
-> $ composer require --dev "palantirnet/drupal-rector:^1.0@alpha"
+> $ composer require --dev "palantirnet/drupal-rector:^1.0@beta"
 > ```
 
 ### Create a configuration file in your project

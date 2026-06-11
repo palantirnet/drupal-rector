@@ -12,6 +12,8 @@ release-by-release.
 
 ## [Unreleased]
 
+## [1.0.0-beta1] — 2026-06-11
+
 ### Added
 
 - **`template_preprocess_*()` family (Drupal 11.3, [#3504125](https://www.drupal.org/node/3504125))** —
@@ -619,6 +621,7 @@ release-by-release.
   This unblocks running the full, bundled rule set — including the D10-era
   deprecations that live in the Drupal 11 set — against Drupal 10 sites.
 
+[1.0.0-beta1]: https://github.com/palantirnet/drupal-rector/releases/tag/1.0.0-beta1
 ## [1.0.0-alpha1] — 2026-06-01
 
 ### Changed
