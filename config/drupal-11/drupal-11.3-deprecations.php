@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use DrupalRector\Drupal11\Rector\Deprecation\CommentLinkBuilderConstructorRector;
 use DrupalRector\Drupal11\Rector\Deprecation\ErrorCurrentErrorHandlerRector;
 use DrupalRector\Drupal11\Rector\Deprecation\FileManagedFileSubmitRector;
 use DrupalRector\Drupal11\Rector\Deprecation\FileSystemBasenameToNativeRector;
@@ -269,6 +270,17 @@ return static function (RectorConfig $rectorConfig): void {
     // \Drupal::service(ViewsConfigUpdater::class) so state set via
     // setDeprecationsEnabled(FALSE) persists across hook invocations.
     $rectorConfig->ruleWithConfiguration(ViewsConfigUpdaterClassResolverToServiceRector::class, [
+        new DrupalIntroducedVersionConfiguration('11.3.0'),
+    ]);
+
+    // https://www.drupal.org/node/3544308
+    // https://www.drupal.org/node/3544527 (change record)
+    // The $module_handler and $entity_type_manager arguments to
+    // CommentLinkBuilder::__construct() deprecated in drupal:11.3.0, removed in
+    // drupal:12.0.0. The 5-argument constructor call is rewritten to the new
+    // 3-argument form ($current_user, $comment_manager, $string_translation);
+    // BC-wrapped because the 3-argument signature only exists on Drupal >= 11.3.0.
+    $rectorConfig->ruleWithConfiguration(CommentLinkBuilderConstructorRector::class, [
         new DrupalIntroducedVersionConfiguration('11.3.0'),
     ]);
 };
