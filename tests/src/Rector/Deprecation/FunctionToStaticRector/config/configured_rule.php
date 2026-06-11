@@ -31,5 +31,7 @@ return static function (RectorConfig $rectorConfig): void {
         // https://www.drupal.org/node/3495966 (Drupal 11.2)
         new FunctionToStaticConfiguration('11.2.0', 'entity_test_create_bundle', 'Drupal\entity_test\EntityTestHelper', 'createBundle'),
         new FunctionToStaticConfiguration('11.2.0', 'entity_test_delete_bundle', 'Drupal\entity_test\EntityTestHelper', 'deleteBundle'),
+        // https://www.drupal.org/node/3574424 (digest issue) / https://www.drupal.org/node/3268441 (change record, Drupal 11.1)
+        new FunctionToStaticConfiguration('11.1.0', 'image_filter_keyword', 'Drupal\Component\Utility\Image', 'getKeywordOffset'),
     ]);
 };
