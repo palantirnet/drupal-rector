@@ -22,6 +22,7 @@ use DrupalRector\Drupal11\Rector\Deprecation\RemoveSetUriCallbackRector;
 use DrupalRector\Drupal11\Rector\Deprecation\RemoveToolkitArgFromImageToolkitOperationConstructorRector;
 use DrupalRector\Drupal11\Rector\Deprecation\RemoveTrustDataCallRector;
 use DrupalRector\Drupal11\Rector\Deprecation\RemoveViewsRowCacheKeysRector;
+use DrupalRector\Drupal11\Rector\Deprecation\ReplaceDrupalStaticResetFileReferencesRector;
 use DrupalRector\Drupal11\Rector\Deprecation\ReplaceEntityReferenceRecursiveLimitRector;
 use DrupalRector\Drupal11\Rector\Deprecation\ReplaceExpectDeprecationRector;
 use DrupalRector\Drupal11\Rector\Deprecation\ReplaceHideShowWithPrintedRector;
@@ -498,6 +499,24 @@ return static function (RectorConfig $rectorConfig): void {
     // DrupalTestCaseTrait::getDrupalRoot() deprecated in drupal:11.4.0, removed in drupal:13.0.0.
     // Replaced by direct access to the $this->root property on Drupal base test classes.
     $rectorConfig->rule(GetDrupalRootToRootPropertyRector::class);
+
+    // https://www.drupal.org/node/1452100
+    // https://www.drupal.org/node/3573884 (change record)
+    // drupal_static_reset('file_get_file_references') and
+    // drupal_static_reset('file_get_file_references:field_columns') deprecated in
+    // drupal:11.4.0, removed in drupal:13.0.0. Replaced by
+    // \Drupal::service('cache.memory')->invalidateTags(['file_references']).
+    // BC-wrapped: the 'file_references' cache tag does not exist before 11.4.0, so
+    // the new call would be a silent no-op there; the DeprecationHelper wrapper
+    // keeps the original drupal_static_reset() on older versions.
+    // TODO PHPSTAN_MESSAGES ReplaceDrupalStaticResetFileReferencesRector:
+    //   No PHPStan deprecation is emitted. The deprecated thing is the static-cache
+    //   key string passed to drupal_static_reset(); the deprecation lives in a
+    //   runtime @trigger_error inside file_get_file_references(), not on a
+    //   @deprecated PHP symbol PHPStan analyses. Nothing to match.
+    $rectorConfig->ruleWithConfiguration(ReplaceDrupalStaticResetFileReferencesRector::class, [
+        new DrupalIntroducedVersionConfiguration('11.4.0'),
+    ]);
 
     // https://www.drupal.org/node/3550268
     // https://www.drupal.org/node/3545276 (change record)
