@@ -22,9 +22,11 @@ use DrupalRector\Drupal11\Rector\Deprecation\RemoveSetUriCallbackRector;
 use DrupalRector\Drupal11\Rector\Deprecation\RemoveToolkitArgFromImageToolkitOperationConstructorRector;
 use DrupalRector\Drupal11\Rector\Deprecation\RemoveTrustDataCallRector;
 use DrupalRector\Drupal11\Rector\Deprecation\RemoveViewsRowCacheKeysRector;
+use DrupalRector\Drupal11\Rector\Deprecation\ReplaceDrupalStaticResetFileReferencesRector;
 use DrupalRector\Drupal11\Rector\Deprecation\ReplaceEntityReferenceRecursiveLimitRector;
 use DrupalRector\Drupal11\Rector\Deprecation\ReplaceExpectDeprecationRector;
 use DrupalRector\Drupal11\Rector\Deprecation\ReplaceHideShowWithPrintedRector;
+use DrupalRector\Drupal11\Rector\Deprecation\ReplaceItemAttributesWithAttributesRector;
 use DrupalRector\Drupal11\Rector\Deprecation\ReplaceLocaleTranslationPathConfigRector;
 use DrupalRector\Drupal11\Rector\Deprecation\ReplaceNonBoolAccessRector;
 use DrupalRector\Drupal11\Rector\Deprecation\ReplaceRecipeRunnerInstallModuleRector;
@@ -499,6 +501,24 @@ return static function (RectorConfig $rectorConfig): void {
     // Replaced by direct access to the $this->root property on Drupal base test classes.
     $rectorConfig->rule(GetDrupalRootToRootPropertyRector::class);
 
+    // https://www.drupal.org/node/1452100
+    // https://www.drupal.org/node/3573884 (change record)
+    // drupal_static_reset('file_get_file_references') and
+    // drupal_static_reset('file_get_file_references:field_columns') deprecated in
+    // drupal:11.4.0, removed in drupal:13.0.0. Replaced by
+    // \Drupal::service('cache.memory')->invalidateTags(['file_references']).
+    // BC-wrapped: the 'file_references' cache tag does not exist before 11.4.0, so
+    // the new call would be a silent no-op there; the DeprecationHelper wrapper
+    // keeps the original drupal_static_reset() on older versions.
+    // TODO PHPSTAN_MESSAGES ReplaceDrupalStaticResetFileReferencesRector:
+    //   No PHPStan deprecation is emitted. The deprecated thing is the static-cache
+    //   key string passed to drupal_static_reset(); the deprecation lives in a
+    //   runtime @trigger_error inside file_get_file_references(), not on a
+    //   @deprecated PHP symbol PHPStan analyses. Nothing to match.
+    $rectorConfig->ruleWithConfiguration(ReplaceDrupalStaticResetFileReferencesRector::class, [
+        new DrupalIntroducedVersionConfiguration('11.4.0'),
+    ]);
+
     // https://www.drupal.org/node/3550268
     // https://www.drupal.org/node/3545276 (change record)
     // ExpectDeprecationTrait deprecated in drupal:11.4.0, removed in drupal:12.0.0.
@@ -530,5 +550,16 @@ return static function (RectorConfig $rectorConfig): void {
     // trait composition from a D10/D11-only codebase.
     $rectorConfig->ruleWithConfiguration(RemovePhpUnitCompatibilityTraitRector::class, [
         new DrupalIntroducedVersionConfiguration('12.0.0'),
+    ]);
+
+    // https://www.drupal.org/node/3554447
+    // https://www.drupal.org/node/3554585 (change record)
+    // The '#item_attributes' property of the image_formatter and
+    // responsive_image_formatter theme hooks deprecated in drupal:11.4.0,
+    // removed in drupal:12.0.0. Replaced by '#attributes'. BC-wrapped because
+    // the '#attributes' variable was only added to these hooks in 11.4.0, so a
+    // plain rename silently drops the attributes on Drupal < 11.4.
+    $rectorConfig->ruleWithConfiguration(ReplaceItemAttributesWithAttributesRector::class, [
+        new DrupalIntroducedVersionConfiguration('11.4.0'),
     ]);
 };
