@@ -19,6 +19,7 @@ declare(strict_types=1);
  * introduced version.
  */
 
+use DrupalRector\Drupal11\Rector\Deprecation\BlockContentSelectionExtendsRector;
 use DrupalRector\Drupal11\Rector\Deprecation\ReplaceNodeViewControllerRector;
 use Rector\Config\RectorConfig;
 use Rector\Renaming\Rector\Name\RenameClassRector;
@@ -87,4 +88,31 @@ return static function (RectorConfig $rectorConfig): void {
     // matches both class names, so the trim is order-independent w.r.t. the
     // RenameClassRector pass above.
     $rectorConfig->rule(ReplaceNodeViewControllerRector::class);
+
+    // https://www.drupal.org/node/2987159
+    // https://www.drupal.org/node/3521459 (change record)
+    // block_content_query_entity_reference_alter() — the hook that
+    // automatically filtered non-reusable blocks out of every entity reference
+    // selection targeting block_content — is deprecated, removed in
+    // drupal:12.0.0. Entity reference selection plugins that extend
+    // Drupal\Core\Entity\Plugin\EntityReferenceSelection\DefaultSelection
+    // directly must now extend
+    // Drupal\block_content\Plugin\EntityReferenceSelection\BlockContentSelection
+    // instead, which performs the reusable-block filtering itself.
+    //
+    // BlockContentSelection was ADDED to core alongside the deprecation
+    // (drupal-core 7f9570dba9, on the 11.4-dev branch — a new class ships in a
+    // minor, so 11.4.0, even though the runtime deprecation message text reads
+    // "11.3.0"). It does not exist on any earlier minor, so reparenting a
+    // subclass onto it produces a "class not found" fatal on Drupal < 11.4. A
+    // `class X extends Y` declaration is a structural node, not an Expr → Expr
+    // rewrite, so it cannot be BC-wrapped.
+    //
+    // PHPSTAN_MESSAGES BlockContentSelectionExtendsRector: none. The deprecation
+    // is a runtime @trigger_error raised inside the query_entity_reference_alter
+    // hook when the auto-filtering happens, not a static @deprecated annotation
+    // on any symbol the plugin references, so phpstan-deprecation-rules /
+    // upgrade_status cannot flag a `class X extends DefaultSelection`
+    // declaration. There is no static message to match.
+    $rectorConfig->rule(BlockContentSelectionExtendsRector::class);
 };

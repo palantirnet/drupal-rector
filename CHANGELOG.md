@@ -134,6 +134,23 @@ release-by-release.
   therefore lives in the opt-in `Drupal11SetList::DRUPAL_113_BREAKING` set, not
   the default deprecation set. [#1019966](https://www.drupal.org/i/1019966) /
   [change record](https://www.drupal.org/node/2690393)
+- **`BlockContentSelectionExtendsRector`** — reparents entity reference
+  selection plugins for the `block_content` entity type from
+  `Drupal\Core\Entity\Plugin\EntityReferenceSelection\DefaultSelection` to
+  `Drupal\block_content\Plugin\EntityReferenceSelection\BlockContentSelection`.
+  The hook that automatically filtered non-reusable blocks out of those
+  selections (`block_content_query_entity_reference_alter()`) is deprecated and
+  removed in drupal:12.0.0; `BlockContentSelection` performs that filtering
+  itself. The rewrite is gated on the `EntityReferenceSelection` attribute
+  carrying `entity_types: ["block_content"]`, so `DefaultSelection` subclasses
+  for other entity types are left untouched, and the canonical core
+  `BlockContentSelection` is skipped so it is not made to extend itself. Ships
+  in the opt-in `DRUPAL_114_BREAKING` set: `BlockContentSelection` was added to
+  core alongside the deprecation (a new class, so 11.4.0) and does not exist on
+  any minor below 11.4, so reparenting onto it would fatal there, and a
+  `class … extends …` declaration cannot be BC-wrapped.
+  [#2987159](https://www.drupal.org/i/2987159) /
+  [CR](https://www.drupal.org/node/3521459).
 - **`RemoveDrupalToStringTraitRector`** — removes
   `use Drupal\Component\Utility\ToStringTrait;` from a class body and inserts
   an inline `public function __toString(): string { return (string)
