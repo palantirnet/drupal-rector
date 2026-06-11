@@ -27,6 +27,31 @@ release-by-release.
   `#attributes`, are left untouched.
   [#3554447](https://www.drupal.org/i/3554447) /
   [CR](https://www.drupal.org/node/3554585).
+- **`HookRequirementsAlterRenameRector`** — renames procedural
+  `{module}_requirements_alter()` hook implementations to
+  `{module}_runtime_requirements_alter()`, deprecated in drupal:11.3.0 and
+  removed in drupal:13.0.0. The runtime hook is only invoked on Drupal minors
+  where it exists, so the renamed function is a silent no-op on older Drupal;
+  this is a non-BC rewrite and ships in the opt-in `DRUPAL_113_BREAKING` set, not
+  the default deprecation set. The rule only renames functions with a single
+  by-reference parameter, skips the `hook_requirements_alter()` API-doc function,
+  and is idempotent — the `_runtime_`/`_update_requirements_alter()` hooks are
+  left untouched.
+- **`ReplaceDrupalStaticResetFileReferencesRector`** — rewrites
+  `drupal_static_reset('file_get_file_references')` and
+  `drupal_static_reset('file_get_file_references:field_columns')` to
+  `\Drupal::service('cache.memory')->invalidateTags(['file_references'])`.
+  Both static-cache keys were deprecated in drupal:11.4.0 (removed in
+  drupal:13.0.0) when the file-reference lookup moved to the new
+  `FileReferenceResolver` service, which uses the `file_references`
+  memory-cache tag instead of `drupal_static()`. Only those two literal keys
+  are matched; other `drupal_static_reset()` calls, calls to
+  `file_get_file_references()` itself, and named/unpacked argument forms are
+  intentionally left for manual review. BC-wrapped via `DeprecationHelper`:
+  the `file_references` cache tag does not exist before drupal:11.4.0, so the
+  new call would be a silent no-op there — the wrapper keeps the original
+  `drupal_static_reset()` on older versions and only switches to the
+  `cache.memory` invalidation on drupal:11.4.0 and above.
 - **`RemoveDrupalToStringTraitRector`** — removes
   `use Drupal\Component\Utility\ToStringTrait;` from a class body and inserts
   an inline `public function __toString(): string { return (string)
@@ -432,9 +457,40 @@ release-by-release.
 - Guide: [Running against a Drupal 10 project](docs/running-against-drupal-10.md) — covers the
   direct install and a standalone-runner recipe for sites whose PHPStan 1 tooling conflicts with
   Rector 2's PHPStan 2 requirement.
+- **`HookConvertRector`** now produces lint-clean hook classes:
+  - Methods whose body never references `$this` are declared `static`
+    (satisfies the `canvas.requireStaticMethods` / "method does not use `$this`
+    and should be declared static" check). The body originates from a
+    procedural function, so this is safe by construction.
+  - Global `t()` calls are rewritten to `$this->t()` and the generated class
+    gains `use Drupal\Core\StringTranslation\StringTranslationTrait;` (clears
+    the `DrupalPractice.Objects.GlobalFunction.GlobalFunction` warning). Because
+    `$this->t()` introduces `$this`, those methods correctly remain
+    non-static — the two rules compose rather than conflict.
 
 ### Fixed
 
+- **`ReplaceEntityOriginalPropertyRector`** now handles `isset()` and `unset()`
+  correctly instead of producing a parse-time fatal. Those constructs accept
+  only a variable, so blindly rewriting `$entity->original` to the
+  `$entity->getOriginal()` method call (e.g. `isset($entity->getOriginal())`)
+  was invalid PHP. Mirroring `EntityBase`'s magic methods:
+  - `isset($entity->original)` → `$entity->getOriginal() !== NULL`
+    (`__isset()` returns `getOriginal()`), BC-wrapped in `DeprecationHelper`.
+  - `unset($entity->original)` → `$entity->setOriginal(NULL)` (`__unset()` calls
+    `setOriginal(NULL)`), BC-wrapped with `$entity->original = NULL` as the
+    pre-11.2 path. In a multi-operand `unset()`, only the `->original` operand
+    is rewritten; the rest stay in a residual `unset()`.
+
+  Only the *direct/outermost* operand is fatal as a method call, so nested
+  fetches are rewritten normally: `isset($entity->original->field)` →
+  `isset($entity->getOriginal()->field)` and likewise for `unset()` (both parse
+  fine — only a bare method call as the outermost operand is fatal). A fetch
+  used as an array key, e.g. `isset($map[$entity->original])`, and `empty()`
+  (which accepts arbitrary expressions) are also rewritten. The only form left
+  untouched is the direct operand of a multi-operand `isset()` —
+  `isset($entity->original, $other)` — where rewriting `->original` would
+  produce the fatal `isset($entity->getOriginal(), $other)`.
 - Loading the Drupal 9 and Drupal 11 sets together no longer crashes at
   container-build time. The Drupal 9 `FunctionToFirstArgMethodRector` (and the
   Drupal 8 `DrupalServiceRenameRector`) subclass the generic rule, so Rector
