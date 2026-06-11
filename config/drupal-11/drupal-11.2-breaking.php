@@ -15,10 +15,37 @@ declare(strict_types=1);
  * Opt in via `Drupal11SetList::DRUPAL_112_BREAKING`.
  */
 
+use DrupalRector\Drupal11\Rector\Deprecation\RemoveSourceModuleFromMigrateSourceAttributeRector;
 use Rector\Config\RectorConfig;
 use Rector\Renaming\Rector\Name\RenameClassRector;
 
 return static function (RectorConfig $rectorConfig): void {
+    // https://www.drupal.org/node/3009349
+    // https://www.drupal.org/node/3306373 (change record)
+    // The source_module constructor parameter was removed from
+    // Drupal\migrate\Attribute\MigrateSource in drupal:11.2.0. Passing
+    // #[MigrateSource(source_module: '...')] raises an "Unknown named
+    // parameter" error at plugin discovery on 11.2.0+. This rule strips the
+    // source_module named argument from #[MigrateSource] usages.
+    //
+    // Non-BC: an Attribute is not an Expr → Expr transformation, so it cannot
+    // be BC-wrapped, and the argument is mutually exclusive across minors —
+    // keeping it fatals on 11.2.0+, removing it drops the requirement metadata
+    // DrupalSqlBase uses to enforce the source module for D6/D7 migrations on
+    // older Drupal. For DrupalSqlBase plugins the value must be re-declared via
+    // the @MigrateSource annotation or the migration YAML after removal; that
+    // is a manual follow-up this rule does not automate. Apply only after
+    // dropping support for Drupal minors that predate 11.2.0.
+    //
+    // TODO PHPSTAN_MESSAGES RemoveSourceModuleFromMigrateSourceAttributeRector:
+    //   none. source_module was hard-removed (not @deprecated), so phpstan-
+    //   deprecation-rules has no deprecation to report. Verified against a
+    //   Drupal 11 test env: phpstan instead emits the hard error "Unknown
+    //   parameter $source_module in call to Drupal\migrate\Attribute\
+    //   MigrateSource constructor." (argument.unknownParameter, not a
+    //   deprecation). Intentionally no coverage message.
+    $rectorConfig->rule(RemoveSourceModuleFromMigrateSourceAttributeRector::class);
+
     // https://www.drupal.org/node/3488572
     // https://www.drupal.org/node/3488580 (change record)
     // Drupal\Core\Entity\Query\Sql\pgsql\* deprecated in drupal:11.2.0,

@@ -25,6 +25,152 @@ release-by-release.
   `FieldPreprocess`; `menu_local_task`, `menu_local_action` → `MenuPreprocess`.
   (`template_preprocess_authorize_report()` has no replacement and is
   intentionally excluded.)
+- **`RemoveSourceModuleFromMigrateSourceAttributeRector`** — removes the
+  `source_module` named argument from `#[MigrateSource]` attribute usages. Only
+  the `Drupal\migrate\Attribute\MigrateSource` attribute is targeted (an
+  attribute of the same short name from another namespace is left untouched).
+  The `source_module` constructor parameter was removed from the attribute in
+  drupal:11.2.0; passing `#[MigrateSource(source_module: '...')]` now raises an
+  "Unknown named parameter" error at plugin discovery time. The rewrite cannot
+  be BC-wrapped (an attribute is not an `Expr → Expr` transformation) and the
+  argument is mutually exclusive across minors, so the rule lives in the opt-in
+  `Drupal11SetList::DRUPAL_112_BREAKING` set, not the default deprecation set.
+  For plugins extending `DrupalSqlBase` the `source_module` value must be
+  re-declared via the `@MigrateSource` annotation or the migration YAML after
+  removal — a manual follow-up this rule does not automate. Apply only after
+  dropping support for Drupal minors that predate 11.2.0.
+  [#3009349](https://www.drupal.org/i/3009349) /
+  [change record](https://www.drupal.org/node/3306373)
+
+- **`UploadedFileConstraintArrayOptionsToNamedArgsRector`** — replaces the
+  deprecated options-array argument of `UploadedFileConstraint` with explicit
+  named constructor arguments (e.g. `new UploadedFileConstraint(['maxSize' => 1024000])`
+  → `new UploadedFileConstraint(maxSize: 1024000)`). Passing an options array is
+  deprecated in drupal:11.4.0 and removed in drupal:12.0.0. The transformation is
+  BC-wrapped: the named-argument constructor was introduced alongside the
+  deprecation, so the new form would fatal (`Unknown named parameter`) on
+  Drupal < 11.4. The rector therefore wraps the `new` expression in
+  `DeprecationHelper::backwardsCompatibleCall()`, using named arguments on
+  Drupal ≥ 11.4 and the original options array on older versions. See
+  [#3561135](https://www.drupal.org/node/3561135) and the
+  [change record](https://www.drupal.org/node/3554746).
+- **`DRUPAL_114_BREAKING`: `HelpSearch` → `SearchHelpSearch` class rename.**
+  `Drupal\help\Plugin\Search\HelpSearch` was moved out of the `help` module and
+  renamed to `Drupal\search_help\Plugin\Search\SearchHelpSearch` in the new
+  `search_help` core sub-module (`system_update_11400()`, drupal:11.4.0). Added
+  as a `RenameClassRector` entry to `drupal-11.4-breaking.php`: the
+  `SearchHelpSearch` class does not exist on any Drupal minor below 11.4, and a
+  `use` / `::class` rename is structural and cannot be BC-wrapped, so applying
+  it against code that still needs to run on an older minor would fatal there.
+  Opt in via `Drupal11SetList::DRUPAL_114_BREAKING` only after dropping support
+  for Drupal < 11.4 ([#3581109](https://www.drupal.org/i/3581109)).
+- **`CommentLinkBuilderConstructorRector`** — rewrites the deprecated
+  5-argument `new \Drupal\comment\CommentLinkBuilder(...)` constructor call to
+  the new 3-argument form, dropping the `$module_handler` and
+  `$entity_type_manager` arguments (deprecated in drupal:11.3.0, removed in
+  drupal:12.0.0). Because the 3-argument signature only exists on Drupal >=
+  11.3.0, the rewrite is BC-wrapped with `DeprecationHelper::backwardsCompatibleCall()`
+  so the original 5-argument call still runs on older Drupal. Only calls with
+  exactly 5 positional arguments are rewritten.
+- **`ReplaceItemAttributesWithAttributesRector`** — replaces the deprecated
+  `#item_attributes` key with `#attributes` in render arrays whose `#theme` is
+  `image_formatter` or `responsive_image_formatter`. The `#item_attributes`
+  property is deprecated in drupal:11.4.0 and removed in drupal:12.0.0. The
+  transformation is BC-wrapped: the `#attributes` variable was only added to
+  these theme hooks in 11.4.0, so a plain rename would silently drop the
+  attributes on Drupal < 11.4. The rector therefore wraps the array literal in
+  `DeprecationHelper::backwardsCompatibleCall()`, using `#attributes` on
+  Drupal ≥ 11.4 and the original `#item_attributes` on older versions. Arrays
+  with an unrelated (or absent) `#theme`, and arrays already using
+  `#attributes`, are left untouched.
+  [#3554447](https://www.drupal.org/i/3554447) /
+  [CR](https://www.drupal.org/node/3554585).
+- **`HookRequirementsAlterRenameRector`** — renames procedural
+  `{module}_requirements_alter()` hook implementations to
+  `{module}_runtime_requirements_alter()`, deprecated in drupal:11.3.0 and
+  removed in drupal:13.0.0. The runtime hook is only invoked on Drupal minors
+  where it exists, so the renamed function is a silent no-op on older Drupal;
+  this is a non-BC rewrite and ships in the opt-in `DRUPAL_113_BREAKING` set, not
+  the default deprecation set. The rule only renames functions with a single
+  by-reference parameter, skips the `hook_requirements_alter()` API-doc function,
+  and is idempotent — the `_runtime_`/`_update_requirements_alter()` hooks are
+  left untouched.
+- **`ReplaceDrupalStaticResetFileReferencesRector`** — rewrites
+  `drupal_static_reset('file_get_file_references')` and
+  `drupal_static_reset('file_get_file_references:field_columns')` to
+  `\Drupal::service('cache.memory')->invalidateTags(['file_references'])`.
+  Both static-cache keys were deprecated in drupal:11.4.0 (removed in
+  drupal:13.0.0) when the file-reference lookup moved to the new
+  `FileReferenceResolver` service, which uses the `file_references`
+  memory-cache tag instead of `drupal_static()`. Only those two literal keys
+  are matched; other `drupal_static_reset()` calls, calls to
+  `file_get_file_references()` itself, and named/unpacked argument forms are
+  intentionally left for manual review. BC-wrapped via `DeprecationHelper`:
+  the `file_references` cache tag does not exist before drupal:11.4.0, so the
+  new call would be a silent no-op there — the wrapper keeps the original
+  `drupal_static_reset()` on older versions and only switches to the
+  `cache.memory` invalidation on drupal:11.4.0 and above.
+- **`ReplaceNodeViewControllerRector`** (+ a companion `RenameClassRector`
+  entry) — migrates the deprecated
+  `Drupal\node\Controller\NodeViewController` to
+  `Drupal\Core\Entity\Controller\EntityViewController` (deprecated in
+  drupal:11.4.0, removed in drupal:13.0.0). The custom rector rewrites
+  `new NodeViewController($etm, $renderer, $currentUser, $entityRepository)`
+  to `new EntityViewController($etm, $renderer)`, dropping the two extra
+  constructor arguments that `EntityViewController` does not accept; it matches
+  both the old and new class names so the argument trim is order-independent
+  w.r.t. the rename pass. The `RenameClassRector` entry handles the structural
+  references (`use` / `extends` / `::class` / type hints). Ships in the opt-in
+  `DRUPAL_114_BREAKING` set: unlike the other entries there, the replacement
+  class exists on every supported minor (so it never fatals on a missing
+  symbol), but reparenting `extends NodeViewController` to
+  `extends EntityViewController` is *behaviorally* breaking on every minor —
+  subclasses lose the node-specific `create()` / `currentUser` /
+  `entityRepository` / `title()` / `view()` members and can throw an
+  `ArgumentCountError` or call an undefined `title()`, so it needs manual
+  review. A subclass's own `parent::__construct($a, $b, $c, $d)` is not
+  rewritten (PHP silently discards the extra arguments).
+  [#3589630](https://www.drupal.org/i/3589630) /
+  [CR](https://www.drupal.org/node/3589636).
+- **`RenameHookRankingRector`** — renames the deprecated OOP hook attribute
+  `#[Hook('ranking')]` to `#[Hook('node_search_ranking')]`. Only the
+  `Drupal\Core\Hook\Attribute\Hook` attribute is targeted (an attribute of the
+  same short name from another namespace is left untouched), and only the
+  `'ranking'` argument is rewritten — the implementing method name and any
+  docblocks are unchanged. `hook_ranking()` is deprecated in drupal:11.3.0 and
+  removed in drupal:12.0.0; use `hook_node_search_ranking()` instead. Because
+  the `node_search_ranking` hook is only invoked on Drupal minors where it
+  exists, a plain rename is a silent no-op on older Drupal, and an attribute is
+  not an `Expr → Expr` transformation so it cannot be BC-wrapped. The rule
+  therefore lives in the opt-in `Drupal11SetList::DRUPAL_113_BREAKING` set, not
+  the default deprecation set. [#1019966](https://www.drupal.org/i/1019966) /
+  [change record](https://www.drupal.org/node/2690393)
+- **`BlockContentSelectionExtendsRector`** — reparents entity reference
+  selection plugins for the `block_content` entity type from
+  `Drupal\Core\Entity\Plugin\EntityReferenceSelection\DefaultSelection` to
+  `Drupal\block_content\Plugin\EntityReferenceSelection\BlockContentSelection`.
+  The hook that automatically filtered non-reusable blocks out of those
+  selections (`block_content_query_entity_reference_alter()`) is deprecated and
+  removed in drupal:12.0.0; `BlockContentSelection` performs that filtering
+  itself. The rewrite is gated on the `EntityReferenceSelection` attribute
+  carrying `entity_types: ["block_content"]`, so `DefaultSelection` subclasses
+  for other entity types are left untouched, and the canonical core
+  `BlockContentSelection` is skipped so it is not made to extend itself. Ships
+  in the opt-in `DRUPAL_114_BREAKING` set: `BlockContentSelection` was added to
+  core alongside the deprecation (a new class, so 11.4.0) and does not exist on
+  any minor below 11.4, so reparenting onto it would fatal there, and a
+  `class … extends …` declaration cannot be BC-wrapped.
+  [#2987159](https://www.drupal.org/i/2987159) /
+  [CR](https://www.drupal.org/node/3521459).
+- **`RemoveRouteBuilderDeprecatedArgsRector`** — rewrites the deprecated
+  6-argument `new \Drupal\Core\Routing\RouteBuilder(...)` instantiation to the
+  new 4-argument form (deprecated in drupal:11.4.0, removed in drupal:12.0.0).
+  The `$module_handler` (arg 3) and `$controller_resolver` (arg 4) arguments
+  were removed and `$check_provider` shifted from position 5 to position 3;
+  YAML route discovery moved to the new `YamlRouteDiscovery` service. Only
+  6-argument positional calls to `RouteBuilder` are matched; the new signature
+  only exists on Drupal ≥ 11.4, so the change is BC-wrapped via
+  `DeprecationHelper::backwardsCompatibleCall()`.
 - **`RemoveDrupalToStringTraitRector`** — removes
   `use Drupal\Component\Utility\ToStringTrait;` from a class body and inserts
   an inline `public function __toString(): string { return (string)
@@ -443,6 +589,27 @@ release-by-release.
 
 ### Fixed
 
+- **`ReplaceEntityOriginalPropertyRector`** now handles `isset()` and `unset()`
+  correctly instead of producing a parse-time fatal. Those constructs accept
+  only a variable, so blindly rewriting `$entity->original` to the
+  `$entity->getOriginal()` method call (e.g. `isset($entity->getOriginal())`)
+  was invalid PHP. Mirroring `EntityBase`'s magic methods:
+  - `isset($entity->original)` → `$entity->getOriginal() !== NULL`
+    (`__isset()` returns `getOriginal()`), BC-wrapped in `DeprecationHelper`.
+  - `unset($entity->original)` → `$entity->setOriginal(NULL)` (`__unset()` calls
+    `setOriginal(NULL)`), BC-wrapped with `$entity->original = NULL` as the
+    pre-11.2 path. In a multi-operand `unset()`, only the `->original` operand
+    is rewritten; the rest stay in a residual `unset()`.
+
+  Only the *direct/outermost* operand is fatal as a method call, so nested
+  fetches are rewritten normally: `isset($entity->original->field)` →
+  `isset($entity->getOriginal()->field)` and likewise for `unset()` (both parse
+  fine — only a bare method call as the outermost operand is fatal). A fetch
+  used as an array key, e.g. `isset($map[$entity->original])`, and `empty()`
+  (which accepts arbitrary expressions) are also rewritten. The only form left
+  untouched is the direct operand of a multi-operand `isset()` —
+  `isset($entity->original, $other)` — where rewriting `->original` would
+  produce the fatal `isset($entity->getOriginal(), $other)`.
 - Loading the Drupal 9 and Drupal 11 sets together no longer crashes at
   container-build time. The Drupal 9 `FunctionToFirstArgMethodRector` (and the
   Drupal 8 `DrupalServiceRenameRector`) subclass the generic rule, so Rector
