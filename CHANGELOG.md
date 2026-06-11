@@ -14,6 +14,19 @@ release-by-release.
 
 ### Added
 
+- **`ReplaceItemAttributesWithAttributesRector`** — replaces the deprecated
+  `#item_attributes` key with `#attributes` in render arrays whose `#theme` is
+  `image_formatter` or `responsive_image_formatter`. The `#item_attributes`
+  property is deprecated in drupal:11.4.0 and removed in drupal:12.0.0. The
+  transformation is BC-wrapped: the `#attributes` variable was only added to
+  these theme hooks in 11.4.0, so a plain rename would silently drop the
+  attributes on Drupal < 11.4. The rector therefore wraps the array literal in
+  `DeprecationHelper::backwardsCompatibleCall()`, using `#attributes` on
+  Drupal ≥ 11.4 and the original `#item_attributes` on older versions. Arrays
+  with an unrelated (or absent) `#theme`, and arrays already using
+  `#attributes`, are left untouched.
+  [#3554447](https://www.drupal.org/i/3554447) /
+  [CR](https://www.drupal.org/node/3554585).
 - **`HookRequirementsAlterRenameRector`** — renames procedural
   `{module}_requirements_alter()` hook implementations to
   `{module}_runtime_requirements_alter()`, deprecated in drupal:11.3.0 and
