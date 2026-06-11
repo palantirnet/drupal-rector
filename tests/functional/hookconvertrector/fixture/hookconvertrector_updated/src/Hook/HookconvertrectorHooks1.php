@@ -13,7 +13,7 @@ class HookconvertrectorHooks1
      * Implements hook_theme_suggestions_HOOK_alter().
      */
     #[Hook('theme_suggestions_form_element_alter')]
-    public function themeSuggestionsFormElementAlter(&$suggestions, $variables)
+    public static function themeSuggestionsFormElementAlter(&$suggestions, $variables)
     {
         $red = 'red';
         $method = [
@@ -32,7 +32,7 @@ class HookconvertrectorHooks1
      * Implements hook_page_attachments_alter().
      */
     #[Hook('page_attachments_alter')]
-    public function pageAttachmentsAlter(array &$page)
+    public static function pageAttachmentsAlter(array &$page)
     {
         // Routes that don't use BigPipe also don't need no-JS detection.
         if (\Drupal::routeMatch()->getRouteObject()->getOption('_no_big_pipe')) {

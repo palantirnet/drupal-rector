@@ -33,17 +33,36 @@ php .claude/scripts/generate-rector-index.php --digests-path=repos/drupal-digest
 
 Read `docs/rector-index.yml` completely.
 
+### 3b. Apply the authoritative implemented-digests record
+
+The index matcher is sometimes unstable and marks already-implemented digests as
+`pending` (e.g. a rector whose `@see` cites a change-record number ≠ the digest
+issue, or code that lives in an open PR not yet merged to main). The hand-maintained
+`docs/implemented-digests.yml` is the source of truth for what is actually done, and
+it always wins over the index.
+
+Read that file (if it exists). For every issue under `digests:`, treat it as **not
+pending** — its status there (`implemented` or `config-only`) overrides whatever the
+index says.
+
+```bash
+[ -f docs/implemented-digests.yml ] && cat docs/implemented-digests.yml
+```
+
 ### 4. Apply filters
 
 If `$ARGUMENTS` contains `--phase X`, show only entries with `phase: 'X'`.
 If `$ARGUMENTS` contains `--limit N`, show only the first N entries.
 If `$ARGUMENTS` contains `--pending-only`, show only `status: pending` entries (default unless --all is passed).
 
+Issues recorded in `implemented-digests.yml` (Step 3b) are never shown as pending.
+
 ### 5. Present results
 
-Print a summary header:
+Print a summary header (counts reflect Step 3b — subtract issues recorded in
+`implemented-digests.yml` from `pending` and add them to `implemented`/`config-only`):
 ```
-Rector Index — <timestamp>
+Rector Index — <timestamp>  (N entries from implemented-digests.yml applied)
   implemented: X   config-only: Y   pending: Z
 ```
 
