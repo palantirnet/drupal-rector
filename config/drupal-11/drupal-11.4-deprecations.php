@@ -18,6 +18,7 @@ use DrupalRector\Drupal11\Rector\Deprecation\RemoveFilterTipsLongParamRector;
 use DrupalRector\Drupal11\Rector\Deprecation\RemoveInstallSchemaSystemSequencesRector;
 use DrupalRector\Drupal11\Rector\Deprecation\RemoveLinkWidgetValidateTitleElementRector;
 use DrupalRector\Drupal11\Rector\Deprecation\RemovePhpUnitCompatibilityTraitRector;
+use DrupalRector\Drupal11\Rector\Deprecation\RemoveRouteBuilderDeprecatedArgsRector;
 use DrupalRector\Drupal11\Rector\Deprecation\RemoveSetUriCallbackRector;
 use DrupalRector\Drupal11\Rector\Deprecation\RemoveToolkitArgFromImageToolkitOperationConstructorRector;
 use DrupalRector\Drupal11\Rector\Deprecation\RemoveTrustDataCallRector;
@@ -572,6 +573,16 @@ return static function (RectorConfig $rectorConfig): void {
     // the '#attributes' variable was only added to these hooks in 11.4.0, so a
     // plain rename silently drops the attributes on Drupal < 11.4.
     $rectorConfig->ruleWithConfiguration(ReplaceItemAttributesWithAttributesRector::class, [
+        new DrupalIntroducedVersionConfiguration('11.4.0'),
+    ]);
+
+    // https://www.drupal.org/node/3311365
+    // https://www.drupal.org/node/3324751 (change record)
+    // RouteBuilder::__construct() $module_handler and $controller_resolver
+    // arguments deprecated in drupal:11.4.0, removed in drupal:12.0.0. YAML
+    // route discovery moved to the new YamlRouteDiscovery service; the 6-arg
+    // constructor form is rewritten to the new 4-arg form.
+    $rectorConfig->ruleWithConfiguration(RemoveRouteBuilderDeprecatedArgsRector::class, [
         new DrupalIntroducedVersionConfiguration('11.4.0'),
     ]);
 };
