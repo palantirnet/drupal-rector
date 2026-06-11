@@ -107,7 +107,8 @@ return static function (RectorConfig $rectorConfig): void {
     // https://www.drupal.org/node/3488176
     // drupal_common_theme() removed in drupal:11.1.0.
     // Replaced by \Drupal\Core\Theme\ThemeCommonElements::commonElements().
-    // https://www.drupal.org/node/3268441
+    // https://www.drupal.org/node/3574424 (digest issue)
+    // https://www.drupal.org/node/3268441 (change record)
     // image_filter_keyword() deprecated in drupal:11.1.0, removed in drupal:12.0.0.
     // Replaced by \Drupal\Component\Utility\Image::getKeywordOffset().
     $rectorConfig->ruleWithConfiguration(FunctionToStaticRector::class, [

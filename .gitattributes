@@ -12,5 +12,4 @@
 /fixtures               export-ignore
 /scripts                export-ignore
 /docs                   export-ignore
-/rector.php             export-ignore
 /README-automated-testing.md export-ignore
