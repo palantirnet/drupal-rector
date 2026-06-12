@@ -28,6 +28,7 @@ use DrupalRector\Drupal11\Rector\Deprecation\ReplaceEntityReferenceRecursiveLimi
 use DrupalRector\Drupal11\Rector\Deprecation\ReplaceExpectDeprecationRector;
 use DrupalRector\Drupal11\Rector\Deprecation\ReplaceHideShowWithPrintedRector;
 use DrupalRector\Drupal11\Rector\Deprecation\ReplaceItemAttributesWithAttributesRector;
+use DrupalRector\Drupal11\Rector\Deprecation\ReplaceLocaleBatchProceduralFunctionsRector;
 use DrupalRector\Drupal11\Rector\Deprecation\ReplaceLocaleTranslationPathConfigRector;
 use DrupalRector\Drupal11\Rector\Deprecation\ReplaceNonBoolAccessRector;
 use DrupalRector\Drupal11\Rector\Deprecation\ReplaceRecipeRunnerInstallModuleRector;
@@ -457,6 +458,21 @@ return static function (RectorConfig $rectorConfig): void {
     // and locale_translation_check_projects_local() deprecated in drupal:11.4.0, removed in drupal:13.0.0.
     // Replaced by LocaleProjectRepository and LocaleProjectChecker service methods.
     $rectorConfig->ruleWithConfiguration(LocaleCompareIncToServiceRector::class, [
+        new DrupalIntroducedVersionConfiguration('11.4.0'),
+    ]);
+
+    // https://www.drupal.org/node/3581303
+    // https://www.drupal.org/node/3589759 (change record)
+    // The locale batch procedural callbacks in locale.batch.inc, locale.bulk.inc,
+    // and locale.compare.inc deprecated in drupal:11.4.0, removed in drupal:13.0.0.
+    // Replaced by methods on the LocaleFetch, LocaleImportBatch, LocaleConfigBatch,
+    // and LocaleProjectChecker services. BC-wrapped because the LocaleImportBatch
+    // and LocaleConfigBatch services (and the new methods on the existing services)
+    // do not exist on Drupal < 11.4. locale_config_batch_build() and
+    // locale_translation_batch_status_build() are intentionally not rewritten:
+    // their signature/behavior changed and they require manual migration.
+    // PHPStan deprecation messages captured in the rector's PHPSTAN_MESSAGES const.
+    $rectorConfig->ruleWithConfiguration(ReplaceLocaleBatchProceduralFunctionsRector::class, [
         new DrupalIntroducedVersionConfiguration('11.4.0'),
     ]);
 
