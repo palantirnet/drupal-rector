@@ -50,6 +50,30 @@ return static function (RectorConfig $rectorConfig): void {
     //   deprecation message — only a plain "class not found" once a site is on
     //   11.4. There is no message for upgrade_status to match against.
     //
+    // https://www.drupal.org/node/3587564
+    // https://www.drupal.org/node/3590298 (change record)
+    // Drupal\node\Plugin\Search\NodeSearch moved out of the node module into
+    // the new search_node core sub-module and renamed to
+    // Drupal\search_node\Plugin\Search\SearchNode (drupal-core bcb6694582, on
+    // 11.x only). Unlike HelpSearch above, the old NodeSearch class is NOT
+    // removed in 11.4 — it survives as a deprecated subclass of SearchNode
+    // (@deprecated, with a class-level @trigger_error) until removal in 12.0.0.
+    // It still belongs in the breaking set: SearchNode does not exist on any
+    // Drupal minor below 11.4, so rewriting `use` / `extends` / `::class`
+    // references to it produces a "class not found" fatal on < 11.4, and a
+    // `class X extends Y` declaration is a structural node, not an Expr → Expr
+    // rewrite, so it cannot be BC-wrapped.
+    //
+    // PHPSTAN_MESSAGES RenameClassRector: because the NodeSearch shim is
+    //   annotated `@deprecated in drupal:11.4.0` at the class level,
+    //   phpstan-deprecation-rules emits "Class ... extends deprecated class
+    //   Drupal\node\Plugin\Search\NodeSearch: in drupal:11.4.0 and is removed
+    //   from drupal:12.0.0. Instead, use
+    //   \Drupal\search_node\Plugin\Search\SearchNode." for subclasses (e.g.
+    //   contrib trash's TrashNodeSearch, search_exclude's
+    //   SearchExcludeNodeSearch) and "Instantiation of deprecated class ..."
+    //   for direct `new` calls.
+    //
     // https://www.drupal.org/node/3589630
     // https://www.drupal.org/node/3589636 (change record)
     // Drupal\node\Controller\NodeViewController deprecated in drupal:11.4.0,
@@ -79,6 +103,7 @@ return static function (RectorConfig $rectorConfig): void {
         'Drupal\menu_link_content\Plugin\migrate\process\LinkOptions' => 'Drupal\migrate\Plugin\migrate\process\LinkOptions',
         'Drupal\menu_link_content\Plugin\migrate\process\LinkUri' => 'Drupal\migrate\Plugin\migrate\process\LinkUri',
         'Drupal\help\Plugin\Search\HelpSearch' => 'Drupal\search_help\Plugin\Search\SearchHelpSearch',
+        'Drupal\node\Plugin\Search\NodeSearch' => 'Drupal\search_node\Plugin\Search\SearchNode',
         'Drupal\node\Controller\NodeViewController' => 'Drupal\Core\Entity\Controller\EntityViewController',
     ]);
 

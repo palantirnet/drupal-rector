@@ -12,6 +12,24 @@ release-by-release.
 
 ## [Unreleased]
 
+### Added
+
+- **`DRUPAL_114_BREAKING`: `NodeSearch` → `SearchNode` class rename.**
+  `Drupal\node\Plugin\Search\NodeSearch` was moved out of the `node` module and
+  renamed to `Drupal\search_node\Plugin\Search\SearchNode` in the new
+  `search_node` core sub-module (drupal:11.4.0). Added as a `RenameClassRector`
+  entry to `drupal-11.4-breaking.php`. Unlike the `HelpSearch` move, the old
+  `NodeSearch` class is **not** removed in 11.4 — it survives as a `@deprecated`
+  subclass of `SearchNode` until removal in drupal:12.0.0. It is still in the
+  breaking set because `SearchNode` does not exist on any Drupal minor below
+  11.4, and a `use` / `extends` / `::class` rename is structural and cannot be
+  BC-wrapped, so applying it against code that must still run on an older minor
+  would fatal there. Known D11 contrib subclasses affected: `trash`
+  (`TrashNodeSearch`) and `search_exclude` (`SearchExcludeNodeSearch`). Opt in
+  via `Drupal11SetList::DRUPAL_114_BREAKING` only after dropping support for
+  Drupal < 11.4 ([#3587564](https://www.drupal.org/i/3587564) /
+  [change record](https://www.drupal.org/node/3590298)).
+
 ## [1.0.0-beta1] — 2026-06-11
 
 ### Added

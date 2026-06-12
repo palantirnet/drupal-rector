@@ -641,6 +641,11 @@ digests:
     phase: '3'
     class: RemovePhpUnitCompatibilityTraitRector
     digest_file: remove-deprecated-phpunitcompatibilitytrait-from-test-3582118.php
+  '3587564':
+    status: config-only
+    phase: '4'
+    digest_file: rename-nodesearch-to-searchnode-from-search-node-module-3587564.php
+    note: 'NodeSearch→SearchNode via RenameClassRector in DRUPAL_114_BREAKING config. SearchNode lives in the new search_node sub-module (introduced by this issue, absent < 11.4), so the rename is non-BC-wrappable. Real D11 contrib users: trash (TrashNodeSearch), search_exclude (SearchExcludeNodeSearch).'
   '3589047':
     status: implemented
     phase: '2'
