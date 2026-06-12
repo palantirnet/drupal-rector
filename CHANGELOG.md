@@ -12,6 +12,20 @@ release-by-release.
 
 ## [Unreleased]
 
+### Added
+
+- **`ReplaceUserOneTimeAuthFunctionsRector` (Drupal 11.4, [#3581056](https://www.drupal.org/node/3581056))** —
+  replaces the deprecated user one-time authentication functions
+  `user_pass_rehash()`, `user_pass_reset_url()` and `user_cancel_url()` (deprecated
+  in drupal:11.4.0, removed in drupal:13.0.0) with the new
+  `\Drupal\user\OneTimeAuthentication` service methods `generateHmac()`,
+  `generateOneTimeLoginUrl()` and `generateCancelConfirmUrl()`. BC-wrapped via
+  `DeprecationHelper` because the service does not exist on Drupal < 11.4. The two
+  URL methods return a `Url` object, so the rewrite chains `->toString()`.
+  `user_mail_tokens()` (deprecated in the same issue) is intentionally not handled —
+  it is used as a string callback and its replacement needs a `BubbleableMetadata`
+  argument that cannot be synthesised.
+
 ## [1.0.0-beta1] — 2026-06-11
 
 ### Added
