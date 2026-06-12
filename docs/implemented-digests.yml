@@ -82,6 +82,11 @@ digests:
     phase: '1a'
     class: LocaleCompareIncToServiceRector
     digest_file: replace-deprecated-locale-compare-inc-functions-with-3037031.php
+  '3037156':
+    status: skip
+    phase: '1a'
+    digest_file: replace-locale-translation-update-file-history-and-locale-3037156.php
+    note: 'SKIP — LocaleTranslationHistoryFunctionsRector was built + reverted Jun 2026. Zero contrib usage (the three functions are core-internal); the sole contrib call (locale_deploy LocaleDeployCommands.php:133, zero-arg locale_translation_file_history_delete()) is unrewritable because CurrentImportStorage::delete() requires $projects. No mechanical replacement for locale_translation_get_file_history(); replacement service is @internal. CR node/3037162 is stale (cites CurrentImportStateStorage; core merged as CurrentImportStorage). Manual migration only — not worth the maintenance surface.'
   '3038908':
     status: implemented
     phase: '1b'
