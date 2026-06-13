@@ -12,6 +12,19 @@ release-by-release.
 
 ## [Unreleased]
 
+### Added
+
+- **`UserLoadByNameAndMailRector` (Drupal 11.4, [#3555936](https://www.drupal.org/node/3555936))** —
+  rewrites the deprecated `user_load_by_name()` and `user_load_by_mail()`
+  functions (deprecated in drupal:11.4.0, removed in drupal:13.0.0) to the
+  equivalent entity-storage lookup
+  `\Drupal::entityTypeManager()->getStorage('user')->loadByProperties([...])`.
+  Because `loadByProperties()` returns an array keyed by user ID while the old
+  functions returned a single user object or `FALSE`, the result is normalised
+  with `array_values(...)[0] ?? FALSE` to preserve the original return contract.
+  The replacement uses only long-standing entity APIs and pure PHP, so it runs
+  on every supported Drupal version and is not BC-wrapped.
+
 ## [1.0.0-beta1] — 2026-06-11
 
 ### Added
