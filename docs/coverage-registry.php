@@ -20,27 +20,36 @@ declare(strict_types=1);
  */
 
 return array (
-  'GetDrupalRootToRootPropertyRector' =>
+  'GetDrupalRootToRootPropertyRector' => 
   array (
     0 => 'Call to deprecated method getDrupalRoot() of class Drupal\\KernelTests\\KernelTestBase. Deprecated in drupal:11.4.0 and is removed from drupal:13.0.0. Access $this->root directly.',
     1 => 'Call to deprecated method getDrupalRoot() of class Drupal\\Tests\\BrowserTestBase. Deprecated in drupal:11.4.0 and is removed from drupal:13.0.0. Access $this->root directly.',
     2 => 'Call to deprecated method getDrupalRoot() of class Drupal\\Tests\\UnitTestCase. Deprecated in drupal:11.4.0 and is removed from drupal:13.0.0. Access $this->root directly.',
   ),
-  'RemoveAliasManagerCacheMethodCallsRector' =>
+  'RemoveAliasManagerCacheMethodCallsRector' => 
   array (
     0 => 'Call to deprecated method setCacheKey() of class Drupal\\path_alias\\AliasManager. Deprecated in drupal:11.3.0 and is removed from drupal:13.0.0. There is no replacement.',
     1 => 'Call to deprecated method writeCache() of class Drupal\\path_alias\\AliasManager. Deprecated in drupal:11.3.0 and is removed from drupal:13.0.0. There is no replacement.',
   ),
-  'RemoveDrupalToStringTraitRector' =>
+  'RemoveDrupalToStringTraitRector' => 
   array (
     0 => 'Usage of deprecated trait Drupal\\Component\\Utility\\ToStringTrait. Deprecated in drupal:11.4.0 and is removed from drupal:13.0.0. Implement the __toString() method directly, exception handling is no longer required.',
   ),
-  'RemoveRendererAddCacheableDependencyNonObjectRector' =>
+  'RemoveRendererAddCacheableDependencyNonObjectRector' => 
   array (
     0 => 'Calling Drupal\\Core\\Render\\Renderer::addCacheableDependency() with an object that doesn\'t implement Drupal\\Core\\Cache\\CacheableDependencyInterface is deprecated in drupal:11.3.0 and will throw an error in drupal:13.0.0. See https://www.drupal.org/node/3525389',
   ),
-  'ReplaceExpectDeprecationRector' =>
+  'ReplaceExpectDeprecationRector' => 
   array (
     0 => 'Call to deprecated method expectDeprecation() of class Drupal\\KernelTests\\KernelTestBase. Deprecated in drupal:11.4.0 and is removed from drupal:12.0.0. Use $this->expectUserDeprecationMessage() or $this->expectUserDeprecationMessageMatches() instead.',
+  ),
+  'ReplaceNodeViewControllerRector' => 
+  array (
+    0 => 'Instantiation of deprecated class Drupal\\node\\Controller\\NodeViewController. Deprecated in drupal:11.4.0 and is removed from drupal:13.0.0. Use Drupal\\Core\\Entity\\Controller\\EntityViewController instead.',
+  ),
+  'UserLoadByNameAndMailRector' => 
+  array (
+    0 => 'Call to deprecated function user_load_by_mail(). Deprecated in drupal:11.4.0 and is removed from drupal:13.0.0. Use Drupal::entityTypeManager()->getStorage(\'user\')->loadByProperties() instead.',
+    1 => 'Call to deprecated function user_load_by_name(). Deprecated in drupal:11.4.0 and is removed from drupal:13.0.0. Use Drupal::entityTypeManager()->getStorage(\'user\')->loadByProperties() instead.',
   ),
 );
