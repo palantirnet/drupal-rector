@@ -12,6 +12,38 @@ release-by-release.
 
 ## [Unreleased]
 
+### Added
+
+- **drupal-rector now registers as a Rector extension** — the package `type` is
+  `rector-extension` and it ships `config/extension.php` (via
+  `extra.rector.includes`). For projects that have `rector/extension-installer`,
+  Rector auto-loads it to supply sensible Drupal defaults — the extra PHP file
+  extensions (`module`, `theme`, `install`, …), class-import conventions, the
+  `upgrade_status` skip, Drupal autoloading and (when present) phpstan-drupal.
+  It loads before your `rector.php`, so your own config always takes precedence,
+  and the bundled `rector.php` template remains fully self-sufficient when the
+  installer is absent. The PHPUnit bootstrap is intentionally not auto-loaded
+  (it requires a Drupal install) — under composer-based selection it is loaded by
+  a dedicated `config/drupal-bootstrap.php` set instead.
+- **Composer-based sets ([rectorphp/rector#9778](https://github.com/rectorphp/rector/issues/9778))** —
+  `DrupalRector\Set\DrupalSetProvider` lets Rector pick the Drupal deprecation
+  sets automatically from the installed `drupal/core` version:
+
+  ```php
+  return RectorConfig::configure()
+      ->withSetProviders(DrupalSetProvider::class)
+      ->withComposerBased(drupal: true);
+  ```
+
+  Matching is cumulative downward — a site on 11.4 loads the 11.0 → 11.4 sets and
+  never a future minor — so it is backward-compatibility safe. Because the
+  installed version is known exactly, the per-minor *breaking* sets are folded in
+  automatically, and the PHPUnit bootstrap (which the per-minor configs don't
+  register) is supplied by a dedicated `config/drupal-bootstrap.php` set matched
+  once per major. Covers `drupal/core` 10.0–10.3 and 11.0–11.4. Requires a Rector
+  release that ships `SetGroup::DRUPAL` and the `withComposerBased(drupal: ...)`
+  toggle.
+
 ## [1.0.0-beta1] — 2026-06-11
 
 ### Added
