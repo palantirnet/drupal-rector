@@ -15,9 +15,9 @@ use Rector\Config\RectorConfig;
  *
  * Loading order is: Rector core defaults -> this file -> the project's
  * rector.php. Because the project's config is applied last it always wins:
- * fileExtensions(), autoloadPaths() and importNames() use "last call wins"
- * semantics, while skip() and phpstanConfigs() are additive. So everything here
- * is a default the project can still override.
+ * fileExtensions() and autoloadPaths() use "last call wins" semantics, while
+ * skip() and phpstanConfigs() are additive. So everything here is a default the
+ * project can still override.
  *
  * Imported via $rectorConfig->import(), hence the RectorConfig closure form
  * rather than RectorConfig::configure().
@@ -31,10 +31,6 @@ use Rector\Config\RectorConfig;
 return static function (RectorConfig $rectorConfig): void {
     // Drupal executes PHP from several non-.php extensions.
     $rectorConfig->fileExtensions(['php', 'module', 'theme', 'install', 'profile', 'inc', 'engine']);
-
-    // Drupal convention: import class names, but leave docblock names untouched.
-    $rectorConfig->importNames(true, false);
-    $rectorConfig->importShortClasses(false);
 
     // upgrade_status ships intentionally broken test modules.
     $rectorConfig->skip(['*/upgrade_status/tests/modules/*']);
