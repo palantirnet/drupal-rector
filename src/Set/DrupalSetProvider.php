@@ -22,14 +22,6 @@ use Rector\Set\ValueObject\ComposerTriggeredSet;
  * installed core, the otherwise opt-in "breaking" sets are safe to include here
  * and are folded into the same group.
  *
- * Enable in rector.php:
- *
- *     return RectorConfig::configure()
- *         ->withSetProviders(\DrupalRector\Set\DrupalSetProvider::class)
- *         ->withComposerBased(drupal: true);
- *
- * @api used by Rector through withSetProviders()
- *
  * @see https://github.com/rectorphp/rector/issues/9778
  */
 final class DrupalSetProvider implements SetProviderInterface
