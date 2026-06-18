@@ -104,6 +104,9 @@ This is more granular than the `Drupal10SetList::DRUPAL_10` set. Since Drupal 10
 
 ### Composer-based sets (automatic version selection)
 
+> [!WARNING]
+> This feature depends on an unreleased Rector version. Only usable right now using `composer require --dev rector/rector:"dev-main as 2.4.6"`
+
 Instead of listing sets by hand, you can let Rector pick them from the installed
 `drupal/core` version. Register the set provider and enable the `drupal` group:
 
