@@ -196,6 +196,23 @@ release-by-release.
   `class … extends …` declaration cannot be BC-wrapped.
   [#2987159](https://www.drupal.org/i/2987159) /
   [CR](https://www.drupal.org/node/3521459).
+- **`RemoveFilterTipsLongParamRector`** — drops the deprecated `$long` parameter
+  from a filter plugin's `tips()` override and the second argument from
+  `_filter_tips()` calls. The `$long` parameter and the long-format "filter
+  tips" page are deprecated in drupal:11.4.0 and removed in drupal:12.0.0.
+  **Moved from the default deprecation set into the opt-in `DRUPAL_114_BREAKING`
+  set.** Removing `$long` from an override is non-BC: `FilterInterface` and
+  `FilterBase` still declare `tips($long = FALSE)` on every Drupal minor below
+  11.4, and PHP rejects a child that *drops* a parameter the parent declares
+  with a fatal at class-declaration time (`Declaration of …::tips() must be
+  compatible with …FilterInterface::tips($long = false)`). Only apply this rule
+  once the consumer's minimum supported Drupal is ≥ 11.4; it must not block
+  Drupal 12 compatibility (on Drupal 12 the parent no longer declares `$long`,
+  so an un-rewritten subclass keeps a harmless extra optional param — phpstan
+  grumbles but it runs). Surfaced by a rejected non-BC change to `token_filter`
+  ([#3603786](https://www.drupal.org/project/token_filter/issues/3603786)).
+  [#3505370](https://www.drupal.org/i/3505370) /
+  [CR](https://www.drupal.org/node/3567879).
 - **`RemoveRouteBuilderDeprecatedArgsRector`** — rewrites the deprecated
   6-argument `new \Drupal\Core\Routing\RouteBuilder(...)` instantiation to the
   new 4-argument form (deprecated in drupal:11.4.0, removed in drupal:12.0.0).
@@ -866,7 +883,6 @@ distinct deprecations in the same minor.
 | `ReplaceEntityReferenceRecursiveLimitRector` | `EntityReferenceEntityFormatter::RECURSIVE_RENDER_LIMIT` → literal `20` | [node/2940605](https://www.drupal.org/node/2940605) |
 | `SystemRegionFunctionsRector` | `system_region_list()` / `system_default_region()` → `theme.region.manager` service | [node/3015812](https://www.drupal.org/node/3015812) |
 | `CheckMarkupToProcessedTextRector` | `check_markup()` → processed-text render array | [node/3588040](https://www.drupal.org/node/3588040) |
-| `RemoveFilterTipsLongParamRector` | `FilterInterface::tips()` — drop the `$long` parameter | [node/3567879](https://www.drupal.org/node/3567879) |
 | `SystemSortThemesRector` | `'system_sort_themes'` string callback → `Closure` (closure callable) | [node/3566774](https://www.drupal.org/node/3566774) |
 | `LocaleCompareIncToServiceRector` | `locale_translation_flush_projects()` / `locale_translation_build_projects()` / `locale_translation_check_projects*()` etc. → `locale.project` and `LocaleSource` services | [node/3037031](https://www.drupal.org/node/3037031) |
 
