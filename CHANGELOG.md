@@ -12,6 +12,19 @@ release-by-release.
 
 ## [Unreleased]
 
+### Changed
+
+- **Composer-based sets now disable backward-compatibility wrapping by default.**
+  Composer-based selection pins the rules to the exact installed Drupal version
+  and only loads sets for deprecations live on it, so the rewritten code only ever
+  runs against that one version — there is no older minor to stay compatible with,
+  which makes the `DeprecationHelper` BC wrappers pure noise. The
+  `DrupalRectorSettings` singleton is now registered with BC disabled in
+  `config/drupal-bootstrap.php` (the set matched once per Drupal major by
+  `DrupalSetProvider`). A project that does need the wrappers can re-register the
+  singleton in its own `rector.php`. (Still inert until a Rector release ships the
+  composer-based set support — see beta2.)
+
 ## [1.0.0-beta2] — 2026-06-18
 
 ### Added
