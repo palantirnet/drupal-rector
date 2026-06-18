@@ -12,38 +12,35 @@ release-by-release.
 
 ## [Unreleased]
 
+## [1.0.0-beta2] — 2026-06-18
+
 ### Added
 
-- **drupal-rector now registers as a Rector extension** — the package `type` is
-  `rector-extension` and it ships `config/extension.php` (via
-  `extra.rector.includes`). For projects that have `rector/extension-installer`,
-  Rector auto-loads it to supply sensible Drupal defaults — the extra PHP file
-  extensions (`module`, `theme`, `install`, …), class-import conventions, the
-  `upgrade_status` skip, Drupal autoloading and (when present) phpstan-drupal.
-  It loads before your `rector.php`, so your own config always takes precedence,
-  and the bundled `rector.php` template remains fully self-sufficient when the
-  installer is absent. The PHPUnit bootstrap is intentionally not auto-loaded
-  (it requires a Drupal install) — under composer-based selection it is loaded by
-  a dedicated `config/drupal-bootstrap.php` set instead.
-- **Composer-based sets ([rectorphp/rector#9778](https://github.com/rectorphp/rector/issues/9778))** —
-  `DrupalRector\Set\DrupalSetProvider` lets Rector pick the Drupal deprecation
-  sets automatically from the installed `drupal/core` version:
+- **Infrastructure for composer-based sets ([rectorphp/rector#9778](https://github.com/rectorphp/rector/issues/9778))** —
+  ships `DrupalRector\Set\DrupalSetProvider`, which will let Rector pick the
+  Drupal deprecation sets automatically from the installed `drupal/core` version.
+  This is groundwork only: it is inert until a Rector release ships the
+  `SetGroup::DRUPAL` group and the `withComposerBased(drupal: ...)` toggle, which
+  has not landed yet.
 
-  ```php
-  return RectorConfig::configure()
-      ->withSetProviders(DrupalSetProvider::class)
-      ->withComposerBased(drupal: true);
-  ```
+### Changed
 
-  Matching is cumulative downward — a site on 11.4 loads the 11.0 → 11.4 sets and
-  never a future minor — so it is backward-compatibility safe. Because the
-  installed version is known exactly, the per-minor *breaking* sets are folded in
-  automatically, and the PHPUnit bootstrap (which the per-minor configs don't
-  register) is supplied by a dedicated `config/drupal-bootstrap.php` set matched
-  once per major. Covers `drupal/core` 10.0–10.3 and 11.0–11.4. Requires a Rector
-  release that ships `SetGroup::DRUPAL` and the `withComposerBased(drupal: ...)`
-  toggle.
+- **`RemoveFilterTipsLongParamRector` moved from the default deprecation set into
+  the opt-in `DRUPAL_114_BREAKING` set** ([#371](https://github.com/palantirnet/drupal-rector/pull/371)).
+  Removing `$long` from a `tips()` override is non-BC: `FilterInterface` and
+  `FilterBase` still declare `tips($long = FALSE)` on every Drupal minor below
+  11.4, and PHP rejects a child that *drops* a parameter the parent declares
+  with a fatal at class-declaration time (`Declaration of …::tips() must be
+  compatible with …FilterInterface::tips($long = false)`). In beta1 the rule ran
+  in the default set and so fired against contrib still supporting Drupal < 11.4,
+  producing a signature-mismatch fatal there. It now only runs once the
+  consumer's minimum supported Drupal is ≥ 11.4; it must not block Drupal 12
+  compatibility (on Drupal 12 the parent no longer declares `$long`, so an
+  un-rewritten subclass keeps a harmless extra optional param — phpstan grumbles
+  but it runs). Surfaced by a rejected non-BC change to `token_filter`
+  ([#3603786](https://www.drupal.org/project/token_filter/issues/3603786)).
 
+[1.0.0-beta2]: https://github.com/palantirnet/drupal-rector/releases/tag/1.0.0-beta2
 ## [1.0.0-beta1] — 2026-06-11
 
 ### Added
@@ -200,17 +197,7 @@ release-by-release.
   from a filter plugin's `tips()` override and the second argument from
   `_filter_tips()` calls. The `$long` parameter and the long-format "filter
   tips" page are deprecated in drupal:11.4.0 and removed in drupal:12.0.0.
-  **Moved from the default deprecation set into the opt-in `DRUPAL_114_BREAKING`
-  set.** Removing `$long` from an override is non-BC: `FilterInterface` and
-  `FilterBase` still declare `tips($long = FALSE)` on every Drupal minor below
-  11.4, and PHP rejects a child that *drops* a parameter the parent declares
-  with a fatal at class-declaration time (`Declaration of …::tips() must be
-  compatible with …FilterInterface::tips($long = false)`). Only apply this rule
-  once the consumer's minimum supported Drupal is ≥ 11.4; it must not block
-  Drupal 12 compatibility (on Drupal 12 the parent no longer declares `$long`,
-  so an un-rewritten subclass keeps a harmless extra optional param — phpstan
-  grumbles but it runs). Surfaced by a rejected non-BC change to `token_filter`
-  ([#3603786](https://www.drupal.org/project/token_filter/issues/3603786)).
+  (Reclassified into the opt-in breaking set in 1.0.0-beta2 — see below.)
   [#3505370](https://www.drupal.org/i/3505370) /
   [CR](https://www.drupal.org/node/3567879).
 - **`RemoveRouteBuilderDeprecatedArgsRector`** — rewrites the deprecated
