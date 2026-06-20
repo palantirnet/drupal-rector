@@ -137,15 +137,17 @@ final class PhpUnitTestAnnotationToAttributeRector extends AbstractDrupalCoreRec
                 continue;
             }
 
+            $attrAdded = false;
             foreach ($attributes as $attribute) {
                 if ($this->attributeAlreadyPresent($node, $attribute)) {
                     continue;
                 }
                 $node->attrGroups[] = new AttributeGroup([$attribute]);
+                $attrAdded = true;
                 $changed = true;
             }
 
-            if ($removeAnnotation) {
+            if ($removeAnnotation && $attrAdded) {
                 $this->phpDocTagRemover->removeTagValueFromNode($phpDocInfo, $tagNode);
                 $changed = true;
             }
