@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 use DrupalRector\Rector\PHPUnit\PhpUnitTestAnnotationToAttributeRector;
 use DrupalRector\Rector\PHPUnit\ValueObject\PhpUnitTestAnnotationToAttributeConfiguration;
-use DrupalRector\Services\DrupalRectorSettings;
 use DrupalRector\Tests\Rector\Deprecation\DeprecationBase;
 use Rector\Config\RectorConfig;
 
@@ -14,7 +13,6 @@ return static function (RectorConfig $rectorConfig): void {
         new PhpUnitTestAnnotationToAttributeConfiguration('11.0.0', '12.0.0', 'dataProvider', 'PHPUnit\Framework\Attributes\DataProvider'),
     ]);
 
-    // Disable BC on the shared singleton so annotations are removed.
-    // Note: setUp() in the test class re-applies this after each tearDown() reset.
-    $rectorConfig->make(DrupalRectorSettings::class)->disableBackwardCompatibility();
+    // Backward-compatibility is disabled per-test in BackwardCompatibilityDisabledPhpUnitTestAnnotationToAttributeRectorTest::setUp(),
+    // because AbstractDrupalRectorTestCase::tearDown() re-enables it after every test.
 };
