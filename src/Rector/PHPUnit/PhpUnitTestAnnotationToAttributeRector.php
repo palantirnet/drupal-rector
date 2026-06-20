@@ -167,6 +167,8 @@ final class PhpUnitTestAnnotationToAttributeRector extends AbstractDrupalCoreRec
     {
         return match ($annotation) {
             'group' => $this->convertGroup($rawValue, $attributeClass),
+            'dataProvider' => $this->convertDataProvider($rawValue, $attributeClass),
+            'depends' => $this->convertDepends($rawValue, $attributeClass),
             default => [],
         };
     }
@@ -182,6 +184,34 @@ final class PhpUnitTestAnnotationToAttributeRector extends AbstractDrupalCoreRec
         }
         if ($value === 'legacy') {
             return [new Attribute(new FullyQualified('PHPUnit\Framework\Attributes\IgnoreDeprecations'))];
+        }
+
+        return [new Attribute(new FullyQualified($attributeClass), [new Arg(new String_($value))])];
+    }
+
+    /**
+     * @return Attribute[]
+     */
+    private function convertDataProvider(string $rawValue, string $attributeClass): array
+    {
+        $value = trim($rawValue);
+        // External providers (Class::method) and any multi-token form are skipped.
+        if ($value === '' || str_contains($value, '::') || str_contains($value, ' ')) {
+            return [];
+        }
+
+        return [new Attribute(new FullyQualified($attributeClass), [new Arg(new String_($value))])];
+    }
+
+    /**
+     * @return Attribute[]
+     */
+    private function convertDepends(string $rawValue, string $attributeClass): array
+    {
+        $value = trim($rawValue);
+        // Modifier forms (`clone m`, `!m`) and external (`Class::method`) are skipped.
+        if ($value === '' || str_contains($value, ' ') || str_contains($value, '!') || str_contains($value, '::')) {
+            return [];
         }
 
         return [new Attribute(new FullyQualified($attributeClass), [new Arg(new String_($value))])];
