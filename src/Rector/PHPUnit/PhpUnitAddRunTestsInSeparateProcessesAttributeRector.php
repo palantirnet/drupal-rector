@@ -21,7 +21,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  * Additively stamps #[RunTestsInSeparateProcesses] on KernelTestBase and
  * BrowserTestBase subclasses for PHPUnit 12 / Drupal 12 readiness.
  *
- * Skips: anonymous classes, UnitTestCase subclasses (not Kernel/Browser),
+ * Skips: anonymous classes, abstract classes, UnitTestCase subclasses (not Kernel/Browser),
  * and classes already carrying the attribute (idempotent).
  *
  * @see https://www.drupal.org/project/drupal/issues/3445240
@@ -61,9 +61,10 @@ final class PhpUnitAddRunTestsInSeparateProcessesAttributeRector extends Abstrac
         return PhpVersion::PHP_81;
     }
 
+    // refactor() is overridden to drive the additive change directly; the parent's Expr BC-wrap path does not apply to a Class_ statement. The abstract refactorWithConfiguration() stub below is required by the base but unused.
     public function refactor(Node $node): ?Node
     {
-        if (!$node instanceof Class_ || $node->isAnonymous()) {
+        if (!$node instanceof Class_ || $node->isAnonymous() || $node->isAbstract()) {
             return null;
         }
 
@@ -143,9 +144,6 @@ final class PhpUnitAddRunTestsInSeparateProcessesAttributeRector extends Abstrac
         ]);
     }
 
-    /**
-     * Not used: refactor() is overridden and drives the change directly.
-     */
     protected function refactorWithConfiguration(Node $node, VersionedConfigurationInterface $configuration)
     {
         return null;
