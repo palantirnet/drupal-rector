@@ -169,6 +169,7 @@ final class PhpUnitTestAnnotationToAttributeRector extends AbstractDrupalCoreRec
             'group' => $this->convertGroup($rawValue, $attributeClass),
             'dataProvider' => $this->convertDataProvider($rawValue, $attributeClass),
             'depends' => $this->convertDepends($rawValue, $attributeClass),
+            'testWith' => $this->convertTestWith($rawValue, $attributeClass),
             default => [],
         };
     }
@@ -217,9 +218,35 @@ final class PhpUnitTestAnnotationToAttributeRector extends AbstractDrupalCoreRec
         return [new Attribute(new FullyQualified($attributeClass), [new Arg(new String_($value))])];
     }
 
+    /**
+     * @return Attribute[]
+     */
+    private function convertTestWith(string $rawValue, string $attributeClass): array
+    {
+        $attributes = [];
+        foreach (preg_split('/\r?\n/', $rawValue) as $rawLine) {
+            // Strip a leading doc-block continuation prefix if present.
+            $line = trim(preg_replace('/^\s*\*\s?/', '', $rawLine));
+            if ($line === '') {
+                continue;
+            }
+
+            $decoded = json_decode($line, true);
+            if (!is_array($decoded)) {
+                // Any unparseable line: skip the whole tag, untouched.
+                return [];
+            }
+
+            $attributes[] = new Attribute(new FullyQualified($attributeClass), [new Arg($this->nodeFactory->createArray($decoded))]);
+        }
+
+        return $attributes;
+    }
+
     private function attributeAlreadyPresent(Class_|ClassMethod $node, Attribute $candidate): bool
     {
         $candidateClass = ltrim($candidate->name->toString(), '\\');
+        $candidateHasArgs = $candidate->args !== [];
         $candidateValue = $this->firstStringArgValue($candidate);
 
         foreach ($node->attrGroups as $attrGroup) {
@@ -227,10 +254,12 @@ final class PhpUnitTestAnnotationToAttributeRector extends AbstractDrupalCoreRec
                 if (ltrim($attr->name->toString(), '\\') !== $candidateClass) {
                     continue;
                 }
-                if ($candidateValue === null) {
+                // No-arg attributes (e.g. #[IgnoreDeprecations]) are singletons.
+                if (!$candidateHasArgs) {
                     return true;
                 }
-                if ($this->firstStringArgValue($attr) === $candidateValue) {
+                // For string-arg attributes, compare the string values.
+                if ($candidateValue !== null && $this->firstStringArgValue($attr) === $candidateValue) {
                     return true;
                 }
             }

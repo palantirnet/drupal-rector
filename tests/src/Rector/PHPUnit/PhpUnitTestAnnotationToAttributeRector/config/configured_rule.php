@@ -12,5 +12,6 @@ return static function (RectorConfig $rectorConfig): void {
         new PhpUnitTestAnnotationToAttributeConfiguration('11.0.0', '12.0.0', 'group', 'PHPUnit\Framework\Attributes\Group'),
         new PhpUnitTestAnnotationToAttributeConfiguration('11.0.0', '12.0.0', 'dataProvider', 'PHPUnit\Framework\Attributes\DataProvider'),
         new PhpUnitTestAnnotationToAttributeConfiguration('11.0.0', '12.0.0', 'depends', 'PHPUnit\Framework\Attributes\Depends'),
+        new PhpUnitTestAnnotationToAttributeConfiguration('11.0.0', '12.0.0', 'testWith', 'PHPUnit\Framework\Attributes\TestWith'),
     ]);
 };
