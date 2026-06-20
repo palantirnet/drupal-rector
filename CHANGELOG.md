@@ -12,6 +12,18 @@ release-by-release.
 
 ## [Unreleased]
 
+### Added
+
+- **`PhpUnitTestAnnotationToAttributeRector`** — converts PHPUnit test-metadata
+  doc-block annotations (`@group`, with `@group legacy → #[IgnoreDeprecations]`
+  as a special case) to PHP attributes. Backward-compatible by default: the
+  annotation is kept alongside the new attribute while the configured
+  `removeVersion` has not been reached (or while BC mode is on), so the rewritten
+  code stays compatible with older PHPUnit/Drupal versions that tolerate unknown
+  attribute classes. Implements `MinPhpVersionInterface` (PHP 8.1+).
+  ([#3535662](https://www.drupal.org/project/drupal/issues/3535662),
+  [#3417066](https://www.drupal.org/project/drupal/issues/3417066))
+
 ### Changed
 
 - **Composer-based sets now disable backward-compatibility wrapping by default.**
