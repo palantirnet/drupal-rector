@@ -23,6 +23,10 @@ release-by-release.
   attribute classes. Implements `MinPhpVersionInterface` (PHP 8.1+).
   ([#3535662](https://www.drupal.org/project/drupal/issues/3535662),
   [#3417066](https://www.drupal.org/project/drupal/issues/3417066))
+- **`PhpUnitAddRunTestsInSeparateProcessesAttributeRector`** — additively stamps
+  `#[RunTestsInSeparateProcesses]` onto Kernel and Browser (Functional) test
+  classes; skips Unit tests, anonymous classes, and already-attributed classes.
+  Registered in the Drupal 11.4 deprecation set.
 
 ### Changed
 
