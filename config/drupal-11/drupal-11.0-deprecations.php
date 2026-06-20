@@ -4,10 +4,11 @@ declare(strict_types=1);
 
 use DrupalRector\Drupal10\Rector\Deprecation\ReplaceRequestTimeConstantRector;
 use DrupalRector\Drupal11\Rector\Deprecation\GetNameToNameRector;
-use DrupalRector\Drupal11\Rector\Deprecation\GroupLegacyToIgnoreDeprecationsRector;
 use DrupalRector\Drupal11\Rector\Deprecation\MigrateSqlGetMigrationPluginManagerRector;
 use DrupalRector\Drupal11\Rector\Deprecation\RemoveStateCacheSettingRector;
 use DrupalRector\Drupal11\Rector\Deprecation\StripMigrationDependenciesExpandArgRector;
+use DrupalRector\Rector\PHPUnit\PhpUnitTestAnnotationToAttributeRector;
+use DrupalRector\Rector\PHPUnit\ValueObject\PhpUnitTestAnnotationToAttributeConfiguration;
 use DrupalRector\Rector\ValueObject\DrupalIntroducedVersionConfiguration;
 use Rector\Config\RectorConfig;
 
@@ -46,9 +47,16 @@ return static function (RectorConfig $rectorConfig): void {
         new DrupalIntroducedVersionConfiguration('11.0.0'),
     ]);
 
-    // https://www.drupal.org/node/3417066
-    // @group legacy docblock annotation deprecated in drupal:10.3.0, removed in drupal:11.0.0.
-    // Drupal 11 drops symfony/phpunit-bridge in favour of PHPUnit 10, whose native
-    // #[\PHPUnit\Framework\Attributes\IgnoreDeprecations] attribute supersedes it.
-    $rectorConfig->rule(GroupLegacyToIgnoreDeprecationsRector::class);
+    // https://www.drupal.org/node/3417066 (@group legacy → #[IgnoreDeprecations])
+    // https://www.drupal.org/project/drupal/issues/3535662 (annotations → attributes)
+    // PHPUnit 12 (Drupal 12) drops annotation metadata in favour of attributes.
+    // Backward-compatible: under BC-on / Drupal < 12 the annotation is kept
+    // alongside the new attribute (unknown attribute classes are ignored on
+    // PHPUnit 9/10/11); only a D12 install or an opted-in clean rewrite strips it.
+    $rectorConfig->ruleWithConfiguration(PhpUnitTestAnnotationToAttributeRector::class, [
+        new PhpUnitTestAnnotationToAttributeConfiguration('11.0.0', '12.0.0', 'group', 'PHPUnit\Framework\Attributes\Group'),
+        new PhpUnitTestAnnotationToAttributeConfiguration('11.0.0', '12.0.0', 'dataProvider', 'PHPUnit\Framework\Attributes\DataProvider'),
+        new PhpUnitTestAnnotationToAttributeConfiguration('11.0.0', '12.0.0', 'depends', 'PHPUnit\Framework\Attributes\Depends'),
+        new PhpUnitTestAnnotationToAttributeConfiguration('11.0.0', '12.0.0', 'testWith', 'PHPUnit\Framework\Attributes\TestWith'),
+    ]);
 };
