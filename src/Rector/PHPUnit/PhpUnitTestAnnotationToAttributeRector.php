@@ -224,7 +224,7 @@ final class PhpUnitTestAnnotationToAttributeRector extends AbstractDrupalCoreRec
     private function convertTestWith(string $rawValue, string $attributeClass): array
     {
         $attributes = [];
-        foreach (preg_split('/\r?\n/', $rawValue) as $rawLine) {
+        foreach ((preg_split('/\r?\n/', $rawValue) ?: []) as $rawLine) {
             // Strip a leading doc-block continuation prefix if present.
             $line = trim(preg_replace('/^\s*\*\s?/', '', $rawLine));
             if ($line === '') {
@@ -261,6 +261,12 @@ final class PhpUnitTestAnnotationToAttributeRector extends AbstractDrupalCoreRec
                 // For string-arg attributes, compare the string values.
                 if ($candidateValue !== null && $this->firstStringArgValue($attr) === $candidateValue) {
                     return true;
+                }
+                // For non-string-arg attributes (e.g. #[TestWith([1, 2])]), compare structurally.
+                if ($candidateValue === null && $attr->args !== []) {
+                    if ($this->nodeComparator->areNodesEqual($candidate->args[0]->value, $attr->args[0]->value)) {
+                        return true;
+                    }
                 }
             }
         }
