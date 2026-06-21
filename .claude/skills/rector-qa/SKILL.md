@@ -1,13 +1,13 @@
 ---
 name: rector-qa
-description: Comprehensive quality review of an existing Drupal rector. Runs four audit passes — type guards, fixture coverage, BC decision correctness, and @see URL accuracy — and produces a PASS/FAIL/WARN checklist. Use before merging a rector or when reviewing existing ones for regressions. Pass 'all' to walk the full branch type-guard checklist.
+description: Comprehensive quality review of an existing Drupal rector. Runs six audit passes — type guards, fixture coverage, BC decision correctness, @see URL accuracy, registration, and common bugs / idempotency — and produces a PASS/FAIL/WARN checklist. Use before merging a rector or when reviewing existing ones for regressions. Pass 'all' to walk the full branch type-guard checklist.
 argument-hint: "<RectorClassName | all>"
 allowed-tools: Read, Bash, Edit, Write, Glob
 ---
 
 # Rector QA
 
-Comprehensive four-pass quality review for a drupal-rector implementation.
+Comprehensive six-pass quality review for a drupal-rector implementation.
 
 ## Input
 
@@ -318,9 +318,51 @@ consecutively, issue first:
 
 ---
 
+## Pass 6 — Common Bugs / Idempotency Audit
+
+**Goal:** Running the rector twice (or in the same run after Rector's post-pass
+name-importing) must produce **no further change**. A rule that re-fires on code
+it already transformed stacks output unboundedly — in the real `importNames(true)`
+config this manifests as an infinite loop / hundreds of duplicated nodes.
+
+This pass is a checklist of known recurring bugs. Add new rows as they are found.
+
+| Bug | Who is at risk | The trap | Fix |
+|-----|----------------|----------|-----|
+| **Attribute/use-import dedup by FQCN** | Any rector that **adds** a PHP attribute (`#[Group]`, `#[RunTestsInSeparateProcesses]`, …) or a `use` import and guards against duplicates | The "already present?" check compares the candidate's **fully-qualified** name against `$attr->name->toString()`. After Rector's `importNames()` post-pass reprints the attribute as a short `use`-imported `#[Group]` — or the import is dropped across passes and the short name resolves to the current namespace — `toString()` no longer equals the FQCN, the check misses, and the attribute is re-appended every pass. | Compare on the **short (last) name segment**: `$attr->name->getLast() === $candidate->name->getLast()`. Keep any value comparison (`#[Group('a')]` vs `#[Group('b')]`) to disambiguate. |
+
+**Steps:**
+
+1. Does the rector **add** an `AttributeGroup`/`Attribute` node, a `use` import, or any
+   node whose name is later subject to name-importing? If no → **N/A**.
+2. If yes, find the duplicate-guard (`attributeAlreadyPresent`, `hasAttribute`, etc.)
+   and check whether it compares `->toString()`/`ltrim(...,'\\')` against a fully-qualified
+   string. If so → **AT-RISK** (apply the short-name fix above).
+3. **Prove idempotency.** Run the rector twice against a sample and confirm the second
+   pass is a no-op. The fixture harness resolves names to FQ, so an FQ-form fixture
+   (`#[\PHPUnit\Framework\Attributes\Group(...)]`) will NOT catch this. Use a CLI two-pass
+   with `importNames(true)` on a temp file (scratch dir inside the project — ddev cannot see
+   host `/tmp`), **and** add a fixture written in the **short, unimported** form
+   (`#[Group('example')]`, no `use`) asserting no change:
+   ```bash
+   ddev exec vendor/bin/rector process scratchpad/idem/Sample.php --config scratchpad/idem/rector.php --no-progress-bar
+   # run again — second run must report "Rector is done!" (no change)
+   ```
+
+**Output:** `Pass 6: [SAFE|AT-RISK|N/A] — <note>`
+
+**If AT-RISK:** apply the fix and add the short-unimported-form idempotency fixture.
+
+Reference case: `PhpUnitTestAnnotationToAttributeRector` and
+`PhpUnitAddRunTestsInSeparateProcessesAttributeRector` (the webform
+`WebformAccessSubmissionViewsTest` stacked hundreds of `#[Group]`/
+`#[RunTestsInSeparateProcesses]` lines before the short-name fix).
+
+---
+
 ## Final Summary
 
-After all five passes, produce a summary checklist:
+After all six passes, produce a summary checklist:
 
 ```
 === QA Summary: <ClassName> ===
@@ -330,6 +372,7 @@ Pass 2 — Fixtures:      [PASS|WARN] — <note>
 Pass 3 — BC Decision:   [PASS|FAIL] — <note>
 Pass 4 — @see URL:      [PASS|WARN|FAIL] — issue:<n> CR:<n> — <present/missing>
 Pass 5 — Registration:  [PASS|FAIL] — <note>
+Pass 6 — Common Bugs:   [SAFE|AT-RISK|N/A] — <note>
 
 Overall: [PASS — ready to merge | NEEDS FIXES — see above]
 ```
@@ -340,4 +383,4 @@ If any pass shows AT-RISK or FAIL, do not declare the rector ready to merge. App
 
 ## Running on a "known good" rector
 
-To verify the skill works correctly, run it on `ReplaceSessionManagerDeleteRector` — all five passes should be PASS/SAFE.
+To verify the skill works correctly, run it on `ReplaceSessionManagerDeleteRector` — all six passes should be PASS/SAFE/N-A.
