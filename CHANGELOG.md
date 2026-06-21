@@ -38,6 +38,17 @@ release-by-release.
 
 - **Removed `GroupLegacyToIgnoreDeprecationsRector`** — its `@group legacy` → `#[IgnoreDeprecations]` conversion is now handled by the new `PhpUnitTestAnnotationToAttributeRector` (registered in the Drupal 11.0 set).
 
+### Fixed
+
+- **`AnnotationToAttributeRector` is now idempotent across name-importing.** Its
+  already-present check compared the existing attribute's fully-qualified name
+  against the configured attribute class. After Rector's `importNames()` pass
+  reprints the attribute as a short `use`-imported name (`#[Action]`) — or the
+  import is dropped across passes and the short name resolves to the current
+  namespace — that comparison missed and a duplicate attribute was appended on
+  every pass, stacking unboundedly. It now compares the short (last) name
+  segment, which is stable regardless of import state.
+
 ### Changed
 
 - **Composer-based sets now disable backward-compatibility wrapping by default.**
