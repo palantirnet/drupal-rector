@@ -21,11 +21,17 @@ release-by-release.
   `removeVersion` has not been reached (or while BC mode is on), so the rewritten
   code stays compatible with older PHPUnit/Drupal versions that tolerate unknown
   attribute classes. Implements `MinPhpVersionInterface` (PHP 8.1+).
+  The already-present check compares the attribute's short name, so it stays
+  idempotent after Rector's name-importing pass reprints the attribute as a
+  `use`-imported short name (a fully-qualified comparison would miss the
+  imported form and re-append the attribute on every pass).
   ([#3535662](https://www.drupal.org/project/drupal/issues/3535662),
   [#3417066](https://www.drupal.org/project/drupal/issues/3417066))
 - **`PhpUnitAddRunTestsInSeparateProcessesAttributeRector`** — additively stamps
   `#[RunTestsInSeparateProcesses]` onto Kernel and Browser (Functional) test
   classes; skips Unit tests, anonymous classes, abstract classes, and already-attributed classes.
+  The already-attributed check compares the attribute's short name so the rule
+  stays idempotent across name-importing passes (see Rector A above).
   Registered in the Drupal 11.4 deprecation set.
 
 ### Removed

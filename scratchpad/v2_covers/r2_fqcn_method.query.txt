@@ -1,0 +1,1 @@
+-r:drupal "@covers \\\\[A-Z][A-Za-z0-9_\\\\]*::" f:test

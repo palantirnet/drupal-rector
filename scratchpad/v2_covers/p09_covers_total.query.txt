@@ -1,0 +1,1 @@
+-r:drupal @covers f:test

@@ -1,0 +1,106 @@
+    class AiChatbotPlusService
+
+<?php
+
+ * @coversDefaultClass \\Drupal\\ai_chatbot_plus\\Service\\AiChatbotPlusService
+
+ * @group ai_chatbot_plus
+
+    $this->assertTrue(is_a($service, $class)); // Use is_a() with assertTrue for PHPUnit 10 compatibility
+
+    $this->assertTrue(is_object($chatbot)); // Use assertTrue(is_object()) for PHPUnit 10 compatibility
+
+    class AiChatbotPlusService
+
+<?php
+
+ * @coversDefaultClass \\Drupal\\ai_chatbot_plus\\Service\\AiChatbotPlusService
+
+ * @group ai_chatbot_plus
+
+### Statistics
+
+## References
+
+### Prerequisites
+
+# TMGMT Lara Translate Tests
+
+## Test Structure
+
+## Running the Tests
+
+## Test Coverage
+
+## Writing Additional Tests
+
+## Test Annotations
+
+### Running All Tests
+
+### Running Tests by Group
+
+### Running Specific Test Files
+
+### Verbose Output
+
+  - Key repository integration
+
+  - Configuration handling
+
+  - Remote language retrieval
+
+1. Ensure you have DDEV running
+
+2. PHPUnit is included in your development dependencies
+
+```bash
+
+ddev phpunit
+
+```bash
+
+ddev phpunit --group tmgmt_laratranslate
+
+```bash
+
+ddev phpunit tests/src/Unit/Plugin/tmgmt/Translator/LaraTranslatorTest.php
+
+```bash
+
+ddev phpunit --verbose
+
+ddev phpunit --debug
+
+- ✅ Plugin availability checking
+
+- ✅ Credential validation
+
+- ✅ Key repository integration
+
+- ✅ Language code format validation
+
+1. **Unit Tests**: Add to `tests/src/Unit/` for testing isolated logic
+
+2. Always use the `@group tmgmt_laratranslate` annotation
+
+- `@group tmgmt_laratranslate` - Allows running all module tests together
+
+- `@coversDefaultClass` - Specifies the class under test
+
+```php
+
+ * @group tmgmt_laratranslate
+
+ * @coversDefaultClass \Drupal\tmgmt_laratranslate\Plugin\tmgmt\Translator\LaraTranslator
+
+  - Supported language filtering
+
+- ✅ European and Asian language variants
+
+- **Unit Tests**: 18 methods
+
+3. Use the `@coversDefaultClass` annotation to specify the class being tested
+
+- `@covers` - Indicates which methods are tested
+

@@ -245,13 +245,22 @@ final class PhpUnitTestAnnotationToAttributeRector extends AbstractDrupalCoreRec
 
     private function attributeAlreadyPresent(Class_|ClassMethod $node, Attribute $candidate): bool
     {
-        $candidateClass = ltrim($candidate->name->toString(), '\\');
+        // Compare on the short (last) name segment rather than the fully-qualified
+        // string. After Rector's name-importing pass the attribute is reprinted as
+        // a short, `use`-imported name (`#[Group]`); on a subsequent pass its
+        // `Name` node resolves to the short form (or, without a matching import, to
+        // the current namespace), so a fully-qualified comparison never matches and
+        // the rule appends a duplicate on every pass — an unbounded attribute
+        // stack. The short-name check is import-resolution-agnostic and keeps the
+        // rule idempotent. For value-bearing attributes the value comparison below
+        // still disambiguates (e.g. #[Group('a')] vs #[Group('b')]).
+        $candidateClass = $candidate->name->getLast();
         $candidateHasArgs = $candidate->args !== [];
         $candidateValue = $this->firstStringArgValue($candidate);
 
         foreach ($node->attrGroups as $attrGroup) {
             foreach ($attrGroup->attrs as $attr) {
-                if (ltrim($attr->name->toString(), '\\') !== $candidateClass) {
+                if ($attr->name->getLast() !== $candidateClass) {
                     continue;
                 }
                 // No-arg attributes (e.g. #[IgnoreDeprecations]) are singletons.

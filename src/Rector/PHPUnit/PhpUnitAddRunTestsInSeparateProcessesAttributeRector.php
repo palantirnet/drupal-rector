@@ -113,10 +113,19 @@ final class PhpUnitAddRunTestsInSeparateProcessesAttributeRector extends Abstrac
 
     private function hasAttribute(Class_ $node): bool
     {
-        $target = ltrim(self::ATTRIBUTE, '\\');
+        // Compare on the short (last) name segment rather than the fully-qualified
+        // string. After Rector's name-importing pass the attribute is reprinted as
+        // a short, `use`-imported name (`#[RunTestsInSeparateProcesses]`); on a
+        // subsequent pass its `Name` node resolves to the short form (or, without a
+        // matching import, to the current namespace), so a fully-qualified
+        // comparison never matches and the rule re-stamps a duplicate on every pass
+        // — an unbounded attribute stack. The short-name check is
+        // import-resolution-agnostic and keeps the rule idempotent.
+        $parts = explode('\\', self::ATTRIBUTE);
+        $target = end($parts);
         foreach ($node->attrGroups as $attrGroup) {
             foreach ($attrGroup->attrs as $attr) {
-                if (ltrim($attr->name->toString(), '\\') === $target) {
+                if ($attr->name->getLast() === $target) {
                     return true;
                 }
             }
