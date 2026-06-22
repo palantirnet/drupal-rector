@@ -14,6 +14,40 @@ release-by-release.
 
 ### Added
 
+- **`PhpUnitTestAnnotationToAttributeRector`** — converts PHPUnit test-metadata
+  doc-block annotations (`@group`, with `@group legacy → #[IgnoreDeprecations]`
+  as a special case) to PHP attributes. Backward-compatible by default: the
+  annotation is kept alongside the new attribute while the configured
+  `removeVersion` has not been reached (or while BC mode is on), so the rewritten
+  code stays compatible with older PHPUnit/Drupal versions that tolerate unknown
+  attribute classes. Implements `MinPhpVersionInterface` (PHP 8.1+).
+  The already-present check compares the attribute's short name, so it stays
+  idempotent after Rector's name-importing pass reprints the attribute as a
+  `use`-imported short name (a fully-qualified comparison would miss the
+  imported form and re-append the attribute on every pass).
+  ([#3535662](https://www.drupal.org/project/drupal/issues/3535662),
+  [#3417066](https://www.drupal.org/project/drupal/issues/3417066))
+- **`PhpUnitAddRunTestsInSeparateProcessesAttributeRector`** — additively stamps
+  `#[RunTestsInSeparateProcesses]` onto Kernel and Browser (Functional) test
+  classes; skips Unit tests, anonymous classes, abstract classes, and already-attributed classes.
+  The already-attributed check compares the attribute's short name so the rule
+  stays idempotent across name-importing passes (see Rector A above).
+  Registered in the Drupal 11.4 deprecation set.
+
+### Removed
+
+- **Removed `GroupLegacyToIgnoreDeprecationsRector`** — its `@group legacy` → `#[IgnoreDeprecations]` conversion is now handled by the new `PhpUnitTestAnnotationToAttributeRector` (registered in the Drupal 11.0 set).
+
+### Fixed
+
+- **`AnnotationToAttributeRector` is now idempotent across name-importing.** Its
+  already-present check compared the existing attribute's fully-qualified name
+  against the configured attribute class. After Rector's `importNames()` pass
+  reprints the attribute as a short `use`-imported name (`#[Action]`) — or the
+  import is dropped across passes and the short name resolves to the current
+  namespace — that comparison missed and a duplicate attribute was appended on
+  every pass, stacking unboundedly. It now compares the short (last) name
+  segment, which is stable regardless of import state.
 - **`UserLoadByNameAndMailRector` (Drupal 11.4, [#3555936](https://www.drupal.org/node/3555936))** —
   rewrites the deprecated `user_load_by_name()` and `user_load_by_mail()`
   functions (deprecated in drupal:11.4.0, removed in drupal:13.0.0) to the

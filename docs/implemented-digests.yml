@@ -189,7 +189,7 @@ digests:
   '3417066':
     status: implemented
     phase: '4'
-    class: GroupLegacyToIgnoreDeprecationsRector
+    class: PhpUnitTestAnnotationToAttributeRector
     digest_file: replace-group-legacy-annotation-with-ignoredeprecations-3417066.php
   '3417136':
     status: implemented

@@ -1,0 +1,9 @@
+acsf
+ai_vdb_provider_pinecone
+calendar_plus
+config_import_locale
+entity
+lingotek
+marketing_cloud
+potx
+workbench_moderation

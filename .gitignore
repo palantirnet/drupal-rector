@@ -24,3 +24,7 @@ rector-decision.log
 docs/rector-index.yml
 docs/plans/
 /repos/
+
+# Local-only superpowers scaffolding (plans, specs, SDD ledger/briefs/reports) — never commit
+/.superpowers/
+/docs/superpowers/

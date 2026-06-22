@@ -177,10 +177,20 @@ CODE_SAMPLE,
             return null;
         }
 
+        // Compare on the short (last) name segment rather than the fully-qualified
+        // string. After Rector's name-importing pass the attribute is reprinted as
+        // a short, `use`-imported name (`#[Action]`); on a subsequent pass its
+        // `Name` node resolves to the short form (or, without a matching import, to
+        // the current namespace), so a fully-qualified comparison never matches and
+        // a duplicate attribute is appended on every pass — an unbounded stack.
+        // The short-name check is import-resolution-agnostic and keeps the rule
+        // idempotent.
+        $attributeClassParts = explode('\\', $configuration->getAttributeClass());
+        $attributeShortName = end($attributeClassParts);
         $hasAttribute = false;
         foreach ($node->attrGroups as $attrGroup) {
             foreach ($attrGroup->attrs as $attr) {
-                if ($attr->name->toString() === $configuration->getAttributeClass()) {
+                if ($attr->name->getLast() === $attributeShortName) {
                     $hasAttribute = true;
                     break 2;
                 }

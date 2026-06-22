@@ -46,6 +46,7 @@ use DrupalRector\Rector\Deprecation\ConstantToClassConstantRector;
 use DrupalRector\Rector\Deprecation\FunctionCallRemovalRector;
 use DrupalRector\Rector\Deprecation\FunctionToServiceRector;
 use DrupalRector\Rector\Deprecation\FunctionToStaticRector;
+use DrupalRector\Rector\PHPUnit\PhpUnitAddRunTestsInSeparateProcessesAttributeRector;
 use DrupalRector\Rector\ValueObject\ClassConstantToClassConstantConfiguration;
 use DrupalRector\Rector\ValueObject\ConstantToClassConfiguration;
 use DrupalRector\Rector\ValueObject\DrupalIntroducedVersionConfiguration;
@@ -571,6 +572,16 @@ return static function (RectorConfig $rectorConfig): void {
     // trait composition from a D10/D11-only codebase.
     $rectorConfig->ruleWithConfiguration(RemovePhpUnitCompatibilityTraitRector::class, [
         new DrupalIntroducedVersionConfiguration('12.0.0'),
+    ]);
+
+    // https://www.drupal.org/project/drupal/issues/3445240 (meta: add #[RunTestsInSeparateProcesses])
+    // PHPUnit 10+ runs each test class in a separate process when this attribute is
+    // present. Introduced at 11.4.0 to limit blast radius — additive only (no
+    // annotation to remove). Added to Kernel and Functional (Browser) tests, not
+    // pure Unit tests. NOTE: this changes test *execution* on PHPUnit 10/11, not
+    // only on Drupal 12.
+    $rectorConfig->ruleWithConfiguration(PhpUnitAddRunTestsInSeparateProcessesAttributeRector::class, [
+        new DrupalIntroducedVersionConfiguration('11.4.0'),
     ]);
 
     // https://www.drupal.org/node/3561135
