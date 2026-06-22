@@ -25,6 +25,86 @@ release-by-release.
   The replacement uses only long-standing entity APIs and pure PHP, so it runs
   on every supported Drupal version and is not BC-wrapped.
 
+- **`DRUPAL_114_BREAKING`: `NodeSearch` → `SearchNode` class rename.**
+  `Drupal\node\Plugin\Search\NodeSearch` was moved out of the `node` module and
+  renamed to `Drupal\search_node\Plugin\Search\SearchNode` in the new
+  `search_node` core sub-module (drupal:11.4.0). Added as a `RenameClassRector`
+  entry to `drupal-11.4-breaking.php`. Unlike the `HelpSearch` move, the old
+  `NodeSearch` class is **not** removed in 11.4 — it survives as a `@deprecated`
+  subclass of `SearchNode` until removal in drupal:12.0.0. It is still in the
+  breaking set because `SearchNode` does not exist on any Drupal minor below
+  11.4, and a `use` / `extends` / `::class` rename is structural and cannot be
+  BC-wrapped, so applying it against code that must still run on an older minor
+  would fatal there. Known D11 contrib subclasses affected: `trash`
+  (`TrashNodeSearch`) and `search_exclude` (`SearchExcludeNodeSearch`). Opt in
+  via `Drupal11SetList::DRUPAL_114_BREAKING` only after dropping support for
+  Drupal < 11.4 ([#3587564](https://www.drupal.org/i/3587564) /
+  [change record](https://www.drupal.org/node/3590298)).
+
+- **Locale batch procedural functions (Drupal 11.4, [#3581303](https://www.drupal.org/node/3581303))** —
+  added `ReplaceLocaleBatchProceduralFunctionsRector`, which rewrites the 17
+  deprecated batch callbacks from `locale.batch.inc`, `locale.bulk.inc`, and
+  `locale.compare.inc` (deprecated in drupal:11.4.0, removed in drupal:13.0.0)
+  to the equivalent methods on the `LocaleFetch`, `LocaleImportBatch`,
+  `LocaleConfigBatch`, and `LocaleProjectChecker` services. BC-wrapped via
+  `DeprecationHelper` because the new services do not exist on Drupal < 11.4.
+  `locale_config_batch_build()` and `locale_translation_batch_status_build()`
+  are intentionally left for manual migration (changed signature/behavior).
+
+- **`ReplaceUserOneTimeAuthFunctionsRector` (Drupal 11.4, [#3581056](https://www.drupal.org/node/3581056))** —
+  replaces the deprecated user one-time authentication functions
+  `user_pass_rehash()`, `user_pass_reset_url()` and `user_cancel_url()` (deprecated
+  in drupal:11.4.0, removed in drupal:13.0.0) with the new
+  `\Drupal\user\OneTimeAuthentication` service methods `generateHmac()`,
+  `generateOneTimeLoginUrl()` and `generateCancelConfirmUrl()`. BC-wrapped via
+  `DeprecationHelper` because the service does not exist on Drupal < 11.4. The two
+  URL methods return a `Url` object, so the rewrite chains `->toString()`.
+  `user_mail_tokens()` (deprecated in the same issue) is intentionally not handled —
+  it is used as a string callback and its replacement needs a `BubbleableMetadata`
+  argument that cannot be synthesised.
+
+### Changed
+
+- **Composer-based sets now disable backward-compatibility wrapping by default.**
+  Composer-based selection pins the rules to the exact installed Drupal version
+  and only loads sets for deprecations live on it, so the rewritten code only ever
+  runs against that one version — there is no older minor to stay compatible with,
+  which makes the `DeprecationHelper` BC wrappers pure noise. The
+  `DrupalRectorSettings` singleton is now registered with BC disabled in
+  `config/drupal-bootstrap.php` (the set matched once per Drupal major by
+  `DrupalSetProvider`). A project that does need the wrappers can re-register the
+  singleton in its own `rector.php`. (Still inert until a Rector release ships the
+  composer-based set support — see beta2.)
+
+## [1.0.0-beta2] — 2026-06-18
+
+### Added
+
+- **Infrastructure for composer-based sets ([rectorphp/rector#9778](https://github.com/rectorphp/rector/issues/9778))** —
+  ships `DrupalRector\Set\DrupalSetProvider`, which will let Rector pick the
+  Drupal deprecation sets automatically from the installed `drupal/core` version.
+  This is groundwork only: it is inert until a Rector release ships the
+  `SetGroup::DRUPAL` group and the `withComposerBased(drupal: ...)` toggle, which
+  has not landed yet.
+
+### Changed
+
+- **`RemoveFilterTipsLongParamRector` moved from the default deprecation set into
+  the opt-in `DRUPAL_114_BREAKING` set** ([#371](https://github.com/palantirnet/drupal-rector/pull/371)).
+  Removing `$long` from a `tips()` override is non-BC: `FilterInterface` and
+  `FilterBase` still declare `tips($long = FALSE)` on every Drupal minor below
+  11.4, and PHP rejects a child that *drops* a parameter the parent declares
+  with a fatal at class-declaration time (`Declaration of …::tips() must be
+  compatible with …FilterInterface::tips($long = false)`). In beta1 the rule ran
+  in the default set and so fired against contrib still supporting Drupal < 11.4,
+  producing a signature-mismatch fatal there. It now only runs once the
+  consumer's minimum supported Drupal is ≥ 11.4; it must not block Drupal 12
+  compatibility (on Drupal 12 the parent no longer declares `$long`, so an
+  un-rewritten subclass keeps a harmless extra optional param — phpstan grumbles
+  but it runs). Surfaced by a rejected non-BC change to `token_filter`
+  ([#3603786](https://www.drupal.org/project/token_filter/issues/3603786)).
+
+[1.0.0-beta2]: https://github.com/palantirnet/drupal-rector/releases/tag/1.0.0-beta2
 ## [1.0.0-beta1] — 2026-06-11
 
 ### Added
@@ -177,6 +257,13 @@ release-by-release.
   `class … extends …` declaration cannot be BC-wrapped.
   [#2987159](https://www.drupal.org/i/2987159) /
   [CR](https://www.drupal.org/node/3521459).
+- **`RemoveFilterTipsLongParamRector`** — drops the deprecated `$long` parameter
+  from a filter plugin's `tips()` override and the second argument from
+  `_filter_tips()` calls. The `$long` parameter and the long-format "filter
+  tips" page are deprecated in drupal:11.4.0 and removed in drupal:12.0.0.
+  (Reclassified into the opt-in breaking set in 1.0.0-beta2 — see below.)
+  [#3505370](https://www.drupal.org/i/3505370) /
+  [CR](https://www.drupal.org/node/3567879).
 - **`RemoveRouteBuilderDeprecatedArgsRector`** — rewrites the deprecated
   6-argument `new \Drupal\Core\Routing\RouteBuilder(...)` instantiation to the
   new 4-argument form (deprecated in drupal:11.4.0, removed in drupal:12.0.0).
@@ -847,7 +934,6 @@ distinct deprecations in the same minor.
 | `ReplaceEntityReferenceRecursiveLimitRector` | `EntityReferenceEntityFormatter::RECURSIVE_RENDER_LIMIT` → literal `20` | [node/2940605](https://www.drupal.org/node/2940605) |
 | `SystemRegionFunctionsRector` | `system_region_list()` / `system_default_region()` → `theme.region.manager` service | [node/3015812](https://www.drupal.org/node/3015812) |
 | `CheckMarkupToProcessedTextRector` | `check_markup()` → processed-text render array | [node/3588040](https://www.drupal.org/node/3588040) |
-| `RemoveFilterTipsLongParamRector` | `FilterInterface::tips()` — drop the `$long` parameter | [node/3567879](https://www.drupal.org/node/3567879) |
 | `SystemSortThemesRector` | `'system_sort_themes'` string callback → `Closure` (closure callable) | [node/3566774](https://www.drupal.org/node/3566774) |
 | `LocaleCompareIncToServiceRector` | `locale_translation_flush_projects()` / `locale_translation_build_projects()` / `locale_translation_check_projects*()` etc. → `locale.project` and `LocaleSource` services | [node/3037031](https://www.drupal.org/node/3037031) |
 

@@ -95,64 +95,6 @@ ddev composer require \
   "palantirnet/drupal-rector:dev-$RECTOR_BRANCH as 1.x-dev" \
   --no-interaction
 
-# ---------------------------------------------------------------------------
-# 4. Require contrib modules (≥2 per rector where possible)
-# ---------------------------------------------------------------------------
-echo ""
-echo "==> Requiring contrib modules…"
-
-# Batch 1 — multi-rector modules (high-value)
-ddev composer require --no-update \
-  "drupal/acquia_contenthub:*" \
-  "drupal/searchstax:*" \
-  "drupal/ai_agents:*" \
-  "drupal/commerce_invoice:*" \
-  "drupal/custom_field:*" \
-  "drupal/role_expire:*" \
-  "drupal/views_dependent_filters:*" \
-  "drupal/search_api:*" \
-  "drupal/schemadotorg:*" \
-  "drupal/smart_migrate_cli:*" \
-  "drupal/metatag:*" \
-  "drupal/external_entity:*" \
-  "drupal/ckeditor5_premium_features:1.3.*" \
-  "drupal/reassign_user_content:*"
-
-# Batch 2 — single-rector gap-fillers
-ddev composer require --no-update \
-  "drupal/tara:*" \
-  "drupal/vani:*" \
-  "drupal/association:*" \
-  "drupal/tome:*" \
-  "drupal/cmrf_form_processor:*" \
-  "drupal/intl_date:*" \
-  "drupal/responsive_preview:*" \
-  "drupal/tmgmt:*" \
-  "drupal/config_track:*" \
-  "drupal/site_guardian:*" \
-  "drupal/smart_date:*" \
-  "drupal/vcp4dates:*" \
-  "drupal/gdpr:*" \
-  "drupal/ai_eca:*" \
-  "drupal/migmag:*" \
-  "drupal/sparql_entity_storage:*" \
-  "drupal/views_advanced_cache:*" \
-  "drupal/smart_sql_idmap:*" \
-  "drupal/forum:*" \
-  "drupal/history:*" \
-  "drupal/addanother:*" \
-  "drupal/quicktabs:*" \
-  "drupal/entity_usage:*" \
-  "drupal/media_auto_publication:*" \
-  "drupal/migrate_tools:6.1.*" \
-  "drupal/stage_file_proxy:^3.1" \
-  "drupal/workflow_buttons:^1" \
-  "drupal/optional_end_date:*" \
-  "drupal/scheduler_field:*" \
-  "drupal/mailsystem:*" \
-  "drupal/webform:*" \
-  "drupal/recipe_installer_kit:*"
-
 echo ""
 echo "==> Running composer update to resolve all requirements…"
 ddev composer update --no-interaction --with-all-dependencies
@@ -415,7 +357,9 @@ run_test ReplaceSystemPerformanceGzipKeyRector
     # No contrib usage: advagg (only known caller) declares "core_version_requirement: ^9.3 || ^10" — not D11-compatible
 
 run_test ReplaceThemeGetSettingRector \
-    tara vani
+    tara
+    # vani dropped: it and tara both declare a global santise_val_url(), a fatal
+    # redeclaration that breaks PHPStan bootstrap. tara alone still exercises this rector.
 
 run_test ReplaceUserSessionNamePropertyRector
     # No contrib usage: $userSession->name property access not present in any D11 contrib module found

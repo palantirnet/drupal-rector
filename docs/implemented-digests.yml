@@ -25,6 +25,26 @@ digests:
     class: RenameHookRankingRector
     digest_file: rename-hook-ranking-to-hook-node-search-ranking-1019966.php
     note: 'Implemented in open PR #352 (not yet merged to main).'
+  '1452100':
+    status: skip
+    phase: '1a'
+    digest_file: replace-drupal-static-reset-file-get-file-references-keys-1452100.php
+    note: >-
+      Won''t implement. The authoritative CR (node/3573884, cited by
+      file.module:460/463 — the digest''s @see node/1452100 is the issue, not
+      the CR) deprecates only file_get_file_references() and
+      file_field_find_file_reference_column(); it says nothing about
+      drupal_static_reset() or a file_references cache-tag migration. The
+      digest invented the drupal_static_reset(''file_get_file_references'') ->
+      cache.memory invalidateTags([''file_references'']) mapping. That rewrite
+      is incorrect: (1) drupal_static_reset() is not deprecated and the old
+      function still uses drupal_static() internally through D12, so the reset
+      still works; (2) the file_references tag is a cacheability tag on the new
+      FileReferenceResolver''s memory-cache entries — a different store, so
+      invalidating it is not equivalent to resetting the old static (silent
+      divergence). The genuine migration (file_get_file_references ->
+      FileReferenceResolver::getReferences(), array -> Generator) is a manual
+      refactor the digest itself declines to automate.
   '1685492':
     status: config-only
     phase: '1a'
@@ -86,7 +106,24 @@ digests:
     status: skip
     phase: '1a'
     digest_file: replace-locale-translation-update-file-history-and-locale-3037156.php
-    note: 'SKIP — LocaleTranslationHistoryFunctionsRector was built + reverted Jun 2026. Zero contrib usage (the three functions are core-internal); the sole contrib call (locale_deploy LocaleDeployCommands.php:133, zero-arg locale_translation_file_history_delete()) is unrewritable because CurrentImportStorage::delete() requires $projects. No mechanical replacement for locale_translation_get_file_history(); replacement service is @internal. CR node/3037162 is stale (cites CurrentImportStateStorage; core merged as CurrentImportStorage). Manual migration only — not worth the maintenance surface.'
+    note: >-
+      Won''t implement — not worth the maintenance surface for ~zero real-world
+      benefit. The three deprecated locale history functions
+      (locale_translation_update_file_history, locale_translation_file_history_delete,
+      locale_translation_get_file_history) have effectively no contrib usage: a
+      full search (api.tresbien.tech) found exactly ONE hit — locale_deploy''s
+      LocaleDeployCommands.php calls locale_translation_file_history_delete()
+      with ZERO arguments, which a rector cannot rewrite anyway (the replacement
+      CurrentImportStorage::delete() requires $projects, and the new service +
+      CurrentImport value object are @internal). get_file_history() has no
+      mechanical replacement at all (its own deprecation notice says so), and
+      update_file_history() has no contrib callers. So an implemented rector
+      would transform nothing in practice while adding a BC-wrapped custom class,
+      test suite, and config entry to maintain. A prior implementation passed all
+      gates + rector-qa but was reverted on this reasoning. Note: CR node/3037162
+      is also stale (says CurrentImportStateStorage / update()); merged core uses
+      CurrentImportStorage / save() — another reason to leave this to manual
+      migration if a site ever actually needs it.
   '3038908':
     status: implemented
     phase: '1b'
@@ -632,11 +669,29 @@ digests:
     status: config-only
     phase: '1a'
     digest_file: replace-locale-translate-get-interface-translation-files-3577671.php
+  '3581056':
+    status: implemented
+    phase: '1b'
+    class: ReplaceUserOneTimeAuthFunctionsRector
+    digest_file: replace-user-pass-rehash-user-pass-reset-url-user-cancel-3581056.php
+    note: >-
+      BC-wrapped. Three user.module functions (user_pass_rehash,
+      user_pass_reset_url, user_cancel_url) → \Drupal\user\OneTimeAuthentication
+      service (generateHmac / generateOneTimeLoginUrl / generateCancelConfirmUrl).
+      The two URL methods return a Url object, so the rewrite chains ->toString().
+      user_mail_tokens() intentionally not handled (string-callback usage; needs a
+      BubbleableMetadata arg that cannot be synthesised).
   '3581109':
     status: config-only
     phase: '?'
     digest_file: rename-helpsearch-to-searchhelpsearch-in-search-help-sub-3581109.php
     note: 'HelpSearch→SearchHelpSearch via RenameClassRector in DRUPAL_114_BREAKING config; open PR #349.'
+  '3581303':
+    status: implemented
+    phase: '2'
+    class: ReplaceLocaleBatchProceduralFunctionsRector
+    digest_file: replace-deprecated-locale-batch-procedural-functions-with-3581303.php
+    note: 'BC-wrapped; 17 locale batch callbacks → LocaleFetch/LocaleImportBatch/LocaleConfigBatch/LocaleProjectChecker services. Implemented on feat/locale-batch-procedural-3581303.'
   '3582106':
     status: config-only
     phase: '1a'
@@ -646,6 +701,11 @@ digests:
     phase: '3'
     class: RemovePhpUnitCompatibilityTraitRector
     digest_file: remove-deprecated-phpunitcompatibilitytrait-from-test-3582118.php
+  '3587564':
+    status: config-only
+    phase: '4'
+    digest_file: rename-nodesearch-to-searchnode-from-search-node-module-3587564.php
+    note: 'NodeSearch→SearchNode via RenameClassRector in DRUPAL_114_BREAKING config. SearchNode lives in the new search_node sub-module (introduced by this issue, absent < 11.4), so the rename is non-BC-wrappable. Real D11 contrib users: trash (TrashNodeSearch), search_exclude (SearchExcludeNodeSearch).'
   '3589047':
     status: implemented
     phase: '2'
