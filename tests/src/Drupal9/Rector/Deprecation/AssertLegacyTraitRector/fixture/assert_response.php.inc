@@ -10,6 +10,7 @@ class BrowserTestBaseGetMock extends BrowserTestBase {
     public function example() {
         $this->drupalGet('test-page');
         $this->assertResponse(200);
+        $this->assertResponse(200, 'Some message.');
     }
 }
 ?>
@@ -25,6 +26,7 @@ class BrowserTestBaseGetMock extends BrowserTestBase {
      */
     public function example() {
         $this->drupalGet('test-page');
+        $this->assertSession()->statusCodeEquals(200);
         $this->assertSession()->statusCodeEquals(200);
     }
 }

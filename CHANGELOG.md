@@ -12,6 +12,13 @@ release-by-release.
 
 ## [Unreleased]
 
+### Fixed
+
+- Drop the surplus message argument when converting `assertResponse()` to
+  `statusCodeEquals()`. `WebAssert::statusCodeEquals(int $code)` takes no message
+  argument, so the second argument is now removed (matching the existing
+  `assertText`/`assertRaw` handling) [#3332090].
+
 ## [1.0.0-beta3] — 2026-06-22
 
 ### Added

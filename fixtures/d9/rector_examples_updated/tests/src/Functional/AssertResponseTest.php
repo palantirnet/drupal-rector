@@ -13,6 +13,7 @@ class AssertResponseTest extends BrowserTestBase {
 
     public function testExample() {
         $this->assertSession()->statusCodeEquals(200);
+        $this->assertSession()->statusCodeEquals(200);
     }
 
 }

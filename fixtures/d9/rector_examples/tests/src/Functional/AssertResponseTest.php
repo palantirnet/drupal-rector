@@ -8,6 +8,7 @@ class AssertResponseTest extends BrowserTestBase {
 
     public function testExample() {
         $this->assertResponse(200);
+        $this->assertResponse(200, 'Some message.');
     }
 
 }
