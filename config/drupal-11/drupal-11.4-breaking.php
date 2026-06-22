@@ -20,6 +20,7 @@ declare(strict_types=1);
  */
 
 use DrupalRector\Drupal11\Rector\Deprecation\BlockContentSelectionExtendsRector;
+use DrupalRector\Drupal11\Rector\Deprecation\RemoveFilterTipsLongParamRector;
 use DrupalRector\Drupal11\Rector\Deprecation\ReplaceNodeViewControllerRector;
 use Rector\Config\RectorConfig;
 use Rector\Renaming\Rector\Name\RenameClassRector;
@@ -140,4 +141,37 @@ return static function (RectorConfig $rectorConfig): void {
     // upgrade_status cannot flag a `class X extends DefaultSelection`
     // declaration. There is no static message to match.
     $rectorConfig->rule(BlockContentSelectionExtendsRector::class);
+
+    // https://www.drupal.org/node/3505370
+    // https://www.drupal.org/node/3567879 (change record)
+    // The $long parameter of FilterInterface::tips() / FilterBase::tips() was
+    // deprecated in drupal:11.4.0 and is removed in drupal:12.0.0. The "filter
+    // tips" long-format page goes away with it.
+    //
+    // RemoveFilterTipsLongParamRector strips $long from a plugin's tips()
+    // override (and drops the second argument from _filter_tips() calls). This
+    // is NOT BC: FilterInterface and FilterBase still declare tips($long = FALSE)
+    // on every Drupal minor below 11.4, and PHP rejects an override that *drops*
+    // a parameter the parent declares with a fatal at class-declaration time:
+    //   "Declaration of MyFilter::tips() must be compatible with
+    //    Drupal\filter\Plugin\FilterInterface::tips($long = false)".
+    // (The reverse — a parent that dropped $long with a subclass that still
+    // declares the optional param — is fine, which is why core can deprecate it
+    // ahead of removal, but a rector that rewrites the *subclass* cannot.)
+    //
+    // So this rule may only be applied once the consumer's minimum supported
+    // Drupal is >= 11.4. It is opt-in here and must NOT block Drupal 12
+    // compatibility: on Drupal 12 the parameter is gone from the parent too, so
+    // the un-rewritten subclass keeps an extra optional param — phpstan will
+    // grumble but it runs. Contrib that still supports Drupal < 11.4 should not
+    // run this rule (it would fatal those sites); see the rejected token_filter
+    // change at https://www.drupal.org/project/token_filter/issues/3603786.
+    //
+    // PHPSTAN_MESSAGES RemoveFilterTipsLongParamRector: the $long parameter is
+    //   annotated `@deprecated in drupal:11.4.0` (a parameter-level deprecation),
+    //   for which phpstan-deprecation-rules emits no discrete message — there is
+    //   no static @deprecated symbol the override references. The runtime
+    //   @trigger_error fires inside core's tips() handling, not at the call site.
+    //   Nothing for upgrade_status to match against.
+    $rectorConfig->rule(RemoveFilterTipsLongParamRector::class);
 };
