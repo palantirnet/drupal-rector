@@ -2,46 +2,6 @@ parameters:
 	ignoreErrors:
 		-
 			message: '''
-				#^Call to method __construct\(\) of deprecated class DrupalFinder\\DrupalFinder\:
-				in drupal\-finder\:1\.3\.0 and is removed from drupal\-finder\:2\.0\.0\.
-				  Use \\DrupalFinder\\DrupalFinderComposerRuntime instead\.$#
-			'''
-			identifier: method.deprecatedClass
-			count: 1
-			path: rector-hook-convert.php
-
-		-
-			message: '''
-				#^Call to method getDrupalRoot\(\) of deprecated class DrupalFinder\\DrupalFinder\:
-				in drupal\-finder\:1\.3\.0 and is removed from drupal\-finder\:2\.0\.0\.
-				  Use \\DrupalFinder\\DrupalFinderComposerRuntime instead\.$#
-			'''
-			identifier: method.deprecatedClass
-			count: 1
-			path: rector-hook-convert.php
-
-		-
-			message: '''
-				#^Call to method locateRoot\(\) of deprecated class DrupalFinder\\DrupalFinder\:
-				in drupal\-finder\:1\.3\.0 and is removed from drupal\-finder\:2\.0\.0\.
-				  Use \\DrupalFinder\\DrupalFinderComposerRuntime instead\.$#
-			'''
-			identifier: method.deprecatedClass
-			count: 1
-			path: rector-hook-convert.php
-
-		-
-			message: '''
-				#^Instantiation of deprecated class DrupalFinder\\DrupalFinder\:
-				in drupal\-finder\:1\.3\.0 and is removed from drupal\-finder\:2\.0\.0\.
-				  Use \\DrupalFinder\\DrupalFinderComposerRuntime instead\.$#
-			'''
-			identifier: new.deprecatedClass
-			count: 1
-			path: rector-hook-convert.php
-
-		-
-			message: '''
 				#^Fetching deprecated class constant SYMFONY_50 of class Rector\\Symfony\\Set\\SymfonySetList\:
 				Set list are too generic and do not handle package differences\. Use \-\>withComposerBased\(symfony\: true\) instead$#
 			'''
@@ -597,15 +557,6 @@ parameters:
 			identifier: argument.type
 			count: 1
 			path: src/Rector/AbstractDrupalCoreRector.php
-
-		-
-			message: '''
-				#^Access to deprecated property \$file of class Rector\\Rector\\AbstractRector\:
-				Use getFile\(\) instead\.$#
-			'''
-			identifier: property.deprecated
-			count: 3
-			path: src/Rector/Convert/HookConvertRector.php
 
 		-
 			message: '#^Call to function method_exists\(\) with \$this\(DrupalRector\\Rector\\Convert\\HookConvertRector\) and ''getFile'' will always evaluate to true\.$#'
