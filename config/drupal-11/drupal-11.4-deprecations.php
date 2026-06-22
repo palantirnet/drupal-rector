@@ -14,7 +14,6 @@ use DrupalRector\Drupal11\Rector\Deprecation\RemoveAutomatedCronSubmitHandlerRec
 use DrupalRector\Drupal11\Rector\Deprecation\RemoveCacheExpireOverrideRector;
 use DrupalRector\Drupal11\Rector\Deprecation\RemoveConfigSaveTrustedDataArgRector;
 use DrupalRector\Drupal11\Rector\Deprecation\RemoveDrupalToStringTraitRector;
-use DrupalRector\Drupal11\Rector\Deprecation\RemoveFilterTipsLongParamRector;
 use DrupalRector\Drupal11\Rector\Deprecation\RemoveInstallSchemaSystemSequencesRector;
 use DrupalRector\Drupal11\Rector\Deprecation\RemoveLinkWidgetValidateTitleElementRector;
 use DrupalRector\Drupal11\Rector\Deprecation\RemovePhpUnitCompatibilityTraitRector;
@@ -442,10 +441,12 @@ return static function (RectorConfig $rectorConfig): void {
     // Replaced by a processed_text render array.
     $rectorConfig->rule(CheckMarkupToProcessedTextRector::class);
 
-    // https://www.drupal.org/node/3505370
-    // https://www.drupal.org/node/3567879 (change record)
-    // FilterInterface::tips() $long parameter deprecated in drupal:11.4.0, removed in drupal:12.0.0.
-    $rectorConfig->rule(RemoveFilterTipsLongParamRector::class);
+    // NOTE: RemoveFilterTipsLongParamRector is intentionally NOT registered
+    // here. Removing the $long parameter from a tips() override is non-BC: the
+    // FilterInterface / FilterBase parents still declare tips($long = FALSE) on
+    // every Drupal minor below 11.4, so the narrowed signature fatals there
+    // ("Declaration of ... must be compatible with ..."). It lives in the
+    // opt-in DRUPAL_114_BREAKING set instead (config/drupal-11/drupal-11.4-breaking.php).
 
     // https://www.drupal.org/node/3571172
     // https://www.drupal.org/node/3566774 (change record)
