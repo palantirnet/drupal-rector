@@ -60,7 +60,7 @@ return static function (RectorConfig $rectorConfig): void {
         new AssertLegacyTraitConfiguration('assertHeader', 'responseHeaderEquals'),
         new AssertLegacyTraitConfiguration('assertOptionByText', 'optionExists'),
         new AssertLegacyTraitConfiguration('assertOption', 'optionExists'),
-        new AssertLegacyTraitConfiguration('assertResponse', 'statusCodeEquals'),
+        new AssertLegacyTraitConfiguration('assertResponse', 'statusCodeEquals', '', true, true),
         new AssertLegacyTraitConfiguration('assertTitle', 'titleEquals'),
         new AssertLegacyTraitConfiguration('assertUniqueText', 'pageTextContainsOnce'),
         new AssertLegacyTraitConfiguration('assertUrl', 'addressEquals'),
