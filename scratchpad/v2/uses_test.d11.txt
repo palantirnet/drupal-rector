@@ -1,7 +1,0 @@
-group
-group_sites
-name
-netforum
-patternkit
-subgroup
-visitors
