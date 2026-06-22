@@ -12,6 +12,8 @@ release-by-release.
 
 ## [Unreleased]
 
+## [1.0.0-beta3] — 2026-06-22
+
 ### Added
 
 - **`PhpUnitTestAnnotationToAttributeRector`** — converts PHPUnit test-metadata
@@ -33,21 +35,6 @@ release-by-release.
   The already-attributed check compares the attribute's short name so the rule
   stays idempotent across name-importing passes (see Rector A above).
   Registered in the Drupal 11.4 deprecation set.
-
-### Removed
-
-- **Removed `GroupLegacyToIgnoreDeprecationsRector`** — its `@group legacy` → `#[IgnoreDeprecations]` conversion is now handled by the new `PhpUnitTestAnnotationToAttributeRector` (registered in the Drupal 11.0 set).
-
-### Fixed
-
-- **`AnnotationToAttributeRector` is now idempotent across name-importing.** Its
-  already-present check compared the existing attribute's fully-qualified name
-  against the configured attribute class. After Rector's `importNames()` pass
-  reprints the attribute as a short `use`-imported name (`#[Action]`) — or the
-  import is dropped across passes and the short name resolves to the current
-  namespace — that comparison missed and a duplicate attribute was appended on
-  every pass, stacking unboundedly. It now compares the short (last) name
-  segment, which is stable regardless of import state.
 - **`UserLoadByNameAndMailRector` (Drupal 11.4, [#3555936](https://www.drupal.org/node/3555936))** —
   rewrites the deprecated `user_load_by_name()` and `user_load_by_mail()`
   functions (deprecated in drupal:11.4.0, removed in drupal:13.0.0) to the
@@ -58,7 +45,6 @@ release-by-release.
   with `array_values(...)[0] ?? FALSE` to preserve the original return contract.
   The replacement uses only long-standing entity APIs and pure PHP, so it runs
   on every supported Drupal version and is not BC-wrapped.
-
 - **`DRUPAL_114_BREAKING`: `NodeSearch` → `SearchNode` class rename.**
   `Drupal\node\Plugin\Search\NodeSearch` was moved out of the `node` module and
   renamed to `Drupal\search_node\Plugin\Search\SearchNode` in the new
@@ -74,7 +60,6 @@ release-by-release.
   via `Drupal11SetList::DRUPAL_114_BREAKING` only after dropping support for
   Drupal < 11.4 ([#3587564](https://www.drupal.org/i/3587564) /
   [change record](https://www.drupal.org/node/3590298)).
-
 - **Locale batch procedural functions (Drupal 11.4, [#3581303](https://www.drupal.org/node/3581303))** —
   added `ReplaceLocaleBatchProceduralFunctionsRector`, which rewrites the 17
   deprecated batch callbacks from `locale.batch.inc`, `locale.bulk.inc`, and
@@ -84,7 +69,6 @@ release-by-release.
   `DeprecationHelper` because the new services do not exist on Drupal < 11.4.
   `locale_config_batch_build()` and `locale_translation_batch_status_build()`
   are intentionally left for manual migration (changed signature/behavior).
-
 - **`ReplaceUserOneTimeAuthFunctionsRector` (Drupal 11.4, [#3581056](https://www.drupal.org/node/3581056))** —
   replaces the deprecated user one-time authentication functions
   `user_pass_rehash()`, `user_pass_reset_url()` and `user_cancel_url()` (deprecated
@@ -96,6 +80,21 @@ release-by-release.
   `user_mail_tokens()` (deprecated in the same issue) is intentionally not handled —
   it is used as a string callback and its replacement needs a `BubbleableMetadata`
   argument that cannot be synthesised.
+
+### Removed
+
+- **Removed `GroupLegacyToIgnoreDeprecationsRector`** — its `@group legacy` → `#[IgnoreDeprecations]` conversion is now handled by the new `PhpUnitTestAnnotationToAttributeRector` (registered in the Drupal 11.0 set).
+
+### Fixed
+
+- **`AnnotationToAttributeRector` is now idempotent across name-importing.** Its
+  already-present check compared the existing attribute's fully-qualified name
+  against the configured attribute class. After Rector's `importNames()` pass
+  reprints the attribute as a short `use`-imported name (`#[Action]`) — or the
+  import is dropped across passes and the short name resolves to the current
+  namespace — that comparison missed and a duplicate attribute was appended on
+  every pass, stacking unboundedly. It now compares the short (last) name
+  segment, which is stable regardless of import state.
 
 ### Changed
 
@@ -110,6 +109,7 @@ release-by-release.
   singleton in its own `rector.php`. (Still inert until a Rector release ships the
   composer-based set support — see beta2.)
 
+[1.0.0-beta3]: https://github.com/palantirnet/drupal-rector/releases/tag/1.0.0-beta3
 ## [1.0.0-beta2] — 2026-06-18
 
 ### Added
