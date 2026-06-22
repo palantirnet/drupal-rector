@@ -14,7 +14,6 @@ use DrupalRector\Drupal11\Rector\Deprecation\RemoveAutomatedCronSubmitHandlerRec
 use DrupalRector\Drupal11\Rector\Deprecation\RemoveCacheExpireOverrideRector;
 use DrupalRector\Drupal11\Rector\Deprecation\RemoveConfigSaveTrustedDataArgRector;
 use DrupalRector\Drupal11\Rector\Deprecation\RemoveDrupalToStringTraitRector;
-use DrupalRector\Drupal11\Rector\Deprecation\RemoveFilterTipsLongParamRector;
 use DrupalRector\Drupal11\Rector\Deprecation\RemoveInstallSchemaSystemSequencesRector;
 use DrupalRector\Drupal11\Rector\Deprecation\RemoveLinkWidgetValidateTitleElementRector;
 use DrupalRector\Drupal11\Rector\Deprecation\RemovePhpUnitCompatibilityTraitRector;
@@ -34,6 +33,7 @@ use DrupalRector\Drupal11\Rector\Deprecation\ReplaceNonBoolAccessRector;
 use DrupalRector\Drupal11\Rector\Deprecation\ReplaceRecipeRunnerInstallModuleRector;
 use DrupalRector\Drupal11\Rector\Deprecation\ReplaceSessionManagerDeleteRector;
 use DrupalRector\Drupal11\Rector\Deprecation\ReplaceSystemPerformanceGzipKeyRector;
+use DrupalRector\Drupal11\Rector\Deprecation\ReplaceUserOneTimeAuthFunctionsRector;
 use DrupalRector\Drupal11\Rector\Deprecation\ReplaceViewsProceduralFunctionsRector;
 use DrupalRector\Drupal11\Rector\Deprecation\SystemRegionFunctionsRector;
 use DrupalRector\Drupal11\Rector\Deprecation\SystemSortThemesRector;
@@ -442,10 +442,12 @@ return static function (RectorConfig $rectorConfig): void {
     // Replaced by a processed_text render array.
     $rectorConfig->rule(CheckMarkupToProcessedTextRector::class);
 
-    // https://www.drupal.org/node/3505370
-    // https://www.drupal.org/node/3567879 (change record)
-    // FilterInterface::tips() $long parameter deprecated in drupal:11.4.0, removed in drupal:12.0.0.
-    $rectorConfig->rule(RemoveFilterTipsLongParamRector::class);
+    // NOTE: RemoveFilterTipsLongParamRector is intentionally NOT registered
+    // here. Removing the $long parameter from a tips() override is non-BC: the
+    // FilterInterface / FilterBase parents still declare tips($long = FALSE) on
+    // every Drupal minor below 11.4, so the narrowed signature fatals there
+    // ("Declaration of ... must be compatible with ..."). It lives in the
+    // opt-in DRUPAL_114_BREAKING set instead (config/drupal-11/drupal-11.4-breaking.php).
 
     // https://www.drupal.org/node/3571172
     // https://www.drupal.org/node/3566774 (change record)
@@ -599,6 +601,24 @@ return static function (RectorConfig $rectorConfig): void {
     // route discovery moved to the new YamlRouteDiscovery service; the 6-arg
     // constructor form is rewritten to the new 4-arg form.
     $rectorConfig->ruleWithConfiguration(RemoveRouteBuilderDeprecatedArgsRector::class, [
+        new DrupalIntroducedVersionConfiguration('11.4.0'),
+    ]);
+
+    // https://www.drupal.org/node/3581056
+    // https://www.drupal.org/node/3581062 (change record)
+    // user_pass_rehash(), user_pass_reset_url() and user_cancel_url()
+    // deprecated in drupal:11.4.0, removed in drupal:13.0.0. Replaced by the
+    // new \Drupal\user\OneTimeAuthentication service (generateHmac(),
+    // generateOneTimeLoginUrl(), generateCancelConfirmUrl()). BC-wrapped
+    // because the service does not exist on Drupal < 11.4. The two URL methods
+    // return a Url object, so the rewrite chains ->toString().
+    // TODO PHPSTAN_MESSAGES ReplaceUserOneTimeAuthFunctionsRector:
+    //   Not yet captured. The functions are @deprecated PHP symbols (so PHPStan
+    //   will emit "Call to deprecated function user_pass_rehash()" etc.), but the
+    //   deprecation only landed in core commit a38f1d17 (committed 2026-06-08) and
+    //   is not in the installed 11.4-dev test core yet. Capture the three messages
+    //   once the test core is updated past that commit.
+    $rectorConfig->ruleWithConfiguration(ReplaceUserOneTimeAuthFunctionsRector::class, [
         new DrupalIntroducedVersionConfiguration('11.4.0'),
     ]);
 };
