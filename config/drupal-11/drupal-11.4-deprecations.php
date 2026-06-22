@@ -39,6 +39,7 @@ use DrupalRector\Drupal11\Rector\Deprecation\SystemRegionFunctionsRector;
 use DrupalRector\Drupal11\Rector\Deprecation\SystemSortThemesRector;
 use DrupalRector\Drupal11\Rector\Deprecation\UploadedFileConstraintArrayOptionsToNamedArgsRector;
 use DrupalRector\Drupal11\Rector\Deprecation\UseEntityTypeHasIntegerIdRector;
+use DrupalRector\Drupal11\Rector\Deprecation\UserLoadByNameAndMailRector;
 use DrupalRector\Drupal11\Rector\Deprecation\ViewsPluginHandlerManagerRector;
 use DrupalRector\Rector\Deprecation\ClassConstantToClassConstantRector;
 use DrupalRector\Rector\Deprecation\ConstantToClassConstantRector;
@@ -603,6 +604,14 @@ return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->ruleWithConfiguration(RemoveRouteBuilderDeprecatedArgsRector::class, [
         new DrupalIntroducedVersionConfiguration('11.4.0'),
     ]);
+
+    // https://www.drupal.org/node/3555936
+    // user_load_by_name() and user_load_by_mail() deprecated in drupal:11.4.0,
+    // removed in drupal:13.0.0. Replaced by an entity storage loadByProperties()
+    // lookup, normalised with array_values(...)[0] ?? FALSE to preserve the
+    // original single-object-or-FALSE return contract. Pure entity-API + PHP —
+    // runs on every supported Drupal version, so no BC wrapper.
+    $rectorConfig->rule(UserLoadByNameAndMailRector::class);
 
     // https://www.drupal.org/node/3581056
     // https://www.drupal.org/node/3581062 (change record)

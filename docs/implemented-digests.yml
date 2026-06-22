@@ -458,6 +458,11 @@ digests:
     class: ReplaceItemAttributesWithAttributesRector
     digest_file: replace-item-attributes-with-attributes-in-image-render-3554447.php
     note: 'Implemented in open PR #348 (not yet merged to main).'
+  '3555936':
+    status: implemented
+    phase: '2'
+    class: UserLoadByNameAndMailRector
+    note: 'No upstream drupal-digests rule exists; authored from scratch. user_load_by_name()/user_load_by_mail() → entity storage loadByProperties() normalised with array_values(...)[0] ?? FALSE to preserve the single-object-or-FALSE return contract. AbstractRector (no BC wrapper).'
   '3557461':
     status: implemented
     phase: '2'
