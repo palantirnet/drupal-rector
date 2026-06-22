@@ -12,6 +12,18 @@ release-by-release.
 
 ## [Unreleased]
 
+### Fixed
+
+- **`AnnotationToAttributeRector`** — preserve the positional (keyless) value when
+  converting a plugin annotation to an attribute. Previously a bare positional
+  value such as the id in `@FormElement("foo")` or `@ViewsField("id")` was
+  silently dropped, producing `#[FormElement]` with no constructor argument. The
+  value is now emitted as the attribute's first positional argument, with
+  positional arguments ordered before named ones as PHP requires (e.g.
+  `#[FormElement('foo')]` and `#[FormElement('id', label: ...)]`).
+  ([#3579141](https://www.drupal.org/i/3579141),
+  [#3470861](https://www.drupal.org/i/3470861))
+
 ## [1.0.0-beta3] — 2026-06-22
 
 ### Added

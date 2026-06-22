@@ -239,7 +239,8 @@ CODE_SAMPLE,
     private function createAttribute(string $attributeClass, array $parsedArgs): Attribute
     {
         $fullyQualified = new FullyQualified($attributeClass);
-        $args = [];
+        $positionalArgs = [];
+        $namedArgs = [];
         foreach ($parsedArgs as $value) {
             if ($value->key == 'deriver') {
                 $arg = $this->nodeFactory->createClassConstFetch($value->value->value, 'class');
@@ -250,15 +251,21 @@ CODE_SAMPLE,
                 $arg = $attribute->value;
             }
 
-            // Sometimes the end ) matches. We need to remove it.
+            // A keyless (positional) annotation value, e.g. the bare plugin id in
+            // `@FormElement("foo")` or `@ViewsField("id")`. Emit it as a positional
+            // constructor argument instead of dropping it. PHP requires positional
+            // arguments before named ones, so collect them separately and merge
+            // positional-first below.
             if ($value->key === null) {
+                $positionalArgs[] = new Arg($arg);
+
                 continue;
             }
 
-            $args[] = new Arg($arg, \false, \false, [], new Node\Identifier($value->key));
+            $namedArgs[] = new Arg($arg, \false, \false, [], new Node\Identifier($value->key));
         }
 
-        return new Attribute($fullyQualified, $args);
+        return new Attribute($fullyQualified, array_merge($positionalArgs, $namedArgs));
     }
 
     public function convertAnnotation(DoctrineAnnotationTagValueNode $value): ?Node\Expr
