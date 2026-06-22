@@ -651,3 +651,8 @@ digests:
     phase: '4'
     class: ReplaceNodeViewControllerRector
     digest_file: replace-nodeviewcontroller-with-entityviewcontroller-3589630.php
+  '3590050':
+    status: skip
+    phase: '1a'
+    digest_file: replace-deprecated-locale-translation-status-functions-with-3590050.php
+    note: 'BLOCKED pending re-land — do not implement yet. Issue "Deprecate and replace locale_status related functions" was committed to 11.x/main (Jun 9 2026) then REVERTED from 11.4.x (Jun 11 2026) over installer test failures; status Needs work as of Jun 12. Not implementable now: (1) introducedVersion is unknown — reverted from 11.4.x, so a FunctionToServiceConfiguration keyed to 11.4.0 would gate DeprecationHelper at a version the deprecation no longer ships in; (2) target LocaleSource methods saveSource/deleteSources/clearSources/deleteSourcesByLanguage are absent from the verifiable core checkout. Digest is also incomplete: it omits locale_translation_status_delete_languages→deleteSourcesByLanguage (1:1 mappable, not the loop-only caveat the digest claims). Once it re-lands on a stable release branch, this is a plain config-only FunctionToServiceRector (FQCN, 5th arg true) batch for Drupal\locale\LocaleSource — same pattern as the existing locale_translation_* entries in drupal-11.4-deprecations.php. Re-confirm introducedVersion and method names against core at that point. Cf. #3530640 (also parked pending re-land).'
