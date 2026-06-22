@@ -14,6 +14,16 @@ release-by-release.
 
 ### Added
 
+- **Locale batch procedural functions (Drupal 11.4, [#3581303](https://www.drupal.org/node/3581303))** —
+  added `ReplaceLocaleBatchProceduralFunctionsRector`, which rewrites the 17
+  deprecated batch callbacks from `locale.batch.inc`, `locale.bulk.inc`, and
+  `locale.compare.inc` (deprecated in drupal:11.4.0, removed in drupal:13.0.0)
+  to the equivalent methods on the `LocaleFetch`, `LocaleImportBatch`,
+  `LocaleConfigBatch`, and `LocaleProjectChecker` services. BC-wrapped via
+  `DeprecationHelper` because the new services do not exist on Drupal < 11.4.
+  `locale_config_batch_build()` and `locale_translation_batch_status_build()`
+  are intentionally left for manual migration (changed signature/behavior).
+
 - **`ReplaceUserOneTimeAuthFunctionsRector` (Drupal 11.4, [#3581056](https://www.drupal.org/node/3581056))** —
   replaces the deprecated user one-time authentication functions
   `user_pass_rehash()`, `user_pass_reset_url()` and `user_cancel_url()` (deprecated

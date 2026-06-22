@@ -681,6 +681,12 @@ digests:
     phase: '?'
     digest_file: rename-helpsearch-to-searchhelpsearch-in-search-help-sub-3581109.php
     note: 'HelpSearch→SearchHelpSearch via RenameClassRector in DRUPAL_114_BREAKING config; open PR #349.'
+  '3581303':
+    status: implemented
+    phase: '2'
+    class: ReplaceLocaleBatchProceduralFunctionsRector
+    digest_file: replace-deprecated-locale-batch-procedural-functions-with-3581303.php
+    note: 'BC-wrapped; 17 locale batch callbacks → LocaleFetch/LocaleImportBatch/LocaleConfigBatch/LocaleProjectChecker services. Implemented on feat/locale-batch-procedural-3581303.'
   '3582106':
     status: config-only
     phase: '1a'
