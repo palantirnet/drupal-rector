@@ -48,6 +48,54 @@ release-by-release.
   namespace — that comparison missed and a duplicate attribute was appended on
   every pass, stacking unboundedly. It now compares the short (last) name
   segment, which is stable regardless of import state.
+- **`UserLoadByNameAndMailRector` (Drupal 11.4, [#3555936](https://www.drupal.org/node/3555936))** —
+  rewrites the deprecated `user_load_by_name()` and `user_load_by_mail()`
+  functions (deprecated in drupal:11.4.0, removed in drupal:13.0.0) to the
+  equivalent entity-storage lookup
+  `\Drupal::entityTypeManager()->getStorage('user')->loadByProperties([...])`.
+  Because `loadByProperties()` returns an array keyed by user ID while the old
+  functions returned a single user object or `FALSE`, the result is normalised
+  with `array_values(...)[0] ?? FALSE` to preserve the original return contract.
+  The replacement uses only long-standing entity APIs and pure PHP, so it runs
+  on every supported Drupal version and is not BC-wrapped.
+
+- **`DRUPAL_114_BREAKING`: `NodeSearch` → `SearchNode` class rename.**
+  `Drupal\node\Plugin\Search\NodeSearch` was moved out of the `node` module and
+  renamed to `Drupal\search_node\Plugin\Search\SearchNode` in the new
+  `search_node` core sub-module (drupal:11.4.0). Added as a `RenameClassRector`
+  entry to `drupal-11.4-breaking.php`. Unlike the `HelpSearch` move, the old
+  `NodeSearch` class is **not** removed in 11.4 — it survives as a `@deprecated`
+  subclass of `SearchNode` until removal in drupal:12.0.0. It is still in the
+  breaking set because `SearchNode` does not exist on any Drupal minor below
+  11.4, and a `use` / `extends` / `::class` rename is structural and cannot be
+  BC-wrapped, so applying it against code that must still run on an older minor
+  would fatal there. Known D11 contrib subclasses affected: `trash`
+  (`TrashNodeSearch`) and `search_exclude` (`SearchExcludeNodeSearch`). Opt in
+  via `Drupal11SetList::DRUPAL_114_BREAKING` only after dropping support for
+  Drupal < 11.4 ([#3587564](https://www.drupal.org/i/3587564) /
+  [change record](https://www.drupal.org/node/3590298)).
+
+- **Locale batch procedural functions (Drupal 11.4, [#3581303](https://www.drupal.org/node/3581303))** —
+  added `ReplaceLocaleBatchProceduralFunctionsRector`, which rewrites the 17
+  deprecated batch callbacks from `locale.batch.inc`, `locale.bulk.inc`, and
+  `locale.compare.inc` (deprecated in drupal:11.4.0, removed in drupal:13.0.0)
+  to the equivalent methods on the `LocaleFetch`, `LocaleImportBatch`,
+  `LocaleConfigBatch`, and `LocaleProjectChecker` services. BC-wrapped via
+  `DeprecationHelper` because the new services do not exist on Drupal < 11.4.
+  `locale_config_batch_build()` and `locale_translation_batch_status_build()`
+  are intentionally left for manual migration (changed signature/behavior).
+
+- **`ReplaceUserOneTimeAuthFunctionsRector` (Drupal 11.4, [#3581056](https://www.drupal.org/node/3581056))** —
+  replaces the deprecated user one-time authentication functions
+  `user_pass_rehash()`, `user_pass_reset_url()` and `user_cancel_url()` (deprecated
+  in drupal:11.4.0, removed in drupal:13.0.0) with the new
+  `\Drupal\user\OneTimeAuthentication` service methods `generateHmac()`,
+  `generateOneTimeLoginUrl()` and `generateCancelConfirmUrl()`. BC-wrapped via
+  `DeprecationHelper` because the service does not exist on Drupal < 11.4. The two
+  URL methods return a `Url` object, so the rewrite chains `->toString()`.
+  `user_mail_tokens()` (deprecated in the same issue) is intentionally not handled —
+  it is used as a string callback and its replacement needs a `BubbleableMetadata`
+  argument that cannot be synthesised.
 
 ### Changed
 

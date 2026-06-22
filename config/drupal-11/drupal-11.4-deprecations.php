@@ -27,16 +27,19 @@ use DrupalRector\Drupal11\Rector\Deprecation\ReplaceEntityReferenceRecursiveLimi
 use DrupalRector\Drupal11\Rector\Deprecation\ReplaceExpectDeprecationRector;
 use DrupalRector\Drupal11\Rector\Deprecation\ReplaceHideShowWithPrintedRector;
 use DrupalRector\Drupal11\Rector\Deprecation\ReplaceItemAttributesWithAttributesRector;
+use DrupalRector\Drupal11\Rector\Deprecation\ReplaceLocaleBatchProceduralFunctionsRector;
 use DrupalRector\Drupal11\Rector\Deprecation\ReplaceLocaleTranslationPathConfigRector;
 use DrupalRector\Drupal11\Rector\Deprecation\ReplaceNonBoolAccessRector;
 use DrupalRector\Drupal11\Rector\Deprecation\ReplaceRecipeRunnerInstallModuleRector;
 use DrupalRector\Drupal11\Rector\Deprecation\ReplaceSessionManagerDeleteRector;
 use DrupalRector\Drupal11\Rector\Deprecation\ReplaceSystemPerformanceGzipKeyRector;
+use DrupalRector\Drupal11\Rector\Deprecation\ReplaceUserOneTimeAuthFunctionsRector;
 use DrupalRector\Drupal11\Rector\Deprecation\ReplaceViewsProceduralFunctionsRector;
 use DrupalRector\Drupal11\Rector\Deprecation\SystemRegionFunctionsRector;
 use DrupalRector\Drupal11\Rector\Deprecation\SystemSortThemesRector;
 use DrupalRector\Drupal11\Rector\Deprecation\UploadedFileConstraintArrayOptionsToNamedArgsRector;
 use DrupalRector\Drupal11\Rector\Deprecation\UseEntityTypeHasIntegerIdRector;
+use DrupalRector\Drupal11\Rector\Deprecation\UserLoadByNameAndMailRector;
 use DrupalRector\Drupal11\Rector\Deprecation\ViewsPluginHandlerManagerRector;
 use DrupalRector\Rector\Deprecation\ClassConstantToClassConstantRector;
 use DrupalRector\Rector\Deprecation\ConstantToClassConstantRector;
@@ -462,6 +465,21 @@ return static function (RectorConfig $rectorConfig): void {
         new DrupalIntroducedVersionConfiguration('11.4.0'),
     ]);
 
+    // https://www.drupal.org/node/3581303
+    // https://www.drupal.org/node/3589759 (change record)
+    // The locale batch procedural callbacks in locale.batch.inc, locale.bulk.inc,
+    // and locale.compare.inc deprecated in drupal:11.4.0, removed in drupal:13.0.0.
+    // Replaced by methods on the LocaleFetch, LocaleImportBatch, LocaleConfigBatch,
+    // and LocaleProjectChecker services. BC-wrapped because the LocaleImportBatch
+    // and LocaleConfigBatch services (and the new methods on the existing services)
+    // do not exist on Drupal < 11.4. locale_config_batch_build() and
+    // locale_translation_batch_status_build() are intentionally not rewritten:
+    // their signature/behavior changed and they require manual migration.
+    // PHPStan deprecation messages captured in the rector's PHPSTAN_MESSAGES const.
+    $rectorConfig->ruleWithConfiguration(ReplaceLocaleBatchProceduralFunctionsRector::class, [
+        new DrupalIntroducedVersionConfiguration('11.4.0'),
+    ]);
+
     // https://www.drupal.org/node/3335756
     // https://www.drupal.org/node/3349345 (change record)
     // KernelTestBase::installSchema('system', 'sequences') deprecated in
@@ -595,6 +613,32 @@ return static function (RectorConfig $rectorConfig): void {
     // route discovery moved to the new YamlRouteDiscovery service; the 6-arg
     // constructor form is rewritten to the new 4-arg form.
     $rectorConfig->ruleWithConfiguration(RemoveRouteBuilderDeprecatedArgsRector::class, [
+        new DrupalIntroducedVersionConfiguration('11.4.0'),
+    ]);
+
+    // https://www.drupal.org/node/3555936
+    // user_load_by_name() and user_load_by_mail() deprecated in drupal:11.4.0,
+    // removed in drupal:13.0.0. Replaced by an entity storage loadByProperties()
+    // lookup, normalised with array_values(...)[0] ?? FALSE to preserve the
+    // original single-object-or-FALSE return contract. Pure entity-API + PHP —
+    // runs on every supported Drupal version, so no BC wrapper.
+    $rectorConfig->rule(UserLoadByNameAndMailRector::class);
+
+    // https://www.drupal.org/node/3581056
+    // https://www.drupal.org/node/3581062 (change record)
+    // user_pass_rehash(), user_pass_reset_url() and user_cancel_url()
+    // deprecated in drupal:11.4.0, removed in drupal:13.0.0. Replaced by the
+    // new \Drupal\user\OneTimeAuthentication service (generateHmac(),
+    // generateOneTimeLoginUrl(), generateCancelConfirmUrl()). BC-wrapped
+    // because the service does not exist on Drupal < 11.4. The two URL methods
+    // return a Url object, so the rewrite chains ->toString().
+    // TODO PHPSTAN_MESSAGES ReplaceUserOneTimeAuthFunctionsRector:
+    //   Not yet captured. The functions are @deprecated PHP symbols (so PHPStan
+    //   will emit "Call to deprecated function user_pass_rehash()" etc.), but the
+    //   deprecation only landed in core commit a38f1d17 (committed 2026-06-08) and
+    //   is not in the installed 11.4-dev test core yet. Capture the three messages
+    //   once the test core is updated past that commit.
+    $rectorConfig->ruleWithConfiguration(ReplaceUserOneTimeAuthFunctionsRector::class, [
         new DrupalIntroducedVersionConfiguration('11.4.0'),
     ]);
 };
