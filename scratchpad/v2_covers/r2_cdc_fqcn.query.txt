@@ -1,1 +1,0 @@
--r:drupal "@coversDefaultClass \\\\" f:test

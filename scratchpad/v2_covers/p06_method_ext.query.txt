@@ -1,1 +1,0 @@
--r:drupal @covers ::[A-Za-z] f:test

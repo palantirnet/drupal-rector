@@ -1,8 +1,0 @@
-acsf
-ai_vdb_provider_pinecone
-calendar_plus
-config_import_locale
-entity
-lingotek
-potx
-workbench_moderation
