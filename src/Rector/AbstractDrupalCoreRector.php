@@ -6,9 +6,14 @@ namespace DrupalRector\Rector;
 
 use Drupal\Component\Utility\DeprecationHelper;
 use DrupalRector\Contract\VersionedConfigurationInterface;
+use DrupalRector\Rector\ValueObject\FunctionToServiceConfiguration;
 use DrupalRector\Services\DrupalRectorSettings;
 use PhpParser\Node;
+use PhpParser\Node\ClosureUse;
 use PhpParser\Node\Expr\ArrowFunction;
+use PhpParser\Node\Expr\Closure;
+use PhpParser\Node\Stmt\Expression;
+use PhpParser\Node\Stmt\Return_;
 use PHPStan\Reflection\MethodReflection;
 use Rector\Contract\Rector\ConfigurableRectorInterface;
 use Rector\NodeTypeResolver\Node\AttributeKey;
@@ -90,7 +95,7 @@ abstract class AbstractDrupalCoreRector extends AbstractRector implements Config
             }
 
             if ($node instanceof Node\Expr && $result instanceof Node\Expr) {
-                return $this->createBcCallOnExpr($node, $result, $configuration->getIntroducedVersion());
+                return $this->createBcCallOnExpr($node, $result, $configuration);
             }
 
             return $result;
@@ -106,16 +111,217 @@ abstract class AbstractDrupalCoreRector extends AbstractRector implements Config
      */
     abstract protected function refactorWithConfiguration(Node $node, VersionedConfigurationInterface $configuration);
 
-    protected function createBcCallOnExpr(Node\Expr $node, Node\Expr $result, string $introducedVersion): Node\Expr\StaticCall
+    /**
+     * @param VersionedConfigurationInterface|string $configuration the matched
+     *                                                              configuration, or — for callers that replace constants and have no call
+     *                                                              arguments to worry about — the introduced version string directly
+     */
+    protected function createBcCallOnExpr(Node\Expr $node, Node\Expr $result, $configuration): Node\Expr\StaticCall
     {
+        $introducedVersion = $configuration instanceof VersionedConfigurationInterface
+            ? $configuration->getIntroducedVersion()
+            : $configuration;
+        $configuration = $configuration instanceof VersionedConfigurationInterface ? $configuration : null;
+
         $clonedNode = clone $node;
+
+        // DeprecationHelper::backwardsCompatibleCall() invokes the callables with
+        // no arguments, so they have to close over the call's arguments. An arrow
+        // function captures by value, which silently drops any mutation made
+        // through a by-reference parameter (e.g. template_preprocess_html(&$variables)).
+        // When the call passes a local variable to a by-reference parameter we
+        // therefore emit a long closure that captures that variable by reference;
+        // otherwise we keep the cleaner arrow function.
+        $byRefVariables = $this->collectByReferenceArgumentVariables($node, $configuration);
+
+        if ($byRefVariables === []) {
+            $newCallable = new ArrowFunction(['expr' => $result]);
+            $oldCallable = new ArrowFunction(['expr' => $clonedNode]);
+        } else {
+            // PHPStan flags `return <void-expr>;` (function.void) at every level,
+            // but allows the same call as a bare expression statement — exactly
+            // what an arrow function's implicit return is treated as. Only return
+            // a value when the replacement method actually produces one.
+            $returnsValue = !$this->serviceMethodReturnsVoid($configuration);
+            $newCallable = $this->createByReferenceClosure($result, $byRefVariables, $returnsValue);
+            $oldCallable = $this->createByReferenceClosure($clonedNode, $byRefVariables, $returnsValue);
+        }
 
         return $this->nodeFactory->createStaticCall(DeprecationHelper::class, 'backwardsCompatibleCall', [
             $this->nodeFactory->createClassConstFetch(\Drupal::class, 'VERSION'),
             $introducedVersion,
-            new ArrowFunction(['expr' => $result]),
-            new ArrowFunction(['expr' => $clonedNode]),
+            $newCallable,
+            $oldCallable,
         ]);
+    }
+
+    /**
+     * Builds a `function () use (&$a, &$b) { <expr>; }` closure.
+     *
+     * When $returnsValue is true the body is `return <expr>;`, otherwise it is
+     * the bare expression statement `<expr>;` so PHPStan does not flag the use
+     * of a void result (function.void).
+     *
+     * @param string[] $variableNames
+     */
+    private function createByReferenceClosure(Node\Expr $expr, array $variableNames, bool $returnsValue): Closure
+    {
+        $uses = array_map(
+            static fn (string $name): ClosureUse => new ClosureUse(new Node\Expr\Variable($name), true),
+            $variableNames
+        );
+
+        $statement = $returnsValue ? new Return_($expr) : new Expression($expr);
+
+        return new Closure([
+            'uses' => $uses,
+            'stmts' => [$statement],
+        ]);
+    }
+
+    /**
+     * Whether the replacement service method is declared to return void.
+     *
+     * A long closure is only ever emitted once a real, reflectable class method
+     * has been found (by-reference detection requires it), so the return type is
+     * reliably available here. Anything other than an explicit `void` return
+     * type — including an undeclared return type — keeps the `return` so a real
+     * value is never silently dropped; PHPStan only flags function.void when it
+     * actually knows the call is void.
+     */
+    private function serviceMethodReturnsVoid(?VersionedConfigurationInterface $configuration): bool
+    {
+        if (!$configuration instanceof FunctionToServiceConfiguration) {
+            return false;
+        }
+
+        $className = $configuration->getServiceName();
+        $methodName = $configuration->getServiceMethodName();
+        if (!class_exists($className) || !method_exists($className, $methodName)) {
+            return false;
+        }
+
+        try {
+            $returnType = (new \ReflectionMethod($className, $methodName))->getReturnType();
+        } catch (\ReflectionException) {
+            return false;
+        }
+
+        return $returnType instanceof \ReflectionNamedType && $returnType->getName() === 'void';
+    }
+
+    /**
+     * Returns the local variables passed to a by-reference parameter of the call.
+     *
+     * The by-reference parameters are collected from both the original
+     * (deprecated) callable and the replacement callable, so a mutation is
+     * preserved whichever branch DeprecationHelper picks. Capturing a variable
+     * that is actually consumed by value is harmless: the closure body is a
+     * single expression and never reassigns the variable.
+     *
+     * @return string[] the names of the local variables to capture by reference
+     */
+    private function collectByReferenceArgumentVariables(Node\Expr $node, ?VersionedConfigurationInterface $configuration): array
+    {
+        if (!$node instanceof Node\Expr\CallLike) {
+            return [];
+        }
+
+        $byRefPositions = [];
+
+        // Replacement service method: when the target is a fully-qualified class
+        // name (rather than a container service id) it is a real class, reliably
+        // reflectable. reflectByReferenceParameterPositions() guards class_exists(),
+        // so service ids such as 'file.repository' just yield nothing here.
+        if ($configuration instanceof FunctionToServiceConfiguration) {
+            foreach ($this->reflectByReferenceParameterPositions($configuration->getServiceName(), $configuration->getServiceMethodName()) as $position) {
+                $byRefPositions[$position] = true;
+            }
+        }
+
+        // Original deprecated function: best-effort, procedural functions are
+        // frequently not autoloadable during a Rector run.
+        if ($node instanceof Node\Expr\FuncCall && $node->name instanceof Node\Name) {
+            $functionName = $node->name->toString();
+            if (function_exists($functionName)) {
+                try {
+                    foreach ((new \ReflectionFunction($functionName))->getParameters() as $position => $parameter) {
+                        if ($parameter->isPassedByReference()) {
+                            $byRefPositions[$position] = true;
+                        }
+                    }
+                } catch (\ReflectionException) {
+                    // Ignore: fall back to whatever the replacement told us.
+                }
+            }
+        }
+
+        if ($byRefPositions === []) {
+            return [];
+        }
+
+        $variableNames = [];
+        foreach ($node->getArgs() as $position => $arg) {
+            if (!isset($byRefPositions[$position])) {
+                continue;
+            }
+            $rootVariable = $this->resolveRootVariableName($arg->value);
+            if ($rootVariable !== null) {
+                $variableNames[$rootVariable] = $rootVariable;
+            }
+        }
+
+        return array_values($variableNames);
+    }
+
+    /**
+     * @return int[] zero-based positions of by-reference parameters
+     */
+    private function reflectByReferenceParameterPositions(string $className, string $methodName): array
+    {
+        if (!class_exists($className) || !method_exists($className, $methodName)) {
+            return [];
+        }
+
+        try {
+            $method = new \ReflectionMethod($className, $methodName);
+        } catch (\ReflectionException) {
+            return [];
+        }
+
+        $positions = [];
+        foreach ($method->getParameters() as $position => $parameter) {
+            if ($parameter->isPassedByReference()) {
+                $positions[] = $position;
+            }
+        }
+
+        return $positions;
+    }
+
+    /**
+     * Returns the name of the local variable an argument is rooted at.
+     *
+     * `$variables`, `$variables['x']` and `$obj->prop` (rooted at `$obj`) all
+     * resolve to that local variable. `$this->prop` returns null: the object is
+     * shared with the closure regardless of capture, so an arrow function would
+     * preserve the mutation anyway.
+     */
+    private function resolveRootVariableName(Node\Expr $expr): ?string
+    {
+        while (
+            $expr instanceof Node\Expr\ArrayDimFetch
+            || $expr instanceof Node\Expr\PropertyFetch
+            || $expr instanceof Node\Expr\NullsafePropertyFetch
+        ) {
+            $expr = $expr->var;
+        }
+
+        if ($expr instanceof Node\Expr\Variable && is_string($expr->name) && $expr->name !== 'this') {
+            return $expr->name;
+        }
+
+        return null;
     }
 
     /**

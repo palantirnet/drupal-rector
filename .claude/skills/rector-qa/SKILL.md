@@ -360,9 +360,46 @@ Reference case: `PhpUnitTestAnnotationToAttributeRector` and
 
 ---
 
+## Pass 7 — By-Reference Capture Audit
+
+**Goal:** a BC-wrapped conversion of a call whose target takes a parameter
+**by reference** must wrap it in a long closure that captures the variable by
+reference (`function () use (&$var) { … }`), **not** an arrow function. Arrow
+functions capture by value, so the `&$` mutation is silently dropped and the
+rewritten module breaks at runtime (the webform render/form test failures that
+prompted fix `3ac6e255`).
+
+**Applies only** to rectors extending `AbstractDrupalCoreRector` whose conversion is
+in an expression context (`FunctionToServiceRector`, `MethodToMethodRector`, …).
+
+**Steps:**
+
+1. Identify the replacement target (class + method) and the deprecated function.
+   If neither has a `&$param` in `repos/drupal-core` → **N/A**.
+   ```bash
+   rg -n 'function <targetMethod>|function <deprecated_function>' repos/drupal-core/core
+   ```
+2. If a by-ref parameter exists, confirm:
+   - a classmap stub for the target class exists under `stubs/Drupal/...` with `&` at
+     the correct positions **and** a return type matching core; and
+   - a fixture asserts the output is a long `function () use (&$var) {` closure (both
+     branches), with the closure body being a bare `<expr>;` for a `void` target or
+     `return <expr>;` for a value-returning one.
+   Missing stub or fixture → **AT-RISK**.
+3. **Prove** it: `ddev exec vendor/bin/phpunit --filter <RectorName>` and a quick
+   `phpstan analyse --level=0` of a sample output showing no `function.void`.
+
+**Output:** `Pass 7: [SAFE|AT-RISK|N/A] — <note>`
+
+**If AT-RISK:** add the stub (correct `&` positions + return type), regenerate the
+autoloader (`ddev composer dump-autoload`), and add the closure fixture. See
+`project_byref_bc_wrapper_fix` in memory.
+
+---
+
 ## Final Summary
 
-After all six passes, produce a summary checklist:
+After all seven passes, produce a summary checklist:
 
 ```
 === QA Summary: <ClassName> ===
@@ -373,6 +410,7 @@ Pass 3 — BC Decision:   [PASS|FAIL] — <note>
 Pass 4 — @see URL:      [PASS|WARN|FAIL] — issue:<n> CR:<n> — <present/missing>
 Pass 5 — Registration:  [PASS|FAIL] — <note>
 Pass 6 — Common Bugs:   [SAFE|AT-RISK|N/A] — <note>
+Pass 7 — By-Reference:  [SAFE|AT-RISK|N/A] — <note>
 
 Overall: [PASS — ready to merge | NEEDS FIXES — see above]
 ```
@@ -383,4 +421,4 @@ If any pass shows AT-RISK or FAIL, do not declare the rector ready to merge. App
 
 ## Running on a "known good" rector
 
-To verify the skill works correctly, run it on `ReplaceSessionManagerDeleteRector` — all six passes should be PASS/SAFE/N-A.
+To verify the skill works correctly, run it on `ReplaceSessionManagerDeleteRector` — all seven passes should be PASS/SAFE/N-A.

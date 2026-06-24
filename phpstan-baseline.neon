@@ -553,7 +553,7 @@ parameters:
 			path: src/Drupal9/Rector/Deprecation/PassRector.php
 
 		-
-			message: '#^Parameter \#3 \$args of method Rector\\PhpParser\\Node\\NodeFactory\:\:createStaticCall\(\) expects array\<PhpParser\\Node\>, array\<int, PhpParser\\Node\\Expr\\ArrowFunction\|PhpParser\\Node\\Expr\\ClassConstFetch\|string\> given\.$#'
+			message: '#^Parameter \#3 \$args of method Rector\\PhpParser\\Node\\NodeFactory\:\:createStaticCall\(\) expects array\<PhpParser\\Node\>, array\<int, PhpParser\\Node\\Expr\\ArrowFunction\|PhpParser\\Node\\Expr\\ClassConstFetch\|PhpParser\\Node\\Expr\\Closure\|string\> given\.$#'
 			identifier: argument.type
 			count: 1
 			path: src/Rector/AbstractDrupalCoreRector.php

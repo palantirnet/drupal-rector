@@ -14,12 +14,40 @@ function example(&$variables) {
 <?php
 
 function example(&$variables) {
-    \Drupal\Component\Utility\DeprecationHelper::backwardsCompatibleCall(\Drupal::VERSION, '11.2.0', fn() => \Drupal::service('Drupal\Core\Theme\ThemePreprocess')->preprocessContainer($variables), fn() => template_preprocess_container($variables));
-    \Drupal\Component\Utility\DeprecationHelper::backwardsCompatibleCall(\Drupal::VERSION, '11.2.0', fn() => \Drupal::service('Drupal\Core\Theme\ThemePreprocess')->preprocessLinks($variables), fn() => template_preprocess_links($variables));
-    \Drupal\Component\Utility\DeprecationHelper::backwardsCompatibleCall(\Drupal::VERSION, '11.2.0', fn() => \Drupal::service('Drupal\Core\Theme\ThemePreprocess')->preprocessHtml($variables), fn() => template_preprocess_html($variables));
-    \Drupal\Component\Utility\DeprecationHelper::backwardsCompatibleCall(\Drupal::VERSION, '11.2.0', fn() => \Drupal::service('Drupal\Core\Theme\ThemePreprocess')->preprocessPage($variables), fn() => template_preprocess_page($variables));
-    \Drupal\Component\Utility\DeprecationHelper::backwardsCompatibleCall(\Drupal::VERSION, '11.2.0', fn() => \Drupal::service('Drupal\Core\Datetime\DatePreprocess')->preprocessTime($variables), fn() => template_preprocess_time($variables));
-    \Drupal\Component\Utility\DeprecationHelper::backwardsCompatibleCall(\Drupal::VERSION, '11.2.0', fn() => \Drupal::service('Drupal\Core\Datetime\DatePreprocess')->preprocessDatetimeForm($variables), fn() => template_preprocess_datetime_form($variables));
-    \Drupal\Component\Utility\DeprecationHelper::backwardsCompatibleCall(\Drupal::VERSION, '11.2.0', fn() => \Drupal::service('Drupal\Core\Datetime\DatePreprocess')->preprocessDatetimeWrapper($variables), fn() => template_preprocess_datetime_wrapper($variables));
+    \Drupal\Component\Utility\DeprecationHelper::backwardsCompatibleCall(\Drupal::VERSION, '11.2.0', function () use (&$variables) {
+        \Drupal::service('Drupal\Core\Theme\ThemePreprocess')->preprocessContainer($variables);
+    }, function () use (&$variables) {
+        template_preprocess_container($variables);
+    });
+    \Drupal\Component\Utility\DeprecationHelper::backwardsCompatibleCall(\Drupal::VERSION, '11.2.0', function () use (&$variables) {
+        \Drupal::service('Drupal\Core\Theme\ThemePreprocess')->preprocessLinks($variables);
+    }, function () use (&$variables) {
+        template_preprocess_links($variables);
+    });
+    \Drupal\Component\Utility\DeprecationHelper::backwardsCompatibleCall(\Drupal::VERSION, '11.2.0', function () use (&$variables) {
+        \Drupal::service('Drupal\Core\Theme\ThemePreprocess')->preprocessHtml($variables);
+    }, function () use (&$variables) {
+        template_preprocess_html($variables);
+    });
+    \Drupal\Component\Utility\DeprecationHelper::backwardsCompatibleCall(\Drupal::VERSION, '11.2.0', function () use (&$variables) {
+        \Drupal::service('Drupal\Core\Theme\ThemePreprocess')->preprocessPage($variables);
+    }, function () use (&$variables) {
+        template_preprocess_page($variables);
+    });
+    \Drupal\Component\Utility\DeprecationHelper::backwardsCompatibleCall(\Drupal::VERSION, '11.2.0', function () use (&$variables) {
+        \Drupal::service('Drupal\Core\Datetime\DatePreprocess')->preprocessTime($variables);
+    }, function () use (&$variables) {
+        template_preprocess_time($variables);
+    });
+    \Drupal\Component\Utility\DeprecationHelper::backwardsCompatibleCall(\Drupal::VERSION, '11.2.0', function () use (&$variables) {
+        \Drupal::service('Drupal\Core\Datetime\DatePreprocess')->preprocessDatetimeForm($variables);
+    }, function () use (&$variables) {
+        template_preprocess_datetime_form($variables);
+    });
+    \Drupal\Component\Utility\DeprecationHelper::backwardsCompatibleCall(\Drupal::VERSION, '11.2.0', function () use (&$variables) {
+        \Drupal::service('Drupal\Core\Datetime\DatePreprocess')->preprocessDatetimeWrapper($variables);
+    }, function () use (&$variables) {
+        template_preprocess_datetime_wrapper($variables);
+    });
 }
 ?>

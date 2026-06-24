@@ -12,6 +12,21 @@ release-by-release.
 
 ## [Unreleased]
 
+### Fixed
+
+- **Backward-compatible call wrapping** — when a deprecation replacement passes a
+  variable to a *by-reference* parameter (`template_preprocess_html(&$variables)`,
+  form `*_process`/`*_validate`/`*_builder` callbacks with `&$form`,
+  `views_add_contextual_links(&$render_element)`, …), the generated
+  `DeprecationHelper::backwardsCompatibleCall()` now wraps the call in a long
+  closure that captures the variable by reference (`function () use (&$var) { … }`)
+  instead of an arrow function. Arrow functions capture by value, so a mutation
+  made through the reference was silently dropped — breaking, for example, webform
+  render and form-handling tests. By-reference parameters are detected by
+  reflecting the replacement service method, so the fix is automatic for every
+  affected deprecation. Closures wrapping a `void` target emit a bare expression
+  statement instead of `return <expr>;`, avoiding PHPStan's `function.void`.
+
 ## [1.0.0-beta6] — 2026-06-24
 
 ### Fixed
