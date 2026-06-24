@@ -12,6 +12,21 @@ release-by-release.
 
 ## [Unreleased]
 
+## [1.0.0-beta6] — 2026-06-24
+
+### Fixed
+
+- **`MethodToMethodWithCheckRector`** — only rewrite a call when the receiver type
+  *definitely* matches the configured class. The guard previously also fired on a
+  *maybe* match (`isSuperTypeOf()` returning `MAYBE`), so a method call on an
+  unrelated class that merely *could* implement the target interface was rewritten.
+  In webform this turned `WebformThemeManagerInterface::renderPlain()` into
+  `renderInIsolation()`, which does not exist there and breaks on older Drupal.
+  Requiring a definite (`YES`) match drops these false positives.
+  ([#396](https://github.com/palantirnet/drupal-rector/pull/396))
+
+## [1.0.0-beta5] — 2026-06-23
+
 ### Fixed
 
 - **`AnnotationToAttributeRector`** — preserve the positional (keyless) value when
