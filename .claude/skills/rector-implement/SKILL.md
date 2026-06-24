@@ -181,6 +181,50 @@ transformation.
 
 ---
 
+### After QG-B: Quality Gate QG-C — By-Reference Parameter Audit (BC-wrapped rectors only)
+
+Apply only if the rector extends `AbstractDrupalCoreRector` and the conversion happens in an
+**expression context** (the call gets wrapped in `DeprecationHelper::backwardsCompatibleCall`).
+This catches the class of bug fixed in `3ac6e255`: the BC wrapper closes over the caller's
+arguments, and an arrow function captures **by value**, so any mutation made through a
+**by-reference parameter** (`&$variables`, `&$form`, `&$element`, …) is silently dropped on the
+rewritten code — breaking the module at runtime (e.g. `template_preprocess_html(&$variables)`).
+
+1. **Check both signatures for `&` parameters.** Look at the replacement target method (the
+   class/method in your `FunctionToServiceConfiguration`) **and** the deprecated function, in
+   `repos/drupal-core`:
+   ```bash
+   rg -n 'function preprocessHtml|function template_preprocess_html' repos/drupal-core/core
+   ```
+   If neither has a `&$param`, this gate is N/A — done.
+
+2. **If a by-reference parameter exists**, `AbstractDrupalCoreRector` handles it automatically by
+   reflecting the **target service method**, but only when that method is reflectable at runtime.
+   So you must:
+   - **Add a classmap stub** under `stubs/Drupal/...` for the target class, with `&` at the exact
+     by-ref positions (drop type hints — `isPassedByReference()` does not need them) **and the
+     correct return type** (see step 3). Guard it with `if (class_exists(\FQCN::class)) { return; }`.
+     Run `ddev composer dump-autoload` after adding stubs.
+   - **Add/extend a fixture** that proves the output is a long closure capturing the variable by
+     reference, e.g. `function () use (&$variables) { … }` for **both** the new and old branches —
+     not `fn() => …`.
+
+3. **Void vs value — the closure body.** PHPStan flags `return <void-expr>;` as `function.void`
+   at every level (but allows a bare expression statement and an arrow function's implicit return).
+   So the wrapper emits `return <expr>;` only when the target method returns a value, and a bare
+   `<expr>;` statement when it returns `void`. The decision is made by reflecting the **target
+   method's return type**, so the stub's return type must match core (`: void` for preprocess and
+   most form callbacks; `: array` etc. for value-returning ones). Your fixture must reflect this:
+   void target → no `return` in the closure body; value target → `return`.
+
+4. **Verify**: `ddev exec vendor/bin/phpunit --filter <RectorName>` is green, and a quick
+   `vendor/bin/phpstan analyse --level=0` on a sample of the generated output shows no
+   `function.void`.
+
+See `project_byref_bc_wrapper_fix` in memory for the full mechanism.
+
+---
+
 ### After Step 14: Record the implemented digest
 
 `docs/implemented-digests.yml` is the **authoritative, hand-maintained** record of
@@ -232,10 +276,11 @@ Before declaring the implementation complete, verify all items from `.claude/ski
 - [ ] QG-A: `isObjectType()` guard present for all MethodCall/PropertyFetch nodes (or explicitly not needed)
 - [ ] QG-A: `no_change_unrelated.php.inc` fixture exists if a type guard was added
 - [ ] QG-B: `testAboveVersion()` + `testBelowVersion()` (with `DrupalRectorSettings::setDrupalVersion`) and `fixture-below-version/basic.php.inc` present if BC-wrapped
+- [ ] QG-C: by-reference parameters on the target/deprecated function checked; if present, stub (`&` positions + return type) and long-closure fixture added (or explicitly N/A)
 - [ ] `vendor/bin/phpunit tests/src/Drupal11/Rector/Deprecation/[ClassName]/` passes
 - [ ] `ddev composer phpstan` reports no new errors
 - [ ] `ddev composer fix-style` produces no changes
-- [ ] rector-qa reports **Overall: PASS** (all four passes green)
+- [ ] rector-qa reports **Overall: PASS** (all passes green)
 - [ ] Digest recorded in `docs/implemented-digests.yml` (append-only source of truth)
 
 ## Quick Reference: Phase 1 (config-only) path
