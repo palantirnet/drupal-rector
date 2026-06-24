@@ -90,6 +90,21 @@ CODE_AFTER,
             if ($newCall instanceof Node\Expr\ArrowFunction) {
                 return $newCall->expr;
             }
+
+            // By-reference calls are wrapped in a long closure (see
+            // AbstractDrupalCoreRector::createBcCallOnExpr) so the mutation is
+            // preserved. Unwrap it to its single statement: `return <expr>;` for
+            // value-returning targets, or a bare `<expr>;` for void ones.
+            if ($newCall instanceof Node\Expr\Closure) {
+                foreach ($newCall->stmts as $stmt) {
+                    if ($stmt instanceof Node\Stmt\Return_ && $stmt->expr !== null) {
+                        return $stmt->expr;
+                    }
+                    if ($stmt instanceof Node\Stmt\Expression) {
+                        return $stmt->expr;
+                    }
+                }
+            }
         }
 
         return null;
