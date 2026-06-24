@@ -54,7 +54,7 @@ class MethodToMethodWithCheckRector extends AbstractDrupalCoreRector
         $expectedType = new ObjectType($configuration->getClassName());
 
         $isSuperOf = $expectedType->isSuperTypeOf($callerType);
-        if (!$isSuperOf->yes() && !$isSuperOf->maybe()) {
+        if (!$isSuperOf->yes()) {
             return null;
         }
 
