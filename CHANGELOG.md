@@ -12,6 +12,8 @@ release-by-release.
 
 ## [Unreleased]
 
+## [1.0.0-beta7] — 2026-06-24
+
 ### Fixed
 
 - **Backward-compatible call wrapping** — when a deprecation replacement passes a
