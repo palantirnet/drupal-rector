@@ -24,6 +24,14 @@ release-by-release.
   BC wrapper is left untouched — the deprecated call sits in the
   `deprecatedCallable` arm and is skipped by the existing
   `isInBackwardsCompatibleCall()` guard.
+- **`FileSystemBasenameToNativeRector`** — no longer wraps the replacement in a
+  `DeprecationHelper::backwardsCompatibleCall()`. PHP's native `basename()` is
+  identical to `FileSystemInterface::basename()` on every PHP version Drupal 11
+  supports (the wrapper only worked around a pre-PHP-8.0 bug), so the rewrite is
+  always safe and emits a plain `basename(…)` call. Code already converted while
+  the rector still emitted a BC wrapper is left untouched — the deprecated call
+  sits in the `deprecatedCallable` arm and is skipped by the existing
+  `isInBackwardsCompatibleCall()` guard.
 
 ## [1.0.0-beta7] — 2026-06-24
 
