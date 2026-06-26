@@ -61,6 +61,22 @@ final class RemoveConfigSaveTrustedDataArgRector extends AbstractDrupalCoreRecto
         return [MethodCall::class];
     }
 
+    /**
+     * The deprecated $has_trusted_data argument is only a performance hint: TRUE
+     * tells Config::save() that the data is already cast to its schema types and
+     * the cast can be skipped. Re-casting already-typed data is idempotent, so
+     * dropping the argument (`save()` re-casts) is behaviourally equivalent on
+     * every Drupal version that ships Config::save() — no DeprecationHelper
+     * wrapper is needed. Confirmed with berdir. The parent still skips calls that
+     * already sit in the `deprecatedCallable` arm of a backwardsCompatibleCall()
+     * (see AbstractDrupalCoreRector::isInBackwardsCompatibleCall()), so
+     * previously BC-wrapped code is left untouched.
+     */
+    public function supportBackwardsCompatibility(VersionedConfigurationInterface $configuration): bool
+    {
+        return false;
+    }
+
     protected function refactorWithConfiguration(Node $node, VersionedConfigurationInterface $configuration): ?Node
     {
         assert($node instanceof MethodCall);
