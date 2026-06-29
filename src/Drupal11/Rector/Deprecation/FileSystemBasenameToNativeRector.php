@@ -61,6 +61,20 @@ final class FileSystemBasenameToNativeRector extends AbstractDrupalCoreRector
         return [MethodCall::class];
     }
 
+    /**
+     * PHP's native basename() is identical to FileSystemInterface::basename() on
+     * every PHP version Drupal 11 supports (the wrapper only existed to work
+     * around a pre-8.0 PHP bug), so the replacement is always safe and needs no
+     * DeprecationHelper wrapper. The parent still skips calls that already sit in
+     * the `deprecatedCallable` arm of a backwardsCompatibleCall() (see
+     * AbstractDrupalCoreRector::isInBackwardsCompatibleCall()), so previously
+     * BC-wrapped code is left untouched.
+     */
+    public function supportBackwardsCompatibility(VersionedConfigurationInterface $configuration): bool
+    {
+        return false;
+    }
+
     public function refactorWithConfiguration(Node $node, VersionedConfigurationInterface $configuration): ?Node
     {
         assert($node instanceof MethodCall);
