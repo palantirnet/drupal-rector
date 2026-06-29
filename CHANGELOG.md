@@ -12,6 +12,19 @@ release-by-release.
 
 ## [Unreleased]
 
+### Changed
+
+- **`RemoveConfigSaveTrustedDataArgRector`** — no longer wraps the rewrite in a
+  `DeprecationHelper::backwardsCompatibleCall()`. The deprecated
+  `$has_trusted_data` argument to `Config::save()` is only a performance hint
+  (skip re-casting data already typed to its schema); re-casting is idempotent,
+  so dropping the argument is behaviourally equivalent on every Drupal version
+  that ships `Config::save()` and the rector now emits a plain `$config->save()`.
+  Confirmed with berdir. Code already converted while the rector still emitted a
+  BC wrapper is left untouched — the deprecated call sits in the
+  `deprecatedCallable` arm and is skipped by the existing
+  `isInBackwardsCompatibleCall()` guard.
+
 ## [1.0.0-beta7] — 2026-06-24
 
 ### Fixed
