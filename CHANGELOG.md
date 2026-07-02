@@ -12,6 +12,8 @@ release-by-release.
 
 ## [Unreleased]
 
+## [1.0.0] — 2026-07-02
+
 ### Changed
 
 - **`RemoveConfigSaveTrustedDataArgRector`** — no longer wraps the rewrite in a
