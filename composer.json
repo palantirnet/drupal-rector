@@ -75,12 +75,7 @@
     "minimum-stability": "dev",
     "prefer-stable": true,
     "extra": {
-        "enable-patching": true,
-        "rector": {
-            "includes": [
-                "config/extension.php"
-            ]
-        }
+        "enable-patching": true
     },
     "require-dev": {
         "php": "^8.2",
