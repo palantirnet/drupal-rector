@@ -328,6 +328,12 @@ parameters:
 			path: src/Drupal8/Rector/Deprecation/EntityManagerRector.php
 
 		-
+			message: '#^Parameter \#1 \$expr of method DrupalRector\\Drupal8\\Rector\\Deprecation\\EntityManagerRector\:\:refactorExpression\(\) expects PhpParser\\Node\\Expr\\MethodCall\|PhpParser\\Node\\Expr\\StaticCall, PhpParser\\Node\\Expr given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Drupal8/Rector/Deprecation/EntityManagerRector.php
+
+		-
 			message: '#^Property PhpParser\\Node\\Expr\\Assign\:\:\$expr \(PhpParser\\Node\\Expr\) does not accept PhpParser\\Node\.$#'
 			identifier: assign.propertyType
 			count: 1
