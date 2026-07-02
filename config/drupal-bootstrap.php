@@ -34,4 +34,40 @@ return static function (RectorConfig $rectorConfig): void {
     // need them can re-register this singleton in its own rector.php.)
     $rectorConfig->singleton(DrupalRectorSettings::class, fn () => (new DrupalRectorSettings())
         ->disableBackwardCompatibility());
+
+    // Drupal executes PHP from several non-.php extensions.
+    $rectorConfig->fileExtensions(['php', 'module', 'theme', 'install', 'profile', 'inc', 'engine']);
+
+    // upgrade_status ships intentionally broken test modules.
+    $rectorConfig->skip(['*/upgrade_status/tests/modules/*']);
+
+    // Autoloading and phpstan-drupal only make sense when Drupal is actually
+    // present. Bail out otherwise — DrupalFinderComposerRuntime::getDrupalRoot()
+    // calls Composer\InstalledVersions::getInstallPath('drupal/core'), which
+    // THROWS (not returns null) when the package is not installed, so this must
+    // be guarded before the lookup.
+    if (! \Composer\InstalledVersions::isInstalled('drupal/core')) {
+        return;
+    }
+
+    $drupalFinder = new \DrupalFinder\DrupalFinderComposerRuntime();
+
+    $drupalRoot = $drupalFinder->getDrupalRoot();
+    if (is_string($drupalRoot) && $drupalRoot !== '') {
+        $rectorConfig->autoloadPaths([
+            $drupalRoot.'/core',
+            $drupalRoot.'/modules',
+            $drupalRoot.'/profiles',
+            $drupalRoot.'/themes',
+        ]);
+    }
+
+    // phpstan-drupal lives in the analysed project's vendor dir, not ours.
+    $vendorDir = $drupalFinder->getVendorDir();
+    if (is_string($vendorDir) && $vendorDir !== '') {
+        $phpstanDrupalExtension = $vendorDir.'/mglaman/phpstan-drupal/extension.neon';
+        if (file_exists($phpstanDrupalExtension)) {
+            $rectorConfig->phpstanConfigs([$phpstanDrupalExtension]);
+        }
+    }
 };
