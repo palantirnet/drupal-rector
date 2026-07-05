@@ -7,6 +7,7 @@ use DrupalRector\Drupal11\Rector\Deprecation\GetNameToNameRector;
 use DrupalRector\Drupal11\Rector\Deprecation\MigrateSqlGetMigrationPluginManagerRector;
 use DrupalRector\Drupal11\Rector\Deprecation\RemoveStateCacheSettingRector;
 use DrupalRector\Drupal11\Rector\Deprecation\StripMigrationDependenciesExpandArgRector;
+use DrupalRector\Drupal12\Rector\Deprecation\AddSymfonyConstraintValidatorTypeDeclarationsRector;
 use DrupalRector\Rector\PHPUnit\PhpUnitTestAnnotationToAttributeRector;
 use DrupalRector\Rector\PHPUnit\ValueObject\PhpUnitTestAnnotationToAttributeConfiguration;
 use DrupalRector\Rector\ValueObject\DrupalIntroducedVersionConfiguration;
@@ -59,4 +60,12 @@ return static function (RectorConfig $rectorConfig): void {
         new PhpUnitTestAnnotationToAttributeConfiguration('11.0.0', '12.0.0', 'depends', 'PHPUnit\Framework\Attributes\Depends'),
         new PhpUnitTestAnnotationToAttributeConfiguration('11.0.0', '12.0.0', 'testWith', 'PHPUnit\Framework\Attributes\TestWith'),
     ]);
+
+    // Forward-compat Symfony 8 / Drupal 12 signature change (NOT an 11.0
+    // deprecation). Registered here so it fires on drupal/core ^11.0 (every D11
+    // install) — the change is backward compatible, so applying it while still
+    // on D11 is safe and prepares the module for D12. Also registered in the
+    // drupal-12.0 set for installs already on ^12.0.
+    // https://git.drupalcode.org/project/redirect/-/merge_requests/200
+    $rectorConfig->rule(AddSymfonyConstraintValidatorTypeDeclarationsRector::class);
 };
