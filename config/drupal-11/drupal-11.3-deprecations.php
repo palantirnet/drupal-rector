@@ -243,8 +243,12 @@ return static function (RectorConfig $rectorConfig): void {
     // https://www.drupal.org/node/3496369
     // https://www.drupal.org/node/3532412 (change record)
     // AliasManager::setCacheKey() and AliasManager::writeCache() deprecated in drupal:11.3.0,
-    // removed in drupal:13.0.0 with no replacement (they are no-ops).
-    $rectorConfig->rule(RemoveAliasManagerCacheMethodCallsRector::class);
+    // removed in drupal:13.0.0 with no replacement. They only became no-ops in
+    // 11.3.0; before that they performed real caching work, so the call is
+    // wrapped in a backwards-compatible no-op when BC support is enabled.
+    $rectorConfig->ruleWithConfiguration(RemoveAliasManagerCacheMethodCallsRector::class, [
+        new DrupalIntroducedVersionConfiguration('11.3.0'),
+    ]);
 
     // https://www.drupal.org/node/3525388
     // https://www.drupal.org/node/3525389 (change record)

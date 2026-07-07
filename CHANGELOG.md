@@ -12,6 +12,19 @@ release-by-release.
 
 ## [Unreleased]
 
+### Fixed
+
+- **`RemoveAliasManagerCacheMethodCallsRector`** — no longer removes calls to
+  `AliasManager::setCacheKey()` / `writeCache()` unconditionally, which broke
+  backward compatibility on Drupal < 11.3. These methods only became no-ops in
+  11.3.0 (when the path alias preload cache was replaced by a Fiber-based
+  bulk-lookup strategy); before 11.3.0 they performed real caching work. The
+  rector now extends `AbstractDrupalCoreRector` and, when BC support is enabled,
+  wraps the call in a `DeprecationHelper::backwardsCompatibleCall()` with a
+  no-op current callable so the caching still runs on Drupal < 11.3 and is
+  skipped on 11.3+. When BC support is disabled the call is removed as before.
+  Reported by Berdir ([#3600789](https://git.drupalcode.org/project/rector/-/work_items/3600789)).
+
 ### Added
 
 - **`AddSymfonyConstraintValidatorTypeDeclarationsRector`** — adds the Symfony 8 / Drupal 12 type declarations (`mixed $value` and `: void` on `validate()`, `: void` on `initialize()`) to `Symfony\Component\Validator\ConstraintValidatorInterface` implementers. Backward compatible on all supported Drupal versions, so no version gate. [#3600790]
