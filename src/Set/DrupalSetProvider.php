@@ -51,6 +51,7 @@ final class DrupalSetProvider implements SetProviderInterface
         '11.2' => Drupal11SetList::DRUPAL_112,
         '11.3' => Drupal11SetList::DRUPAL_113,
         '11.4' => Drupal11SetList::DRUPAL_114,
+        '12.0' => Drupal12SetList::DRUPAL_120,
     ];
 
     /**
@@ -74,7 +75,7 @@ final class DrupalSetProvider implements SetProviderInterface
      *
      * @var string[]
      */
-    private const MAJOR_FLOORS = ['10.0', '11.0'];
+    private const MAJOR_FLOORS = ['10.0', '11.0', '12.0'];
 
     /**
      * @return SetInterface[]

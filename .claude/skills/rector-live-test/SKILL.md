@@ -1,8 +1,8 @@
 ---
 name: rector-live-test
-description: Finds D11-compatible contrib modules that exercise a rector and runs it against them. Uses api.tresbien.tech JSON API as primary search tool, falls back to Drupal GitLab API. Pass rector class name or issue number as argument.
+description: Runs a rector against real D11-compatible contrib modules to verify it transforms real-world code correctly, then captures the PHPStan deprecation message it covers. Delegates finding the modules to the contrib-search skill. Pass rector class name or issue number as argument.
 argument-hint: "<RectorClassName or issue-number>"
-allowed-tools: Read, Bash, Glob, WebFetch, WebSearch
+allowed-tools: Read, Bash, Glob, Skill
 ---
 
 # Rector Live Test
@@ -17,102 +17,23 @@ Find real contrib modules that use the deprecated API a rector targets, then run
 
 ## Steps
 
-### 1. Resolve the rector
+### 1. Find D11-compatible contrib modules that exercise the rector
 
-If given a class name, find the source file:
-```bash
-find src -name "<ClassName>.php"
-```
-
-If given an issue number, check `docs/rector-index.yml` (regenerate if needed) for the class name, then find the source file.
-
-Read the rector source to extract:
-- The deprecated method/function/constant name (look in `isName()` calls, constants, or `FUNCTION_MAP`)
-- The deprecated class/interface name (from `isObjectType()` guards)
-
-### 2. Search for contrib modules
-
-**Primary: `api.tresbien.tech` JSON API**
-
-Use `curl` + `jq` to query the JSON search API. The base URL is:
+Invoke the **`contrib-search`** skill in **full mode**, passing the rector class name or
+issue number:
 
 ```
-https://api.tresbien.tech/v1/search?q=<urlencoded_query>&num=<max_results>
+contrib-search <ClassName or issue-number> --full
 ```
 
-**Always include `-r:drupal`** to exclude Drupal core from results (use `-r:drupal`, NOT `-r:core`).
+It resolves the rector's deprecated symbol, searches `api.tresbien.tech`, filters to
+D11-compatible modules, and returns a list ranked by install count with the file path(s)
+each match lives in. Use that list as the modules to test in the following steps.
 
-**Regex escaping:** The query is treated as a regex. Escape `(` as `\(` — an unescaped `(` causes a parse error and returns HTTP 418.
+If it reports no D11-compatible modules, stop and report that — there is nothing to
+live-test.
 
-Standard query construction:
-- Method call: `-r:drupal ->methodName\(`
-- Function call: `-r:drupal functionName\(`
-- Class constant: `-r:drupal ClassName::CONSTANT_NAME`
-- Property access: `-r:drupal ->propertyName`
-
-Additional filters to add as needed:
-- `f:\.php$` — PHP files only (add `f:\.module$` if pattern may appear in `.module` files)
-- `-f:test` — exclude test files
-- `lang:php` — PHP language filter
-- `case:yes` — force case-sensitive match
-
-Example — search for `_filter_autop(` in contrib PHP files:
-```bash
-curl -s "https://api.tresbien.tech/v1/search?q=-r%3Adrupal+_filter_autop%5C%28+-f%3Atest&num=20" \
-  | jq -r '.Result.Files[] | "\(.Repository)\t\(.FileName)\t\(.Branches | join(","))"'
-```
-
-The response is JSON with `Result.Files[]` — each entry has:
-- `.Repository` — module/project name (use this directly, no path parsing needed)
-- `.FileName` — file path within the repo
-- `.Branches[]` — which branch the match is on
-- `.ChunkMatches[].Content` — base64-encoded matched line(s)
-
-To decode a matched line and see actual code context:
-```bash
-echo "<base64string>" | base64 -d
-```
-
-**Never loop over individual repos.** If you need to search within a known set of repos, use regex alternation: `r:^(module1|module2|module3)$`.
-
-**Fallback: Drupal GitLab API blob search**
-
-If the API yields no results or is unavailable:
-
-```bash
-QUERY="<urlencoded_search_term>"
-curl -s "https://git.drupalcode.org/search?group_id=2&scope=blobs&search=-path%3Acore+-path%3Avendor+-path%3Adocroot+-path%3Aweb+-path%3Aprofiles+-path%3Asites+$QUERY" \
-  | grep -o 'data-project="[^"]*"' | sort -u | head -20
-```
-
-### 3. Filter to D11-compatible modules
-
-Use the repo listing API to batch-check all found modules at once. The endpoint returns `RawConfig."drupal-core"` (branch-keyed compatibility strings) and `RawConfig."drupal-usage"` (install counts per branch):
-
-```bash
-# Get D11-compatible repos and their install counts
-MODULES='module1|module2|module3'  # pipe-separated list from step 2
-curl -s "https://api.tresbien.tech/v1/search/repo" \
-  | jq -r --arg mods "$MODULES" \
-    '.List.Repos[]
-     | select(.Repository.Name | test($mods))
-     | select(.Repository.RawConfig."drupal-core" // "" | test("\\^11"))
-     | [.Repository.Name,
-        .Repository.RawConfig."drupal-core",
-        .Repository.RawConfig."drupal-usage"] | @tsv'
-```
-
-The `drupal-core` field looks like `"1.x:^10 || ^11;2.x:^11"` — keep modules where any branch entry includes `^11`.
-
-The `drupal-usage` field looks like `"1.x:4521;2.x:312"` — **prefer modules with higher install counts** for better real-world test coverage.
-
-If no D11-compatible modules are found, report:
-```
-No D11-compatible contrib modules found for <RectorName>.
-Try manually: https://git.drupalcode.org/search?group_id=2&scope=blobs&search=<query>
-```
-
-### 4. Run the rector
+### 2. Run the rector
 
 **Check if the DDEV test project exists:**
 ```bash
@@ -133,7 +54,7 @@ DDEV_STATUS=$(ddev status --json-output 2>/dev/null | python3 -c "import json,sy
 [ "$DDEV_STATUS" = "running" ] || ddev start -y
 ```
 
-**If a module found in step 2 is not pre-installed**, add it before running:
+**If a module found in step 1 is not pre-installed**, add it before running:
 ```bash
 cd ~/projects/drupal-rector-test
 ddev composer require drupal/<module> --no-interaction
@@ -189,7 +110,7 @@ rm ~/projects/drupal-rector-test/rector-live-test.php
 If the contrib modules are not git-tracked in the test project, `git checkout` won't restore them.
 Use `ddev composer reinstall drupal/<module1> drupal/<module2> --no-interaction` instead.
 
-### 5. Capture the PHPStan deprecation message
+### 3. Capture the PHPStan deprecation message
 
 While the contrib module is still installed and the pre-transform code is on
 disk, run PHPStan against the file the rector matched and capture the
@@ -263,7 +184,7 @@ guessing the message text. Do **not** synthesize the string from the
 "Call to deprecated method", "Instantiation of deprecated class", "Class X
 implements deprecated interface", etc.
 
-### 6. Report results
+### 4. Report results
 
 For each tested module, report:
 ```
@@ -272,9 +193,9 @@ For each tested module, report:
 ```
 
 For every module with **zero changes**, do not just say "no match" — always show the actual
-code and explain why. See step 7.
+code and explain why. See step 5.
 
-### 7. Diagnose zero-match results
+### 5. Diagnose zero-match results
 
 For **every** module that produced no changes, you must:
 
@@ -299,7 +220,7 @@ For **every** module that produced no changes, you must:
 | Untyped receiver | No `@var` annotation and no type-hinted parameter for the variable | Rector is correct to skip — would cause false positives on unrelated classes |
 | Chained call, return type unresolvable | `$foo->something()->getOriginalClass()` where `something()` has no known return type | Rector correctly skips — add phpstan-drupal or a stub to fix |
 | Broken `use` import | File imports a class from a module that isn't installed | PHPStan can't resolve the import, degrades type inference for the whole file |
-| `.module` file silently skipped | File extension is `.module`, `.install`, etc. | Config is missing `fileExtensions()` — this should not happen if step 4 was followed |
+| `.module` file silently skipped | File extension is `.module`, `.install`, etc. | Config is missing `fileExtensions()` — this should not happen if step 2 was followed |
 | Module already updated | The call site no longer uses the deprecated API | Expected — the module has already migrated |
 | Wrong rector class | The rector targets a different method/function | Verify the rector's `isName()` matches the actual call in the module |
 
