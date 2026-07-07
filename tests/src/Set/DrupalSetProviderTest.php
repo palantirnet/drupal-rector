@@ -90,8 +90,11 @@ final class DrupalSetProviderTest extends TestCase
                 'drupal-11.4-breaking.php',
                 'drupal-bootstrap.php',
             ]],
-            // A future major out of range matches nothing.
-            '12.0.0 matches nothing' => ['12.0.0', []],
+            // The next major's floor loads only its own set + bootstrap.
+            '12.0.0 loads only 12.0' => ['12.0.0', [
+                'drupal-12.0-deprecations.php',
+                'drupal-bootstrap.php',
+            ]],
         ];
     }
 

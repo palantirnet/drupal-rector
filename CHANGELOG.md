@@ -12,6 +12,10 @@ release-by-release.
 
 ## [Unreleased]
 
+### Added
+
+- **`AddSymfonyConstraintValidatorTypeDeclarationsRector`** — adds the Symfony 8 / Drupal 12 type declarations (`mixed $value` and `: void` on `validate()`, `: void` on `initialize()`) to `Symfony\Component\Validator\ConstraintValidatorInterface` implementers. Backward compatible on all supported Drupal versions, so no version gate. [#3600790]
+
 ## [1.0.0] — 2026-07-02
 
 ### Changed
