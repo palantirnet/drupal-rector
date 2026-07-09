@@ -6,6 +6,7 @@ namespace DrupalRector\Drupal8\Rector\Deprecation;
 
 use PhpParser\Node;
 use Rector\Rector\AbstractRector;
+use Symplify\RuleDocGenerator\Contract\DocumentedRuleInterface;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
@@ -21,7 +22,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  * - Dependency injection
  * - Using class ::create() methods like Node::create().
  */
-final class EntityCreateRector extends AbstractRector
+final class EntityCreateRector extends AbstractRector implements DocumentedRuleInterface
 {
     /**
      * {@inheritdoc}

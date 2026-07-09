@@ -6,10 +6,11 @@ namespace DrupalRector\Tests\Rector\AbstractDrupalCoreRector;
 
 use DrupalRector\Tests\AbstractDrupalRectorTestCase;
 use Iterator;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 class AbstractDrupalCoreRectorBcTest extends AbstractDrupalRectorTestCase
 {
-    #[\PHPUnit\Framework\Attributes\DataProvider('provideData')]
+    #[DataProvider('provideData')]
     public function test(string $filePath): void
     {
         $this->doTestFile($filePath);

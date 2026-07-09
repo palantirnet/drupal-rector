@@ -6,6 +6,7 @@ namespace DrupalRector\Drupal8\Rector\Deprecation;
 
 use PhpParser\Node;
 use Rector\Rector\AbstractRector;
+use Symplify\RuleDocGenerator\Contract\DocumentedRuleInterface;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
@@ -19,7 +20,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  *
  * Improvement opportunities
  */
-final class SafeMarkupFormatRector extends AbstractRector
+final class SafeMarkupFormatRector extends AbstractRector implements DocumentedRuleInterface
 {
     /**
      * {@inheritdoc}

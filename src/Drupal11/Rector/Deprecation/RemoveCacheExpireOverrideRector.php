@@ -9,6 +9,7 @@ use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\ClassMethod;
 use PHPStan\Type\ObjectType;
 use Rector\Rector\AbstractRector;
+use Symplify\RuleDocGenerator\Contract\DocumentedRuleInterface;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
@@ -21,7 +22,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  * @see https://www.drupal.org/node/3576556
  * @see https://www.drupal.org/node/3576855
  */
-final class RemoveCacheExpireOverrideRector extends AbstractRector
+final class RemoveCacheExpireOverrideRector extends AbstractRector implements DocumentedRuleInterface
 {
     private const CACHE_PLUGIN_BASE_FQCN = 'Drupal\views\Plugin\views\cache\CachePluginBase';
 

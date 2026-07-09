@@ -8,6 +8,7 @@ use PhpParser\Node;
 use PhpParser\NodeVisitor;
 use PHPStan\Type\ObjectType;
 use Rector\Rector\AbstractRector;
+use Symplify\RuleDocGenerator\Contract\DocumentedRuleInterface;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
@@ -17,7 +18,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  * @see https://www.drupal.org/node/3396062
  * @see https://www.drupal.org/node/3519187
  */
-final class NodeStorageDeprecatedMethodsRector extends AbstractRector
+final class NodeStorageDeprecatedMethodsRector extends AbstractRector implements DocumentedRuleInterface
 {
     public function getNodeTypes(): array
     {
@@ -107,8 +108,13 @@ final class NodeStorageDeprecatedMethodsRector extends AbstractRector
                 "array_keys(\$storage->getQuery()->allRevisions()->accessCheck(FALSE)->condition('uid', \$account->id())->execute());"
             ),
             new CodeSample(
-                '$storage->countDefaultLanguageRevisions($node);',
-                ''
+                <<<'CODE_BEFORE'
+$storage->resetCache([$node->id()]);
+$storage->countDefaultLanguageRevisions($node);
+CODE_BEFORE,
+                <<<'CODE_AFTER'
+$storage->resetCache([$node->id()]);
+CODE_AFTER
             ),
         ]);
     }

@@ -10,6 +10,7 @@ use PhpParser\Node\Stmt\Expression;
 use PhpParser\NodeVisitor;
 use PHPStan\Type\ObjectType;
 use Rector\Rector\AbstractRector;
+use Symplify\RuleDocGenerator\Contract\DocumentedRuleInterface;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
@@ -23,7 +24,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  * @see https://www.drupal.org/node/2667040
  * @see https://www.drupal.org/node/3575062
  */
-final class RemoveSetUriCallbackRector extends AbstractRector
+final class RemoveSetUriCallbackRector extends AbstractRector implements DocumentedRuleInterface
 {
     public function getRuleDefinition(): RuleDefinition
     {
@@ -31,8 +32,13 @@ final class RemoveSetUriCallbackRector extends AbstractRector
             'Remove deprecated EntityTypeInterface::setUriCallback() calls',
             [
                 new CodeSample(
-                    '$entity_type->setUriCallback(\'my_entity_uri\');',
-                    ''
+                    <<<'CODE_BEFORE'
+$entity_type->setLinkTemplate('canonical', '/mymodule/{entity}');
+$entity_type->setUriCallback('my_entity_uri');
+CODE_BEFORE,
+                    <<<'CODE_AFTER'
+$entity_type->setLinkTemplate('canonical', '/mymodule/{entity}');
+CODE_AFTER
                 ),
             ]
         );

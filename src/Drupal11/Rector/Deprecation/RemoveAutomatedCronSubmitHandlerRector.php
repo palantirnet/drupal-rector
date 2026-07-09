@@ -7,6 +7,7 @@ namespace DrupalRector\Drupal11\Rector\Deprecation;
 use PhpParser\Node;
 use PhpParser\NodeVisitor;
 use Rector\Rector\AbstractRector;
+use Symplify\RuleDocGenerator\Contract\DocumentedRuleInterface;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
@@ -19,7 +20,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  * @see https://www.drupal.org/node/3566768
  * @see https://www.drupal.org/node/3566774
  */
-final class RemoveAutomatedCronSubmitHandlerRector extends AbstractRector
+final class RemoveAutomatedCronSubmitHandlerRector extends AbstractRector implements DocumentedRuleInterface
 {
     public function getNodeTypes(): array
     {
@@ -61,8 +62,13 @@ final class RemoveAutomatedCronSubmitHandlerRector extends AbstractRector
     {
         return new RuleDefinition("Removes deprecated \$form['#submit'][] = 'automated_cron_settings_submit' handler assignments (drupal:11.4.0)", [
             new CodeSample(
-                "\$form['#submit'][] = 'automated_cron_settings_submit';",
-                ''
+                <<<'CODE_BEFORE'
+$form['#submit'][] = 'automated_cron_settings_submit';
+$form['#submit'][] = 'mymodule_settings_submit';
+CODE_BEFORE,
+                <<<'CODE_AFTER'
+$form['#submit'][] = 'mymodule_settings_submit';
+CODE_AFTER
             ),
         ]);
     }

@@ -6,16 +6,18 @@ namespace DrupalRector\Tests\Drupal10\Rector\Deprecation\ActionAnnotationToAttri
 
 use DrupalRector\Tests\AbstractDrupalRectorTestCase;
 use Iterator;
+use PHPUnit\Framework\Attributes\CoversFunction;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 class Drupal
 {
     public const VERSION = '11.0.x-dev';
 }
 
-#[\PHPUnit\Framework\Attributes\CoversFunction('refactor')]
+#[CoversFunction('refactor')]
 class BackwardsCompatibilityActionAnnotationToAttributeRectorTest extends AbstractDrupalRectorTestCase
 {
-    #[\PHPUnit\Framework\Attributes\DataProvider('provideData')]
+    #[DataProvider('provideData')]
     public function test(string $filePath): void
     {
         $this->doTestFile($filePath);

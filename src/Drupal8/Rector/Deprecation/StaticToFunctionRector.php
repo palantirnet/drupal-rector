@@ -8,6 +8,7 @@ use DrupalRector\Drupal8\Rector\ValueObject\StaticToFunctionConfiguration;
 use PhpParser\Node;
 use Rector\Contract\Rector\ConfigurableRectorInterface;
 use Rector\Rector\AbstractRector;
+use Symplify\RuleDocGenerator\Contract\DocumentedRuleInterface;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\ConfiguredCodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
@@ -17,7 +18,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  * What is covered:
  * - Static replacement
  */
-class StaticToFunctionRector extends AbstractRector implements ConfigurableRectorInterface
+class StaticToFunctionRector extends AbstractRector implements ConfigurableRectorInterface, DocumentedRuleInterface
 {
     /**
      * @var StaticToFunctionConfiguration[]

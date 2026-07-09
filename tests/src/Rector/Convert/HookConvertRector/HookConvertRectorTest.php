@@ -10,9 +10,14 @@ use PhpParser\Node\Identifier;
 use PhpParser\Node\Name\FullyQualified;
 use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\Function_;
+use PhpParser\NodeFinder;
 use PhpParser\ParserFactory;
 use PHPUnit\Framework\TestCase;
+use Rector\Configuration\Option;
+use Rector\Configuration\Parameter\SimpleParameterProvider;
+use Rector\NodeAnalyzer\ExprAnalyzer;
 use Rector\PhpParser\Printer\BetterStandardPrinter;
+use Rector\Util\Reflection\PrivatesAccessor;
 
 class HookConvertRectorTest extends TestCase
 {
@@ -165,7 +170,7 @@ CODE);
         // t() became $this->t(), so the method must stay an instance method.
         $this->assertFalse($method->isStatic(), 'A method using $this->t() must not be static.');
 
-        $finder = new \PhpParser\NodeFinder();
+        $finder = new NodeFinder();
         $thisT = $finder->findFirst(
             $method->stmts ?? [],
             fn (Node $n) => $n instanceof Node\Expr\MethodCall
@@ -195,7 +200,7 @@ CODE);
 
         $this->assertFalse($method->isStatic(), '\t() must be rewritten to $this->t() and keep the method instance.');
 
-        $finder = new \PhpParser\NodeFinder();
+        $finder = new NodeFinder();
         $funcCall = $finder->findFirst(
             $method->stmts ?? [],
             fn (Node $n) => $n instanceof Node\Expr\FuncCall
@@ -233,7 +238,7 @@ function mymodule_user_cancel($edit, $account, $method) {
 }
 CODE);
 
-        $finder = new \PhpParser\NodeFinder();
+        $finder = new NodeFinder();
         $thisCalls = $finder->find(
             $method->stmts ?? [],
             fn (Node $n) => $n instanceof Node\Expr\MethodCall
@@ -263,12 +268,12 @@ CODE);
     {
         // Indent parameters are normally seeded by the Rector container; set
         // them so the standalone printer can lay out statements.
-        \Rector\Configuration\Parameter\SimpleParameterProvider::setParameter(\Rector\Configuration\Option::INDENT_CHAR, ' ');
-        \Rector\Configuration\Parameter\SimpleParameterProvider::setParameter(\Rector\Configuration\Option::INDENT_SIZE, 4);
+        SimpleParameterProvider::setParameter(Option::INDENT_CHAR, ' ');
+        SimpleParameterProvider::setParameter(Option::INDENT_SIZE, 4);
 
-        $exprAnalyzer = (new \ReflectionClass(\Rector\NodeAnalyzer\ExprAnalyzer::class))->newInstanceWithoutConstructor();
+        $exprAnalyzer = (new \ReflectionClass(ExprAnalyzer::class))->newInstanceWithoutConstructor();
 
-        return new BetterStandardPrinter($exprAnalyzer, new \Rector\Util\Reflection\PrivatesAccessor());
+        return new BetterStandardPrinter($exprAnalyzer, new PrivatesAccessor());
     }
 
     public function testGeneratedHookClassFileIsPrintedCorrectly(): void

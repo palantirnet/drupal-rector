@@ -6,10 +6,11 @@ namespace DrupalRector\Tests\Drupal9\Rector\Property\ProtectedStaticModulesPrope
 
 use DrupalRector\Tests\AbstractDrupalRectorTestCase;
 use Iterator;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 final class ProtectedStaticModulesPropertyRectorTest extends AbstractDrupalRectorTestCase
 {
-    #[\PHPUnit\Framework\Attributes\DataProvider('provideData')]
+    #[DataProvider('provideData')]
     public function test(string $filePath): void
     {
         $this->doTestFile($filePath);

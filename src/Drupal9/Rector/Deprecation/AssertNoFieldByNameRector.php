@@ -10,10 +10,11 @@ use PhpParser\Node;
 use PhpParser\Node\Arg;
 use PhpParser\Node\VariadicPlaceholder;
 use Rector\Rector\AbstractRector;
+use Symplify\RuleDocGenerator\Contract\DocumentedRuleInterface;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
-final class AssertNoFieldByNameRector extends AbstractRector
+final class AssertNoFieldByNameRector extends AbstractRector implements DocumentedRuleInterface
 {
     use GetDeclaringSourceTrait;
 

@@ -18,8 +18,9 @@ use PHPStan\Reflection\MethodReflection;
 use Rector\Contract\Rector\ConfigurableRectorInterface;
 use Rector\NodeTypeResolver\Node\AttributeKey;
 use Rector\Rector\AbstractRector;
+use Symplify\RuleDocGenerator\Contract\DocumentedRuleInterface;
 
-abstract class AbstractDrupalCoreRector extends AbstractRector implements ConfigurableRectorInterface
+abstract class AbstractDrupalCoreRector extends AbstractRector implements ConfigurableRectorInterface, DocumentedRuleInterface
 {
     /**
      * @var array|VersionedConfigurationInterface[]

@@ -10,6 +10,7 @@ use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Scalar\String_;
 use PHPStan\Type\ObjectType;
 use Rector\Rector\AbstractRector;
+use Symplify\RuleDocGenerator\Contract\DocumentedRuleInterface;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
@@ -19,7 +20,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  * @see https://www.drupal.org/node/3511123
  * @see https://www.drupal.org/node/3511149
  */
-class RemoveCacheTagChecksumAssertionsRector extends AbstractRector
+class RemoveCacheTagChecksumAssertionsRector extends AbstractRector implements DocumentedRuleInterface
 {
     private const DEPRECATED_KEYS = [
         'CacheTagChecksumCount',

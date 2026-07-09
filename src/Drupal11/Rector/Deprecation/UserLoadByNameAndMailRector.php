@@ -6,6 +6,7 @@ namespace DrupalRector\Drupal11\Rector\Deprecation;
 
 use PhpParser\Node;
 use Rector\Rector\AbstractRector;
+use Symplify\RuleDocGenerator\Contract\DocumentedRuleInterface;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
@@ -20,7 +21,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  *
  * @see https://www.drupal.org/node/3555936
  */
-class UserLoadByNameAndMailRector extends AbstractRector
+class UserLoadByNameAndMailRector extends AbstractRector implements DocumentedRuleInterface
 {
     public const PHPSTAN_MESSAGES = [
         'Call to deprecated function user_load_by_name(). Deprecated in drupal:11.4.0 and is removed from drupal:13.0.0. Use Drupal::entityTypeManager()->getStorage(\'user\')->loadByProperties() instead.',

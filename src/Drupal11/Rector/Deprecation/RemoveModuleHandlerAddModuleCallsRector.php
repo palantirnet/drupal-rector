@@ -8,6 +8,7 @@ use PhpParser\Node;
 use PhpParser\NodeVisitor;
 use PHPStan\Type\ObjectType;
 use Rector\Rector\AbstractRector;
+use Symplify\RuleDocGenerator\Contract\DocumentedRuleInterface;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
@@ -19,7 +20,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  * @see https://www.drupal.org/node/3528899
  * @see https://www.drupal.org/node/3491200
  */
-final class RemoveModuleHandlerAddModuleCallsRector extends AbstractRector
+final class RemoveModuleHandlerAddModuleCallsRector extends AbstractRector implements DocumentedRuleInterface
 {
     public function getNodeTypes(): array
     {
@@ -59,8 +60,13 @@ final class RemoveModuleHandlerAddModuleCallsRector extends AbstractRector
     {
         return new RuleDefinition('Removes deprecated ModuleHandlerInterface::addModule() and addProfile() calls, which are no-ops since drupal:11.2.0 and removed in drupal:12.0.0', [
             new CodeSample(
-                "\$moduleHandler->addModule('mymodule', 'modules/mymodule');",
-                ''
+                <<<'CODE_BEFORE'
+$moduleHandler->addModule('mymodule', 'modules/mymodule');
+$moduleHandler->load('mymodule');
+CODE_BEFORE,
+                <<<'CODE_AFTER'
+$moduleHandler->load('mymodule');
+CODE_AFTER
             ),
         ]);
     }

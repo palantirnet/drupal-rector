@@ -65,8 +65,13 @@ final class RemoveAliasManagerCacheMethodCallsRector extends AbstractDrupalCoreR
             'Remove calls to AliasManager::setCacheKey() and AliasManager::writeCache(), deprecated in drupal:11.3.0 and removed in drupal:13.0.0 with no replacement.',
             [
                 new ConfiguredCodeSample(
-                    '$this->aliasManager->setCacheKey($path);',
-                    '',
+                    <<<'CODE_BEFORE'
+$alias = $this->aliasManager->getAliasByPath($path);
+$this->aliasManager->setCacheKey($path);
+CODE_BEFORE,
+                    <<<'CODE_AFTER'
+$alias = $this->aliasManager->getAliasByPath($path);
+CODE_AFTER,
                     [new DrupalIntroducedVersionConfiguration('11.3.0')]
                 ),
             ]

@@ -7,6 +7,7 @@ namespace DrupalRector\Drupal11\Rector\Deprecation;
 use PhpParser\Node;
 use PhpParser\NodeVisitor;
 use Rector\Rector\AbstractRector;
+use Symplify\RuleDocGenerator\Contract\DocumentedRuleInterface;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
@@ -19,7 +20,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  * @see https://www.drupal.org/node/3093118
  * @see https://www.drupal.org/node/3554139
  */
-final class RemoveLinkWidgetValidateTitleElementRector extends AbstractRector
+final class RemoveLinkWidgetValidateTitleElementRector extends AbstractRector implements DocumentedRuleInterface
 {
     public function getNodeTypes(): array
     {
@@ -52,8 +53,13 @@ final class RemoveLinkWidgetValidateTitleElementRector extends AbstractRector
     {
         return new RuleDefinition('Removes deprecated LinkWidget::validateTitleElement() calls. Validation is now handled by LinkTitleRequiredConstraint on the LinkItem field type (drupal:11.4.0)', [
             new CodeSample(
-                'LinkWidget::validateTitleElement($element, $form_state, $form);',
-                ''
+                <<<'CODE_BEFORE'
+LinkWidget::validateTitleElement($element, $form_state, $form);
+$element['#value'] = $value;
+CODE_BEFORE,
+                <<<'CODE_AFTER'
+$element['#value'] = $value;
+CODE_AFTER
             ),
         ]);
     }

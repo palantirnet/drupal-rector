@@ -10,6 +10,7 @@ use PhpParser\Node\Expr\PropertyFetch;
 use PhpParser\Node\Identifier;
 use PHPStan\Type\ObjectType;
 use Rector\Rector\AbstractRector;
+use Symplify\RuleDocGenerator\Contract\DocumentedRuleInterface;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
@@ -26,7 +27,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  * @see https://www.drupal.org/node/3589047
  * @see https://www.drupal.org/node/3574112
  */
-final class GetDrupalRootToRootPropertyRector extends AbstractRector
+final class GetDrupalRootToRootPropertyRector extends AbstractRector implements DocumentedRuleInterface
 {
     public const PHPSTAN_MESSAGES = [
         'Call to deprecated method getDrupalRoot() of class Drupal\Tests\BrowserTestBase. Deprecated in drupal:11.4.0 and is removed from drupal:13.0.0. Access $this->root directly.',

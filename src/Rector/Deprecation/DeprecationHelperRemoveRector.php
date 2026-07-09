@@ -8,10 +8,11 @@ use DrupalRector\Rector\ValueObject\DeprecationHelperRemoveConfiguration;
 use PhpParser\Node;
 use Rector\Contract\Rector\ConfigurableRectorInterface;
 use Rector\Rector\AbstractRector;
+use Symplify\RuleDocGenerator\Contract\DocumentedRuleInterface;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\ConfiguredCodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
-final class DeprecationHelperRemoveRector extends AbstractRector implements ConfigurableRectorInterface
+final class DeprecationHelperRemoveRector extends AbstractRector implements ConfigurableRectorInterface, DocumentedRuleInterface
 {
     /**
      * @var array|DeprecationHelperRemoveConfiguration[]

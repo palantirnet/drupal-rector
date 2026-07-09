@@ -5,10 +5,11 @@ declare(strict_types=1);
 namespace DrupalRector\Tests\Rector\Deprecation\FunctionCallRemovalRector;
 
 use DrupalRector\Tests\AbstractDrupalRectorTestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 class FunctionCallRemovalRectorTest extends AbstractDrupalRectorTestCase
 {
-    #[\PHPUnit\Framework\Attributes\DataProvider('provideData')]
+    #[DataProvider('provideData')]
     public function test(string $filePath): void
     {
         $this->doTestFile($filePath);

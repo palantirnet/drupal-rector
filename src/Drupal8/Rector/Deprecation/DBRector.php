@@ -11,6 +11,7 @@ use PhpParser\Node\Expr;
 use PhpParser\Node\Expr\MethodCall;
 use Rector\Contract\Rector\ConfigurableRectorInterface;
 use Rector\Rector\AbstractRector;
+use Symplify\RuleDocGenerator\Contract\DocumentedRuleInterface;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\ConfiguredCodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
@@ -37,7 +38,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  * - Inject the database connection
  * - Use calls to Database::getConnection() if the container is not yet available
  */
-class DBRector extends AbstractRector implements ConfigurableRectorInterface
+class DBRector extends AbstractRector implements ConfigurableRectorInterface, DocumentedRuleInterface
 {
     /**
      * The method name, such as `db_query`.

@@ -7,11 +7,13 @@ namespace DrupalRector\Tests\Drupal10\Rector\Deprecation\WatchdogExceptionRector
 use DrupalRector\Services\DrupalRectorSettings;
 use DrupalRector\Tests\AbstractDrupalRectorTestCase;
 use Iterator;
+use PHPUnit\Framework\Attributes\CoversFunction;
+use PHPUnit\Framework\Attributes\DataProvider;
 
-#[\PHPUnit\Framework\Attributes\CoversFunction('refactor')]
+#[CoversFunction('refactor')]
 class WatchdogExceptionRectorTest extends AbstractDrupalRectorTestCase
 {
-    #[\PHPUnit\Framework\Attributes\DataProvider('provideData')]
+    #[DataProvider('provideData')]
     public function testAboveVersion(string $filePath): void
     {
         static::getContainer()->make(DrupalRectorSettings::class)->setDrupalVersion('99.99.99');
@@ -26,7 +28,7 @@ class WatchdogExceptionRectorTest extends AbstractDrupalRectorTestCase
         return self::yieldFilesFromDirectory(__DIR__.'/fixture');
     }
 
-    #[\PHPUnit\Framework\Attributes\DataProvider('provideDataBelowVersion')]
+    #[DataProvider('provideDataBelowVersion')]
     public function testBelowVersion(string $filePath): void
     {
         static::getContainer()->make(DrupalRectorSettings::class)->setDrupalVersion('1.0.0');

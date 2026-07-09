@@ -12,6 +12,10 @@ release-by-release.
 
 ## [Unreleased]
 
+### Feature
+
+- **Rule documentation on [getrector.com](https://getrector.com)** — all rules now implement Rector's `DocumentedRuleInterface`, so their definitions and code samples are picked up and published on the getrector.com documentation site. ([#3600962](https://git.drupalcode.org/project/rector/-/work_items/3600962))
+
 ## [1.1.0] — 2026-07-09
 
 ### Added
@@ -20,6 +24,10 @@ release-by-release.
 
 ### Fixed
 
+- **Composer-based sets bootstrap** — the Drupal bootstrap now loads correctly
+  when rector is run through the composer-based sets, so rules that rely on the
+  Drupal container / class map resolve as expected in that scenario
+  ([#404](https://github.com/palantirnet/drupal-rector/pull/404)).
 - **`RemoveAliasManagerCacheMethodCallsRector`** — no longer removes calls to
   `AliasManager::setCacheKey()` / `writeCache()` unconditionally, which broke
   backward compatibility on Drupal < 11.3. These methods only became no-ops in

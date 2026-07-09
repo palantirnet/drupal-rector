@@ -8,19 +8,21 @@ use Drupal\Tests\BrowserTestBase;
 use PhpParser\Builder\Property;
 use PhpParser\Node;
 use PHPStan\Php\PhpVersionFactory;
+use PHPStan\Reflection\Php\PhpPropertyReflection;
 use PHPStan\Type\ObjectType;
 use Rector\BetterPhpDocParser\PhpDocInfo\PhpDocInfoFactory;
 use Rector\Exception\ShouldNotHappenException;
 use Rector\PhpParser\Node\Value\ValueResolver;
 use Rector\PHPStan\ScopeFetcher;
 use Rector\Rector\AbstractRector;
+use Symplify\RuleDocGenerator\Contract\DocumentedRuleInterface;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 /**
  * @changelog https://www.drupal.org/node/3083055
  */
-final class FunctionalTestDefaultThemePropertyRector extends AbstractRector
+final class FunctionalTestDefaultThemePropertyRector extends AbstractRector implements DocumentedRuleInterface
 {
     /**
      * @var PhpDocInfoFactory
@@ -104,7 +106,7 @@ CODE_SAMPLE
             $scope = $node->getAttribute('scope');
         }
         $defaultThemeProperty = $classReflection->getProperty('defaultTheme', $scope);
-        assert($defaultThemeProperty instanceof \PHPStan\Reflection\Php\PhpPropertyReflection);
+        assert($defaultThemeProperty instanceof PhpPropertyReflection);
 
         $reflectionProperty = $defaultThemeProperty->getNativeReflection();
         $betterReflection = $reflectionProperty->getBetterReflection();

@@ -6,11 +6,13 @@ namespace DrupalRector\Tests\Drupal8\Rector\Deprecation\EntityDeleteMultipleRect
 
 use DrupalRector\Tests\AbstractDrupalRectorTestCase;
 use Iterator;
+use PHPUnit\Framework\Attributes\CoversFunction;
+use PHPUnit\Framework\Attributes\DataProvider;
 
-#[\PHPUnit\Framework\Attributes\CoversFunction('refactor')]
+#[CoversFunction('refactor')]
 class EntityDeleteMultipleRectorTest extends AbstractDrupalRectorTestCase
 {
-    #[\PHPUnit\Framework\Attributes\DataProvider('provideData')]
+    #[DataProvider('provideData')]
     public function test(string $filePath): void
     {
         $this->doTestFile($filePath);

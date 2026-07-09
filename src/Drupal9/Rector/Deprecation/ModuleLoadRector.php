@@ -6,13 +6,14 @@ namespace DrupalRector\Drupal9\Rector\Deprecation;
 
 use PhpParser\Node;
 use Rector\Rector\AbstractRector;
+use Symplify\RuleDocGenerator\Contract\DocumentedRuleInterface;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 /**
  * Replaces deprecated module_load_install call with ModuleHandler call.
  */
-class ModuleLoadRector extends AbstractRector
+class ModuleLoadRector extends AbstractRector implements DocumentedRuleInterface
 {
     /**
      * {@inheritdoc}

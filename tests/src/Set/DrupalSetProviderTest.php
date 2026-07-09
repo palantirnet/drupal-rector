@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace DrupalRector\Tests\Set;
 
 use DrupalRector\Set\DrupalSetProvider;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Rector\Composer\ValueObject\InstalledPackage;
 use Rector\Set\ValueObject\ComposerTriggeredSet;
@@ -101,7 +102,7 @@ final class DrupalSetProviderTest extends TestCase
     /**
      * @param string[] $expectedFiles
      */
-    #[\PHPUnit\Framework\Attributes\DataProvider('installedVersionProvider')]
+    #[DataProvider('installedVersionProvider')]
     public function testCumulativeMatchingByInstalledCoreVersion(string $installedVersion, array $expectedFiles): void
     {
         $installedPackages = [

@@ -9,13 +9,14 @@ use PhpParser\Node;
 use PhpParser\NodeVisitor;
 use Rector\Contract\Rector\ConfigurableRectorInterface;
 use Rector\Rector\AbstractRector;
+use Symplify\RuleDocGenerator\Contract\DocumentedRuleInterface;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\ConfiguredCodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 /**
  * Removes deprecated function call statements with no replacement.
  */
-class FunctionCallRemovalRector extends AbstractRector implements ConfigurableRectorInterface
+class FunctionCallRemovalRector extends AbstractRector implements ConfigurableRectorInterface, DocumentedRuleInterface
 {
     /**
      * @var array|FunctionCallRemovalConfiguration[]
@@ -64,8 +65,13 @@ class FunctionCallRemovalRector extends AbstractRector implements ConfigurableRe
     {
         return new RuleDefinition('Removes deprecated function call statements that have no replacement', [
             new ConfiguredCodeSample(
-                'deprecated_function();',
-                '',
+                <<<'CODE_BEFORE'
+deprecated_function();
+do_something_else();
+CODE_BEFORE,
+                <<<'CODE_AFTER'
+do_something_else();
+CODE_AFTER,
                 [new FunctionCallRemovalConfiguration('deprecated_function')]
             ),
         ]);

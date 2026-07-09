@@ -5,12 +5,14 @@ declare(strict_types=1);
 namespace DrupalRector\Rector\PHPUnit;
 
 use PhpParser\Node;
+use PHPUnit\Framework\TestCase;
 use Rector\PHPStan\ScopeFetcher;
 use Rector\Rector\AbstractRector;
+use Symplify\RuleDocGenerator\Contract\DocumentedRuleInterface;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
-class ShouldCallParentMethodsRector extends AbstractRector
+class ShouldCallParentMethodsRector extends AbstractRector implements DocumentedRuleInterface
 {
     public function getNodeTypes(): array
     {
@@ -37,7 +39,7 @@ class ShouldCallParentMethodsRector extends AbstractRector
             return null;
         }
 
-        if (!$scope->getClassReflection()->isSubclassOf(\PHPUnit\Framework\TestCase::class)) {
+        if (!$scope->getClassReflection()->isSubclassOf(TestCase::class)) {
             return null;
         }
 

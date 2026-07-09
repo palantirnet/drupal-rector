@@ -14,6 +14,7 @@ use PhpParser\Node\Stmt\ClassMethod;
 use PhpParser\Node\Stmt\Function_;
 use PhpParser\NodeVisitor;
 use Rector\Rector\AbstractRector;
+use Symplify\RuleDocGenerator\Contract\DocumentedRuleInterface;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
@@ -29,7 +30,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  * @see https://www.drupal.org/node/3535439
  * @see https://www.drupal.org/node/3542527
  */
-final class TaxonomyTermPageVariableToViewModeRector extends AbstractRector
+final class TaxonomyTermPageVariableToViewModeRector extends AbstractRector implements DocumentedRuleInterface
 {
     // TODO PHPSTAN_MESSAGES TaxonomyTermPageVariableToViewModeRector:
     // The deprecation is signalled at runtime by core via

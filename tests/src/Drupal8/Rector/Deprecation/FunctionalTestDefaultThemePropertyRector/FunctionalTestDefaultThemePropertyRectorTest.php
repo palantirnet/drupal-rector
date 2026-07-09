@@ -6,10 +6,11 @@ namespace DrupalRector\Tests\Drupal8\Rector\Deprecation\FunctionalTestDefaultThe
 
 use DrupalRector\Tests\AbstractDrupalRectorTestCase;
 use DrupalRector\Tests\Rector\Class_\FunctionalTestDefaultThemePropertyRector\Iterator;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 final class FunctionalTestDefaultThemePropertyRectorTest extends AbstractDrupalRectorTestCase
 {
-    #[\PHPUnit\Framework\Attributes\DataProvider('provideData')]
+    #[DataProvider('provideData')]
     public function test(string $filePath): void
     {
         $this->doTestFile($filePath);

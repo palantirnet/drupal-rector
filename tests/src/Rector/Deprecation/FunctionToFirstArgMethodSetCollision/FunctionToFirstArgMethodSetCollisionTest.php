@@ -6,6 +6,7 @@ namespace DrupalRector\Tests\Rector\Deprecation\FunctionToFirstArgMethodSetColli
 
 use DrupalRector\Services\DrupalRectorSettings;
 use DrupalRector\Tests\AbstractDrupalRectorTestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
  * Regression test for the Drupal 9 + Drupal 11 set collision.
@@ -19,7 +20,7 @@ use DrupalRector\Tests\AbstractDrupalRectorTestCase;
  */
 class FunctionToFirstArgMethodSetCollisionTest extends AbstractDrupalRectorTestCase
 {
-    #[\PHPUnit\Framework\Attributes\DataProvider('provideData')]
+    #[DataProvider('provideData')]
     public function test(string $filePath): void
     {
         static::getContainer()->make(DrupalRectorSettings::class)->setDrupalVersion('99.99.99');

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use DrupalRector\Drupal9\Rector\Deprecation\AssertFieldByIdRector;
 use DrupalRector\Drupal9\Rector\Deprecation\AssertFieldByNameRector;
+use DrupalRector\Drupal9\Rector\Deprecation\AssertLegacyTraitRector;
 use DrupalRector\Drupal9\Rector\Deprecation\AssertNoFieldByIdRector;
 use DrupalRector\Drupal9\Rector\Deprecation\AssertNoFieldByNameRector;
 use DrupalRector\Drupal9\Rector\Deprecation\AssertNoUniqueTextRector;
@@ -44,7 +45,7 @@ return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->rule(AssertNoFieldByNameRector::class);
     $rectorConfig->rule(AssertFieldByIdRector::class);
 
-    $rectorConfig->ruleWithConfiguration(DrupalRector\Drupal9\Rector\Deprecation\AssertLegacyTraitRector::class, [
+    $rectorConfig->ruleWithConfiguration(AssertLegacyTraitRector::class, [
         new AssertLegacyTraitConfiguration('assertLinkByHref', 'linkByHrefExists'),
         new AssertLegacyTraitConfiguration('assertLink', 'linkExists'),
         new AssertLegacyTraitConfiguration('assertNoEscaped', 'assertNoEscaped'),

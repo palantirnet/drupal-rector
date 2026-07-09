@@ -6,10 +6,11 @@ namespace DrupalRector\Tests\Drupal11\Rector\Deprecation\ReplaceEntityOriginalPr
 
 use DrupalRector\Services\DrupalRectorSettings;
 use DrupalRector\Tests\AbstractDrupalRectorTestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 class ReplaceEntityOriginalPropertyRectorTest extends AbstractDrupalRectorTestCase
 {
-    #[\PHPUnit\Framework\Attributes\DataProvider('provideData')]
+    #[DataProvider('provideData')]
     public function testAboveVersion(string $filePath): void
     {
         static::getContainer()->make(DrupalRectorSettings::class)->setDrupalVersion('99.99.99');
@@ -24,7 +25,7 @@ class ReplaceEntityOriginalPropertyRectorTest extends AbstractDrupalRectorTestCa
         return self::yieldFilesFromDirectory(__DIR__.'/fixture');
     }
 
-    #[\PHPUnit\Framework\Attributes\DataProvider('provideDataBelowVersion')]
+    #[DataProvider('provideDataBelowVersion')]
     public function testBelowVersion(string $filePath): void
     {
         static::getContainer()->make(DrupalRectorSettings::class)->setDrupalVersion('1.0.0');

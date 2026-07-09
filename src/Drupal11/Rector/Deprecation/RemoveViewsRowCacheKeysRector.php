@@ -16,6 +16,7 @@ use PhpParser\Node\Stmt\Return_;
 use PhpParser\NodeVisitor;
 use PHPStan\Type\ObjectType;
 use Rector\Rector\AbstractRector;
+use Symplify\RuleDocGenerator\Contract\DocumentedRuleInterface;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
@@ -31,7 +32,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  * @see https://www.drupal.org/node/3564937
  * @see https://www.drupal.org/node/3564958
  */
-final class RemoveViewsRowCacheKeysRector extends AbstractRector
+final class RemoveViewsRowCacheKeysRector extends AbstractRector implements DocumentedRuleInterface
 {
     private const DEPRECATED_METHODS = ['getRowCacheKeys', 'getRowId'];
 

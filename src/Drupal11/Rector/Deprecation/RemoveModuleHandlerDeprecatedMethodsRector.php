@@ -11,6 +11,7 @@ use PhpParser\Node\Stmt\Expression;
 use PhpParser\NodeVisitor;
 use PHPStan\Type\ObjectType;
 use Rector\Rector\AbstractRector;
+use Symplify\RuleDocGenerator\Contract\DocumentedRuleInterface;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
@@ -23,7 +24,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  * @see https://www.drupal.org/node/3442009
  * @see https://www.drupal.org/node/3442349
  */
-final class RemoveModuleHandlerDeprecatedMethodsRector extends AbstractRector
+final class RemoveModuleHandlerDeprecatedMethodsRector extends AbstractRector implements DocumentedRuleInterface
 {
     public function getRuleDefinition(): RuleDefinition
     {
@@ -31,8 +32,13 @@ final class RemoveModuleHandlerDeprecatedMethodsRector extends AbstractRector
             'Remove deprecated ModuleHandlerInterface::writeCache() calls and replace getHookInfo() with []',
             [
                 new CodeSample(
-                    '$this->moduleHandler->writeCache();',
-                    ''
+                    <<<'CODE_BEFORE'
+$this->moduleHandler->writeCache();
+$this->moduleHandler->resetImplementations();
+CODE_BEFORE,
+                    <<<'CODE_AFTER'
+$this->moduleHandler->resetImplementations();
+CODE_AFTER
                 ),
                 new CodeSample(
                     '$hookInfo = $this->moduleHandler->getHookInfo();',

@@ -6,10 +6,11 @@ namespace DrupalRector\Tests\Drupal11\Rector\Deprecation\RemoveAliasManagerCache
 
 use DrupalRector\Services\DrupalRectorSettings;
 use DrupalRector\Tests\AbstractDrupalRectorTestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 class RemoveAliasManagerCacheMethodCallsRectorTest extends AbstractDrupalRectorTestCase
 {
-    #[\PHPUnit\Framework\Attributes\DataProvider('provideData')]
+    #[DataProvider('provideData')]
     public function test(string $filePath): void
     {
         // Backward compatibility disabled: the deprecated call is removed.
@@ -22,7 +23,7 @@ class RemoveAliasManagerCacheMethodCallsRectorTest extends AbstractDrupalRectorT
         return self::yieldFilesFromDirectory(__DIR__.'/fixture');
     }
 
-    #[\PHPUnit\Framework\Attributes\DataProvider('provideDataBelowVersion')]
+    #[DataProvider('provideDataBelowVersion')]
     public function testBelowVersion(string $filePath): void
     {
         // Target Drupal is below the 11.3.0 deprecation: the rector must not

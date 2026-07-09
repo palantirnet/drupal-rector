@@ -8,6 +8,7 @@ use PhpParser\Node;
 use PhpParser\Node\Identifier;
 use PhpParser\Node\Stmt\Function_;
 use Rector\Rector\AbstractRector;
+use Symplify\RuleDocGenerator\Contract\DocumentedRuleInterface;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
@@ -32,7 +33,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  * @see https://www.drupal.org/node/3490846
  * @see https://www.drupal.org/node/3549685
  */
-final class HookRequirementsAlterRenameRector extends AbstractRector
+final class HookRequirementsAlterRenameRector extends AbstractRector implements DocumentedRuleInterface
 {
     private const SUFFIX = '_requirements_alter';
 

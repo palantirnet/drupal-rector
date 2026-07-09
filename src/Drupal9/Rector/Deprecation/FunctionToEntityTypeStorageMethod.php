@@ -8,10 +8,11 @@ use DrupalRector\Drupal9\Rector\ValueObject\FunctionToEntityTypeStorageConfigura
 use PhpParser\Node;
 use Rector\Contract\Rector\ConfigurableRectorInterface;
 use Rector\Rector\AbstractRector;
+use Symplify\RuleDocGenerator\Contract\DocumentedRuleInterface;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\ConfiguredCodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
-class FunctionToEntityTypeStorageMethod extends AbstractRector implements ConfigurableRectorInterface
+class FunctionToEntityTypeStorageMethod extends AbstractRector implements ConfigurableRectorInterface, DocumentedRuleInterface
 {
     /**
      * @var array|FunctionToEntityTypeStorageConfiguration[]

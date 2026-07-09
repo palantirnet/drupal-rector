@@ -12,6 +12,7 @@ use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Scalar\String_;
 use PHPStan\Type\ObjectType;
 use Rector\Rector\AbstractRector;
+use Symplify\RuleDocGenerator\Contract\DocumentedRuleInterface;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
@@ -28,7 +29,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  * @see https://www.drupal.org/node/3456178
  * @see https://www.drupal.org/node/3456233
  */
-class DrupalGetHeadersAssocArrayRector extends AbstractRector
+class DrupalGetHeadersAssocArrayRector extends AbstractRector implements DocumentedRuleInterface
 {
     // TODO PHPSTAN_MESSAGES DrupalGetHeadersAssocArrayRector: PHPStan emits no
     //   deprecation for the targeted call. The deprecation is triggered at

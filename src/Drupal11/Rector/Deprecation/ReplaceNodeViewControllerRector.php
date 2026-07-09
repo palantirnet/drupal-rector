@@ -9,6 +9,7 @@ use PhpParser\Node\Expr\New_;
 use PhpParser\Node\Name;
 use PhpParser\Node\Name\FullyQualified;
 use Rector\Rector\AbstractRector;
+use Symplify\RuleDocGenerator\Contract\DocumentedRuleInterface;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
@@ -48,7 +49,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  * @see https://www.drupal.org/node/3589630
  * @see https://www.drupal.org/node/3589636
  */
-class ReplaceNodeViewControllerRector extends AbstractRector
+class ReplaceNodeViewControllerRector extends AbstractRector implements DocumentedRuleInterface
 {
     private const OLD_CLASS = 'Drupal\node\Controller\NodeViewController';
 

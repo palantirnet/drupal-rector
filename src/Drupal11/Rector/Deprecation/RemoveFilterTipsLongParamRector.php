@@ -11,6 +11,7 @@ use PhpParser\Node\Name;
 use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\ClassMethod;
 use Rector\Rector\AbstractRector;
+use Symplify\RuleDocGenerator\Contract\DocumentedRuleInterface;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
@@ -29,7 +30,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  * @see https://www.drupal.org/node/3505370
  * @see https://www.drupal.org/node/3567879
  */
-class RemoveFilterTipsLongParamRector extends AbstractRector
+class RemoveFilterTipsLongParamRector extends AbstractRector implements DocumentedRuleInterface
 {
     private const FILTER_SYMBOLS = [
         'Drupal\\filter\\Plugin\\FilterBase',

@@ -5,10 +5,11 @@ declare(strict_types=1);
 namespace DrupalRector\Tests\Drupal11\Rector\Deprecation\EntityFormModeEmptyDescriptionToNullRector;
 
 use DrupalRector\Tests\AbstractDrupalRectorTestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 class EntityFormModeEmptyDescriptionToNullRectorTest extends AbstractDrupalRectorTestCase
 {
-    #[\PHPUnit\Framework\Attributes\DataProvider('provideData')]
+    #[DataProvider('provideData')]
     public function test(string $filePath): void
     {
         $this->doTestFile($filePath);

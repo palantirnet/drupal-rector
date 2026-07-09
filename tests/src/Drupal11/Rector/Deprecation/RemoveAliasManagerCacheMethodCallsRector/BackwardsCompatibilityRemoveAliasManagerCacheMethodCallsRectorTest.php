@@ -6,10 +6,11 @@ namespace DrupalRector\Tests\Drupal11\Rector\Deprecation\RemoveAliasManagerCache
 
 use DrupalRector\Services\DrupalRectorSettings;
 use DrupalRector\Tests\AbstractDrupalRectorTestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 class BackwardsCompatibilityRemoveAliasManagerCacheMethodCallsRectorTest extends AbstractDrupalRectorTestCase
 {
-    #[\PHPUnit\Framework\Attributes\DataProvider('provideData')]
+    #[DataProvider('provideData')]
     public function test(string $filePath): void
     {
         // Backward compatibility enabled with a minimum supported core version

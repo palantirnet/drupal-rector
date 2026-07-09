@@ -13,6 +13,7 @@ use PhpParser\Node\Stmt\Expression;
 use PhpParser\NodeVisitor;
 use PHPStan\Type\ObjectType;
 use Rector\Rector\AbstractRector;
+use Symplify\RuleDocGenerator\Contract\DocumentedRuleInterface;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
@@ -28,7 +29,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  * @see https://www.drupal.org/node/3335756
  * @see https://www.drupal.org/node/3349345
  */
-class RemoveInstallSchemaSystemSequencesRector extends AbstractRector
+class RemoveInstallSchemaSystemSequencesRector extends AbstractRector implements DocumentedRuleInterface
 {
     // TODO PHPSTAN_MESSAGES RemoveInstallSchemaSystemSequencesRector:
     // The installSchema() method itself is not annotated @deprecated — only
@@ -45,10 +46,11 @@ class RemoveInstallSchemaSystemSequencesRector extends AbstractRector
             [
                 new CodeSample(
                     <<<'CODE_BEFORE'
+$this->installEntitySchema('node');
 $this->installSchema('system', ['sequences']);
 CODE_BEFORE,
                     <<<'CODE_AFTER'
-
+$this->installEntitySchema('node');
 CODE_AFTER
                 ),
             ]

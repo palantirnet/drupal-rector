@@ -6,10 +6,11 @@ namespace DrupalRector\Tests\Rector\Deprecation\DrupalServiceRenameRector;
 
 use DrupalRector\Tests\AbstractDrupalRectorTestCase;
 use Iterator;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 class DrupalServiceRenameRectorTest extends AbstractDrupalRectorTestCase
 {
-    #[\PHPUnit\Framework\Attributes\DataProvider('provideData')]
+    #[DataProvider('provideData')]
     public function test(string $filePath): void
     {
         $this->doTestFile($filePath);

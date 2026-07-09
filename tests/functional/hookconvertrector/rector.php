@@ -3,10 +3,11 @@
 declare(strict_types=1);
 
 use DrupalFinder\DrupalFinder;
+use DrupalRector\Rector\Convert\HookConvertRector;
 use Rector\Config\RectorConfig;
 
 return static function (RectorConfig $rectorConfig): void {
-    $rectorConfig->rule(DrupalRector\Rector\Convert\HookConvertRector::class);
+    $rectorConfig->rule(HookConvertRector::class);
 
     $drupalFinder = new DrupalFinder();
     $drupalFinder->locateRoot(__DIR__);

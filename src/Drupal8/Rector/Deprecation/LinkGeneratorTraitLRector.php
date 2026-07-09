@@ -9,6 +9,7 @@ use DrupalRector\Utility\FindParentByTypeTrait;
 use PhpParser\Node;
 use Rector\NodeTypeResolver\Node\AttributeKey;
 use Rector\Rector\AbstractRector;
+use Symplify\RuleDocGenerator\Contract\DocumentedRuleInterface;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
@@ -23,7 +24,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  * Improvement opportunities
  * - Remove link generator trait.
  */
-final class LinkGeneratorTraitLRector extends AbstractRector
+final class LinkGeneratorTraitLRector extends AbstractRector implements DocumentedRuleInterface
 {
     use FindParentByTypeTrait;
 

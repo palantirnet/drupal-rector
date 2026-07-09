@@ -7,6 +7,7 @@ namespace DrupalRector\Drupal8\Rector\Deprecation;
 use DrupalRector\Services\AddCommentService;
 use PhpParser\Node;
 use Rector\Rector\AbstractRector;
+use Symplify\RuleDocGenerator\Contract\DocumentedRuleInterface;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
@@ -21,7 +22,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  * Improvement opportunities:
  * - Checks the variable has a certain class.
  */
-final class EntityInterfaceLinkRector extends AbstractRector
+final class EntityInterfaceLinkRector extends AbstractRector implements DocumentedRuleInterface
 {
     /**
      * @var AddCommentService

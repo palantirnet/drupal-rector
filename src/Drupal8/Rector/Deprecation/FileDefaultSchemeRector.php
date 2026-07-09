@@ -6,6 +6,7 @@ namespace DrupalRector\Drupal8\Rector\Deprecation;
 
 use PhpParser\Node;
 use Rector\Rector\AbstractRector;
+use Symplify\RuleDocGenerator\Contract\DocumentedRuleInterface;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
@@ -14,7 +15,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  *
  * @see https://www.drupal.org/node/3049030 for change record.
  */
-final class FileDefaultSchemeRector extends AbstractRector
+final class FileDefaultSchemeRector extends AbstractRector implements DocumentedRuleInterface
 {
     protected string $deprecatedFunctionName = 'file_default_scheme';
 

@@ -11,6 +11,7 @@ use Rector\Exception\ShouldNotHappenException;
 use Rector\NodeCollector\ScopeResolver\ParentClassScopeResolver;
 use Rector\NodeTypeResolver\Node\AttributeKey;
 use Rector\Rector\AbstractRector;
+use Symplify\RuleDocGenerator\Contract\DocumentedRuleInterface;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
@@ -33,7 +34,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  * - Complex use case handling when a different service is needed and the
  * method does not directly call the service
  */
-final class EntityManagerRector extends AbstractRector
+final class EntityManagerRector extends AbstractRector implements DocumentedRuleInterface
 {
     /**
      * @var ParentClassScopeResolver

@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 use DrupalRector\Drupal9\Rector\Deprecation\ExtensionPathRector;
 use DrupalRector\Drupal9\Rector\Deprecation\FileBuildUriRector;
+use DrupalRector\Drupal9\Rector\Deprecation\FileCreateUrlRector;
+use DrupalRector\Drupal9\Rector\Deprecation\FileUrlTransformRelativeRector;
+use DrupalRector\Drupal9\Rector\Deprecation\FromUriRector;
 use DrupalRector\Drupal9\Rector\Deprecation\FunctionToEntityTypeStorageMethod;
 use DrupalRector\Drupal9\Rector\Deprecation\FunctionToFirstArgMethodRector;
 use DrupalRector\Drupal9\Rector\Deprecation\SystemSortByInfoNameRector;
@@ -33,9 +36,9 @@ return static function (RectorConfig $rectorConfig): void {
     ]);
 
     // Change record: https://www.drupal.org/node/2940031
-    $rectorConfig->rule(DrupalRector\Drupal9\Rector\Deprecation\FileCreateUrlRector::class);
-    $rectorConfig->rule(DrupalRector\Drupal9\Rector\Deprecation\FileUrlTransformRelativeRector::class);
-    $rectorConfig->rule(DrupalRector\Drupal9\Rector\Deprecation\FromUriRector::class);
+    $rectorConfig->rule(FileCreateUrlRector::class);
+    $rectorConfig->rule(FileUrlTransformRelativeRector::class);
+    $rectorConfig->rule(FromUriRector::class);
 
     // Change record: https://www.drupal.org/node/3223520
     $rectorConfig->ruleWithConfiguration(FunctionToServiceRector::class, [
