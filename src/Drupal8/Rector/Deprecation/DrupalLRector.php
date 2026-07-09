@@ -6,6 +6,7 @@ namespace DrupalRector\Drupal8\Rector\Deprecation;
 
 use PhpParser\Node;
 use Rector\Rector\AbstractRector;
+use Symplify\RuleDocGenerator\Contract\DocumentedRuleInterface;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
@@ -20,7 +21,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  * Improvement opportunities
  * - Dependency injection
  */
-final class DrupalLRector extends AbstractRector
+final class DrupalLRector extends AbstractRector implements DocumentedRuleInterface
 {
     /**
      * {@inheritdoc}

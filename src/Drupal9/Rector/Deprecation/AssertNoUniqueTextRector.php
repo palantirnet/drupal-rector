@@ -8,10 +8,11 @@ use DrupalRector\Utility\GetDeclaringSourceTrait;
 use PhpParser\Node;
 use Rector\Exception\ShouldNotHappenException;
 use Rector\Rector\AbstractRector;
+use Symplify\RuleDocGenerator\Contract\DocumentedRuleInterface;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
-final class AssertNoUniqueTextRector extends AbstractRector
+final class AssertNoUniqueTextRector extends AbstractRector implements DocumentedRuleInterface
 {
     use GetDeclaringSourceTrait;
 

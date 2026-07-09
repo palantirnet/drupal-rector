@@ -13,6 +13,7 @@ use PHPStan\PhpDocParser\Ast\PhpDoc\PhpDocTagNode;
 use Rector\BetterPhpDocParser\PhpDocInfo\PhpDocInfo;
 use Rector\NodeTypeResolver\Node\AttributeKey;
 use Rector\Rector\AbstractRector;
+use Symplify\RuleDocGenerator\Contract\DocumentedRuleInterface;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
@@ -31,7 +32,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  * - Add trait for classes
  *   - `use MessengerTrait;`
  */
-final class DrupalSetMessageRector extends AbstractRector
+final class DrupalSetMessageRector extends AbstractRector implements DocumentedRuleInterface
 {
     use FindParentByTypeTrait;
 

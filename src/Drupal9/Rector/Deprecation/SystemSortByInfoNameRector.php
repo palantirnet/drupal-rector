@@ -6,10 +6,11 @@ namespace DrupalRector\Drupal9\Rector\Deprecation;
 
 use PhpParser\Node;
 use Rector\Rector\AbstractRector;
+use Symplify\RuleDocGenerator\Contract\DocumentedRuleInterface;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
-class SystemSortByInfoNameRector extends AbstractRector
+class SystemSortByInfoNameRector extends AbstractRector implements DocumentedRuleInterface
 {
     public function getNodeTypes(): array
     {

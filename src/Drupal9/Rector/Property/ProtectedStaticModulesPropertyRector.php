@@ -7,13 +7,14 @@ namespace DrupalRector\Drupal9\Rector\Property;
 use PhpParser\Node;
 use Rector\Privatization\NodeManipulator\VisibilityManipulator;
 use Rector\Rector\AbstractRector;
+use Symplify\RuleDocGenerator\Contract\DocumentedRuleInterface;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 /**
  * @changelog https://www.drupal.org/node/2909426
  */
-final class ProtectedStaticModulesPropertyRector extends AbstractRector
+final class ProtectedStaticModulesPropertyRector extends AbstractRector implements DocumentedRuleInterface
 {
     private VisibilityManipulator $visibilityManipulator;
 

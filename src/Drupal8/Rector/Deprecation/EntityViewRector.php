@@ -6,6 +6,7 @@ namespace DrupalRector\Drupal8\Rector\Deprecation;
 
 use PhpParser\Node;
 use Rector\Rector\AbstractRector;
+use Symplify\RuleDocGenerator\Contract\DocumentedRuleInterface;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
@@ -21,7 +22,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  * Improvement opportunities
  * - Include support for cache rest parameter.
  */
-final class EntityViewRector extends AbstractRector
+final class EntityViewRector extends AbstractRector implements DocumentedRuleInterface
 {
     /**
      * {@inheritdoc}

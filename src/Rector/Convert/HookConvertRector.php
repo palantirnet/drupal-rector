@@ -23,10 +23,11 @@ use Rector\Doctrine\CodeQuality\Utils\CaseStringHelper;
 use Rector\NodeTypeResolver\Node\AttributeKey;
 use Rector\PhpParser\Printer\BetterStandardPrinter;
 use Rector\Rector\AbstractRector;
+use Symplify\RuleDocGenerator\Contract\DocumentedRuleInterface;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
-class HookConvertRector extends AbstractRector
+class HookConvertRector extends AbstractRector implements DocumentedRuleInterface
 {
     protected string $inputFilename = '';
 

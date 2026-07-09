@@ -6,10 +6,11 @@ namespace DrupalRector\Drupal9\Rector\Deprecation;
 
 use PhpParser\Node;
 use Rector\Rector\AbstractRector;
+use Symplify\RuleDocGenerator\Contract\DocumentedRuleInterface;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
-final class FileBuildUriRector extends AbstractRector
+final class FileBuildUriRector extends AbstractRector implements DocumentedRuleInterface
 {
     /**
      * {@inheritdoc}

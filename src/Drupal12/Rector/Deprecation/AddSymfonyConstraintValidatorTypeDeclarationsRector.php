@@ -10,6 +10,7 @@ use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\ClassMethod;
 use PHPStan\Type\ObjectType;
 use Rector\Rector\AbstractRector;
+use Symplify\RuleDocGenerator\Contract\DocumentedRuleInterface;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
@@ -33,7 +34,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  * @see https://git.drupalcode.org/project/redirect/-/merge_requests/200 (issue #3602388)
  * @see https://github.com/symfony/symfony/blob/8.0/src/Symfony/Component/Validator/ConstraintValidatorInterface.php
  */
-final class AddSymfonyConstraintValidatorTypeDeclarationsRector extends AbstractRector
+final class AddSymfonyConstraintValidatorTypeDeclarationsRector extends AbstractRector implements DocumentedRuleInterface
 {
     private const CONSTRAINT_VALIDATOR_INTERFACE = 'Symfony\Component\Validator\ConstraintValidatorInterface';
 

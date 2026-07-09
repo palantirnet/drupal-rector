@@ -6,10 +6,11 @@ namespace DrupalRector\Drupal9\Rector\Deprecation;
 
 use PhpParser\Node;
 use Rector\Rector\AbstractRector;
+use Symplify\RuleDocGenerator\Contract\DocumentedRuleInterface;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
-class TaxonomyVocabularyGetNamesDrupalStaticResetRector extends AbstractRector
+class TaxonomyVocabularyGetNamesDrupalStaticResetRector extends AbstractRector implements DocumentedRuleInterface
 {
     public function getRuleDefinition(): RuleDefinition
     {
