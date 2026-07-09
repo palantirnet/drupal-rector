@@ -10,6 +10,7 @@ use PhpParser\Node\Stmt\Expression;
 use PhpParser\NodeVisitor;
 use PHPStan\Type\ObjectType;
 use Rector\Rector\AbstractRector;
+use Symplify\RuleDocGenerator\Contract\DocumentedRuleInterface;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
@@ -24,7 +25,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  * @see https://www.drupal.org/node/3525388
  * @see https://www.drupal.org/node/3525389
  */
-class RemoveRendererAddCacheableDependencyNonObjectRector extends AbstractRector
+class RemoveRendererAddCacheableDependencyNonObjectRector extends AbstractRector implements DocumentedRuleInterface
 {
     public const PHPSTAN_MESSAGES = [
         "Calling Drupal\\Core\\Render\\Renderer::addCacheableDependency() with an object that doesn't implement Drupal\\Core\\Cache\\CacheableDependencyInterface is deprecated in drupal:11.3.0 and will throw an error in drupal:13.0.0. See https://www.drupal.org/node/3525389",

@@ -8,6 +8,7 @@ use Drupal\Tests\BrowserTestBase;
 use PhpParser\Builder\Property;
 use PhpParser\Node;
 use PHPStan\Php\PhpVersionFactory;
+use PHPStan\Reflection\Php\PhpPropertyReflection;
 use PHPStan\Type\ObjectType;
 use Rector\BetterPhpDocParser\PhpDocInfo\PhpDocInfoFactory;
 use Rector\Exception\ShouldNotHappenException;
@@ -104,7 +105,7 @@ CODE_SAMPLE
             $scope = $node->getAttribute('scope');
         }
         $defaultThemeProperty = $classReflection->getProperty('defaultTheme', $scope);
-        assert($defaultThemeProperty instanceof \PHPStan\Reflection\Php\PhpPropertyReflection);
+        assert($defaultThemeProperty instanceof PhpPropertyReflection);
 
         $reflectionProperty = $defaultThemeProperty->getNativeReflection();
         $betterReflection = $reflectionProperty->getBetterReflection();

@@ -11,6 +11,7 @@ use PhpParser\Node\Expr\ArrayItem;
 use PhpParser\Node\Expr\FuncCall;
 use PhpParser\Node\Scalar\String_;
 use Rector\Rector\AbstractRector;
+use Symplify\RuleDocGenerator\Contract\DocumentedRuleInterface;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
@@ -20,7 +21,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  * @see https://www.drupal.org/node/455724
  * @see https://www.drupal.org/node/3588040
  */
-class CheckMarkupToProcessedTextRector extends AbstractRector
+class CheckMarkupToProcessedTextRector extends AbstractRector implements DocumentedRuleInterface
 {
     private const PARAM_MAP = [
         'text' => '#text',

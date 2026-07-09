@@ -17,6 +17,7 @@ use PhpParser\Node\Scalar\String_;
 use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\ClassMethod;
 use PHPStan\PhpDocParser\Ast\PhpDoc\GenericTagValueNode;
+use PHPUnit\Framework\TestCase;
 use Rector\BetterPhpDocParser\PhpDocInfo\PhpDocInfo;
 use Rector\BetterPhpDocParser\PhpDocInfo\PhpDocInfoFactory;
 use Rector\BetterPhpDocParser\PhpDocManipulator\PhpDocTagRemover;
@@ -307,7 +308,7 @@ final class PhpUnitTestAnnotationToAttributeRector extends AbstractDrupalCoreRec
             return false;
         }
 
-        return $classReflection->isSubclassOf(\PHPUnit\Framework\TestCase::class);
+        return $classReflection->isSubclassOf(TestCase::class);
     }
 
     public function getRuleDefinition(): RuleDefinition

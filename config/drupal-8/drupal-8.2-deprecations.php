@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use DrupalRector\Rector\Deprecation\FunctionToStaticRector;
+use DrupalRector\Rector\ValueObject\FunctionToStaticConfiguration;
 use DrupalRector\Services\AddCommentService;
 use Rector\Config\RectorConfig;
 
@@ -12,7 +13,7 @@ return static function (RectorConfig $rectorConfig): void {
     });
     // https://www.drupal.org/node/2418133
     $rectorConfig->ruleWithConfiguration(FunctionToStaticRector::class, [
-        new DrupalRector\Rector\ValueObject\FunctionToStaticConfiguration(
+        new FunctionToStaticConfiguration(
             '8.2.0',
             'file_directory_os_temp',
             'Drupal\Component\FileSystem\FileSystem',

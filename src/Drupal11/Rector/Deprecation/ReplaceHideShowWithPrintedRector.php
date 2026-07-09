@@ -12,6 +12,7 @@ use PhpParser\Node\Expr\FuncCall;
 use PhpParser\Node\Scalar\String_;
 use PhpParser\Node\Stmt\Expression;
 use Rector\Rector\AbstractRector;
+use Symplify\RuleDocGenerator\Contract\DocumentedRuleInterface;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
@@ -27,7 +28,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  * @see https://www.drupal.org/node/2258355
  * @see https://www.drupal.org/node/3261271
  */
-final class ReplaceHideShowWithPrintedRector extends AbstractRector
+final class ReplaceHideShowWithPrintedRector extends AbstractRector implements DocumentedRuleInterface
 {
     /** @var array<string, bool> */
     private const FUNCTION_TO_PRINTED_VALUE = [

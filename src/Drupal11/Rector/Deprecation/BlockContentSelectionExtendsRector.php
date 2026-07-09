@@ -10,6 +10,7 @@ use PhpParser\Node\Name\FullyQualified;
 use PhpParser\Node\Scalar\String_;
 use PhpParser\Node\Stmt\Class_;
 use Rector\Rector\AbstractRector;
+use Symplify\RuleDocGenerator\Contract\DocumentedRuleInterface;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
@@ -44,7 +45,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  * @see https://www.drupal.org/node/2987159
  * @see https://www.drupal.org/node/3521459
  */
-class BlockContentSelectionExtendsRector extends AbstractRector
+class BlockContentSelectionExtendsRector extends AbstractRector implements DocumentedRuleInterface
 {
     private const DEFAULT_SELECTION_CLASS = 'Drupal\Core\Entity\Plugin\EntityReferenceSelection\DefaultSelection';
 

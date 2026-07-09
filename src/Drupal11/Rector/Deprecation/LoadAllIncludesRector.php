@@ -7,6 +7,7 @@ namespace DrupalRector\Drupal11\Rector\Deprecation;
 use PhpParser\Node;
 use PHPStan\Type\ObjectType;
 use Rector\Rector\AbstractRector;
+use Symplify\RuleDocGenerator\Contract\DocumentedRuleInterface;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
@@ -16,7 +17,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  * @see https://www.drupal.org/node/3536431
  * @see https://www.drupal.org/node/3536432
  */
-final class LoadAllIncludesRector extends AbstractRector
+final class LoadAllIncludesRector extends AbstractRector implements DocumentedRuleInterface
 {
     public function getNodeTypes(): array
     {

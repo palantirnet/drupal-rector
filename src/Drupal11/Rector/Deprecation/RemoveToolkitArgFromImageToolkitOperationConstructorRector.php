@@ -13,6 +13,7 @@ use PhpParser\Node\Expr\Variable;
 use PhpParser\Node\Stmt\Class_;
 use PhpParser\NodeVisitor;
 use Rector\Rector\AbstractRector;
+use Symplify\RuleDocGenerator\Contract\DocumentedRuleInterface;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
@@ -28,7 +29,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  * @see https://www.drupal.org/node/3559481
  * @see https://www.drupal.org/node/3562304
  */
-final class RemoveToolkitArgFromImageToolkitOperationConstructorRector extends AbstractRector
+final class RemoveToolkitArgFromImageToolkitOperationConstructorRector extends AbstractRector implements DocumentedRuleInterface
 {
     private const TOOLKIT_INTERFACE = 'Drupal\\Core\\ImageToolkit\\ImageToolkitInterface';
 

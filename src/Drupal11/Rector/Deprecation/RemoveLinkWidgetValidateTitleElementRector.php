@@ -7,6 +7,7 @@ namespace DrupalRector\Drupal11\Rector\Deprecation;
 use PhpParser\Node;
 use PhpParser\NodeVisitor;
 use Rector\Rector\AbstractRector;
+use Symplify\RuleDocGenerator\Contract\DocumentedRuleInterface;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
@@ -19,7 +20,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  * @see https://www.drupal.org/node/3093118
  * @see https://www.drupal.org/node/3554139
  */
-final class RemoveLinkWidgetValidateTitleElementRector extends AbstractRector
+final class RemoveLinkWidgetValidateTitleElementRector extends AbstractRector implements DocumentedRuleInterface
 {
     public function getNodeTypes(): array
     {

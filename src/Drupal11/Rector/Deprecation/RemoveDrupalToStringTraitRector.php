@@ -15,6 +15,7 @@ use PhpParser\Node\Stmt\ClassMethod;
 use PhpParser\Node\Stmt\Return_;
 use PhpParser\Node\Stmt\TraitUse;
 use Rector\Rector\AbstractRector;
+use Symplify\RuleDocGenerator\Contract\DocumentedRuleInterface;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
@@ -32,7 +33,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  * @see https://www.drupal.org/node/3548957
  * @see https://www.drupal.org/node/3548961
  */
-final class RemoveDrupalToStringTraitRector extends AbstractRector
+final class RemoveDrupalToStringTraitRector extends AbstractRector implements DocumentedRuleInterface
 {
     private const TRAIT_FQCN = 'Drupal\Component\Utility\ToStringTrait';
 

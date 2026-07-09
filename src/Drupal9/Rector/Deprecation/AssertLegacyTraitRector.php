@@ -12,10 +12,11 @@ use PhpParser\Node\Arg;
 use PhpParser\Node\VariadicPlaceholder;
 use Rector\Contract\Rector\ConfigurableRectorInterface;
 use Rector\Rector\AbstractRector;
+use Symplify\RuleDocGenerator\Contract\DocumentedRuleInterface;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\ConfiguredCodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
-class AssertLegacyTraitRector extends AbstractRector implements ConfigurableRectorInterface
+class AssertLegacyTraitRector extends AbstractRector implements ConfigurableRectorInterface, DocumentedRuleInterface
 {
     use GetDeclaringSourceTrait;
 

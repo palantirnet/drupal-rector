@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace DrupalRector\Rector\PHPUnit;
 
 use PhpParser\Node;
+use PHPUnit\Framework\TestCase;
 use Rector\PHPStan\ScopeFetcher;
 use Rector\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
@@ -37,7 +38,7 @@ class ShouldCallParentMethodsRector extends AbstractRector
             return null;
         }
 
-        if (!$scope->getClassReflection()->isSubclassOf(\PHPUnit\Framework\TestCase::class)) {
+        if (!$scope->getClassReflection()->isSubclassOf(TestCase::class)) {
             return null;
         }
 

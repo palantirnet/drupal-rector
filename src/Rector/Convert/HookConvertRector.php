@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace DrupalRector\Rector\Convert;
 
 use Composer\InstalledVersions;
+use PhpParser\Comment\Doc;
 use PhpParser\Modifiers;
 use PhpParser\Node;
 use PhpParser\Node\Name\FullyQualified;
@@ -268,7 +269,7 @@ CODE_SAMPLE
             ]);
             array_unshift($this->hookClass->stmts, new Node\Stmt\TraitUse([new Node\Name('StringTranslationTrait')]));
         }
-        $this->hookClass->setDocComment(new \PhpParser\Comment\Doc("/**\n * Hook implementations for $this->module.\n */"));
+        $this->hookClass->setDocComment(new Doc("/**\n * Hook implementations for $this->module.\n */"));
 
         return [
             new Node\Stmt\Namespace_(new Node\Name($namespace)),
