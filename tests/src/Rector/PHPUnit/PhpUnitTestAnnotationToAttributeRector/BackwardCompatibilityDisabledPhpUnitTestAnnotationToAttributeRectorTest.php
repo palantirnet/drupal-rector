@@ -7,8 +7,10 @@ namespace DrupalRector\Tests\Rector\PHPUnit\PhpUnitTestAnnotationToAttributeRect
 use DrupalRector\Services\DrupalRectorSettings;
 use DrupalRector\Tests\AbstractDrupalRectorTestCase;
 use Iterator;
+use PHPUnit\Framework\Attributes\CoversFunction;
+use PHPUnit\Framework\Attributes\DataProvider;
 
-#[\PHPUnit\Framework\Attributes\CoversFunction('refactor')]
+#[CoversFunction('refactor')]
 class BackwardCompatibilityDisabledPhpUnitTestAnnotationToAttributeRectorTest extends AbstractDrupalRectorTestCase
 {
     protected function setUp(): void
@@ -19,7 +21,7 @@ class BackwardCompatibilityDisabledPhpUnitTestAnnotationToAttributeRectorTest ex
         static::getContainer()->make(DrupalRectorSettings::class)->disableBackwardCompatibility();
     }
 
-    #[\PHPUnit\Framework\Attributes\DataProvider('provideData')]
+    #[DataProvider('provideData')]
     public function test(string $filePath): void
     {
         $this->doTestFile($filePath);

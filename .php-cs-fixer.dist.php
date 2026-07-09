@@ -24,6 +24,11 @@ return (new PhpCsFixer\Config())
         'yoda_style' => false,
         'no_superfluous_phpdoc_tags' => false,
         'declare_strict_types' => true,
+        'fully_qualified_strict_types' => [
+            'import_symbols' => true,
+            'phpdoc_tags' => [],
+
+        ],
     ])
     ->setFinder($finder)
     ;

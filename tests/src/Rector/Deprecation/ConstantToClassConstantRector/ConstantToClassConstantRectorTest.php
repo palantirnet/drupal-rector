@@ -7,11 +7,13 @@ namespace DrupalRector\Tests\Rector\Deprecation\ConstantToClassConstantRector;
 use DrupalRector\Services\DrupalRectorSettings;
 use DrupalRector\Tests\AbstractDrupalRectorTestCase;
 use Iterator;
+use PHPUnit\Framework\Attributes\CoversFunction;
+use PHPUnit\Framework\Attributes\DataProvider;
 
-#[\PHPUnit\Framework\Attributes\CoversFunction('refactor')]
+#[CoversFunction('refactor')]
 class ConstantToClassConstantRectorTest extends AbstractDrupalRectorTestCase
 {
-    #[\PHPUnit\Framework\Attributes\DataProvider('provideData')]
+    #[DataProvider('provideData')]
     public function test(string $filePath): void
     {
         $this->doTestFile($filePath);
@@ -25,7 +27,7 @@ class ConstantToClassConstantRectorTest extends AbstractDrupalRectorTestCase
         return self::yieldFilesFromDirectory(__DIR__.'/fixture');
     }
 
-    #[\PHPUnit\Framework\Attributes\DataProvider('provideDataBelowVersion')]
+    #[DataProvider('provideDataBelowVersion')]
     public function testBelowVersion(string $filePath): void
     {
         static::getContainer()->make(DrupalRectorSettings::class)->setDrupalVersion('1.0.0');
