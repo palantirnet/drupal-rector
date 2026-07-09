@@ -37,8 +37,13 @@ class RemoveRendererAddCacheableDependencyNonObjectRector extends AbstractRector
             'Remove RendererInterface::addCacheableDependency() calls where the dependency argument cannot implement CacheableDependencyInterface (bool, int, float, string, null, array). Such calls silently make pages uncacheable and are deprecated in drupal:11.3.0.',
             [
                 new CodeSample(
-                    '$this->renderer->addCacheableDependency($build, false);',
-                    ''
+                    <<<'CODE_BEFORE'
+$build = ['#markup' => 'Hello'];
+$this->renderer->addCacheableDependency($build, false);
+CODE_BEFORE,
+                    <<<'CODE_AFTER'
+$build = ['#markup' => 'Hello'];
+CODE_AFTER
                 ),
             ]
         );

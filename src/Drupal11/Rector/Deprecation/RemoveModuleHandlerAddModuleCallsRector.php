@@ -60,8 +60,13 @@ final class RemoveModuleHandlerAddModuleCallsRector extends AbstractRector imple
     {
         return new RuleDefinition('Removes deprecated ModuleHandlerInterface::addModule() and addProfile() calls, which are no-ops since drupal:11.2.0 and removed in drupal:12.0.0', [
             new CodeSample(
-                "\$moduleHandler->addModule('mymodule', 'modules/mymodule');",
-                ''
+                <<<'CODE_BEFORE'
+$moduleHandler->addModule('mymodule', 'modules/mymodule');
+$moduleHandler->load('mymodule');
+CODE_BEFORE,
+                <<<'CODE_AFTER'
+$moduleHandler->load('mymodule');
+CODE_AFTER
             ),
         ]);
     }

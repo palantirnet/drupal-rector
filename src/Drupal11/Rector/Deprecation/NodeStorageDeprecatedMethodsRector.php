@@ -108,8 +108,13 @@ final class NodeStorageDeprecatedMethodsRector extends AbstractRector implements
                 "array_keys(\$storage->getQuery()->allRevisions()->accessCheck(FALSE)->condition('uid', \$account->id())->execute());"
             ),
             new CodeSample(
-                '$storage->countDefaultLanguageRevisions($node);',
-                ''
+                <<<'CODE_BEFORE'
+$storage->resetCache([$node->id()]);
+$storage->countDefaultLanguageRevisions($node);
+CODE_BEFORE,
+                <<<'CODE_AFTER'
+$storage->resetCache([$node->id()]);
+CODE_AFTER
             ),
         ]);
     }

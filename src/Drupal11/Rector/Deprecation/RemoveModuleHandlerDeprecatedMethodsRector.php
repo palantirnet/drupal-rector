@@ -32,8 +32,13 @@ final class RemoveModuleHandlerDeprecatedMethodsRector extends AbstractRector im
             'Remove deprecated ModuleHandlerInterface::writeCache() calls and replace getHookInfo() with []',
             [
                 new CodeSample(
-                    '$this->moduleHandler->writeCache();',
-                    ''
+                    <<<'CODE_BEFORE'
+$this->moduleHandler->writeCache();
+$this->moduleHandler->resetImplementations();
+CODE_BEFORE,
+                    <<<'CODE_AFTER'
+$this->moduleHandler->resetImplementations();
+CODE_AFTER
                 ),
                 new CodeSample(
                     '$hookInfo = $this->moduleHandler->getHookInfo();',

@@ -46,10 +46,11 @@ class RemoveInstallSchemaSystemSequencesRector extends AbstractRector implements
             [
                 new CodeSample(
                     <<<'CODE_BEFORE'
+$this->installEntitySchema('node');
 $this->installSchema('system', ['sequences']);
 CODE_BEFORE,
                     <<<'CODE_AFTER'
-
+$this->installEntitySchema('node');
 CODE_AFTER
                 ),
             ]

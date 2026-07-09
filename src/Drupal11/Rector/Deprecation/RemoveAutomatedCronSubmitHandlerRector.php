@@ -62,8 +62,13 @@ final class RemoveAutomatedCronSubmitHandlerRector extends AbstractRector implem
     {
         return new RuleDefinition("Removes deprecated \$form['#submit'][] = 'automated_cron_settings_submit' handler assignments (drupal:11.4.0)", [
             new CodeSample(
-                "\$form['#submit'][] = 'automated_cron_settings_submit';",
-                ''
+                <<<'CODE_BEFORE'
+$form['#submit'][] = 'automated_cron_settings_submit';
+$form['#submit'][] = 'mymodule_settings_submit';
+CODE_BEFORE,
+                <<<'CODE_AFTER'
+$form['#submit'][] = 'mymodule_settings_submit';
+CODE_AFTER
             ),
         ]);
     }

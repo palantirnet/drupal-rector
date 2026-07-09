@@ -53,8 +53,13 @@ final class RemoveLinkWidgetValidateTitleElementRector extends AbstractRector im
     {
         return new RuleDefinition('Removes deprecated LinkWidget::validateTitleElement() calls. Validation is now handled by LinkTitleRequiredConstraint on the LinkItem field type (drupal:11.4.0)', [
             new CodeSample(
-                'LinkWidget::validateTitleElement($element, $form_state, $form);',
-                ''
+                <<<'CODE_BEFORE'
+LinkWidget::validateTitleElement($element, $form_state, $form);
+$element['#value'] = $value;
+CODE_BEFORE,
+                <<<'CODE_AFTER'
+$element['#value'] = $value;
+CODE_AFTER
             ),
         ]);
     }

@@ -65,8 +65,13 @@ class FunctionCallRemovalRector extends AbstractRector implements ConfigurableRe
     {
         return new RuleDefinition('Removes deprecated function call statements that have no replacement', [
             new ConfiguredCodeSample(
-                'deprecated_function();',
-                '',
+                <<<'CODE_BEFORE'
+deprecated_function();
+do_something_else();
+CODE_BEFORE,
+                <<<'CODE_AFTER'
+do_something_else();
+CODE_AFTER,
                 [new FunctionCallRemovalConfiguration('deprecated_function')]
             ),
         ]);

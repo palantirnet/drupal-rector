@@ -63,8 +63,13 @@ final class RemoveStateCacheSettingRector extends AbstractRector implements Docu
     {
         return new RuleDefinition("Removes deprecated \$settings['state_cache'] assignments. State caching is permanently enabled since drupal:11.0.0 and the setting has no effect", [
             new CodeSample(
-                "\$settings['state_cache'] = TRUE;",
-                ''
+                <<<'CODE_BEFORE'
+$settings['state_cache'] = TRUE;
+$settings['other_setting'] = TRUE;
+CODE_BEFORE,
+                <<<'CODE_AFTER'
+$settings['other_setting'] = TRUE;
+CODE_AFTER
             ),
         ]);
     }

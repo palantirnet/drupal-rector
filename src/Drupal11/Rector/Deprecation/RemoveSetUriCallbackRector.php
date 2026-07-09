@@ -32,8 +32,13 @@ final class RemoveSetUriCallbackRector extends AbstractRector implements Documen
             'Remove deprecated EntityTypeInterface::setUriCallback() calls',
             [
                 new CodeSample(
-                    '$entity_type->setUriCallback(\'my_entity_uri\');',
-                    ''
+                    <<<'CODE_BEFORE'
+$entity_type->setLinkTemplate('canonical', '/mymodule/{entity}');
+$entity_type->setUriCallback('my_entity_uri');
+CODE_BEFORE,
+                    <<<'CODE_AFTER'
+$entity_type->setLinkTemplate('canonical', '/mymodule/{entity}');
+CODE_AFTER
                 ),
             ]
         );
