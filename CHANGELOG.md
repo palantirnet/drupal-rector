@@ -16,6 +16,10 @@ release-by-release.
 
 - **Rule documentation on [getrector.com](https://getrector.com)** — all rules now implement Rector's `DocumentedRuleInterface`, so their definitions and code samples are picked up and published on the getrector.com documentation site. ([#3600962](https://git.drupalcode.org/project/rector/-/work_items/3600962))
 
+### Changed
+
+- **`HookConvertRector`** — converted hook methods are no longer declared `static` when they don't reference `$this`; they are always generated as plain `public` methods. Making them `static` followed a PHPStan opinion that doesn't fit hooks: hooks are essentially interface implementations (they implement a contract rather than defining an API), and core always calls them as a method on an object, so implementations don't get to decide to be static. Reverts the `static` behavior added in [#3600921](https://git.drupalcode.org/project/rector/-/work_items/3600921). Reported by Berdir ([#3600963](https://git.drupalcode.org/project/rector/-/work_items/3600963)).
+
 ## [1.1.0] — 2026-07-09
 
 ### Added
