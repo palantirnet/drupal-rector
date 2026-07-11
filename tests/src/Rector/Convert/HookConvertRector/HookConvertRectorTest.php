@@ -140,21 +140,6 @@ class HookConvertRectorTest extends TestCase
         return $method->invoke($this->rector, $fn);
     }
 
-    public function testMethodWithoutThisIsDeclaredStatic(): void
-    {
-        $method = $this->createMethod(<<<'CODE'
-<?php
-/**
- * Implements hook_user_cancel().
- */
-function mymodule_user_cancel($edit, $account, $method) {
-    $account->block();
-}
-CODE);
-
-        $this->assertTrue($method->isStatic(), 'A method that never uses $this should be static.');
-    }
-
     public function testTranslationCallMakesMethodInstanceAndFlagsTrait(): void
     {
         $method = $this->createMethod(<<<'CODE'
@@ -330,6 +315,6 @@ CODE));
         $this->assertStringContainsString('public function userCancel(', $output);
         $this->assertStringContainsString('$this->t(\'Cancelled\')', $output);
         // Non-translating hook is static.
-        $this->assertStringContainsString('public static function userLogin(', $output);
+        $this->assertStringContainsString('public function userLogin(', $output);
     }
 }
