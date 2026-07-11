@@ -140,21 +140,6 @@ class HookConvertRectorTest extends TestCase
         return $method->invoke($this->rector, $fn);
     }
 
-    public function testMethodWithoutThisIsDeclaredStatic(): void
-    {
-        $method = $this->createMethod(<<<'CODE'
-<?php
-/**
- * Implements hook_user_cancel().
- */
-function mymodule_user_cancel($edit, $account, $method) {
-    $account->block();
-}
-CODE);
-
-        $this->assertTrue($method->isStatic(), 'A method that never uses $this should be static.');
-    }
-
     public function testTranslationCallMakesMethodInstanceAndFlagsTrait(): void
     {
         $method = $this->createMethod(<<<'CODE'
@@ -296,8 +281,8 @@ CODE);
         $create = new \ReflectionMethod($rector, 'createMethodFromFunction');
         $create->setAccessible(true);
 
-        // One hook that translates (instance + $this->t()), one that does not
-        // (static). Bodies are array-free so the stubbed ExprAnalyzer is unused.
+        // One hook that translates (uses $this->t()), one that does not.
+        // Bodies are array-free so the stubbed ExprAnalyzer is unused.
         $class->stmts[] = $create->invoke($rector, $this->parseFunction(<<<'CODE'
 <?php
 /**
@@ -329,7 +314,7 @@ CODE));
         // Translating hook stays an instance method and uses $this->t().
         $this->assertStringContainsString('public function userCancel(', $output);
         $this->assertStringContainsString('$this->t(\'Cancelled\')', $output);
-        // Non-translating hook is static.
-        $this->assertStringContainsString('public static function userLogin(', $output);
+        // Non-translating hook is still a plain instance method.
+        $this->assertStringContainsString('public function userLogin(', $output);
     }
 }

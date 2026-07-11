@@ -315,9 +315,7 @@ CODE_SAMPLE
                 public function leaveNode(Node $node)
                 {
                     // Rewrite the global t() to $this->t() so the method uses
-                    // StringTranslationTrait. This intentionally introduces
-                    // $this, which keeps the method non-static. Matches both
-                    // t() and \t().
+                    // StringTranslationTrait. Matches both t() and \t().
                     if ($node instanceof Node\Expr\FuncCall && $node->name instanceof Node\Name && $node->name->toString() === 't') {
                         $this->usedTranslation = true;
 
@@ -348,15 +346,7 @@ CODE_SAMPLE
             }
             // Convert the function to a method.
             $method = new ClassMethod($this->getMethodName($node), get_object_vars($node), $node->getAttributes());
-            // Declare the method static when its body never touches $this. The
-            // body comes from a procedural function, so the only $this it can
-            // contain is the one introduced by the t() -> $this->t() rewrite
-            // above; that case correctly keeps the method non-static.
-            $usesThis = (bool) (new NodeFinder())->findFirst(
-                $method->stmts ?? [],
-                fn (Node $n) => $n instanceof Node\Expr\Variable && \is_string($n->name) && $n->name === 'this'
-            );
-            $method->flags = $usesThis ? Modifiers::PUBLIC : Modifiers::PUBLIC | Modifiers::STATIC;
+            $method->flags = Modifiers::PUBLIC;
             // Assemble the arguments for the #[Hook] attribute.
             $arguments = [new Node\Arg(new String_($hook))];
             if ($implementsModule !== $this->module) {
