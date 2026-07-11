@@ -12,7 +12,9 @@ release-by-release.
 
 ## [Unreleased]
 
-### Feature
+## [1.1.1] — 2026-07-11
+
+### Added
 
 - **Rule documentation on [getrector.com](https://getrector.com)** — all rules now implement Rector's `DocumentedRuleInterface`, so their definitions and code samples are picked up and published on the getrector.com documentation site. ([#3600962](https://git.drupalcode.org/project/rector/-/work_items/3600962))
 
