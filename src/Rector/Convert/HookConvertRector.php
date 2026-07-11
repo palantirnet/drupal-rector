@@ -315,9 +315,7 @@ CODE_SAMPLE
                 public function leaveNode(Node $node)
                 {
                     // Rewrite the global t() to $this->t() so the method uses
-                    // StringTranslationTrait. This intentionally introduces
-                    // $this, which keeps the method non-static. Matches both
-                    // t() and \t().
+                    // StringTranslationTrait. Matches both t() and \t().
                     if ($node instanceof Node\Expr\FuncCall && $node->name instanceof Node\Name && $node->name->toString() === 't') {
                         $this->usedTranslation = true;
 
