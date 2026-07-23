@@ -15,6 +15,7 @@ release-by-release.
 ### Feature
 
 - **Rule documentation on [getrector.com](https://getrector.com)** — all rules now implement Rector's `DocumentedRuleInterface`, so their definitions and code samples are picked up and published on the getrector.com documentation site. ([#3600962](https://git.drupalcode.org/project/rector/-/work_items/3600962))
+- **phpstan-drupal ServiceMap in the bootstrap** — `config/drupal-phpunit-bootstrap-file.php` now hands off to phpstan-drupal's own `drupal-autoloader.php` when Rector injects the PHPStan container ([rectorphp/rector#8190](https://github.com/rectorphp/rector/pull/8190)), which populates phpstan-drupal's ServiceMap so `\Drupal::service('…')` type inference resolves concrete service classes instead of a bare `object`. On Rector versions without that container injection it falls back to the previous namespace-autoloading behaviour, so the change is backward compatible and needs no `rector/rector` constraint bump. ([#3600964](https://git.drupalcode.org/project/rector/-/work_items/3600964))
 
 ### Changed
 
