@@ -48,7 +48,7 @@ return static function (RectorConfig $rectorConfig): void {
     //     new DeprecationHelperRemoveConfiguration(\Drupal::VERSION),
     // ]);
 
-    // When phsptan-drupal is available, we should load it to get better type
+    // When phpstan-drupal is available, we should load it to get better type
     // inference to use in rectors.
     $phpstanDrupalExtension = __DIR__.'/vendor/mglaman/phpstan-drupal/extension.neon';
     if (file_exists($phpstanDrupalExtension)) {
