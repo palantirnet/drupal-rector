@@ -21,6 +21,10 @@ release-by-release.
 
 - **`HookConvertRector`** — converted hook methods are no longer declared `static` when they don't reference `$this`; they are always generated as plain `public` methods. Making them `static` followed a PHPStan opinion that doesn't fit hooks: hooks are essentially interface implementations (they implement a contract rather than defining an API), and core always calls them as a method on an object, so implementations don't get to decide to be static. Reverts the `static` behavior added in [#3600921](https://git.drupalcode.org/project/rector/-/work_items/3600921). Reported by Berdir ([#3600963](https://git.drupalcode.org/project/rector/-/work_items/3600963)).
 
+### Removed
+
+- **Drupal 11.4 search plugin renames dropped from `DRUPAL_114_BREAKING`** — the `Drupal\help\Plugin\Search\HelpSearch` → `Drupal\search_help\Plugin\Search\SearchHelpSearch` ([#3581109](https://www.drupal.org/node/3581109)) and `Drupal\node\Plugin\Search\NodeSearch` → `Drupal\search_node\Plugin\Search\SearchNode` ([#3587564](https://www.drupal.org/node/3587564)) `RenameClassRector` entries are no longer registered in the opt-in breaking set. Both replacements live in new core sub-modules, and the rename cannot add the matching `dependencies:` entry to the module's `info.yml`, so the output was incomplete by construction. Core has since restored both old classes as deprecated stubs on 11.4.x (drupal-core `af7dd6efc0`, [#3608912](https://www.drupal.org/i/3608912)), so the rename is no longer needed to avoid a missing-class fatal either. Reported by catch ([#414](https://github.com/palantirnet/drupal-rector/issues/414)).
+
 ## [1.1.0] — 2026-07-09
 
 ### Added
