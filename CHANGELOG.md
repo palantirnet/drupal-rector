@@ -15,6 +15,7 @@ release-by-release.
 ### Feature
 
 - **Rule documentation on [getrector.com](https://getrector.com)** — all rules now implement Rector's `DocumentedRuleInterface`, so their definitions and code samples are picked up and published on the getrector.com documentation site. ([#3600962](https://git.drupalcode.org/project/rector/-/work_items/3600962))
+- **phpstan-drupal ServiceMap in the bootstrap** — `config/drupal-phpunit-bootstrap-file.php` now hands off to phpstan-drupal's own `drupal-autoloader.php` when Rector injects the PHPStan container ([rectorphp/rector#8190](https://github.com/rectorphp/rector/pull/8190)), which populates phpstan-drupal's ServiceMap so `\Drupal::service('…')` type inference resolves concrete service classes instead of a bare `object`. On Rector versions without that container injection it falls back to the previous namespace-autoloading behaviour, so the change is backward compatible and needs no `rector/rector` constraint bump. ([#3600964](https://git.drupalcode.org/project/rector/-/work_items/3600964))
 
 ### Changed
 
@@ -23,6 +24,7 @@ release-by-release.
 ### Removed
 
 - **`RemoveAliasManagerCacheMethodCallsRector`** — removed; `AliasManager::setCacheKey()` / `writeCache()` calls ([#3496369](https://www.drupal.org/node/3496369)) are no longer rewritten by the Drupal 11.3 deprecation set. Both methods are no-ops from 11.3.0 on, so removing the call only reclaims a lost preload-cache micro-optimization, while with BC support enabled (the default) the rule emitted a `DeprecationHelper::backwardsCompatibleCall()` wrapper around a no-op. The value didn't justify the surface. Note for `upgrade_status` users: the two deprecation messages are still listed in `DeprecationAnalyzer::isRectorCovered()`, so upgrade_status will keep reporting them as rector-covered until that list is updated upstream. Reported by catch ([#415](https://github.com/palantirnet/drupal-rector/issues/415)).
+- **Drupal 11.4 search plugin renames dropped from `DRUPAL_114_BREAKING`** — the `Drupal\help\Plugin\Search\HelpSearch` → `Drupal\search_help\Plugin\Search\SearchHelpSearch` ([#3581109](https://www.drupal.org/node/3581109)) and `Drupal\node\Plugin\Search\NodeSearch` → `Drupal\search_node\Plugin\Search\SearchNode` ([#3587564](https://www.drupal.org/node/3587564)) `RenameClassRector` entries are no longer registered in the opt-in breaking set. Both replacements live in new core sub-modules, and the rename cannot add the matching `dependencies:` entry to the module's `info.yml`, so the output was incomplete by construction. Core has since restored both old classes as deprecated stubs on 11.4.x (drupal-core `af7dd6efc0`, [#3608912](https://www.drupal.org/i/3608912)), so the rename is no longer needed to avoid a missing-class fatal either. Reported by catch ([#414](https://github.com/palantirnet/drupal-rector/issues/414)).
 
 ## [1.1.0] — 2026-07-09
 

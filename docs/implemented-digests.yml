@@ -692,10 +692,17 @@ digests:
       user_mail_tokens() intentionally not handled (string-callback usage; needs a
       BubbleableMetadata arg that cannot be synthesised).
   '3581109':
-    status: config-only
+    status: skip
     phase: '?'
     digest_file: rename-helpsearch-to-searchhelpsearch-in-search-help-sub-3581109.php
-    note: 'HelpSearch→SearchHelpSearch via RenameClassRector in DRUPAL_114_BREAKING config; open PR #349.'
+    note: >-
+      HelpSearch→SearchHelpSearch. Was registered as a RenameClassRector entry in
+      DRUPAL_114_BREAKING (PR #349, merged); removed again per GH #414. The
+      replacement lives in the new search_help sub-module, and the rename cannot
+      add the required `dependencies:` line to info.yml. Core also restored
+      Drupal\help\Plugin\Search\HelpSearch as a deprecated stub on 11.4.x
+      (drupal-core af7dd6efc0, #3608912). Zero contrib consumers. Do not
+      re-implement.
   '3581303':
     status: implemented
     phase: '2'
@@ -712,10 +719,19 @@ digests:
     class: RemovePhpUnitCompatibilityTraitRector
     digest_file: remove-deprecated-phpunitcompatibilitytrait-from-test-3582118.php
   '3587564':
-    status: config-only
+    status: skip
     phase: '4'
     digest_file: rename-nodesearch-to-searchnode-from-search-node-module-3587564.php
-    note: 'NodeSearch→SearchNode via RenameClassRector in DRUPAL_114_BREAKING config. SearchNode lives in the new search_node sub-module (introduced by this issue, absent < 11.4), so the rename is non-BC-wrappable. Real D11 contrib users: trash (TrashNodeSearch), search_exclude (SearchExcludeNodeSearch).'
+    note: >-
+      NodeSearch→SearchNode. Was registered as a RenameClassRector entry in
+      DRUPAL_114_BREAKING (PR #367, merged); removed again per GH #414, same
+      reasoning as 3581109 — SearchNode lives in the new search_node sub-module
+      and the rename cannot add the required `dependencies:` line to info.yml.
+      Core restored Drupal\node\Plugin\Search\NodeSearch as a deprecated stub on
+      11.4.x (drupal-core af7dd6efc0, #3608912); it is inert (access() forbidden,
+      execute() empty), so contrib subclassers (trash, search_exclude,
+      auto_indexer) need a manual port, not a mechanical rename. Do not
+      re-implement.
   '3589047':
     status: implemented
     phase: '2'

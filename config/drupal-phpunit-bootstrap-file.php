@@ -4,11 +4,19 @@
  * @file
  *
  * This fixes Drupal testing namespace autoloading and PHPUnit compatibility.
+ *
+ * Rector releases that contain rectorphp/rector#8190 inject the PHPStan
+ * dependency-injection container into bootstrap files as a `$container`
+ * variable. When it is present we hand off to phpstan-drupal's own
+ * `drupal-autoloader.php`, which not only sets up Drupal autoloading but also
+ * populates phpstan-drupal's ServiceMap — so `\Drupal::service('…')` type
+ * inference resolves to concrete service classes instead of a bare `object`.
+ *
+ * On older Rector (no `$container`) — or when phpstan-drupal is not installed,
+ * or the hand-off fails — we fall back to the legacy namespace-autoloading
+ * below, which is exactly the behaviour shipped before this change. This keeps
+ * the file working across Rector versions without a version bump.
  */
-
-use Rector\Core\Autoloading\BootstrapFilesIncluder;
-use Rector\Core\Exception\ShouldNotHappenException;
-
 
 if (class_exists('DrupalFinder\DrupalFinderComposerRuntime')) {
     $drupalFinder = new DrupalFinder\DrupalFinderComposerRuntime();
@@ -22,6 +30,25 @@ $drupalVendorRoot = $drupalFinder->getVendorDir();
 
 if (! (bool) $drupalRoot || ! (bool) $drupalVendorRoot) {
     throw new \RuntimeException("Unable to detect Drupal at $drupalRoot");
+}
+
+// Prefer phpstan-drupal's own autoloader when Rector gives us the PHPStan
+// container (rectorphp/rector#8190+). It performs the same test-namespace
+// autoloading as the legacy code below and, crucially, fills the ServiceMap
+// that `\Drupal::service()` type inference depends on. Guarded so any failure
+// (phpstan-drupal absent, ServiceMap service not registered because
+// extension.neon was not loaded, …) degrades to the legacy autoloading.
+if (isset($container) && $container instanceof \PHPStan\DependencyInjection\Container) {
+    $phpstanDrupalAutoloader = $drupalVendorRoot . '/mglaman/phpstan-drupal/drupal-autoloader.php';
+    if (file_exists($phpstanDrupalAutoloader)) {
+        try {
+            require $phpstanDrupalAutoloader;
+
+            return;
+        } catch (\Throwable $e) {
+            // Fall through to the legacy autoloading below.
+        }
+    }
 }
 
 /**
