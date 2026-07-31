@@ -302,10 +302,20 @@ digests:
     phase: '1b'
     digest_file: replace-entity-test-create-bundle-and-entity-test-delete-3495966.php
   '3496369':
-    status: implemented
+    status: skip
     phase: '3'
-    class: RemoveAliasManagerCacheMethodCallsRector
     digest_file: remove-aliasmanager-setcachekey-and-writecache-calls-3496369.php
+    note: >-
+      Was implemented as RemoveAliasManagerCacheMethodCallsRector; the rule was
+      removed again per GH #415. setCacheKey()/writeCache() are no-ops from
+      11.3.0 on, so the rewrite only reclaims a lost preload-cache
+      micro-optimization, and with BC support enabled (the default) it emits a
+      DeprecationHelper wrapper around a no-op. Four contrib call sites: redirect
+      (already hand-fixed with its own version_compare guard, which the rector
+      would then wrap a second time), domain_path and domain_unique_path_alias
+      (AliasManagerInterface decorators, where the matched line must keep
+      forwarding until 13.0.0), seo_urls (own manager, not matched). Do not
+      re-implement.
   '3498026':
     status: implemented
     phase: '2'
