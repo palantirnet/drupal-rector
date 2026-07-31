@@ -27,7 +27,12 @@ final class DrupalSetProviderTest extends TestCase
 
         foreach ($sets as $set) {
             self::assertInstanceOf(ComposerTriggeredSet::class, $set);
-            self::assertSame('drupal', $set->getGroupName());
+            // Breaking sets live in their own group so they are not pulled in by
+            // the plain "drupal" group; everything else is grouped as "drupal".
+            $expectedGroup = str_ends_with($set->getSetFilePath(), '-breaking.php')
+                ? 'drupal (breaking)'
+                : 'drupal';
+            self::assertSame($expectedGroup, $set->getGroupName());
             // getName() is "<package> <version>".
             self::assertStringStartsWith('drupal/core ', $set->getName());
             self::assertFileExists($set->getSetFilePath());

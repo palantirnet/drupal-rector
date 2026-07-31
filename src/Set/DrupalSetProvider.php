@@ -19,8 +19,9 @@ use Rector\Set\ValueObject\ComposerTriggeredSet;
  * installed core, which is inherently backward-compatibility safe.
  *
  * Because the matched version guarantees the replacement symbols exist on the
- * installed core, the otherwise opt-in "breaking" sets are safe to include here
- * and are folded into the same group.
+ * installed core, the otherwise opt-in "breaking" sets are safe to include here,
+ * but they are kept in their own group so they are not loaded by the plain
+ * "drupal" group.
  *
  * @see https://github.com/rectorphp/rector/issues/9778
  */
@@ -89,7 +90,7 @@ final class DrupalSetProvider implements SetProviderInterface
         }
 
         foreach (self::BREAKING_SETS as $version => $setFilePath) {
-            $sets[] = new ComposerTriggeredSet(self::GROUP_NAME, self::PACKAGE_NAME, $version, $setFilePath);
+            $sets[] = new ComposerTriggeredSet(self::GROUP_NAME.' (breaking)', self::PACKAGE_NAME, $version, $setFilePath);
         }
 
         foreach (self::MAJOR_FLOORS as $version) {
