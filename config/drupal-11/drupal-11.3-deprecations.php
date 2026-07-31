@@ -8,7 +8,6 @@ use DrupalRector\Drupal11\Rector\Deprecation\FileManagedFileSubmitRector;
 use DrupalRector\Drupal11\Rector\Deprecation\FileSystemBasenameToNativeRector;
 use DrupalRector\Drupal11\Rector\Deprecation\LoadAllIncludesRector;
 use DrupalRector\Drupal11\Rector\Deprecation\NodeStorageDeprecatedMethodsRector;
-use DrupalRector\Drupal11\Rector\Deprecation\RemoveAliasManagerCacheMethodCallsRector;
 use DrupalRector\Drupal11\Rector\Deprecation\RemoveRendererAddCacheableDependencyNonObjectRector;
 use DrupalRector\Drupal11\Rector\Deprecation\RemoveRootFromConvertDbUrlRector;
 use DrupalRector\Drupal11\Rector\Deprecation\ReplaceCommentManagerGetCountNewCommentsRector;
@@ -240,15 +239,14 @@ return static function (RectorConfig $rectorConfig): void {
     // Drupal 10.x branch, so the (non-BC-wrappable) RenameClassRector rewrite
     // would fatal there.
 
-    // https://www.drupal.org/node/3496369
-    // https://www.drupal.org/node/3532412 (change record)
-    // AliasManager::setCacheKey() and AliasManager::writeCache() deprecated in drupal:11.3.0,
-    // removed in drupal:13.0.0 with no replacement. They only became no-ops in
-    // 11.3.0; before that they performed real caching work, so the call is
-    // wrapped in a backwards-compatible no-op when BC support is enabled.
-    $rectorConfig->ruleWithConfiguration(RemoveAliasManagerCacheMethodCallsRector::class, [
-        new DrupalIntroducedVersionConfiguration('11.3.0'),
-    ]);
+    // AliasManager::setCacheKey() / writeCache() (https://www.drupal.org/node/3496369)
+    // used to be handled here by RemoveAliasManagerCacheMethodCallsRector; the
+    // rule was removed, see
+    // https://github.com/palantirnet/drupal-rector/issues/415. The methods are
+    // no-ops from 11.3.0 on, so deleting the call only reclaims a lost
+    // preload-cache micro-optimization, and with BC support enabled (the
+    // default, minimumCoreVersionSupported 10.1.0) the rewrite was a verbose
+    // DeprecationHelper wrapper around a no-op.
 
     // https://www.drupal.org/node/3525388
     // https://www.drupal.org/node/3525389 (change record)

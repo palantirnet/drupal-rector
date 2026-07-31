@@ -20,6 +20,10 @@ release-by-release.
 
 - **`HookConvertRector`** — converted hook methods are no longer declared `static` when they don't reference `$this`; they are always generated as plain `public` methods. Making them `static` followed a PHPStan opinion that doesn't fit hooks: hooks are essentially interface implementations (they implement a contract rather than defining an API), and core always calls them as a method on an object, so implementations don't get to decide to be static. Reverts the `static` behavior added in [#3600921](https://git.drupalcode.org/project/rector/-/work_items/3600921). Reported by Berdir ([#3600963](https://git.drupalcode.org/project/rector/-/work_items/3600963)).
 
+### Removed
+
+- **`RemoveAliasManagerCacheMethodCallsRector`** — removed; `AliasManager::setCacheKey()` / `writeCache()` calls ([#3496369](https://www.drupal.org/node/3496369)) are no longer rewritten by the Drupal 11.3 deprecation set. Both methods are no-ops from 11.3.0 on, so removing the call only reclaims a lost preload-cache micro-optimization, while with BC support enabled (the default) the rule emitted a `DeprecationHelper::backwardsCompatibleCall()` wrapper around a no-op. The value didn't justify the surface. Note for `upgrade_status` users: the two deprecation messages are still listed in `DeprecationAnalyzer::isRectorCovered()`, so upgrade_status will keep reporting them as rector-covered until that list is updated upstream. Reported by catch ([#415](https://github.com/palantirnet/drupal-rector/issues/415)).
+
 ## [1.1.0] — 2026-07-09
 
 ### Added

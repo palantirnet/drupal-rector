@@ -26,11 +26,6 @@ return array (
     1 => 'Call to deprecated method getDrupalRoot() of class Drupal\\Tests\\BrowserTestBase. Deprecated in drupal:11.4.0 and is removed from drupal:13.0.0. Access $this->root directly.',
     2 => 'Call to deprecated method getDrupalRoot() of class Drupal\\Tests\\UnitTestCase. Deprecated in drupal:11.4.0 and is removed from drupal:13.0.0. Access $this->root directly.',
   ),
-  'RemoveAliasManagerCacheMethodCallsRector' => 
-  array (
-    0 => 'Call to deprecated method setCacheKey() of class Drupal\\path_alias\\AliasManager. Deprecated in drupal:11.3.0 and is removed from drupal:13.0.0. There is no replacement.',
-    1 => 'Call to deprecated method writeCache() of class Drupal\\path_alias\\AliasManager. Deprecated in drupal:11.3.0 and is removed from drupal:13.0.0. There is no replacement.',
-  ),
   'RemoveDrupalToStringTraitRector' => 
   array (
     0 => 'Usage of deprecated trait Drupal\\Component\\Utility\\ToStringTrait. Deprecated in drupal:11.4.0 and is removed from drupal:13.0.0. Implement the __toString() method directly, exception handling is no longer required.',
