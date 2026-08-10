@@ -615,11 +615,8 @@ return static function (RectorConfig $rectorConfig): void {
     // Change record https://www.drupal.org/node/3220952
     $rectorConfig->rule(ModuleLoadRector::class);
 
-    // ---------------------------------------------------------------------
-    // Drupal 10.0
-    // ---------------------------------------------------------------------
-
-    $rectorConfig->rule(ShouldCallParentMethodsRector::class);
+    // Drupal 10.0 registers ShouldCallParentMethodsRector too; the rule is bonded
+    // to the lower of the two versions, >=9.0.0, so it is registered once above.
 
     // ---------------------------------------------------------------------
     // Drupal 10.1
@@ -2193,14 +2190,7 @@ return static function (RectorConfig $rectorConfig): void {
     //   Nothing for upgrade_status to match against.
     $rectorConfig->rule(RemoveFilterTipsLongParamRector::class);
 
-    // ---------------------------------------------------------------------
-    // Drupal 12.0
-    // ---------------------------------------------------------------------
-
-    // Symfony 8 (Drupal 12) added native `: void` return types to
-    // ConstraintValidatorInterface::validate()/initialize() and `mixed $value`
-    // to validate() (the latter since Symfony 7). Add them to implementers.
-    // Backward compatible on all supported Drupal versions, so no version gate.
-    // https://git.drupalcode.org/project/redirect/-/merge_requests/200
-    $rectorConfig->rule(AddSymfonyConstraintValidatorTypeDeclarationsRector::class);
+    // Drupal 12.0 registers AddSymfonyConstraintValidatorTypeDeclarationsRector too;
+    // the rule is bonded to the lower of the two versions, >=11.0.0, so it is
+    // registered once above.
 };

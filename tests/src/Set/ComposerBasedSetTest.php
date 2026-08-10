@@ -62,7 +62,7 @@ final class ComposerBasedSetTest extends TestCase
             );
 
             // some rules take constructor dependencies, which the constraint does not use
-            $rector = new \ReflectionClass($rectorClass)->newInstanceWithoutConstructor();
+            $rector = (new \ReflectionClass($rectorClass))->newInstanceWithoutConstructor();
             self::assertInstanceOf(ComposerPackageConstraintInterface::class, $rector);
 
             $composerPackageConstraint = $rector->provideComposerPackageConstraint();
