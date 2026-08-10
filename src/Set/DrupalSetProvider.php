@@ -11,13 +11,14 @@ use Rector\Set\ValueObject\ComposerTriggeredSet;
 /**
  * Provides composer-based Drupal sets.
  *
- * Backward-compatibility layer, superseded by
- * \DrupalRector\Set\DrupalSetList::COMPOSER_BASED. Rector deprecated
+ * Deprecated in favour of \DrupalRector\Set\DrupalSetList::COMPOSER_BASED, but
+ * kept registered so existing `withSetProviders(DrupalSetProvider::class)`
+ * configs keep working. Rector deprecated
  * \Rector\Set\Contract\SetProviderInterface and
- * \Rector\Set\ValueObject\ComposerTriggeredSet in favour of binding each rule to
- * the package version its target API is available from, which the composer-based
- * set does at a per-rule rather than per-minor granularity. Kept registered so
- * existing `withSetProviders(DrupalSetProvider::class)` configs keep working.
+ * \Rector\Set\ValueObject\ComposerTriggeredSet, which this class is built on, in
+ * favour of binding each rule to the package version its target API is available
+ * from — which the composer-based set does at a per-rule rather than per-minor
+ * granularity.
  *
  * Each set is keyed to a `drupal/core` minor and is loaded automatically when
  * the installed core satisfies `^<version>` (see
@@ -32,6 +33,7 @@ use Rector\Set\ValueObject\ComposerTriggeredSet;
  * "drupal" group.
  *
  * @see https://github.com/rectorphp/rector/issues/9778
+ * @deprecated since 1.2.0, use \DrupalRector\Set\DrupalSetList::COMPOSER_BASED instead
  */
 final class DrupalSetProvider implements SetProviderInterface
 {
