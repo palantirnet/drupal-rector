@@ -46,7 +46,8 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "DrupalRector\\Tests\\": "tests/src"
+            "DrupalRector\\Tests\\": "tests/src",
+            "DrupalRector\\PHPStan\\": "utils/PHPStan"
         },
         "classmap": [
             "stubs"

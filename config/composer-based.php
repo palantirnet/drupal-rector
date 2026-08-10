@@ -188,8 +188,9 @@ use Rector\Renaming\ValueObject\RenameStaticMethod;
  *
  * Deliberately duplicates the registrations of the per-minor configs in
  * config/drupal-N: a rule is registered here and there. Keeping this a plain
- * config of real rules is worth the duplication, and `ComposerBasedSetTest`
- * fails when a rule of a per-minor config is missing here.
+ * config of real rules is worth the duplication, and
+ * \DrupalRector\PHPStan\Rule\ComposerBasedSetCoverageRule fails the build when a
+ * rule of a per-minor config is missing here.
  *
  * Instead of picking set lists by hand, this set lets Rector pick the rules from
  * the installed `drupal/core` version: a site on 11.2 gets the rules bound to
