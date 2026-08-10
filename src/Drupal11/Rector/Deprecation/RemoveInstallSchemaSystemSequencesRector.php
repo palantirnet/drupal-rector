@@ -13,6 +13,8 @@ use PhpParser\Node\Stmt\Expression;
 use PhpParser\NodeVisitor;
 use PHPStan\Type\ObjectType;
 use Rector\Rector\AbstractRector;
+use Rector\VersionBonding\Contract\ComposerPackageConstraintInterface;
+use Rector\VersionBonding\ValueObject\ComposerPackageConstraint;
 use Symplify\RuleDocGenerator\Contract\DocumentedRuleInterface;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
@@ -29,8 +31,13 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  * @see https://www.drupal.org/node/3335756
  * @see https://www.drupal.org/node/3349345
  */
-class RemoveInstallSchemaSystemSequencesRector extends AbstractRector implements DocumentedRuleInterface
+class RemoveInstallSchemaSystemSequencesRector extends AbstractRector implements ComposerPackageConstraintInterface, DocumentedRuleInterface
 {
+    public function provideComposerPackageConstraint(): ComposerPackageConstraint
+    {
+        return new ComposerPackageConstraint('drupal/core', '>=11.4.0');
+    }
+
     // TODO PHPSTAN_MESSAGES RemoveInstallSchemaSystemSequencesRector:
     // The installSchema() method itself is not annotated @deprecated — only
     // the specific ('system', 'sequences') argument combination triggers a

@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-use Composer\Semver\Semver;
 use DrupalRector\Drupal10\Rector\Deprecation\ReplaceModuleHandlerGetNameRector;
 use DrupalRector\Drupal10\Rector\Deprecation\ReplaceRebuildThemeDataRector;
 use DrupalRector\Drupal10\Rector\Deprecation\ReplaceRequestTimeConstantRector;
@@ -173,9 +172,6 @@ use DrupalRector\Rector\ValueObject\MethodToMethodWithCheckConfiguration;
 use DrupalRector\Services\AddCommentService;
 use Rector\Composer\InstalledPackageResolver;
 use Rector\Config\RectorConfig;
-use Rector\PHPUnit\PHPUnit100\Rector\Class_\PublicDataProviderClassMethodRector;
-use Rector\PHPUnit\PHPUnit100\Rector\Class_\StaticDataProviderClassMethodRector;
-use Rector\PHPUnit\PHPUnit100\Rector\MethodCall\RemoveSetMethodsMethodCallRector;
 use Rector\Renaming\Rector\Name\RenameClassRector;
 use Rector\Renaming\Rector\StaticCall\RenameStaticMethodRector;
 use Rector\Renaming\ValueObject\RenameStaticMethod;
@@ -184,12 +180,16 @@ use Rector\Renaming\ValueObject\RenameStaticMethod;
  * Every drupal-rector rule, bound to the exact `drupal/core` version its
  * deprecation was introduced in.
  *
+ * A rule that takes configuration is registered with
+ * ruleWithConfigurationComposerVersionBound(), which states the version here.
+ * One that does not declares it on the rule class itself, through
+ * \Rector\VersionBonding\Contract\ComposerPackageConstraintInterface, and is
+ * registered with a plain rule() call.
+ *
  * Deliberately duplicates the registrations of the per-minor configs in
  * config/drupal-N: a rule is registered here and there. Keeping this a plain
- * config of real rules is worth the duplication — the constraint of every rule
- * is readable on the spot, instead of being derived from the file a
- * registration happens to live in. `ComposerBasedSetTest` fails when a rule of a
- * per-minor config is missing here.
+ * config of real rules is worth the duplication, and `ComposerBasedSetTest`
+ * fails when a rule of a per-minor config is missing here.
  *
  * Instead of picking set lists by hand, this set lets Rector pick the rules from
  * the installed `drupal/core` version: a site on 11.2 gets the rules bound to
@@ -209,9 +209,10 @@ use Rector\Renaming\ValueObject\RenameStaticMethod;
  * accurate than inferring them from the Drupal minor. Add
  * `symfony: true, phpunit: true` to the call above to get those too.
  *
- * To look ahead and prepare for a Drupal version you have not installed yet, use
- * the explicit \DrupalRector\Set\Drupal11SetList sets instead — they are not
- * version-bound.
+ * The explicit \DrupalRector\Set\Drupal11SetList sets stay the way to pick rules
+ * by hand. Note that the rules bonded through ComposerPackageConstraintInterface
+ * are filtered by the installed core there as well — that filter is global, not
+ * per set — so those sets no longer fire every rule on an older core.
  *
  * @see \DrupalRector\Set\DrupalSetList::COMPOSER_BASED
  */
@@ -226,24 +227,6 @@ return static function (RectorConfig $rectorConfig): void {
         $rectorConfig->import(__DIR__.'/drupal-bootstrap.php');
     }
 
-    /**
-     * Registers a rule that takes no configuration, and so cannot be registered
-     * with ruleWithConfigurationComposerVersionBound(), only when the installed
-     * `drupal/core` satisfies the constraint.
-     *
-     * @param class-string<\Rector\Contract\Rector\RectorInterface> $rectorClass
-     */
-    $ruleSince = static function (string $rectorClass, string $constraint) use ($rectorConfig, $installedCoreVersion): void {
-        if ($installedCoreVersion === null) {
-            return;
-        }
-
-        if (!Semver::satisfies($installedCoreVersion, $constraint)) {
-            return;
-        }
-
-        $rectorConfig->rule($rectorClass);
-    };
 
     // ---------------------------------------------------------------------
     // Drupal 8.0
@@ -258,13 +241,13 @@ return static function (RectorConfig $rectorConfig): void {
         new DBConfiguration('db_update', 2),
     ], 'drupal/core', '>=8.0.0');
 
-    $ruleSince(DrupalURLRector::class, '>=8.0.0');
+    $rectorConfig->rule(DrupalURLRector::class);
 
-    $ruleSince(DrupalLRector::class, '>=8.0.0');
+    $rectorConfig->rule(DrupalLRector::class);
 
-    $ruleSince(EntityCreateRector::class, '>=8.0.0');
+    $rectorConfig->rule(EntityCreateRector::class);
 
-    $ruleSince(EntityDeleteMultipleRector::class, '>=8.0.0');
+    $rectorConfig->rule(EntityDeleteMultipleRector::class);
 
     $rectorConfig->ruleWithConfigurationComposerVersionBound(FunctionToServiceRector::class, [
         // https://www.drupal.org/node/2418133
@@ -277,7 +260,7 @@ return static function (RectorConfig $rectorConfig): void {
         new FunctionToServiceConfiguration('8.0.0', 'format_date', 'date.formatter', 'format'),
     ], 'drupal/core', '>=8.0.0');
 
-    $ruleSince(EntityInterfaceLinkRector::class, '>=8.0.0');
+    $rectorConfig->rule(EntityInterfaceLinkRector::class);
 
     $rectorConfig->ruleWithConfigurationComposerVersionBound(MethodToMethodWithCheckRector::class, [
         // https://www.drupal.org/node/2614344
@@ -291,13 +274,13 @@ return static function (RectorConfig $rectorConfig): void {
         new EntityLoadConfiguration('user'),
     ], 'drupal/core', '>=8.0.0');
 
-    $ruleSince(EntityViewRector::class, '>=8.0.0');
+    $rectorConfig->rule(EntityViewRector::class);
 
-    $ruleSince(EntityManagerRector::class, '>=8.0.0');
+    $rectorConfig->rule(EntityManagerRector::class);
 
-    $ruleSince(LinkGeneratorTraitLRector::class, '>=8.0.0');
+    $rectorConfig->rule(LinkGeneratorTraitLRector::class);
 
-    $ruleSince(SafeMarkupFormatRector::class, '>=8.0.0');
+    $rectorConfig->rule(SafeMarkupFormatRector::class);
 
     // ---------------------------------------------------------------------
     // Drupal 8.2
@@ -317,7 +300,7 @@ return static function (RectorConfig $rectorConfig): void {
     // Drupal 8.3
     // ---------------------------------------------------------------------
 
-    $ruleSince(RequestTimeConstRector::class, '>=8.3.0');
+    $rectorConfig->rule(RequestTimeConstRector::class);
 
     // ---------------------------------------------------------------------
     // Drupal 8.4
@@ -334,7 +317,7 @@ return static function (RectorConfig $rectorConfig): void {
     // Drupal 8.5
     // ---------------------------------------------------------------------
 
-    $ruleSince(DrupalSetMessageRector::class, '>=8.5.0');
+    $rectorConfig->rule(DrupalSetMessageRector::class);
 
     /*
      * Replaces deprecated DATETIME_DATE_STORAGE_FORMAT, DATETIME_DATETIME_STORAGE_FORMAT, DATETIME_STORAGE_TIMEZONE constant use.
@@ -413,7 +396,7 @@ return static function (RectorConfig $rectorConfig): void {
         new DrupalServiceRenameConfiguration('path.alias_manager', 'path_alias.manager'),
     ], 'drupal/core', '>=8.8.0');
 
-    $ruleSince(FileDefaultSchemeRector::class, '>=8.8.0');
+    $rectorConfig->rule(FileDefaultSchemeRector::class);
 
     $rectorConfig->ruleWithConfigurationComposerVersionBound(FunctionToServiceRector::class,
         [
@@ -435,31 +418,31 @@ return static function (RectorConfig $rectorConfig): void {
     ], 'drupal/core', '>=8.8.0');
 
     // https://www.drupal.org/node/3083055
-    $ruleSince(FunctionalTestDefaultThemePropertyRector::class, '>=8.8.0');
+    $rectorConfig->rule(FunctionalTestDefaultThemePropertyRector::class);
 
     // ---------------------------------------------------------------------
     // Drupal 9.0
     // ---------------------------------------------------------------------
 
-    $ruleSince(ProtectedStaticModulesPropertyRector::class, '>=9.0.0');
+    $rectorConfig->rule(ProtectedStaticModulesPropertyRector::class);
 
-    $ruleSince(ShouldCallParentMethodsRector::class, '>=9.0.0');
+    $rectorConfig->rule(ShouldCallParentMethodsRector::class);
 
     // ---------------------------------------------------------------------
     // Drupal 9.1
     // ---------------------------------------------------------------------
 
-    $ruleSince(UiHelperTraitDrupalPostFormRector::class, '>=9.1.0');
+    $rectorConfig->rule(UiHelperTraitDrupalPostFormRector::class);
 
-    $ruleSince(PassRector::class, '>=9.1.0');
+    $rectorConfig->rule(PassRector::class);
 
-    $ruleSince(AssertNoUniqueTextRector::class, '>=9.1.0');
+    $rectorConfig->rule(AssertNoUniqueTextRector::class);
 
-    $ruleSince(AssertFieldByNameRector::class, '>=9.1.0');
+    $rectorConfig->rule(AssertFieldByNameRector::class);
 
-    $ruleSince(AssertNoFieldByNameRector::class, '>=9.1.0');
+    $rectorConfig->rule(AssertNoFieldByNameRector::class);
 
-    $ruleSince(AssertFieldByIdRector::class, '>=9.1.0');
+    $rectorConfig->rule(AssertFieldByIdRector::class);
 
     $rectorConfig->ruleWithConfigurationComposerVersionBound(AssertLegacyTraitRector::class, [
         new AssertLegacyTraitConfiguration('assertLinkByHref', 'linkByHrefExists'),
@@ -505,17 +488,17 @@ return static function (RectorConfig $rectorConfig): void {
         new AssertLegacyTraitConfiguration('assertCacheTag', 'responseHeaderContains', '', true, false, 'Drupal\FunctionalTests\AssertLegacyTrait', 'X-Drupal-Cache-Tags'),
     ], 'drupal/core', '>=9.1.0');
 
-    $ruleSince(AssertNoFieldByIdRector::class, '>=9.1.0');
+    $rectorConfig->rule(AssertNoFieldByIdRector::class);
 
-    $ruleSince(AssertOptionSelectedRector::class, '>=9.1.0');
+    $rectorConfig->rule(AssertOptionSelectedRector::class);
 
-    $ruleSince(ConstructFieldXpathRector::class, '>=9.1.0');
+    $rectorConfig->rule(ConstructFieldXpathRector::class);
 
-    $ruleSince(GetRawContentRector::class, '>=9.1.0');
+    $rectorConfig->rule(GetRawContentRector::class);
 
-    $ruleSince(GetAllOptionsRector::class, '>=9.1.0');
+    $rectorConfig->rule(GetAllOptionsRector::class);
 
-    $ruleSince(UserPasswordRector::class, '>=9.1.0');
+    $rectorConfig->rule(UserPasswordRector::class);
 
     // Change record: https://www.drupal.org/node/3162663
     $rectorConfig->ruleWithConfigurationComposerVersionBound(RenameStaticMethodRector::class, [
@@ -572,11 +555,11 @@ return static function (RectorConfig $rectorConfig): void {
     ], 'drupal/core', '>=9.3.0');
 
     // Change record: https://www.drupal.org/node/2940031
-    $ruleSince(FileCreateUrlRector::class, '>=9.3.0');
+    $rectorConfig->rule(FileCreateUrlRector::class);
 
-    $ruleSince(FileUrlTransformRelativeRector::class, '>=9.3.0');
+    $rectorConfig->rule(FileUrlTransformRelativeRector::class);
 
-    $ruleSince(FromUriRector::class, '>=9.3.0');
+    $rectorConfig->rule(FromUriRector::class);
 
     // Change record: https://www.drupal.org/node/3223520
     $rectorConfig->ruleWithConfigurationComposerVersionBound(FunctionToServiceRector::class, [
@@ -588,10 +571,10 @@ return static function (RectorConfig $rectorConfig): void {
     ], 'drupal/core', '>=9.3.0');
 
     // Change record: https://www.drupal.org/node/3223091.
-    $ruleSince(FileBuildUriRector::class, '>=9.3.0');
+    $rectorConfig->rule(FileBuildUriRector::class);
 
     // Change record: https://www.drupal.org/node/3225999
-    $ruleSince(SystemSortByInfoNameRector::class, '>=9.3.0');
+    $rectorConfig->rule(SystemSortByInfoNameRector::class);
 
     // Change rector: https://www.drupal.org/node/3039041
     // Missing: $url = $term->toUrl(); AND $name = taxonomy_term_title($term); AND taxonomy_implode_tags();
@@ -600,11 +583,11 @@ return static function (RectorConfig $rectorConfig): void {
         new FunctionToEntityTypeStorageConfiguration('taxonomy_vocabulary_static_reset', 'taxonomy_vocabulary', 'resetCache'),
     ], 'drupal/core', '>=9.3.0');
 
-    $ruleSince(TaxonomyVocabularyGetNamesRector::class, '>=9.3.0');
+    $rectorConfig->rule(TaxonomyVocabularyGetNamesRector::class);
 
-    $ruleSince(TaxonomyTermLoadMultipleByNameRector::class, '>=9.3.0');
+    $rectorConfig->rule(TaxonomyTermLoadMultipleByNameRector::class);
 
-    $ruleSince(TaxonomyVocabularyGetNamesDrupalStaticResetRector::class, '>=9.3.0');
+    $rectorConfig->rule(TaxonomyVocabularyGetNamesDrupalStaticResetRector::class);
 
     $rectorConfig->ruleWithConfigurationComposerVersionBound(FunctionToStaticRector::class, [
         new FunctionToStaticConfiguration('9.3.0', 'taxonomy_implode_tags', 'Drupal\Core\Entity\Element\EntityAutocomplete', 'getEntityLabels'),
@@ -630,22 +613,19 @@ return static function (RectorConfig $rectorConfig): void {
     // ---------------------------------------------------------------------
 
     // Change record https://www.drupal.org/node/3220952
-    $ruleSince(ModuleLoadRector::class, '>=9.4.0');
+    $rectorConfig->rule(ModuleLoadRector::class);
 
     // ---------------------------------------------------------------------
     // Drupal 10.0
     // ---------------------------------------------------------------------
 
-    $ruleSince(ShouldCallParentMethodsRector::class, '>=10.0.0');
+    $rectorConfig->rule(ShouldCallParentMethodsRector::class);
 
     // ---------------------------------------------------------------------
     // Drupal 10.1
     // ---------------------------------------------------------------------
 
     // PHPUnit 10.0 rules
-    $ruleSince(PublicDataProviderClassMethodRector::class, '>=10.1.0');
-    $ruleSince(StaticDataProviderClassMethodRector::class, '>=10.1.0');
-    $ruleSince(RemoveSetMethodsMethodCallRector::class, '>=10.1.0');
 
     // https://www.drupal.org/node/3244583
     $rectorConfig->ruleWithConfigurationComposerVersionBound(FunctionToStaticRector::class, [
@@ -747,13 +727,13 @@ return static function (RectorConfig $rectorConfig): void {
     // https://www.drupal.org/node/3217904
     // TestCase::getName() deprecated in drupal:10.1.0, removed in drupal:11.0.0.
     // Replaced by name().
-    $ruleSince(GetNameToNameRector::class, '>=11.0.0');
+    $rectorConfig->rule(GetNameToNameRector::class);
 
     // https://www.drupal.org/node/3436954
     // https://www.drupal.org/node/2575105 (change record)
     // $settings['state_cache'] deprecated in drupal:11.0.0.
     // State caching is now permanently enabled and the setting has no effect.
-    $ruleSince(RemoveStateCacheSettingRector::class, '>=11.0.0');
+    $rectorConfig->rule(RemoveStateCacheSettingRector::class);
 
     // https://www.drupal.org/node/3395986
     // REQUEST_TIME constant deprecated in drupal:8.3.0, removed in drupal:11.0.0.
@@ -797,7 +777,7 @@ return static function (RectorConfig $rectorConfig): void {
     // on D11 is safe and prepares the module for D12. Also registered in the
     // drupal-12.0 set for installs already on ^12.0.
     // https://git.drupalcode.org/project/redirect/-/merge_requests/200
-    $ruleSince(AddSymfonyConstraintValidatorTypeDeclarationsRector::class, '>=11.0.0');
+    $rectorConfig->rule(AddSymfonyConstraintValidatorTypeDeclarationsRector::class);
 
     // ---------------------------------------------------------------------
     // Drupal 11.1
@@ -828,7 +808,7 @@ return static function (RectorConfig $rectorConfig): void {
     // https://www.drupal.org/node/3368812 (change record)
     // ModuleHandlerInterface::writeCache() deprecated in drupal:11.1.0, removed in drupal:12.0.0. No replacement needed.
     // ModuleHandlerInterface::getHookInfo() deprecated in drupal:11.1.0, removed in drupal:12.0.0. Replaced by [].
-    $ruleSince(RemoveModuleHandlerDeprecatedMethodsRector::class, '>=11.1.0');
+    $rectorConfig->rule(RemoveModuleHandlerDeprecatedMethodsRector::class);
 
     // https://www.drupal.org/node/3575254
     // locale_config_batch_set_config_langcodes() and locale_config_batch_refresh_name() deprecated
@@ -842,19 +822,19 @@ return static function (RectorConfig $rectorConfig): void {
     // https://www.drupal.org/node/3461934 (change record)
     // Updater::postInstall() and postInstallTasks() deprecated in drupal:11.1.0, removed in drupal:12.0.0.
     // The entire install-via-URL flow was eliminated; overrides are dead code.
-    $ruleSince(RemoveUpdaterPostInstallMethodsRector::class, '>=11.1.0');
+    $rectorConfig->rule(RemoveUpdaterPostInstallMethodsRector::class);
 
     // https://www.drupal.org/node/3196937
     // https://www.drupal.org/node/3473739 (change record)
     // BlockContentTestBase::createBlockContentType() $values deprecated in drupal:11.1.0, removed in drupal:12.0.0.
     // Callers must pass an explicit array such as ['id' => 'basic'] instead of a plain string.
-    $ruleSince(BlockContentTestBaseStringToArrayRector::class, '>=11.1.0');
+    $rectorConfig->rule(BlockContentTestBaseStringToArrayRector::class);
 
     // https://www.drupal.org/node/3421202
     // https://www.drupal.org/node/3460567 (change record)
     // movePointerTo() deprecated in drupal:11.1.0, removed in drupal:12.0.0.
     // Replaced by getSession()->getDriver()->mouseOver() with an XPath selector.
-    $ruleSince(MovePointerToMouseOverRector::class, '>=11.1.0');
+    $rectorConfig->rule(MovePointerToMouseOverRector::class);
 
     // https://www.drupal.org/node/3432827
     // https://www.drupal.org/node/3442229 (change record)
@@ -882,7 +862,7 @@ return static function (RectorConfig $rectorConfig): void {
     // UiHelperTrait::drupalGet() $headers as indexed colon-separated strings or null values
     // deprecated in drupal:11.1.0, removed in drupal:12.0.0. Replaced by the associative array
     // format ['Header-Name' => 'value'], with empty strings in place of null.
-    $ruleSince(DrupalGetHeadersAssocArrayRector::class, '>=11.1.0');
+    $rectorConfig->rule(DrupalGetHeadersAssocArrayRector::class);
 
     // ---------------------------------------------------------------------
     // Drupal 11.1 (breaking)
@@ -950,13 +930,13 @@ return static function (RectorConfig $rectorConfig): void {
     // https://www.drupal.org/node/3550193 (change record)
     // ModuleHandlerInterface::addModule() and addProfile() deprecated in drupal:11.2.0, removed in drupal:12.0.0.
     // These methods are no-ops and can be removed.
-    $ruleSince(RemoveModuleHandlerAddModuleCallsRector::class, '>=11.2.0');
+    $rectorConfig->rule(RemoveModuleHandlerAddModuleCallsRector::class);
 
     // https://www.drupal.org/node/3485084
     // https://www.drupal.org/node/3486781 (change record)
     // HandlerBase::defineExtraOptions() deprecated in drupal:11.2.0, removed in drupal:12.0.0.
     // No replacement — Drupal core never called it; any override is dead code.
-    $ruleSince(RemoveHandlerBaseDefineExtraOptionsRector::class, '>=11.2.0');
+    $rectorConfig->rule(RemoveHandlerBaseDefineExtraOptionsRector::class);
 
     // https://www.drupal.org/node/3410938
     // drupal_requirements_severity() deprecated in drupal:11.2.0, removed in drupal:12.0.0.
@@ -1070,18 +1050,18 @@ return static function (RectorConfig $rectorConfig): void {
 
     // https://www.drupal.org/node/3495943
     // #[StopProceduralHookScan] attribute renamed to #[ProceduralHookScanStop] in drupal:11.2.0.
-    $ruleSince(RenameStopProceduralHookScanRector::class, '>=11.2.0');
+    $rectorConfig->rule(RenameStopProceduralHookScanRector::class);
 
     // https://www.drupal.org/node/3511123
     // https://www.drupal.org/node/3511149 (change record)
     // CacheTagChecksumCount and CacheTagIsValidCount deprecated in drupal:11.2.0, removed in drupal:12.0.0. No replacement.
-    $ruleSince(RemoveCacheTagChecksumAssertionsRector::class, '>=11.2.0');
+    $rectorConfig->rule(RemoveCacheTagChecksumAssertionsRector::class);
 
     // https://www.drupal.org/node/3506931
     // https://www.drupal.org/node/3511287 (change record)
     // Connection::createConnectionOptionsFromUrl() $root parameter deprecated in drupal:11.2.0, removed in drupal:12.0.0.
     // Pass NULL explicitly instead of the root path argument.
-    $ruleSince(RemoveRootFromCreateConnectionOptionsFromUrlRector::class, '>=11.2.0');
+    $rectorConfig->rule(RemoveRootFromCreateConnectionOptionsFromUrlRector::class);
 
     // https://www.drupal.org/node/3410939
     // SystemManager::REQUIREMENT_* deprecated in drupal:11.2.0, removed in drupal:12.0.0.
@@ -1115,14 +1095,14 @@ return static function (RectorConfig $rectorConfig): void {
     // ViewsBlockBase::setConfigurationValue('items_per_page', 'none') deprecated in drupal:11.2.0,
     // removed in drupal:12.0.0. Replaced by NULL, which is the canonical value for inheriting
     // the items-per-page setting from the view.
-    $ruleSince(ViewsBlockItemsPerPageNoneToNullRector::class, '>=11.2.0');
+    $rectorConfig->rule(ViewsBlockItemsPerPageNoneToNullRector::class);
 
     // https://www.drupal.org/node/3448457
     // https://www.drupal.org/node/3452144 (change record)
     // EntityFormMode::create() with 'description' => '' deprecated in drupal:11.2.0,
     // removed in drupal:12.0.0. Replaced by NULL, which is the canonical "no description" value
     // for entity display modes.
-    $ruleSince(EntityFormModeEmptyDescriptionToNullRector::class, '>=11.2.0');
+    $rectorConfig->rule(EntityFormModeEmptyDescriptionToNullRector::class);
 
     // ---------------------------------------------------------------------
     // Drupal 11.2 (breaking)
@@ -1152,7 +1132,7 @@ return static function (RectorConfig $rectorConfig): void {
     //   parameter $source_module in call to Drupal\migrate\Attribute\
     //   MigrateSource constructor." (argument.unknownParameter, not a
     //   deprecation). Intentionally no coverage message.
-    $ruleSince(RemoveSourceModuleFromMigrateSourceAttributeRector::class, '>=11.2.0');
+    $rectorConfig->rule(RemoveSourceModuleFromMigrateSourceAttributeRector::class);
 
     // https://www.drupal.org/node/3488572
     // https://www.drupal.org/node/3488580 (change record)
@@ -1205,13 +1185,13 @@ return static function (RectorConfig $rectorConfig): void {
     // https://www.drupal.org/node/3536432 (change record)
     // ModuleHandler::loadAllIncludes() deprecated in drupal:11.3.0, removed in drupal:13.0.0.
     // Replaced by an explicit foreach over getModuleList() + loadInclude().
-    $ruleSince(LoadAllIncludesRector::class, '>=11.3.0');
+    $rectorConfig->rule(LoadAllIncludesRector::class);
 
     // https://www.drupal.org/node/3396062
     // https://www.drupal.org/node/3519187 (change record)
     // NodeStorage::revisionIds() and userRevisionIds() deprecated in drupal:11.3.0, removed in drupal:13.0.0.
     // Replaced by equivalent entity queries.
-    $ruleSince(NodeStorageDeprecatedMethodsRector::class, '>=11.3.0');
+    $rectorConfig->rule(NodeStorageDeprecatedMethodsRector::class);
 
     // https://www.drupal.org/node/3533083
     // node_mass_update() deprecated in drupal:11.3.0, removed in drupal:13.0.0.
@@ -1389,7 +1369,7 @@ return static function (RectorConfig $rectorConfig): void {
     // throws in drupal:13.0.0, when the dependency cannot implement
     // CacheableDependencyInterface. Removes calls whose dependency argument is
     // provably a primitive/array (bool, int, float, string, null, array).
-    $ruleSince(RemoveRendererAddCacheableDependencyNonObjectRector::class, '>=11.3.0');
+    $rectorConfig->rule(RemoveRendererAddCacheableDependencyNonObjectRector::class);
 
     // https://www.drupal.org/node/3571054
     // https://www.drupal.org/node/3440844 (change record)
@@ -1398,7 +1378,7 @@ return static function (RectorConfig $rectorConfig): void {
     // $dialog_options['classes']['ui-dialog']. The replacement form has existed in
     // core since 10.3.x, so the transformed output is safe on every drupal-rector–
     // supported Drupal minor (D10.3+); no BC wrapper needed.
-    $ruleSince(ReplaceDialogClassOptionRector::class, '>=11.3.0');
+    $rectorConfig->rule(ReplaceDialogClassOptionRector::class);
 
     // https://www.drupal.org/node/3535439
     // https://www.drupal.org/node/3542527 (change record)
@@ -1406,7 +1386,7 @@ return static function (RectorConfig $rectorConfig): void {
     // drupal:11.3.0, removed in drupal:13.0.0. Reads replaced with
     // $variables['view_mode'] === 'full'; the comparison is pure PHP and works
     // on every Drupal version, so no BC wrapper is needed.
-    $ruleSince(TaxonomyTermPageVariableToViewModeRector::class, '>=11.3.0');
+    $rectorConfig->rule(TaxonomyTermPageVariableToViewModeRector::class);
 
     // https://www.drupal.org/node/3538660
     // https://www.drupal.org/node/3538678 (change record)
@@ -1451,7 +1431,7 @@ return static function (RectorConfig $rectorConfig): void {
     // (a function declaration is not an Expr → Expr transformation), hence the
     // breaking set. Apply only after dropping support for Drupal minors that
     // predate hook_runtime_requirements_alter().
-    $ruleSince(HookRequirementsAlterRenameRector::class, '>=11.3.0');
+    $rectorConfig->rule(HookRequirementsAlterRenameRector::class);
 
     // https://www.drupal.org/node/1019966
     // https://www.drupal.org/node/2690393 (change record)
@@ -1472,7 +1452,7 @@ return static function (RectorConfig $rectorConfig): void {
     //   download_statistics 1.0.x (the rector transforms it correctly, but
     //   PHPStan emits no deprecation for the attribute). Runtime-only
     //   deprecation — intentionally no coverage message.
-    $ruleSince(RenameHookRankingRector::class, '>=11.3.0');
+    $rectorConfig->rule(RenameHookRankingRector::class);
 
     // https://www.drupal.org/node/3551446
     // https://www.drupal.org/node/3551450 (change record)
@@ -1722,7 +1702,7 @@ return static function (RectorConfig $rectorConfig): void {
     // https://www.drupal.org/node/3575062 (change record)
     // EntityTypeInterface::setUriCallback() deprecated in drupal:11.4.0, removed in drupal:13.0.0.
     // Use link templates or a route provider instead.
-    $ruleSince(RemoveSetUriCallbackRector::class, '>=11.4.0');
+    $rectorConfig->rule(RemoveSetUriCallbackRector::class);
 
     // https://www.drupal.org/node/3498026
     // https://www.drupal.org/node/3579527 (change record)
@@ -1743,13 +1723,13 @@ return static function (RectorConfig $rectorConfig): void {
     // https://www.drupal.org/node/3564958 (change record)
     // CachePluginBase::getRowCacheKeys() and getRowId() deprecated in drupal:11.4.0, removed in drupal:13.0.0.
     // Remove array items whose value is one of these calls.
-    $ruleSince(RemoveViewsRowCacheKeysRector::class, '>=11.4.0');
+    $rectorConfig->rule(RemoveViewsRowCacheKeysRector::class);
 
     // https://www.drupal.org/node/3576556
     // https://www.drupal.org/node/3576855 (change record)
     // CachePluginBase::cacheExpire() deprecated in drupal:11.4.0, removed in drupal:13.0.0.
     // Subclass overrides are dead code; remove them.
-    $ruleSince(RemoveCacheExpireOverrideRector::class, '>=11.4.0');
+    $rectorConfig->rule(RemoveCacheExpireOverrideRector::class);
 
     // https://www.drupal.org/node/3347842
     // https://www.drupal.org/node/3348180 (change record)
@@ -1767,13 +1747,13 @@ return static function (RectorConfig $rectorConfig): void {
     // https://www.drupal.org/node/3554139 (change record)
     // LinkWidget::validateTitleElement() deprecated in drupal:11.4.0, removed in drupal:12.0.0.
     // Validation is now handled by LinkTitleRequiredConstraint on the LinkItem field type.
-    $ruleSince(RemoveLinkWidgetValidateTitleElementRector::class, '>=11.4.0');
+    $rectorConfig->rule(RemoveLinkWidgetValidateTitleElementRector::class);
 
     // https://www.drupal.org/node/3566768
     // https://www.drupal.org/node/3566774 (change record)
     // $form['#submit'][] = 'automated_cron_settings_submit' deprecated in drupal:11.4.0, removed in drupal:13.0.0.
     // Config saving is now handled automatically via #config_target on the interval element.
-    $ruleSince(RemoveAutomatedCronSubmitHandlerRector::class, '>=11.4.0');
+    $rectorConfig->rule(RemoveAutomatedCronSubmitHandlerRector::class);
 
     // https://www.drupal.org/node/3572243
     // https://www.drupal.org/node/3572594 (change record)
@@ -1896,13 +1876,13 @@ return static function (RectorConfig $rectorConfig): void {
     // https://www.drupal.org/node/3588040 (change record)
     // check_markup() deprecated in drupal:11.4.0, removed in drupal:12.0.0.
     // Replaced by a processed_text render array.
-    $ruleSince(CheckMarkupToProcessedTextRector::class, '>=11.4.0');
+    $rectorConfig->rule(CheckMarkupToProcessedTextRector::class);
 
     // https://www.drupal.org/node/3571172
     // https://www.drupal.org/node/3566774 (change record)
     // system_sort_themes() string callback deprecated in drupal:11.4.0, removed in drupal:12.0.0.
     // Replaced by an inline static closure.
-    $ruleSince(SystemSortThemesRector::class, '>=11.4.0');
+    $rectorConfig->rule(SystemSortThemesRector::class);
 
     // https://www.drupal.org/node/3037031
     // locale_translation_flush_projects(), locale_translation_build_projects(), locale_translation_check_projects(),
@@ -1933,7 +1913,7 @@ return static function (RectorConfig $rectorConfig): void {
     // drupal:10.2.0 and removed in drupal:12.0.0. The sequences table no
     // longer exists in core; the call throws a LogicException on D12 and
     // must be removed (or have 'sequences' stripped from its array form).
-    $ruleSince(RemoveInstallSchemaSystemSequencesRector::class, '>=11.4.0');
+    $rectorConfig->rule(RemoveInstallSchemaSystemSequencesRector::class);
 
     // https://www.drupal.org/node/3548957
     // https://www.drupal.org/node/3548961 (change record)
@@ -1943,32 +1923,32 @@ return static function (RectorConfig $rectorConfig): void {
     // normally. Inline `public function __toString(): string { return (string)
     // $this->render(); }` replaces it. Pure PHP — runs on every supported
     // Drupal version, no BC wrapper.
-    $ruleSince(RemoveDrupalToStringTraitRector::class, '>=11.4.0');
+    $rectorConfig->rule(RemoveDrupalToStringTraitRector::class);
 
     // https://www.drupal.org/node/3559481
     // https://www.drupal.org/node/3562304 (change record)
     // ImageToolkitOperationBase::__construct() $toolkit argument deprecated in drupal:11.4.0,
     // removed in drupal:13.0.0. Plugin manager now injects via setToolkit() for autowiring.
-    $ruleSince(RemoveToolkitArgFromImageToolkitOperationConstructorRector::class, '>=11.4.0');
+    $rectorConfig->rule(RemoveToolkitArgFromImageToolkitOperationConstructorRector::class);
 
     // https://www.drupal.org/node/2258355
     // https://www.drupal.org/node/3261271 (change record)
     // hide() and show() deprecated in drupal:11.4.0, removed in drupal:13.0.0.
     // Replaced by direct $element['#printed'] = TRUE/FALSE assignment.
-    $ruleSince(ReplaceHideShowWithPrintedRector::class, '>=11.4.0');
+    $rectorConfig->rule(ReplaceHideShowWithPrintedRector::class);
 
     // https://www.drupal.org/node/3526250
     // Integer values for #access render array key deprecated in drupal:11.4.0,
     // removed in drupal:13.0.0. Replaced by boolean or AccessResultInterface.
     // Only integer literals are rewritten (1 → true, 0 → false); variables and
     // typed expressions are left for manual review.
-    $ruleSince(ReplaceNonBoolAccessRector::class, '>=11.4.0');
+    $rectorConfig->rule(ReplaceNonBoolAccessRector::class);
 
     // https://www.drupal.org/node/3589047
     // https://www.drupal.org/node/3574112 (change record)
     // DrupalTestCaseTrait::getDrupalRoot() deprecated in drupal:11.4.0, removed in drupal:13.0.0.
     // Replaced by direct access to the $this->root property on Drupal base test classes.
-    $ruleSince(GetDrupalRootToRootPropertyRector::class, '>=11.4.0');
+    $rectorConfig->rule(GetDrupalRootToRootPropertyRector::class);
 
     // https://www.drupal.org/node/1452100
     // https://www.drupal.org/node/3573884 (change record)
@@ -2069,7 +2049,7 @@ return static function (RectorConfig $rectorConfig): void {
     // lookup, normalised with array_values(...)[0] ?? FALSE to preserve the
     // original single-object-or-FALSE return contract. Pure entity-API + PHP —
     // runs on every supported Drupal version, so no BC wrapper.
-    $ruleSince(UserLoadByNameAndMailRector::class, '>=11.4.0');
+    $rectorConfig->rule(UserLoadByNameAndMailRector::class);
 
     // https://www.drupal.org/node/3581056
     // https://www.drupal.org/node/3581062 (change record)
@@ -2151,7 +2131,7 @@ return static function (RectorConfig $rectorConfig): void {
     // `new NodeViewController(...)`, which RenameClassRector cannot do. It
     // matches both class names, so the trim is order-independent w.r.t. the
     // RenameClassRector pass above.
-    $ruleSince(ReplaceNodeViewControllerRector::class, '>=11.4.0');
+    $rectorConfig->rule(ReplaceNodeViewControllerRector::class);
 
     // https://www.drupal.org/node/2987159
     // https://www.drupal.org/node/3521459 (change record)
@@ -2178,7 +2158,7 @@ return static function (RectorConfig $rectorConfig): void {
     // on any symbol the plugin references, so phpstan-deprecation-rules /
     // upgrade_status cannot flag a `class X extends DefaultSelection`
     // declaration. There is no static message to match.
-    $ruleSince(BlockContentSelectionExtendsRector::class, '>=11.4.0');
+    $rectorConfig->rule(BlockContentSelectionExtendsRector::class);
 
     // https://www.drupal.org/node/3505370
     // https://www.drupal.org/node/3567879 (change record)
@@ -2211,7 +2191,7 @@ return static function (RectorConfig $rectorConfig): void {
     //   no static @deprecated symbol the override references. The runtime
     //   @trigger_error fires inside core's tips() handling, not at the call site.
     //   Nothing for upgrade_status to match against.
-    $ruleSince(RemoveFilterTipsLongParamRector::class, '>=11.4.0');
+    $rectorConfig->rule(RemoveFilterTipsLongParamRector::class);
 
     // ---------------------------------------------------------------------
     // Drupal 12.0
@@ -2222,5 +2202,5 @@ return static function (RectorConfig $rectorConfig): void {
     // to validate() (the latter since Symfony 7). Add them to implementers.
     // Backward compatible on all supported Drupal versions, so no version gate.
     // https://git.drupalcode.org/project/redirect/-/merge_requests/200
-    $ruleSince(AddSymfonyConstraintValidatorTypeDeclarationsRector::class, '>=12.0.0');
+    $rectorConfig->rule(AddSymfonyConstraintValidatorTypeDeclarationsRector::class);
 };

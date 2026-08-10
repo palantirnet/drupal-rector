@@ -6,12 +6,13 @@ namespace DrupalRector\Tests\Set;
 
 use DrupalRector\Set\DrupalSetList;
 use PHPUnit\Framework\TestCase;
+use Rector\VersionBonding\Contract\ComposerPackageConstraintInterface;
 
 final class ComposerBasedSetTest extends TestCase
 {
     private const ROOT_DIR = __DIR__.'/../../..';
 
-    public function testSetListConstantPointsAtTheGeneratedFile(): void
+    public function testSetListConstantPointsAtTheSetFile(): void
     {
         self::assertFileExists(DrupalSetList::COMPOSER_BASED);
         self::assertSame(
@@ -20,28 +21,58 @@ final class ComposerBasedSetTest extends TestCase
         );
     }
 
-    public function testEveryRegistrationIsBoundToAnExactCoreVersion(): void
+    public function testEveryConfiguredRuleIsBoundToAnExactCoreVersion(): void
     {
-        $contents = $this->readComposerBasedSet();
-
-        preg_match_all('#\$ruleSince\((\S+)::class, (\S+)\);#', $contents, $ruleSinceMatches, PREG_SET_ORDER);
         preg_match_all(
             '#ruleWithConfigurationComposerVersionBound\((\S+)::class,.*?\], (\S+), (\S+)\);#s',
-            $contents,
-            $boundMatches,
+            $this->readComposerBasedSet(),
+            $matches,
             PREG_SET_ORDER
         );
 
-        self::assertNotEmpty($ruleSinceMatches);
-        self::assertNotEmpty($boundMatches);
+        self::assertNotEmpty($matches);
 
-        foreach ($ruleSinceMatches as $match) {
-            self::assertMatchesRegularExpression("#^'>=\d+\.\d+\.\d+'$#", $match[2], $match[1]);
-        }
-
-        foreach ($boundMatches as $match) {
+        foreach ($matches as $match) {
             self::assertSame("'drupal/core'", $match[2], $match[1]);
             self::assertMatchesRegularExpression("#^'>=\d+\.\d+\.\d+'$#", $match[3], $match[1]);
+        }
+    }
+
+    /**
+     * A rule that takes no configuration cannot state its version in the set, so
+     * it has to declare it on the class instead — otherwise it would run on every
+     * Drupal version.
+     */
+    public function testEveryPlainlyRegisteredRuleDeclaresItsCoreConstraint(): void
+    {
+        $contents = $this->readComposerBasedSet();
+
+        preg_match_all('#^use (\S+\\\\(\w+));$#m', $contents, $importMatches, PREG_SET_ORDER);
+        $importedClassNames = array_column($importMatches, 1, 2);
+
+        preg_match_all('#\$rectorConfig->rule\((\S+)::class\);#', $contents, $ruleMatches);
+        self::assertNotEmpty($ruleMatches[1]);
+
+        foreach (array_unique($ruleMatches[1]) as $shortClassName) {
+            $rectorClass = $importedClassNames[$shortClassName] ?? ltrim($shortClassName, '\\');
+
+            self::assertTrue(
+                is_a($rectorClass, ComposerPackageConstraintInterface::class, true),
+                $rectorClass.' must implement '.ComposerPackageConstraintInterface::class
+            );
+
+            // some rules take constructor dependencies, which the constraint does not use
+            $rector = new \ReflectionClass($rectorClass)->newInstanceWithoutConstructor();
+            self::assertInstanceOf(ComposerPackageConstraintInterface::class, $rector);
+
+            $composerPackageConstraint = $rector->provideComposerPackageConstraint();
+
+            self::assertSame('drupal/core', $composerPackageConstraint->getPackageName(), $rectorClass);
+            self::assertMatchesRegularExpression(
+                '#^>=\d+\.\d+\.\d+$#',
+                $composerPackageConstraint->getConstraint(),
+                $rectorClass
+            );
         }
     }
 
@@ -60,10 +91,19 @@ final class ComposerBasedSetTest extends TestCase
         foreach ($this->providePerMinorConfigFilePaths() as $configFilePath) {
             $configContents = (string) file_get_contents($configFilePath);
 
-            preg_match_all('#(?:rule|ruleWithConfiguration)\((\w+)::class#', $configContents, $matches);
+            preg_match_all('#^use (\S+\\\\(\w+));$#m', $configContents, $importMatches, PREG_SET_ORDER);
+            $importedClassNames = array_column($importMatches, 1, 2);
+
+            // rule(), ruleWithConfiguration() and the entries of a rules([]) call
+            preg_match_all('#(\w+)::class#', $configContents, $matches);
 
             foreach (array_unique($matches[1]) as $shortClassName) {
                 if (!str_ends_with($shortClassName, 'Rector')) {
+                    continue;
+                }
+
+                // rules of the other Rector packages are bound by their own composer-based set
+                if (!str_starts_with($importedClassNames[$shortClassName] ?? '', 'DrupalRector\\')) {
                     continue;
                 }
 

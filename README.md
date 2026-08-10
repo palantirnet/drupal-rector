@@ -127,16 +127,20 @@ composer-based sets, bound to their own installed version, which is more accurat
 than inferring them from the Drupal minor. Add `symfony: true, phpunit: true` to
 the call above if you want those too.
 
-To see which rules are active for the installed core:
+To see the rules that carry their configuration in the set, and whether the
+installed core activates them:
 
 ```bash
 vendor/bin/rector composer-based
 ```
 
+A rule that takes no configuration states its version on the rule class instead,
+through Rector's `ComposerPackageConstraintInterface`, so it is skipped on a core
+below it too. That filter is global, not per set: those rules stay off on an
+older core even when you load a `Drupal11SetList` set by hand.
+
 This is the backward-compatibility-safe counterpart to listing sets manually:
-it fixes what is deprecated on *your* installed core. To look ahead and prepare
-for the next major before upgrading, keep using the explicit `Drupal11SetList`
-sets with `setDrupalVersion()` as described above — those are not version-bound.
+it fixes what is deprecated on *your* installed core.
 
 > **Requires** a Rector release that ships `SetGroup::DRUPAL` and the
 > `withComposerBased(drupal: ...)` toggle (see
