@@ -138,9 +138,12 @@ it fixes what is deprecated on *your* installed core. To look ahead and prepare
 for the next major before upgrading, keep using the explicit `Drupal11SetList`
 sets with `setDrupalVersion()` as described above — those are not version-bound.
 
-> **Requires `rector/rector` ^2.6**, which is where
-> `RectorConfig::ruleWithConfigurationComposerVersionBound()` landed (see
-> [rectorphp/rector#9778](https://github.com/rectorphp/rector/issues/9778)).
+> **Requires** a Rector release that ships `SetGroup::DRUPAL` and the
+> `withComposerBased(drupal: ...)` toggle (see
+> [rectorphp/rector#9778](https://github.com/rectorphp/rector/issues/9778)),
+> and `rector/rector` ^2.6, which is where
+> `RectorConfig::ruleWithConfigurationComposerVersionBound()` landed
+> ([rectorphp/rector-src#8244](https://github.com/rectorphp/rector-src/pull/8244)).
 
 ### DrupalRectorSettings
 
