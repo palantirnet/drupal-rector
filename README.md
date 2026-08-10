@@ -121,12 +121,6 @@ known exactly, the otherwise opt-in *breaking* renames (whose replacement only
 exists from a given minor onward) are included — they cannot fatal on a core
 that is guaranteed to have the replacement.
 
-The Symfony and PHPUnit version sets that the per-minor Drupal sets pull in are
-not repeated in the composer-based set; those packages ship their own
-composer-based sets, bound to their own installed version, which is more accurate
-than inferring them from the Drupal minor. Add `symfony: true, phpunit: true` to
-the call above if you want those too.
-
 To see the rules that carry their configuration in the set, and whether the
 installed core activates them:
 
