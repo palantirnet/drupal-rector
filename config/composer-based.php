@@ -184,9 +184,12 @@ use Rector\Renaming\ValueObject\RenameStaticMethod;
  * Every drupal-rector rule, bound to the exact `drupal/core` version its
  * deprecation was introduced in.
  *
- * GENERATED FILE — do not edit by hand. Run
- * `php scripts/generate-composer-based.php` after changing a per-minor config
- * in one of the config/drupal-N directories.
+ * Deliberately duplicates the registrations of the per-minor configs in
+ * config/drupal-N: a rule is registered here and there. Keeping this a plain
+ * config of real rules is worth the duplication — the constraint of every rule
+ * is readable on the spot, instead of being derived from the file a
+ * registration happens to live in. `ComposerBasedSetTest` fails when a rule of a
+ * per-minor config is missing here.
  *
  * Instead of picking set lists by hand, this set lets Rector pick the rules from
  * the installed `drupal/core` version: a site on 11.2 gets the rules bound to

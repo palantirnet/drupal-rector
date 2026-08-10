@@ -20,34 +20,6 @@ final class ComposerBasedSetTest extends TestCase
         );
     }
 
-    /**
-     * The committed file is generated; a rule added to a per-minor config
-     * without re-running the generator would silently never be version-bound.
-     */
-    public function testIsUpToDateWithTheGenerator(): void
-    {
-        $temporaryFilePath = (string) tempnam(sys_get_temp_dir(), 'composer-based-');
-
-        $command = sprintf(
-            '%s %s %s',
-            escapeshellarg(PHP_BINARY),
-            escapeshellarg(self::ROOT_DIR.'/scripts/generate-composer-based.php'),
-            escapeshellarg($temporaryFilePath)
-        );
-
-        exec($command, $output, $exitCode);
-        self::assertSame(0, $exitCode, implode("\n", $output));
-
-        $generated = (string) file_get_contents($temporaryFilePath);
-        unlink($temporaryFilePath);
-
-        self::assertSame(
-            $this->readComposerBasedSet(),
-            $generated,
-            'config/composer-based.php is out of date, run `php scripts/generate-composer-based.php`'
-        );
-    }
-
     public function testEveryRegistrationIsBoundToAnExactCoreVersion(): void
     {
         $contents = $this->readComposerBasedSet();
@@ -74,8 +46,10 @@ final class ComposerBasedSetTest extends TestCase
     }
 
     /**
-     * Every rule the per-minor sets register must also be registered here,
-     * otherwise composer-based selection silently covers less.
+     * The registrations are duplicated between here and the per-minor configs on
+     * purpose, so this is the guard against the two drifting apart: every rule
+     * the per-minor sets register must also be registered here, otherwise
+     * composer-based selection silently covers less.
      */
     public function testCoversEveryRuleOfThePerMinorSets(): void
     {
