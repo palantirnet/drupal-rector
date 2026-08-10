@@ -378,12 +378,13 @@ $header = <<<'PHP'
      * Usage:
      *
      *     return RectorConfig::configure()
-     *         ->withComposerBased(drupal: true, symfony: true, phpunit: true);
+     *         ->withComposerBased(drupal: true);
      *
      * The Symfony and PHPUnit version sets that the per-minor Drupal configs pull in
      * are deliberately not repeated here: those packages ship their own
      * composer-based sets, bound to their own installed version, which is more
-     * accurate than inferring them from the Drupal minor.
+     * accurate than inferring them from the Drupal minor. Add
+     * `symfony: true, phpunit: true` to the call above to get those too.
      *
      * To look ahead and prepare for a Drupal version you have not installed yet, use
      * the explicit \DrupalRector\Set\Drupal11SetList sets instead — they are not

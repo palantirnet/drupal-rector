@@ -109,7 +109,7 @@ installed `drupal/core` version:
 
 ```php
 return RectorConfig::configure()
-    ->withComposerBased(drupal: true, symfony: true, phpunit: true);
+    ->withComposerBased(drupal: true);
 ```
 
 `DrupalSetList::COMPOSER_BASED` registers every drupal-rector rule at once, each
@@ -124,8 +124,8 @@ that is guaranteed to have the replacement.
 The Symfony and PHPUnit version sets that the per-minor Drupal sets pull in are
 not repeated in the composer-based set; those packages ship their own
 composer-based sets, bound to their own installed version, which is more accurate
-than inferring them from the Drupal minor. Enable them with
-`withComposerBased(symfony: true, phpunit: true)` as shown above.
+than inferring them from the Drupal minor. Add `symfony: true, phpunit: true` to
+the call above if you want those too.
 
 To see which rules are active for the installed core:
 
