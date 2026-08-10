@@ -9,7 +9,8 @@ use Rector\Config\RectorConfig;
  * Composer-based selection defaults: PHPUnit bootstrap + settings.
  *
  * Standalone set imported by `config/composer-based.php` (see
- * \DrupalRector\Set\DrupalSetList::COMPOSER_BASED). The per-minor deprecation
+ * \DrupalRector\Set\DrupalSetList::COMPOSER_BASED) and matched once per Drupal
+ * major by \DrupalRector\Set\DrupalSetProvider. The per-minor deprecation
  * configs do not register the bootstrap themselves — only the aggregated
  * `drupal-{10,11}-all-deprecations.php` sets do.
  *

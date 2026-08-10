@@ -200,8 +200,6 @@ use Rector\Renaming\ValueObject\RenameStaticMethod;
  *     return RectorConfig::configure()
  *         ->withComposerBased(drupal: true, symfony: true, phpunit: true);
  *
- * or, equivalently, `->withSets([DrupalSetList::COMPOSER_BASED])`.
- *
  * The Symfony and PHPUnit version sets that the per-minor Drupal configs pull in
  * are deliberately not repeated here: those packages ship their own
  * composer-based sets, bound to their own installed version, which is more

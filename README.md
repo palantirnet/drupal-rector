@@ -105,12 +105,11 @@ This is more granular than the `Drupal10SetList::DRUPAL_10` set. Since Drupal 10
 ### Composer-based sets (automatic version selection)
 
 Instead of listing sets by hand, you can let Rector pick the rules from the
-installed `drupal/core` version. Load the single composer-based set:
+installed `drupal/core` version:
 
 ```php
 return RectorConfig::configure()
-    ->withSets([\DrupalRector\Set\DrupalSetList::COMPOSER_BASED])
-    ->withComposerBased(symfony: true, phpunit: true);
+    ->withComposerBased(drupal: true, symfony: true, phpunit: true);
 ```
 
 `DrupalSetList::COMPOSER_BASED` registers every drupal-rector rule at once, each
@@ -142,9 +141,6 @@ sets with `setDrupalVersion()` as described above — those are not version-boun
 > **Requires `rector/rector` ^2.6**, which is where
 > `RectorConfig::ruleWithConfigurationComposerVersionBound()` landed (see
 > [rectorphp/rector#9778](https://github.com/rectorphp/rector/issues/9778)).
-> `withComposerBased(drupal: true)` still resolves the `drupal` set *group*,
-> which this package no longer provides; use `withSets()` as shown above until
-> the toggle points at `DrupalSetList::COMPOSER_BASED`.
 
 ### DrupalRectorSettings
 
