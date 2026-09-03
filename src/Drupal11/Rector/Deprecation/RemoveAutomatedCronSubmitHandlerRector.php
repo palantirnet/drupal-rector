@@ -7,6 +7,8 @@ namespace DrupalRector\Drupal11\Rector\Deprecation;
 use PhpParser\Node;
 use PhpParser\NodeVisitor;
 use Rector\Rector\AbstractRector;
+use Rector\VersionBonding\Contract\ComposerPackageConstraintInterface;
+use Rector\VersionBonding\ValueObject\ComposerPackageConstraint;
 use Symplify\RuleDocGenerator\Contract\DocumentedRuleInterface;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
@@ -20,8 +22,13 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  * @see https://www.drupal.org/node/3566768
  * @see https://www.drupal.org/node/3566774
  */
-final class RemoveAutomatedCronSubmitHandlerRector extends AbstractRector implements DocumentedRuleInterface
+final class RemoveAutomatedCronSubmitHandlerRector extends AbstractRector implements ComposerPackageConstraintInterface, DocumentedRuleInterface
 {
+    public function provideComposerPackageConstraint(): ComposerPackageConstraint
+    {
+        return new ComposerPackageConstraint('drupal/core', '>=11.4.0');
+    }
+
     public function getNodeTypes(): array
     {
         return [Node\Stmt\Expression::class];

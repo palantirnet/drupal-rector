@@ -8,6 +8,8 @@ use PhpParser\Node;
 use PhpParser\NodeVisitor;
 use PHPStan\Type\ObjectType;
 use Rector\Rector\AbstractRector;
+use Rector\VersionBonding\Contract\ComposerPackageConstraintInterface;
+use Rector\VersionBonding\ValueObject\ComposerPackageConstraint;
 use Symplify\RuleDocGenerator\Contract\DocumentedRuleInterface;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
@@ -18,8 +20,13 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  * @see https://www.drupal.org/node/3396062
  * @see https://www.drupal.org/node/3519187
  */
-final class NodeStorageDeprecatedMethodsRector extends AbstractRector implements DocumentedRuleInterface
+final class NodeStorageDeprecatedMethodsRector extends AbstractRector implements ComposerPackageConstraintInterface, DocumentedRuleInterface
 {
+    public function provideComposerPackageConstraint(): ComposerPackageConstraint
+    {
+        return new ComposerPackageConstraint('drupal/core', '>=11.3.0');
+    }
+
     public function getNodeTypes(): array
     {
         return [Node\Expr\MethodCall::class, Node\Stmt\Expression::class];

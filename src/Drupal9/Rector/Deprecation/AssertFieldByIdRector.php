@@ -7,12 +7,19 @@ namespace DrupalRector\Drupal9\Rector\Deprecation;
 use PhpParser\Node;
 use PhpParser\Node\Expr\MethodCall;
 use Rector\Rector\AbstractRector;
+use Rector\VersionBonding\Contract\ComposerPackageConstraintInterface;
+use Rector\VersionBonding\ValueObject\ComposerPackageConstraint;
 use Symplify\RuleDocGenerator\Contract\DocumentedRuleInterface;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
-final class AssertFieldByIdRector extends AbstractRector implements DocumentedRuleInterface
+final class AssertFieldByIdRector extends AbstractRector implements ComposerPackageConstraintInterface, DocumentedRuleInterface
 {
+    public function provideComposerPackageConstraint(): ComposerPackageConstraint
+    {
+        return new ComposerPackageConstraint('drupal/core', '>=9.1.0');
+    }
+
     public function getRuleDefinition(): RuleDefinition
     {
         return new RuleDefinition('Fixes deprecated AssertLegacyTrait::assertFieldById() calls', [

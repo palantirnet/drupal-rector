@@ -15,6 +15,8 @@ use Rector\Exception\ShouldNotHappenException;
 use Rector\PhpParser\Node\Value\ValueResolver;
 use Rector\PHPStan\ScopeFetcher;
 use Rector\Rector\AbstractRector;
+use Rector\VersionBonding\Contract\ComposerPackageConstraintInterface;
+use Rector\VersionBonding\ValueObject\ComposerPackageConstraint;
 use Symplify\RuleDocGenerator\Contract\DocumentedRuleInterface;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
@@ -22,8 +24,13 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 /**
  * @changelog https://www.drupal.org/node/3083055
  */
-final class FunctionalTestDefaultThemePropertyRector extends AbstractRector implements DocumentedRuleInterface
+final class FunctionalTestDefaultThemePropertyRector extends AbstractRector implements ComposerPackageConstraintInterface, DocumentedRuleInterface
 {
+    public function provideComposerPackageConstraint(): ComposerPackageConstraint
+    {
+        return new ComposerPackageConstraint('drupal/core', '>=8.8.0');
+    }
+
     /**
      * @var PhpDocInfoFactory
      */

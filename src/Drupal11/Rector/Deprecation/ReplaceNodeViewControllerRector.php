@@ -9,6 +9,8 @@ use PhpParser\Node\Expr\New_;
 use PhpParser\Node\Name;
 use PhpParser\Node\Name\FullyQualified;
 use Rector\Rector\AbstractRector;
+use Rector\VersionBonding\Contract\ComposerPackageConstraintInterface;
+use Rector\VersionBonding\ValueObject\ComposerPackageConstraint;
 use Symplify\RuleDocGenerator\Contract\DocumentedRuleInterface;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
@@ -49,8 +51,13 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  * @see https://www.drupal.org/node/3589630
  * @see https://www.drupal.org/node/3589636
  */
-class ReplaceNodeViewControllerRector extends AbstractRector implements DocumentedRuleInterface
+class ReplaceNodeViewControllerRector extends AbstractRector implements ComposerPackageConstraintInterface, DocumentedRuleInterface
 {
+    public function provideComposerPackageConstraint(): ComposerPackageConstraint
+    {
+        return new ComposerPackageConstraint('drupal/core', '>=11.4.0');
+    }
+
     private const OLD_CLASS = 'Drupal\node\Controller\NodeViewController';
 
     private const NEW_CLASS = 'Drupal\Core\Entity\Controller\EntityViewController';

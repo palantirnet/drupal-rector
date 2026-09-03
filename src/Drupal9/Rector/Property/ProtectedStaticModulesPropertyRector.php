@@ -7,6 +7,8 @@ namespace DrupalRector\Drupal9\Rector\Property;
 use PhpParser\Node;
 use Rector\Privatization\NodeManipulator\VisibilityManipulator;
 use Rector\Rector\AbstractRector;
+use Rector\VersionBonding\Contract\ComposerPackageConstraintInterface;
+use Rector\VersionBonding\ValueObject\ComposerPackageConstraint;
 use Symplify\RuleDocGenerator\Contract\DocumentedRuleInterface;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
@@ -14,8 +16,13 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 /**
  * @changelog https://www.drupal.org/node/2909426
  */
-final class ProtectedStaticModulesPropertyRector extends AbstractRector implements DocumentedRuleInterface
+final class ProtectedStaticModulesPropertyRector extends AbstractRector implements ComposerPackageConstraintInterface, DocumentedRuleInterface
 {
+    public function provideComposerPackageConstraint(): ComposerPackageConstraint
+    {
+        return new ComposerPackageConstraint('drupal/core', '>=9.0.0');
+    }
+
     private VisibilityManipulator $visibilityManipulator;
 
     public function __construct(VisibilityManipulator $visibilityManipulator)

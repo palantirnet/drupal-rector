@@ -12,6 +12,19 @@ release-by-release.
 
 ## [Unreleased]
 
+### Feature
+
+- **`DrupalSetList::COMPOSER_BASED`** — a single set, `config/composer-based.php`, that registers every drupal-rector rule with the exact `drupal/core` version its deprecation was introduced in (`>=10.2.0`, `>=11.3.0`, …). Rector activates only the rules whose constraint the installed core satisfies, so composer-based selection no longer goes through per-minor set files. Configurable rules use Rector's `RectorConfig::ruleWithConfigurationComposerVersionBound()`, so `vendor/bin/rector composer-based` lists them with their constraint and active state. Because the installed version is known exactly, the opt-in *breaking* renames are included — they cannot fatal on a core that is guaranteed to have the replacement. A rule that takes no configuration declares its version on the class instead, through Rector's `ComposerPackageConstraintInterface`. The set duplicates the registrations of the per-minor configs on purpose; custom PHPStan rules under `utils/PHPStan` fail the build when a rule of a per-minor config is missing from the set, when a registration is not bound to an exact `drupal/core` version, or when a plainly registered rule does not implement `ComposerPackageConstraintInterface`. Raises the `rector/rector` requirement to `^2.6`, the release that added `ruleWithConfigurationComposerVersionBound()`. ([rectorphp/rector#9778](https://github.com/rectorphp/rector/issues/9778))
+
+### Deprecated
+
+- **`DrupalRector\Set\DrupalSetProvider`** — deprecated, together with the `drupal` / `drupal (breaking)` set groups it provides; still registered, so existing configs keep working, and removed in a later release. Rector deprecated `SetProviderInterface` and `ComposerTriggeredSet` in favour of binding rules to a package version directly, which `DrupalSetList::COMPOSER_BASED` now does. Replace `->withSetProviders(DrupalSetProvider::class)->withComposerBased(drupal: true)` with `->withComposerBased(drupal: true)`. The per-minor `Drupal*SetList` constants are unchanged and stay the way to pick rules by hand.
+
+### Changed
+
+- **Rules that take no configuration are now bound to `drupal/core`** — the 76 rules registered with a plain `rule()` call implement Rector's `ComposerPackageConstraintInterface` and return the version their deprecation was introduced in, e.g. `new ComposerPackageConstraint('drupal/core', '>=11.3.0')`. Rector applies that filter globally rather than per set, so those rules no longer run against a Drupal older than the deprecation — including when a `Drupal*SetList` set is loaded by hand. Looking ahead at a newer Drupal's rules from an older installed core no longer works for them.
+- **`HookConvertRector`** — converted hook methods are no longer declared `static` when they don't reference `$this`; they are always generated as plain `public` methods. Making them `static` followed a PHPStan opinion that doesn't fit hooks: hooks are essentially interface implementations (they implement a contract rather than defining an API), and core always calls them as a method on an object, so implementations don't get to decide to be static. Reverts the `static` behavior added in [#3600921](https://git.drupalcode.org/project/rector/-/work_items/3600921). Reported by Berdir ([#3600963](https://git.drupalcode.org/project/rector/-/work_items/3600963)).
+
 ## [1.1.3] — 2026-09-03
 
 ### Changed
