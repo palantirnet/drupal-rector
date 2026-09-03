@@ -1,10 +1,14 @@
 name: php-cs-fixer
 
-# This test will run on every pull request, and on every push on main branch
+# This test will run on every pull request, on every push on main branch, and
+# weekly on a schedule.
 on:
   push:
     branches:
       - main
+  schedule:
+    # Run weekly (to check for php-cs-fixer changes)
+    - cron:  '0 0 * * 0'
   pull_request:
 
 jobs:
