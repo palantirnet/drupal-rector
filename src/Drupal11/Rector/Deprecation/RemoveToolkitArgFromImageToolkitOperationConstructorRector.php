@@ -118,7 +118,7 @@ CODE
         // parameter or `use ($toolkit)` capture there shadows the outer
         // variable and must not affect the outer-scope count.
         $toolkitUsageCount = 0;
-        $this->traverseNodesWithCallable($constructor->stmts ?? [], function (Node $innerNode) use ($toolkitVarName, &$toolkitUsageCount): null|int {
+        $this->traverseNodesWithCallable($constructor->stmts ?? [], function (Node $innerNode) use ($toolkitVarName, &$toolkitUsageCount): ?int {
             if ($innerNode instanceof Closure || $innerNode instanceof ArrowFunction) {
                 return NodeVisitor::DONT_TRAVERSE_CHILDREN;
             }
