@@ -12,9 +12,6 @@
         "rector/rector": "^2.6",
         "webflo/drupal-finder": "^1.2"
     },
-    "conflict": {
-        "rector/rector": ">=2.6.2"
-    },
     "license": "MIT",
     "authors": [
         {
