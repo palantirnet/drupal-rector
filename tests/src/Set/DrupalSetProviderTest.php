@@ -59,6 +59,21 @@ final class DrupalSetProviderTest extends TestCase
                 'drupal-11.4-breaking.php',
                 'drupal-bootstrap.php',
             ]],
+            // The newest minor adds its own deprecation set on top; it has no
+            // breaking set of its own yet.
+            '11.5.0 loads 11.0-11.5 cumulatively' => ['11.5.0', [
+                'drupal-11.0-deprecations.php',
+                'drupal-11.1-deprecations.php',
+                'drupal-11.2-deprecations.php',
+                'drupal-11.3-deprecations.php',
+                'drupal-11.4-deprecations.php',
+                'drupal-11.5-deprecations.php',
+                'drupal-11.1-breaking.php',
+                'drupal-11.2-breaking.php',
+                'drupal-11.3-breaking.php',
+                'drupal-11.4-breaking.php',
+                'drupal-bootstrap.php',
+            ]],
             // A mid-range minor stops at its own version — 11.4 must not leak in.
             '11.3.0 loads 11.0-11.3, not 11.4' => ['11.3.0', [
                 'drupal-11.0-deprecations.php',

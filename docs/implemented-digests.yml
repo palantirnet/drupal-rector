@@ -742,3 +742,12 @@ digests:
     phase: '4'
     class: ReplaceNodeViewControllerRector
     digest_file: replace-nodeviewcontroller-with-entityviewcontroller-3589630.php
+  '3595652':
+    status: config-only
+    phase: '1a'
+    digest_file: replace-module-set-weight-and-module-config-sort-with-3595652.php
+    note: >-
+      Handled via drupal-11.5-deprecations.php (FunctionToServiceRector, two
+      FunctionToServiceConfiguration entries). First rule on the new 11.5 set,
+      so it also adds Drupal11SetList::DRUPAL_115 and the '11.5' entry in
+      DrupalSetProvider.
