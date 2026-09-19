@@ -20,6 +20,11 @@ declare(strict_types=1);
  */
 
 return array (
+  'FunctionToServiceRector' => 
+  array (
+    0 => 'Call to deprecated function user_login_finalize(). Deprecated in drupal:11.5.0 and is removed from drupal:13.0.0. Use Drupal\\user\\LoginFinalizer::finalizeLogin() instead.',
+    1 => 'Call to deprecated function user_logout(). Deprecated in drupal:11.5.0 and is removed from drupal:13.0.0. Use Drupal\\user\\LogoutFinalizer::finalizeLogout() instead.',
+  ),
   'GetDrupalRootToRootPropertyRector' => 
   array (
     0 => 'Call to deprecated method getDrupalRoot() of class Drupal\\KernelTests\\KernelTestBase. Deprecated in drupal:11.4.0 and is removed from drupal:13.0.0. Access $this->root directly.',

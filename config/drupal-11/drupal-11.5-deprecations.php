@@ -46,6 +46,9 @@ return static function (RectorConfig $rectorConfig): void {
     // parameter is $user on the service and was $account on the function. No
     // contrib project calls either function with a named or extra argument
     // (0 hits across the contrib index), so no guard is warranted here.
+    // PHPSTAN_MESSAGES FunctionToServiceRector:
+    //   Call to deprecated function user_login_finalize(). Deprecated in drupal:11.5.0 and is removed from drupal:13.0.0. Use Drupal\user\LoginFinalizer::finalizeLogin() instead.
+    //   Call to deprecated function user_logout(). Deprecated in drupal:11.5.0 and is removed from drupal:13.0.0. Use Drupal\user\LogoutFinalizer::finalizeLogout() instead.
     $rectorConfig->ruleWithConfiguration(FunctionToServiceRector::class, [
         new FunctionToServiceConfiguration('11.5.0', 'user_login_finalize', 'Drupal\user\LoginFinalizer', 'finalizeLogin', true),
         new FunctionToServiceConfiguration('11.5.0', 'user_logout', 'Drupal\user\LogoutFinalizer', 'finalizeLogout', true),
