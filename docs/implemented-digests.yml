@@ -8,11 +8,15 @@
 # rector-discover reads it to exclude these issues from the pending list.
 #
 # Keyed by drupal.org issue number. Each entry:
-#   status:      implemented | config-only | skip
+#   status:      implemented | config-only | skip | pending
 #   phase:       implementation phase (1a/1b/1c/2/3/4/unknown)
 #   class:       Rector class name, or list; omit for config-only
 #   digest_file: digest filename in repos/drupal-digests
 #   note:        optional — PR/merge state or why the matcher missed it
+#
+# `pending` is a correction: the audit proved an earlier `implemented` claim wrong.
+# The digest goes back on the pending list, but the entry stays so the wrong claim
+# is not silently made again. Always give these a note.
 digests:
   '455724':
     status: implemented
@@ -368,10 +372,18 @@ digests:
     phase: '3'
     digest_file: remove-deprecated-update-manager-function-calls-with-no-3521059.php
   '3525077':
-    status: implemented
+    status: pending
     phase: '2'
-    class: ReplacePdoFetchConstantsRector
     digest_file: replace-removed-mysql-pgsql-sqlite-driver-query-subclass-3525077.php
+    note: >-
+      Was recorded as implemented via ReplacePdoFetchConstantsRector. That is a
+      different transform (PDO::FETCH_* constants). This digest renames the nine
+      empty driver query subclasses (mysql\Delete, mysql\Merge, mysql\Select,
+      mysql\Truncate, mysql\Update, pgsql\Merge, sqlite\Delete, sqlite\Merge,
+      sqlite\Update) to their Drupal\Core\Database\Query\* bases. None of those
+      14 targets appear in src/ or config/; core still ships the stubs. Deprecated
+      drupal:11.2.0, removed drupal:12.0.0 -> belongs in DRUPAL_11X_BREAKING.
+      Impact is negligible: 1 project (distributions_recipes, 0 installs).
   '3525388':
     status: implemented
     phase: '3'
@@ -632,10 +644,17 @@ digests:
     class: ReplaceThemeGetSettingRector
     digest_file: replace-deprecated-theme-get-setting-and-system-default-3573896.php
   '3573954':
-    status: implemented
+    status: pending
     phase: 'unknown'
-    class: GetDrupalRootToRootPropertyRector
     digest_file: replace-testrequirementstrait-with-drupaltestcasetrait-3573954.php
+    note: >-
+      Was recorded as implemented via GetDrupalRootToRootPropertyRector. That rector
+      does getDrupalRoot() -> $this->root and cites node/3589047 + node/3574112; this
+      digest explicitly states its own rule does NOT rewrite getDrupalRoot() calls.
+      The actual transform is a trait rename, Drupal\Tests\TestRequirementsTrait ->
+      Drupal\Tests\DrupalTestCaseTrait (deprecated drupal:12.0.0, removed
+      drupal:13.0.0); TestRequirementsTrait appears nowhere in config/, src/ or
+      tests/. Impact is negligible: 1 project (distributions_recipes, 0 installs).
   '3574424':
     status: config-only
     phase: '?'
