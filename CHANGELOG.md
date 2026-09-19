@@ -12,6 +12,11 @@ release-by-release.
 
 ## [Unreleased]
 
+### Added
+
+- **Drupal 11.5 deprecation set** — added `Drupal11SetList::DRUPAL_115` (`config/drupal-11/drupal-11.5-deprecations.php`), registered in `drupal-11-all-deprecations.php` and in the composer-based `DrupalSetProvider`, so a site on `drupal/core ^11.5` picks it up automatically.
+- **`ReplaceUserRolePermissionFunctionsRector`** — rewrites `user_role_grant_permissions()`, `user_role_revoke_permissions()` and `user_role_change_permissions()`, deprecated in drupal:11.5.0 and removed in drupal:13.0.0 ([#2025089](https://www.drupal.org/node/2025089), [change record](https://www.drupal.org/node/3348027)), to the matching `\Drupal\user\RoleInterface` method on a role loaded with `\Drupal\user\Entity\Role::loadOverrideFree()` — the nullsafe chain core itself adopted in `media_install()` and `node_install()`. BC-wrapped, because `loadOverrideFree()` is new in 11.5.0 ([#3620216](https://www.drupal.org/i/3620216)) and the rewritten chain would fatal on older minors. Calls with named arguments, argument unpacking or an argument count the deprecated functions never had are left untouched.
+
 ## [1.1.3] — 2026-09-03
 
 ### Changed

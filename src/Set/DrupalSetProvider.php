@@ -52,6 +52,7 @@ final class DrupalSetProvider implements SetProviderInterface
         '11.2' => Drupal11SetList::DRUPAL_112,
         '11.3' => Drupal11SetList::DRUPAL_113,
         '11.4' => Drupal11SetList::DRUPAL_114,
+        '11.5' => Drupal11SetList::DRUPAL_115,
         '12.0' => Drupal12SetList::DRUPAL_120,
     ];
 

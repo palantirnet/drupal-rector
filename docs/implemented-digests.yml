@@ -53,6 +53,15 @@ digests:
     status: config-only
     phase: '1b'
     digest_file: replace-comment-uri-with-comment-permalink-2010202.php
+  '2025089':
+    status: implemented
+    phase: '1b'
+    class: ReplaceUserRolePermissionFunctionsRector
+    digest_file: replace-user-role-permissions-functions-with-roleinterface-2025089.php
+    note: >-
+      First Drupal 11.5 rule — created config/drupal-11/drupal-11.5-deprecations.php
+      and registered DRUPAL_115 in Drupal11SetList, drupal-11-all-deprecations.php
+      and DrupalSetProvider.
   '2258355':
     status: implemented
     phase: '3'

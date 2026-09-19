@@ -38,9 +38,35 @@ return array (
   array (
     0 => 'Call to deprecated method expectDeprecation() of class Drupal\\KernelTests\\KernelTestBase. Deprecated in drupal:11.4.0 and is removed from drupal:12.0.0. Use $this->expectUserDeprecationMessage() or $this->expectUserDeprecationMessageMatches() instead.',
   ),
+  'ReplaceLocaleBatchProceduralFunctionsRector' => 
+  array (
+    0 => 'Call to deprecated function _locale_translation_batch_status_operations(). Deprecated in drupal:11.4.0 and is removed from drupal:13.0.0. Use Drupal::service(LocaleFetch::class)->getStatusOperations() instead.',
+    1 => 'Call to deprecated function locale_config_batch_finished(). Deprecated in drupal:11.4.0 and is removed from drupal:13.0.0. Use Drupal::service(LocaleConfigBatch::class)->batchFinished() instead.',
+    2 => 'Call to deprecated function locale_config_batch_update_components(). Deprecated in drupal:11.4.0 and is removed from drupal:13.0.0. Use Drupal::service(LocaleConfigBatch::class)->buildBatch() instead.',
+    3 => 'Call to deprecated function locale_config_batch_update_config_translations(). Deprecated in drupal:11.4.0 and is removed from drupal:13.0.0. Use Drupal::service(LocaleConfigBatch::class)->batchUpdateConfigTranslations() instead.',
+    4 => 'Call to deprecated function locale_config_batch_update_default_config_langcodes(). Deprecated in drupal:11.4.0 and is removed from drupal:13.0.0. Use Drupal::service(LocaleConfigBatch::class)->batchUpdateDefaultConfigLangcodes() instead.',
+    5 => 'Call to deprecated function locale_translate_batch_build(). Deprecated in drupal:11.4.0 and is removed from drupal:13.0.0. Use Drupal::service(LocaleImportBatch::class)->buildBatch() instead.',
+    6 => 'Call to deprecated function locale_translate_batch_finished(). Deprecated in drupal:11.4.0 and is removed from drupal:13.0.0. Use Drupal::service(LocaleImportBatch::class)->batchFinished() instead.',
+    7 => 'Call to deprecated function locale_translate_batch_import(). Deprecated in drupal:11.4.0 and is removed from drupal:13.0.0. Use Drupal::service(LocaleImportBatch::class)->batchImport() instead.',
+    8 => 'Call to deprecated function locale_translate_batch_import_save(). Deprecated in drupal:11.4.0 and is removed from drupal:13.0.0. Use Drupal::service(LocaleImportBatch::class)->batchSave() instead.',
+    9 => 'Call to deprecated function locale_translate_batch_refresh(). Deprecated in drupal:11.4.0 and is removed from drupal:13.0.0. Use Drupal::service(LocaleImportBatch::class)->batchRefresh() instead.',
+    10 => 'Call to deprecated function locale_translation_batch_fetch_download(). Deprecated in drupal:11.4.0 and is removed from drupal:13.0.0. Use Drupal::service(LocaleFetch::class)->batchDownload() instead.',
+    11 => 'Call to deprecated function locale_translation_batch_fetch_finished(). Deprecated in drupal:11.4.0 and is removed from drupal:13.0.0. Use Drupal::service(LocaleFetch::class)->batchFinished() instead.',
+    12 => 'Call to deprecated function locale_translation_batch_fetch_import(). Deprecated in drupal:11.4.0 and is removed from drupal:13.0.0. Use Drupal::service(LocaleFetch::class)->batchImport() instead.',
+    13 => 'Call to deprecated function locale_translation_batch_status_check(). Deprecated in drupal:11.4.0 and is removed from drupal:13.0.0. Use Drupal::service(LocaleFetch::class)->batchStatusCheck() instead.',
+    14 => 'Call to deprecated function locale_translation_batch_status_finished(). Deprecated in drupal:11.4.0 and is removed from drupal:13.0.0. Use Drupal::service(LocaleProjectChecker::class)->batchFinished() instead.',
+    15 => 'Call to deprecated function locale_translation_batch_version_check(). Deprecated in drupal:11.4.0 and is removed from drupal:13.0.0. Use Drupal::service(LocaleFetch::class)->batchVersionCheck() instead.',
+    16 => 'Call to deprecated function locale_translation_check_projects_batch(). Deprecated in drupal:11.4.0 and is removed from drupal:13.0.0. Use Drupal::service(LocaleProjectChecker::class)->triggerBatch() instead.',
+  ),
   'ReplaceNodeViewControllerRector' => 
   array (
     0 => 'Instantiation of deprecated class Drupal\\node\\Controller\\NodeViewController. Deprecated in drupal:11.4.0 and is removed from drupal:13.0.0. Use Drupal\\Core\\Entity\\Controller\\EntityViewController instead.',
+  ),
+  'ReplaceUserRolePermissionFunctionsRector' => 
+  array (
+    0 => 'Call to deprecated function user_role_change_permissions(). Deprecated in drupal:11.5.0 and is removed from drupal:13.0.0. Use Drupal\\user\\RoleInterface::changePermissions() instead.',
+    1 => 'Call to deprecated function user_role_grant_permissions(). Deprecated in drupal:11.5.0 and is removed from drupal:13.0.0. Use Drupal\\user\\RoleInterface::grantPermissions() instead.',
+    2 => 'Call to deprecated function user_role_revoke_permissions(). Deprecated in drupal:11.5.0 and is removed from drupal:13.0.0. Use Drupal\\user\\RoleInterface::revokePermissions() instead.',
   ),
   'UserLoadByNameAndMailRector' => 
   array (
