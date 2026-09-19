@@ -118,5 +118,8 @@ return static function (RectorConfig $rectorConfig): void {
         new FunctionToServiceConfiguration('11.4.0', 'views_add_contextual_links', 'Drupal\views\ContextualLinksHelper', 'addLinks', true),
         // https://www.drupal.org/node/3567163 (Drupal 11.4)
         new FunctionToServiceConfiguration('11.4.0', 'field_ui_form_manage_field_form_submit', 'Drupal\field_ui\Hook\FieldUiHooks', 'manageFieldFormSubmit', true),
+        // https://www.drupal.org/node/3595652 (Drupal 11.5)
+        new FunctionToServiceConfiguration('11.5.0', 'module_set_weight', 'Drupal\Core\Extension\ModuleWeight', 'set', true),
+        new FunctionToServiceConfiguration('11.5.0', 'module_config_sort', 'Drupal\Core\Extension\ModuleWeight', 'sort', true),
     ]);
 };

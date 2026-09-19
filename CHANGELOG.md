@@ -12,6 +12,10 @@ release-by-release.
 
 ## [Unreleased]
 
+### Added
+
+- **`module_set_weight()` and `module_config_sort()` → `ModuleWeight` service** — both functions in `core/includes/module.inc` are deprecated in drupal:11.5.0 and removed in drupal:13.0.0; they are rewritten to `\Drupal::service(\Drupal\Core\Extension\ModuleWeight::class)->set()` / `->sort()` via `FunctionToServiceRector`, BC-wrapped in `DeprecationHelper::backwardsCompatibleCall()` because the service does not exist on Drupal < 11.5. `module_set_weight()` is the single most widely-called pending deprecation in contrib (209 projects, including pathauto, webform and paragraphs, mostly from `hook_install()`). This is the first rule on the Drupal 11.5 set, so it also adds `Drupal11SetList::DRUPAL_115` and the matching `'11.5'` entry in `DrupalSetProvider`. ([#3595652](https://www.drupal.org/i/3595652), [change record](https://www.drupal.org/node/3595653))
+
 ## [1.1.3] — 2026-09-03
 
 ### Changed

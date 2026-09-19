@@ -12,6 +12,7 @@ return static function (RectorConfig $rectorConfig): void {
         Drupal11SetList::DRUPAL_112,
         Drupal11SetList::DRUPAL_113,
         Drupal11SetList::DRUPAL_114,
+        Drupal11SetList::DRUPAL_115,
     ]);
 
     $rectorConfig->bootstrapFiles([
