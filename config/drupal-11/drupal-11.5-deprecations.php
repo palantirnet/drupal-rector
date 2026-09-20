@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use DrupalRector\Drupal11\Rector\Deprecation\ReplaceFileSaveUploadFunctionsRector;
 use DrupalRector\Drupal11\Rector\Deprecation\ReplaceUserRolePermissionFunctionsRector;
 use DrupalRector\Rector\Deprecation\FunctionToServiceRector;
 use DrupalRector\Rector\ValueObject\DrupalIntroducedVersionConfiguration;
@@ -52,5 +53,33 @@ return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->ruleWithConfiguration(FunctionToServiceRector::class, [
         new FunctionToServiceConfiguration('11.5.0', 'user_login_finalize', 'Drupal\user\LoginFinalizer', 'finalizeLogin', true),
         new FunctionToServiceConfiguration('11.5.0', 'user_logout', 'Drupal\user\LogoutFinalizer', 'finalizeLogout', true),
+    ]);
+
+    // https://www.drupal.org/node/3375423
+    // https://www.drupal.org/node/3382414 (change record)
+    //
+    // file_save_upload(), file_managed_file_save_upload() and
+    // _file_save_upload_from_form() deprecated in drupal:11.5.0, removed in
+    // drupal:13.0.0. Each function body moved into the new
+    // \Drupal\file\Upload\FormFileUploader or
+    // \Drupal\file\Upload\ManagedFileElementHelper service
+    // (drupal-core e8424495f0d), leaving the function a delegating wrapper, so
+    // the argument order carries over unchanged.
+    //
+    // Not config-only, because the wrapper also normalised its arguments:
+    // file_save_upload() turned a FALSE/NULL $destination into 'temporary://'
+    // before delegating, and saveFormUploadedFiles() types that parameter
+    // string. That is the dominant contrib shape — a literal FALSE or NULL
+    // third argument appears in 47 files across the contrib index — so a
+    // verbatim FunctionToServiceRector pass-through would hand the service a
+    // bool and fatal with a TypeError.
+    //
+    // BC-wrapped: both services arrive with the deprecation itself, so the
+    // rewritten call fatals on Drupal < 11.5.
+    //
+    // PHPSTAN_MESSAGES live on the rector class itself
+    // (ReplaceFileSaveUploadFunctionsRector::PHPSTAN_MESSAGES).
+    $rectorConfig->ruleWithConfiguration(ReplaceFileSaveUploadFunctionsRector::class, [
+        new DrupalIntroducedVersionConfiguration('11.5.0'),
     ]);
 };
