@@ -20,7 +20,6 @@ use DrupalRector\Rector\Deprecation\ClassConstantToClassConstantRector;
 use DrupalRector\Rector\ValueObject\ClassConstantToClassConstantConfiguration;
 use DrupalRector\Services\AddCommentService;
 use Rector\Config\RectorConfig;
-use Rector\PHPUnit\Set\PHPUnitSetList;
 use Rector\Renaming\Rector\StaticCall\RenameStaticMethodRector;
 use Rector\Renaming\ValueObject\RenameStaticMethod;
 
@@ -28,10 +27,6 @@ return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->singleton(AddCommentService::class, function () {
         return new AddCommentService();
     });
-
-    $rectorConfig->sets([
-        PHPUnitSetList::PHPUNIT_90,
-    ]);
 
     $rectorConfig->rule(UiHelperTraitDrupalPostFormRector::class);
     // AssertLegacyTrait items

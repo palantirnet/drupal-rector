@@ -103,6 +103,19 @@ return RectorConfig::configure()
 
 This is more granular than the `Drupal10SetList::DRUPAL_10` set. Since Drupal 10.1 there is not real reason not to include later versions. It will detect the installed Drupal version and supply BC wrappers as needed if you enable it in the config.
 
+> [!NOTE]
+> The Drupal sets contain Drupal rules only. Up to 1.1.3 the Drupal 8, 9 and 10
+> sets also pulled in Rector's Symfony, PHPUnit and Twig sets; Rector 2.6.2
+> removed the per-version sets they referenced, so those references are gone.
+> Add the upstream rules yourself if you want them — bearing in mind they follow
+> the installed Symfony/PHPUnit/Twig version, not the Drupal one:
+>
+> ```php
+> return RectorConfig::configure()
+>     ->withComposerBased(phpunit: true, symfony: true, twig: true)
+>     ->withSets([Drupal10SetList::DRUPAL_10]);
+> ```
+
 ### Composer-based sets (automatic version selection)
 
 Instead of listing sets by hand, you can let Rector pick the rules from the
