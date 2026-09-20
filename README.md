@@ -92,12 +92,13 @@ the sets used in the `rector.php` config. For example, if your site is still on 
 made in Drupal 10.4, use the following configuration:
 
 ```php
-$rectorConfig->sets([
-    Drupal10SetList::DRUPAL_100,
-    Drupal10SetList::DRUPAL_101,
-    Drupal10SetList::DRUPAL_102,
-    Drupal10SetList::DRUPAL_103,
-]);
+return RectorConfig::configure()
+    ->withSets([
+        Drupal10SetList::DRUPAL_100,
+        Drupal10SetList::DRUPAL_101,
+        Drupal10SetList::DRUPAL_102,
+        Drupal10SetList::DRUPAL_103,
+    ]);
 ```
 
 This is more granular than the `Drupal10SetList::DRUPAL_10` set. Since Drupal 10.1 there is not real reason not to include later versions. It will detect the installed Drupal version and supply BC wrappers as needed if you enable it in the config.
