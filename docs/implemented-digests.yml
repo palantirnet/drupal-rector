@@ -199,6 +199,24 @@ digests:
     phase: '2'
     class: [RemoveConfigSaveTrustedDataArgRector, RemoveTrustDataCallRector]
     digest_file: remove-deprecated-trusted-data-concept-from-drupal-config-3347842.php
+  '3375423':
+    status: implemented
+    phase: '1a'
+    class: ReplaceFileSaveUploadFunctionsRector
+    digest_file: replace-deprecated-file-upload-functions-with-service-calls-3375423.php
+    note: >-
+      BC-wrapped. file_save_upload() -> \Drupal\file\Upload\FormFileUploader
+      ::saveFormUploadedFiles(), file_managed_file_save_upload() and
+      _file_save_upload_from_form() -> \Drupal\file\Upload\ManagedFileElementHelper
+      ::managedFileSaveUpload() / ::saveFileUploads() (drupal-core e8424495f0d).
+      Not config-only: the deprecated wrapper normalised a FALSE/NULL $destination
+      to 'temporary://' (47 contrib files pass that literal) and ran a legacy int
+      $fileExists through FileExists::fromLegacyInt(), while the service parameters
+      are typed string and FileExists. The rector rewrites the destination literal
+      and skips a call passing an integer literal for $fileExists; a
+      FileSystemInterface::EXISTS_* constant is already converted by the
+      drupal-10.3 set. Implemented on feat/file-save-upload-3375423, stacked on
+      #432.
   '3396062':
     status: implemented
     phase: '2'
