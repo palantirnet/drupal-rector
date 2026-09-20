@@ -89,16 +89,16 @@ Data: `api.tresbien.tech`, `core_symbol` and `change_record` stamped 2026-09-19;
 
 | Major | Rules | Removal version | Code-observed |
 |---|---|---|---|
-| Drupal8 | 17 | 15 | 15 |
-| Drupal9 | 24 | 22 | 22 |
+| Drupal8 | 17 | 16 | 16 |
+| Drupal9 | 24 | 23 | 23 |
 | Drupal10 | 6 | 5 | 3 |
 | Drupal11 | 93 | 89 | 11 |
 | Drupal12 | 1 | 0 | 0 |
 | generic | 13 | 8 | 1 |
-| **Total** | **154** | **139** | **52** |
+| **Total** | **154** | **141** | **54** |
 
 Pass 1 alone reached 76 rules with a removal version and 39 observed; pass 2
-took that to 100 and 48; passes 3 and 4 (below) to 139. Of the 234 configuration entries, **228 resolved to a
+took that to 100 and 48; passes 3 to 5 (below) to 141. Of the 234 configuration entries, **228 resolved to a
 core symbol**. The 6 that did not are not core symbols at all: three
 `GetMockConfiguration` entries name PHPUnit's `getMock()`, and three name
 `Symfony\Cmf\Component\Routing\RouteObjectInterface` constants, which live in
@@ -235,51 +235,91 @@ have to live per configuration entry — which is what
 the class-level `ComposerPackageConstraintInterface` is the wrong home for a
 bound. The last seven are single-purpose and take a class-level bound cleanly.
 
-## What is left
+## On bounding Drupal 11 at all
 
-- **42 Drupal 11 rules have no removal version**, because the change records
-  they cite either are not indexed (130 of the 275 records our rules reference
-  resolve to no row) or link no `from` symbol. Closing them would need symbol
-  extraction from each rule body, and the payoff is low: of the 51 D11 rules
-  that *do* have a removal version, only 8 are `observed` — the rest are
-  `scheduled` for 12.0.0 or 13.0.0, and bounding on a promise is the thing the
-  evidence above says not to do. **Recommend stopping here for D11** until those
-  removals actually land.
-- **The generic rules' 6 remaining entries** are not core symbols (PHPUnit and
-  Symfony CMF) and never will resolve against `core_symbol`.
+Drupal 11's bounds are almost all `scheduled` rather than `observed` — 89 of its
+93 rules now carry a removal version, but only 11 are code-observed, because
+Drupal 12 does not exist yet. Everything else is core's stated intention for
+12.0.0 or 13.0.0.
 
-## The 15 rules that still have no upper bound — and should not get one
+That is not a reason to leave them unbounded, but it is a reason to re-check
+them. A promise that slips turns a bounded rule into a silently inactive one,
+and the same change-record join that produced these bounds re-runs in seconds —
+worth wiring into CI so a moved promise surfaces as a notification rather than
+as a rule that quietly stops firing.
 
-All four passes are done, and these are left. None is an unfinished lookup:
+## Pass 5 — chasing the residue through core, the catalog and drupal.org
 
-**Wrong package (5).** The deprecation belongs to `phpunit/phpunit`, so a
-`drupal/core` bound would be meaningless. PR #419 nonetheless gives four of them
-a `drupal/core` constraint, which is a defect worth reporting on its own:
-`GetMockRector`, `GetNameToNameRector` (it type-checks
-`PHPUnit\Framework\TestCase`), `PhpUnitTestAnnotationToAttributeRector`,
-`PhpUnitAddRunTestsInSeparateProcessesAttributeRector`,
-`RemovePhpUnitCompatibilityTraitRector`.
+Pass 4's leftovers were not all dead ends. Checking each against the symbol
+catalog, core's git history and the change records on drupal.org turned two of
+them into real bounds and corrected the package on a third.
+
+**`FromUriRector` was a misidentified symbol, not a missing one.** Pass 2 looked
+up `Drupal\Core\Url::fromUri`, found it undeprecated, and filed the rule as a
+behaviour change. The rule actually matches `Url::fromUri(file_create_url($uri))`
+and rewrites it to `\Drupal::service('file_url_generator')->generate()`. Its
+deprecated symbol is `file_create_url()` — deprecated 9.3.0, **removed 10.0.0,
+observed**. Bound: `>=9.3.0 <10.0.0`. It has no test fixtures, which is why
+fixture-based identification could not reach it either.
+
+**`FunctionalTestDefaultThemePropertyRector` has a removal after all.**
+Deprecated in 8.8.0 ([CR 3083055](https://www.drupal.org/node/3083055)); the BC
+layer came out in **9.0.0**, commit `305c401f90e` (#3110874, "Remove BC layer for
+TestSetupTrait"). Core now throws, citing that very change record:
+
+```php
+throw new \Exception('Drupal\Tests\BrowserTestBase::$defaultTheme is required.
+  See https://www.drupal.org/node/3083055, ...');
+```
+
+Bound: `>=8.8.0 <9.0.0`.
+
+**A sixth wrong-package rule.** `AddSymfonyConstraintValidatorTypeDeclarationsRector`
+links `symfony/symfony` `blob/8.0/…/ConstraintValidatorInterface.php` in its own
+docblock: it tracks **Symfony 8.0**, not `drupal/core`. PR #419 gives it
+`>=11.0.0` against `drupal/core`.
+
+Incidental, and another trap for anyone computing bounds by arithmetic: Classy
+was removed in **10.1.0**, not 10.0.0 (`c3d1caafb5a`, #3110137).
+
+## The 13 rules that still have no upper bound — and should not get one
+
+None is an unfinished lookup; each was chased to a citation.
+
+**Wrong package (6).** A `drupal/core` bound is meaningless for these, and PR
+#419 gives five of them one anyway — a defect worth reporting on its own.
+
+| Rule | Actually bound to | Evidence |
+|---|---|---|
+| `GetMockRector` | `phpunit/phpunit <6.0` | [CR 2907725](https://www.drupal.org/node/2907725): deprecated in Drupal 8.4.4, "getMock() is removed in PHPUnit 6". No Drupal removal version. |
+| `GetNameToNameRector` | `phpunit/phpunit >=10.0` | [CR 3217904](https://www.drupal.org/node/3217904): `TestCase::getName` was renamed to `name` in PHPUnit 10. The rule type-checks `PHPUnit\Framework\TestCase`. |
+| `PhpUnitTestAnnotationToAttributeRector` | `phpunit/phpunit` | Annotations deprecated in PHPUnit 11, removed in PHPUnit 12. |
+| `PhpUnitAddRunTestsInSeparateProcessesAttributeRector` | `phpunit/phpunit` | PHPUnit attribute; cites core issue #3445240. |
+| `RemovePhpUnitCompatibilityTraitRector` | `phpunit/phpunit` | [#3582118](https://www.drupal.org/node/3582118): the trait became "a no-op … since PHPUnit 11". Still present at 11.x HEAD with no deprecation notice. |
+| `AddSymfonyConstraintValidatorTypeDeclarationsRector` | `symfony/validator ^8.0` | Its own `@see` points at Symfony 8.0's `ConstraintValidatorInterface`. |
+
+**Nothing is removed (4).**
+
+- `ViewsConfigUpdaterClassResolverToServiceRector` — settled, not merely
+  plausible: `\Drupal::classResolver` is `added_in: 8.3.x`, `status: []`, with no
+  `deprecated_in` and no `removal_in`. [CR 3530638](https://www.drupal.org/node/3530638)
+  ("ViewsConfigUpdater is now a service") recommends `\Drupal::service()` over
+  `\Drupal::classResolver()`; the old call still works.
+- `ProtectedStaticModulesPropertyRector` — `$modules` became `protected static`
+  in **8.3.0** (`b33af7a964e`, #2814035). A visibility change with no removal.
+- `RemoveStateCacheSettingRector` — the rule cites 3436954 and 2575105, but core
+  cites [3177901](https://www.drupal.org/node/3177901), which says *"In Drupal
+  11+, settings 'state_cache' is removed and permanently turned on"*. That is the
+  rule's **lower** bound, not an upper one: the setting is inert from 11.0.0, and
+  `lib/Drupal/Core/Site/Settings.php:42` still flags it with no removal deadline.
+  Indefinite cleanup.
+- `ShouldCallParentMethodsRector` — not a deprecation rule at all. Its own
+  definition reads *"PHPUnit based tests should call parent methods (setUp,
+  tearDown)"*. It is test hygiene, registered in the 9.0 and 10.0 **deprecation**
+  sets, which is arguably a miscategorisation worth raising separately.
 
 **Infrastructure (3).** No deprecation, no set, nothing to bound:
 `HookConvertRector`, `DeprecationHelperRemoveRector`, `AnnotationToAttributeRector`.
-
-**Behaviour change, nothing removed (5).** `FromUriRector`,
-`ProtectedStaticModulesPropertyRector`,
-`FunctionalTestDefaultThemePropertyRector`, `ShouldCallParentMethodsRector`,
-`AddSymfonyConstraintValidatorTypeDeclarationsRector`.
-
-**No removal version exists (1).** `RemoveStateCacheSettingRector`. Core still
-carries the setting at `lib/Drupal/Core/Site/Settings.php:42` with *"The
-`state_cache` setting is deprecated in drupal:11.0.0. This setting should be
-removed from the settings file, since its usage has been removed"* — deprecated,
-but with no removal deadline stated. Note core cites change record 3177901 while
-the rule cites 3436954 and 2575105.
-
-**One needs a human look (1).** `ViewsConfigUpdaterClassResolverToServiceRector`
-came back `no_removal`, but with no positive citation, and neither of its change
-records (3529274, 3530638) appears anywhere in core. The three removal notices
-in `ViewsConfigUpdater.php` are about view config updates, not about
-`classResolver()`. Plausible, unconfirmed.
 
 ## Full matrix
 
@@ -301,7 +341,7 @@ which pass produced the removal version.
 | `EntityManagerRector` | 8.0 | `>=8.0.0` | 9.0.0 | observed | change record |
 | `EntityViewRector` | 8.0 | `>=8.0.0` | 9.0.0 | observed | symbol |
 | `FileDefaultSchemeRector` | 8.8 | `>=8.8.0` | 9.0.0 | observed | change record |
-| `FunctionalTestDefaultThemePropertyRector` | 8.8 | `>=8.8.0` | — | — | — |
+| `FunctionalTestDefaultThemePropertyRector` | 8.8 | `>=8.8.0` | 9.0.0 | observed | core git 305c401f90e |
 | `GetMockRector` | 8.4 | config-bound | — | — | — |
 | `LinkGeneratorTraitLRector` | 8.0 | `>=8.0.0` | 9.0.0 | observed | change record |
 | `RequestTimeConstRector` | 8.3 | `>=8.3.0` | 11.0.0 | observed | symbol |
@@ -319,7 +359,7 @@ which pass produced the removal version.
 | `FileBuildUriRector` | 9.3 | `>=9.3.0` | 10.0.0 | observed | change record |
 | `FileCreateUrlRector` | 9.3 | `>=9.3.0` | 10.0.0 | observed | symbol |
 | `FileUrlTransformRelativeRector` | 9.3 | `>=9.3.0` | 10.0.0 | observed | symbol |
-| `FromUriRector` | 9.3 | `>=9.3.0` | — | — | — |
+| `FromUriRector` | 9.3 | `>=9.3.0` | 10.0.0 | observed | fn:file_create_url |
 | `FunctionToFirstArgMethodRector` | 9.3 11.2 11.3 | config-bound | several | 2 distinct | config entries |
 | `GetAllOptionsRector` | 9.1 | `>=9.1.0` | 10.0.0 | observed | symbol |
 | `GetRawContentRector` | 9.1 | `>=9.1.0` | 10.0.0 | observed | symbol |
