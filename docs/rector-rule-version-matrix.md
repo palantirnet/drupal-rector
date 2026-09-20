@@ -53,6 +53,31 @@ These land as `scheduled`, not `observed` — Drupal 12 does not exist yet, so f
 a Drupal 11 deprecation there is no removal to observe, only core's stated
 intention.
 
+**Pass 4 — researcher agents, with every citation re-checked.** The 27 rules the
+join could not reach were handed to seven Haiku agents, four rules each, each
+told to read the rule and its test fixtures, locate the deprecated symbol in
+core, and return the notice **copied verbatim with a file and line**. A script
+then re-read every citation and string-matched it. 18 of 21 bounded claims
+verified; **3 were fabricated** — a cited file that does not exist, an
+`evidence_text` that is not at the line given, and a version absent from the
+text quoted. Those three were rejected and resolved by hand from core's git
+history instead, which also closed two `not_found` results whose symbols were
+removed before 11.0 and so are invisible in an 11.x working tree:
+
+| Rule | Removed in | How |
+|---|---|---|
+| `ReplaceRequestTimeConstantRector` | 11.0.0 | `2f44d215e86` (#3442766), first tag 11.0.0 |
+| `MigrateSqlGetMigrationPluginManagerRector` | 11.0.0 | `166f3a39e46` (#3439369), first tag 11.0.0 |
+| `RemoveTwigNodeTransTagArgumentRector` | 11.1.0 | `cec21638d09` (#3477374), first tag 11.1.0 |
+| `RenameStopProceduralHookScanRector` | 11.2.0 | `308ad151024` (#3495943), first tag 11.2.0 |
+| `ReplaceLocaleTranslationPathConfigRector` | 13.0.0 | `locale.schema.yml:45`; the function form says 12.0.0 — take the widest |
+
+Two lessons for any repeat run. The working tree only shows what is still
+present, so a pre-11.0 removal needs `git log -S` plus `git tag --contains`, not
+grep. And when a rule spans several notices with different removals, take the
+**latest** — bounding on the earliest silently disables the rule while the
+deprecation is still live.
+
 `removal_kind` is the column that matters: **`observed`** means gone from the
 tree — the code-level verification; **`scheduled`** means still present behind
 an `@deprecated` promise, which core can still slip.
@@ -66,14 +91,14 @@ Data: `api.tresbien.tech`, `core_symbol` and `change_record` stamped 2026-09-19;
 |---|---|---|---|
 | Drupal8 | 17 | 15 | 15 |
 | Drupal9 | 24 | 22 | 22 |
-| Drupal10 | 6 | 4 | 2 |
-| Drupal11 | 93 | 68 | 8 |
+| Drupal10 | 6 | 5 | 3 |
+| Drupal11 | 93 | 89 | 11 |
 | Drupal12 | 1 | 0 | 0 |
 | generic | 13 | 8 | 1 |
-| **Total** | **154** | **117** | **48** |
+| **Total** | **154** | **139** | **52** |
 
 Pass 1 alone reached 76 rules with a removal version and 39 observed; pass 2
-took that to 100 and 48; pass 3 (below) to 117. Of the 234 configuration entries, **228 resolved to a
+took that to 100 and 48; passes 3 and 4 (below) to 139. Of the 234 configuration entries, **228 resolved to a
 core symbol**. The 6 that did not are not core symbols at all: three
 `GetMockConfiguration` entries name PHPUnit's `getMock()`, and three name
 `Symfony\Cmf\Component\Routing\RouteObjectInterface` constants, which live in
@@ -223,6 +248,39 @@ bound. The last seven are single-purpose and take a class-level bound cleanly.
 - **The generic rules' 6 remaining entries** are not core symbols (PHPUnit and
   Symfony CMF) and never will resolve against `core_symbol`.
 
+## The 15 rules that still have no upper bound — and should not get one
+
+All four passes are done, and these are left. None is an unfinished lookup:
+
+**Wrong package (5).** The deprecation belongs to `phpunit/phpunit`, so a
+`drupal/core` bound would be meaningless. PR #419 nonetheless gives four of them
+a `drupal/core` constraint, which is a defect worth reporting on its own:
+`GetMockRector`, `GetNameToNameRector` (it type-checks
+`PHPUnit\Framework\TestCase`), `PhpUnitTestAnnotationToAttributeRector`,
+`PhpUnitAddRunTestsInSeparateProcessesAttributeRector`,
+`RemovePhpUnitCompatibilityTraitRector`.
+
+**Infrastructure (3).** No deprecation, no set, nothing to bound:
+`HookConvertRector`, `DeprecationHelperRemoveRector`, `AnnotationToAttributeRector`.
+
+**Behaviour change, nothing removed (5).** `FromUriRector`,
+`ProtectedStaticModulesPropertyRector`,
+`FunctionalTestDefaultThemePropertyRector`, `ShouldCallParentMethodsRector`,
+`AddSymfonyConstraintValidatorTypeDeclarationsRector`.
+
+**No removal version exists (1).** `RemoveStateCacheSettingRector`. Core still
+carries the setting at `lib/Drupal/Core/Site/Settings.php:42` with *"The
+`state_cache` setting is deprecated in drupal:11.0.0. This setting should be
+removed from the settings file, since its usage has been removed"* — deprecated,
+but with no removal deadline stated. Note core cites change record 3177901 while
+the rule cites 3436954 and 2575105.
+
+**One needs a human look (1).** `ViewsConfigUpdaterClassResolverToServiceRector`
+came back `no_removal`, but with no positive citation, and neither of its change
+records (3529274, 3530638) appears anywhere in core. The three removal notices
+in `ViewsConfigUpdater.php` are about view config updates, not about
+`classResolver()`. Plausible, unconfirmed.
+
 ## Full matrix
 
 `Set` is the per-minor config that registers the rule — drupal-rector's own
@@ -277,28 +335,28 @@ which pass produced the removal version.
 | `AnnotationToAttributeRector` | — | config-bound | — | — | — |
 | `ReplaceModuleHandlerGetNameRector` | 10.3 | config-bound | 12.0.0 | scheduled | change record |
 | `ReplaceRebuildThemeDataRector` | 10.3 | config-bound | 12.0.0 | scheduled | change record |
-| `ReplaceRequestTimeConstantRector` | 11.0 | config-bound | — | — | — |
+| `ReplaceRequestTimeConstantRector` | 11.0 | config-bound | 11.0.0 | observed | core git 2f44d215e86 |
 | `SystemTimeZonesRector` | 10.1 | config-bound | 11.0.0 | observed | change record |
 | `WatchdogExceptionRector` | 10.1 | config-bound | 11.0.0 | observed | change record |
 | `BlockContentSelectionExtendsRector` | 11.4* | `>=11.4.0` | 12.0.0 | scheduled | core promise |
 | `BlockContentTestBaseStringToArrayRector` | 11.1 | `>=11.1.0` | 12.0.0 | scheduled | core promise |
 | `CheckMarkupToProcessedTextRector` | 11.4 | `>=11.4.0` | 13.0.0 | scheduled | symbol |
-| `CommentLinkBuilderConstructorRector` | 11.3 | config-bound | — | — | — |
+| `CommentLinkBuilderConstructorRector` | 11.3 | config-bound | 12.0.0 | scheduled | core notice |
 | `DeprecatedFilterFunctionsRector` | 11.4 | config-bound | 12.0.0 | scheduled/observed | change record |
-| `DrupalGetHeadersAssocArrayRector` | 11.1 | `>=11.1.0` | — | — | — |
-| `EntityFormModeEmptyDescriptionToNullRector` | 11.2 | `>=11.2.0` | — | — | — |
+| `DrupalGetHeadersAssocArrayRector` | 11.1 | `>=11.1.0` | 12.0.0 | scheduled | core notice |
+| `EntityFormModeEmptyDescriptionToNullRector` | 11.2 | `>=11.2.0` | 12.0.0 | scheduled | core notice |
 | `ErrorCurrentErrorHandlerRector` | 11.3 | config-bound | 13.0.0 | scheduled | change record |
 | `FileManagedFileSubmitRector` | 11.3 | config-bound | 12.0.0 | scheduled | core promise |
 | `FileSystemBasenameToNativeRector` | 11.3 | config-bound | 13.0.0 | scheduled | change record |
 | `FilterFormatFunctionsToServiceRector` | 11.4 | config-bound | 13.0.0 | scheduled | change record |
 | `GetDrupalRootToRootPropertyRector` | 11.4 | `>=11.4.0` | 13.0.0 | scheduled | core promise |
 | `GetNameToNameRector` | 11.0 | `>=11.0.0` | — | — | — |
-| `GetOriginalClassToGetDecoratedClassesRector` | 11.4 | config-bound | — | — | — |
-| `HookRequirementsAlterRenameRector` | 11.3* | `>=11.3.0` | — | — | — |
+| `GetOriginalClassToGetDecoratedClassesRector` | 11.4 | config-bound | 12.0.0 | scheduled | core notice |
+| `HookRequirementsAlterRenameRector` | 11.3* | `>=11.3.0` | 13.0.0 | scheduled | core notice |
 | `LoadAllIncludesRector` | 11.3 | `>=11.3.0` | 13.0.0 | scheduled | core promise |
 | `LocaleCompareIncToServiceRector` | 11.4 | config-bound | 13.0.0 | scheduled | change record |
 | `MediaFilterFormatEditFormValidateRector` | 11.4 | config-bound | 12.0.0 | scheduled/observed | change record |
-| `MigrateSqlGetMigrationPluginManagerRector` | 11.0 | config-bound | — | — | — |
+| `MigrateSqlGetMigrationPluginManagerRector` | 11.0 | config-bound | 11.0.0 | observed | core git 166f3a39e46 |
 | `MovePointerToMouseOverRector` | 11.1 | `>=11.1.0` | 12.0.0 | scheduled | core promise |
 | `NodeAccessRebuildFunctionsRector` | 11.4 | config-bound | 13.0.0 | scheduled | change record |
 | `NodeStorageDeprecatedMethodsRector` | 11.3 | `>=11.3.0` | 11.3.0 | scheduled | change record |
@@ -316,25 +374,25 @@ which pass produced the removal version.
 | `RemoveModuleHandlerDeprecatedMethodsRector` | 11.1 | `>=11.1.0` | 12.0.0 | scheduled | change record |
 | `RemovePhpUnitCompatibilityTraitRector` | 11.4 | config-bound | — | — | — |
 | `RemoveRendererAddCacheableDependencyNonObjectRector` | 11.3 | `>=11.3.0` | 11.2.0 | scheduled/observed | change record |
-| `RemoveRootFromConvertDbUrlRector` | 11.3 | config-bound | — | — | — |
-| `RemoveRootFromCreateConnectionOptionsFromUrlRector` | 11.2 | `>=11.2.0` | — | — | — |
-| `RemoveRouteBuilderDeprecatedArgsRector` | 11.4 | config-bound | — | — | — |
+| `RemoveRootFromConvertDbUrlRector` | 11.3 | config-bound | 12.0.0 | scheduled | core notice |
+| `RemoveRootFromCreateConnectionOptionsFromUrlRector` | 11.2 | `>=11.2.0` | 12.0.0 | scheduled | core notice |
+| `RemoveRouteBuilderDeprecatedArgsRector` | 11.4 | config-bound | 12.0.0 | scheduled | core notice |
 | `RemoveSetUriCallbackRector` | 11.4 | `>=11.4.0` | 13.0.0 | scheduled | core promise |
-| `RemoveSourceModuleFromMigrateSourceAttributeRector` | 11.2* | `>=11.2.0` | — | — | — |
+| `RemoveSourceModuleFromMigrateSourceAttributeRector` | 11.2* | `>=11.2.0` | 12.0.0 | scheduled | core notice |
 | `RemoveStateCacheSettingRector` | 11.0 | `>=11.0.0` | — | — | — |
-| `RemoveToolkitArgFromImageToolkitOperationConstructorRector` | 11.4 | `>=11.4.0` | — | — | — |
+| `RemoveToolkitArgFromImageToolkitOperationConstructorRector` | 11.4 | `>=11.4.0` | 13.0.0 | scheduled | core notice |
 | `RemoveTrustDataCallRector` | 11.4 | config-bound | 13.0.0 | scheduled | change record |
-| `RemoveTwigNodeTransTagArgumentRector` | 11.2 | config-bound | — | — | — |
+| `RemoveTwigNodeTransTagArgumentRector` | 11.2 | config-bound | 11.1.0 | observed | core git cec21638d09 |
 | `RemoveUpdaterPostInstallMethodsRector` | 11.1 | `>=11.1.0` | 11.1.0 | observed | change record |
 | `RemoveViewsRowCacheKeysRector` | 11.4 | `>=11.4.0` | 13.0.0 | scheduled | change record |
 | `RenameHookRankingRector` | 11.3* | `>=11.3.0` | 12.0.0 | observed | change record |
-| `RenameStopProceduralHookScanRector` | 11.2 | `>=11.2.0` | — | — | — |
+| `RenameStopProceduralHookScanRector` | 11.2 | `>=11.2.0` | 11.2.0 | observed | core git 308ad151024 |
 | `ReplaceAddCachedDiscoveryMethodCallRector` | 11.1 | config-bound | 11.1.0 | scheduled/observed | change record |
-| `ReplaceAlphadecimalToIntNullRector` | 11.2 | config-bound | — | — | — |
+| `ReplaceAlphadecimalToIntNullRector` | 11.2 | config-bound | 12.0.0 | scheduled | core notice |
 | `ReplaceCommentManagerGetCountNewCommentsRector` | 11.3 | config-bound | 12.0.0 | observed | symbol |
-| `ReplaceCommentPreviewConstantsRector` | 11.3 | config-bound | — | — | — |
+| `ReplaceCommentPreviewConstantsRector` | 11.3 | config-bound | 13.0.0 | scheduled | core notice |
 | `ReplaceDateTimeRangeConstantsRector` | 11.2 | config-bound | 12.0.0 | scheduled | change record |
-| `ReplaceDialogClassOptionRector` | 11.3 | `>=11.3.0` | — | — | — |
+| `ReplaceDialogClassOptionRector` | 11.3 | `>=11.3.0` | 12.0.0 | scheduled | core notice |
 | `ReplaceDrupalStaticResetFileReferencesRector` | 11.4 | config-bound | 13.0.0 | scheduled | change record |
 | `ReplaceEditorLoadRector` | 11.2 | config-bound | 12.0.0 | observed | symbol |
 | `ReplaceEntityOriginalPropertyRector` | 11.2 | config-bound | 12.0.0 | scheduled | core promise |
@@ -345,17 +403,17 @@ which pass produced the removal version.
 | `ReplaceItemAttributesWithAttributesRector` | 11.4 | config-bound | 12.0.0 | scheduled | core promise |
 | `ReplaceLocaleBatchProceduralFunctionsRector` | 11.4 | config-bound | 13.0.0 | scheduled | change record |
 | `ReplaceLocaleConfigBatchFunctionsRector` | 11.1 | config-bound | 12.0.0 | observed/scheduled | change record |
-| `ReplaceLocaleTranslationPathConfigRector` | 11.4 | config-bound | several | 2 distinct | core promise |
+| `ReplaceLocaleTranslationPathConfigRector` | 11.4 | config-bound | 13.0.0 | scheduled | locale.schema.yml:45 |
 | `ReplaceNodeAccessViewAllNodesRector` | 11.3 | config-bound | 12.0.0 | observed | symbol |
 | `ReplaceNodeAddBodyFieldRector` | 11.3 | config-bound | 12.0.0 | observed | symbol |
 | `ReplaceNodeModuleProceduralFunctionsRector` | 11.3 | config-bound | 13.0.0 | scheduled | change record |
-| `ReplaceNodeSetPreviewModeRector` | 11.3 | config-bound | — | — | — |
+| `ReplaceNodeSetPreviewModeRector` | 11.3 | config-bound | 13.0.0 | scheduled | core notice |
 | `ReplaceNodeViewControllerRector` | 11.4* | `>=11.4.0` | 12.0.0 | scheduled/observed | change record |
 | `ReplaceNonBoolAccessRector` | 11.4 | `>=11.4.0` | 13.0.0 | scheduled | core promise |
 | `ReplacePdoFetchConstantsRector` | 11.2 | config-bound | 12.0.0 | scheduled | core promise |
 | `ReplaceRecipeRunnerInstallModuleRector` | 11.4 | config-bound | 13.0.0 | scheduled | change record |
 | `ReplaceSessionManagerDeleteRector` | 11.4 | config-bound | 11.4.0 | scheduled | change record |
-| `ReplaceSessionWritesWithRequestSessionRector` | 11.2 | config-bound | — | — | — |
+| `ReplaceSessionWritesWithRequestSessionRector` | 11.2 | config-bound | 12.0.0 | scheduled | core notice |
 | `ReplaceSystemPerformanceGzipKeyRector` | 11.4 | config-bound | 12.0.0 | scheduled | core promise |
 | `ReplaceThemeGetSettingRector` | 11.3 | config-bound | 13.0.0 | scheduled | change record |
 | `ReplaceTwigExtensionRector` | 11.3 | config-bound | 12.0.0 | scheduled | core promise |
@@ -363,14 +421,14 @@ which pass produced the removal version.
 | `ReplaceUserSessionNamePropertyRector` | 11.3 | config-bound | 12.0.0 | scheduled | core promise |
 | `ReplaceViewsProceduralFunctionsRector` | 11.4 | config-bound | 13.0.0 | scheduled | change record |
 | `StatementPrefetchIteratorFetchColumnRector` | 11.2 | config-bound | 12.0.0 | scheduled | change record |
-| `StripMigrationDependenciesExpandArgRector` | 11.0 | config-bound | — | — | — |
+| `StripMigrationDependenciesExpandArgRector` | 11.0 | config-bound | 12.0.0 | scheduled | core notice |
 | `SystemRegionFunctionsRector` | 11.4 | config-bound | 12.0.0 | scheduled | change record |
 | `SystemSortThemesRector` | 11.4 | `>=11.4.0` | 12.0.0 | scheduled/observed | change record |
 | `TaxonomyTermPageVariableToViewModeRector` | 11.3 | `>=11.3.0` | 13.0.0 | scheduled | change record |
-| `UploadedFileConstraintArrayOptionsToNamedArgsRector` | 11.4 | config-bound | — | — | — |
+| `UploadedFileConstraintArrayOptionsToNamedArgsRector` | 11.4 | config-bound | 12.0.0 | scheduled | core notice |
 | `UseEntityTypeHasIntegerIdRector` | 11.4 | config-bound | 13.0.0 | scheduled | change record |
 | `UserLoadByNameAndMailRector` | 11.4 | `>=11.4.0` | 13.0.0 | scheduled | change record |
-| `ViewsBlockItemsPerPageNoneToNullRector` | 11.2 | `>=11.2.0` | — | — | — |
+| `ViewsBlockItemsPerPageNoneToNullRector` | 11.2 | `>=11.2.0` | 12.0.0 | scheduled | core notice |
 | `ViewsConfigUpdaterClassResolverToServiceRector` | 11.3 | config-bound | — | — | — |
 | `ViewsPluginHandlerManagerRector` | 11.4 | config-bound | 13.0.0 | scheduled | change record |
 | `AddSymfonyConstraintValidatorTypeDeclarationsRector` | 11.0 12.0 | `>=11.0.0` | — | — | — |
