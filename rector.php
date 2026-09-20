@@ -13,10 +13,12 @@ use Rector\Config\RectorConfig;
 
 return static function (RectorConfig $rectorConfig): void {
     // Adjust the set lists to be more granular to your Drupal requirements.
-    // @todo find out how to only load the relevant rector rules.
-    //   Should we try and load \Drupal::VERSION and check?
-    //   new possible option with ComposerTriggeredSet
-    //   https://github.com/rectorphp/rector-src/blob/b5a5739b7d7dde621053adff113449860ed5331f/src/Set/ValueObject/ComposerTriggeredSet.php
+    //
+    // To load only the rules that are relevant for your installed Drupal
+    // version, replace the sets below with the composer-based set, which binds
+    // every rule to the drupal/core version its deprecation was introduced in:
+    //
+    //   $rectorConfig->sets([DrupalSetList::COMPOSER_BASED]);
     $rectorConfig->sets([
         Drupal10SetList::DRUPAL_10,
         Drupal11SetList::DRUPAL_11,

@@ -12,6 +12,8 @@ use PhpParser\Node\Expr\StaticCall;
 use PhpParser\Node\Name;
 use PhpParser\Node\Scalar\String_;
 use Rector\Rector\AbstractRector;
+use Rector\VersionBonding\Contract\ComposerPackageConstraintInterface;
+use Rector\VersionBonding\ValueObject\ComposerPackageConstraint;
 use Symplify\RuleDocGenerator\Contract\DocumentedRuleInterface;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
@@ -26,8 +28,13 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  * @see https://www.drupal.org/node/3448457
  * @see https://www.drupal.org/node/3452144
  */
-class EntityFormModeEmptyDescriptionToNullRector extends AbstractRector implements DocumentedRuleInterface
+class EntityFormModeEmptyDescriptionToNullRector extends AbstractRector implements ComposerPackageConstraintInterface, DocumentedRuleInterface
 {
+    public function provideComposerPackageConstraint(): ComposerPackageConstraint
+    {
+        return new ComposerPackageConstraint('drupal/core', '>=11.2.0');
+    }
+
     // TODO PHPSTAN_MESSAGES EntityFormModeEmptyDescriptionToNullRector: PHPStan
     //   emits no deprecation for the targeted call. The deprecation is a
     //   runtime config-schema constraint validation against EntityFormMode's

@@ -103,36 +103,59 @@ return RectorConfig::configure()
 
 This is more granular than the `Drupal10SetList::DRUPAL_10` set. Since Drupal 10.1 there is not real reason not to include later versions. It will detect the installed Drupal version and supply BC wrappers as needed if you enable it in the config.
 
+> [!NOTE]
+> The Drupal sets contain Drupal rules only. Up to 1.1.3 the Drupal 8, 9 and 10
+> sets also pulled in Rector's Symfony, PHPUnit and Twig sets; Rector 2.6.2
+> removed the per-version sets they referenced, so those references are gone.
+> Add the upstream rules yourself if you want them — bearing in mind they follow
+> the installed Symfony/PHPUnit/Twig version, not the Drupal one:
+>
+> ```php
+> return RectorConfig::configure()
+>     ->withComposerBased(phpunit: true, symfony: true, twig: true)
+>     ->withSets([Drupal10SetList::DRUPAL_10]);
+> ```
+
 ### Composer-based sets (automatic version selection)
 
-> [!WARNING]
-> This feature depends on an unreleased Rector version. Only usable right now using `composer require --dev rector/rector:"dev-main as 2.4.6"`
-
-Instead of listing sets by hand, you can let Rector pick them from the installed
-`drupal/core` version. Register the set provider and enable the `drupal` group:
+Instead of listing sets by hand, you can let Rector pick the rules from the
+installed `drupal/core` version:
 
 ```php
 return RectorConfig::configure()
-    ->withSetProviders(\DrupalRector\Set\DrupalSetProvider::class)
     ->withComposerBased(drupal: true);
 ```
 
-Rector reads the installed `drupal/core` version and loads every set up to and
-including that minor — a site on 11.4 loads the 11.0 → 11.4 rules, a site on
-11.2 loads 11.0 → 11.2, and a future minor's rules are never applied. Because the
-matched version is known exactly, the otherwise opt-in *breaking* sets (renames
-whose replacement only exists from a given minor onward) are included
-automatically — they cannot fatal on a core that is guaranteed to have the
-replacement.
+`DrupalSetList::COMPOSER_BASED` registers every drupal-rector rule at once, each
+one bound to the exact `drupal/core` version its deprecation was introduced in —
+`>=11.3.0`, `>=10.2.0`, and so on. Rector activates only the rules whose
+constraint the installed core satisfies, so a site on 11.2 gets the `>=8.0.0` …
+`>=11.2.0` rules and never a later minor's. Because the installed version is
+known exactly, the otherwise opt-in *breaking* renames (whose replacement only
+exists from a given minor onward) are included — they cannot fatal on a core
+that is guaranteed to have the replacement.
+
+To see the rules that carry their configuration in the set, and whether the
+installed core activates them:
+
+```bash
+vendor/bin/rector composer-based
+```
+
+A rule that takes no configuration states its version on the rule class instead,
+through Rector's `ComposerPackageConstraintInterface`, so it is skipped on a core
+below it too. That filter is global, not per set: those rules stay off on an
+older core even when you load a `Drupal11SetList` set by hand.
 
 This is the backward-compatibility-safe counterpart to listing sets manually:
-it fixes what is deprecated on *your* installed core. To look ahead and prepare
-for the next major before upgrading, keep using the explicit `Drupal11SetList`
-sets with `setDrupalVersion()` as described above.
+it fixes what is deprecated on *your* installed core.
 
 > **Requires** a Rector release that ships `SetGroup::DRUPAL` and the
 > `withComposerBased(drupal: ...)` toggle (see
-> [rectorphp/rector#9778](https://github.com/rectorphp/rector/issues/9778)).
+> [rectorphp/rector#9778](https://github.com/rectorphp/rector/issues/9778)),
+> and `rector/rector` ^2.6, which is where
+> `RectorConfig::ruleWithConfigurationComposerVersionBound()` landed
+> ([rectorphp/rector-src#8244](https://github.com/rectorphp/rector-src/pull/8244)).
 
 ### DrupalRectorSettings
 

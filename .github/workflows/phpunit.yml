@@ -19,7 +19,7 @@ jobs:
             matrix:
                 include:
                     - php-version: "8.3"
-                      rector: "^2"
+                      rector: "^2.6"
         steps:
             -   uses: actions/checkout@v3
             -   uses: shivammathur/setup-php@v2

@@ -13,6 +13,8 @@ use PhpParser\Node\Expr\Variable;
 use PhpParser\Node\Stmt\Class_;
 use PhpParser\NodeVisitor;
 use Rector\Rector\AbstractRector;
+use Rector\VersionBonding\Contract\ComposerPackageConstraintInterface;
+use Rector\VersionBonding\ValueObject\ComposerPackageConstraint;
 use Symplify\RuleDocGenerator\Contract\DocumentedRuleInterface;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
@@ -29,8 +31,13 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  * @see https://www.drupal.org/node/3559481
  * @see https://www.drupal.org/node/3562304
  */
-final class RemoveToolkitArgFromImageToolkitOperationConstructorRector extends AbstractRector implements DocumentedRuleInterface
+final class RemoveToolkitArgFromImageToolkitOperationConstructorRector extends AbstractRector implements ComposerPackageConstraintInterface, DocumentedRuleInterface
 {
+    public function provideComposerPackageConstraint(): ComposerPackageConstraint
+    {
+        return new ComposerPackageConstraint('drupal/core', '>=11.4.0');
+    }
+
     private const TOOLKIT_INTERFACE = 'Drupal\\Core\\ImageToolkit\\ImageToolkitInterface';
 
     private const OPERATION_BASE = 'Drupal\\Core\\ImageToolkit\\ImageToolkitOperationBase';

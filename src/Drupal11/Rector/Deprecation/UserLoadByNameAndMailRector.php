@@ -6,6 +6,8 @@ namespace DrupalRector\Drupal11\Rector\Deprecation;
 
 use PhpParser\Node;
 use Rector\Rector\AbstractRector;
+use Rector\VersionBonding\Contract\ComposerPackageConstraintInterface;
+use Rector\VersionBonding\ValueObject\ComposerPackageConstraint;
 use Symplify\RuleDocGenerator\Contract\DocumentedRuleInterface;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
@@ -21,8 +23,13 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  *
  * @see https://www.drupal.org/node/3555936
  */
-class UserLoadByNameAndMailRector extends AbstractRector implements DocumentedRuleInterface
+class UserLoadByNameAndMailRector extends AbstractRector implements ComposerPackageConstraintInterface, DocumentedRuleInterface
 {
+    public function provideComposerPackageConstraint(): ComposerPackageConstraint
+    {
+        return new ComposerPackageConstraint('drupal/core', '>=11.4.0');
+    }
+
     public const PHPSTAN_MESSAGES = [
         'Call to deprecated function user_load_by_name(). Deprecated in drupal:11.4.0 and is removed from drupal:13.0.0. Use Drupal::entityTypeManager()->getStorage(\'user\')->loadByProperties() instead.',
         'Call to deprecated function user_load_by_mail(). Deprecated in drupal:11.4.0 and is removed from drupal:13.0.0. Use Drupal::entityTypeManager()->getStorage(\'user\')->loadByProperties() instead.',

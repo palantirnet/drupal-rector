@@ -1,0 +1,13 @@
+<?php
+
+declare(strict_types=1);
+
+use DrupalRector\Drupal11\Rector\Deprecation\ErrorCurrentErrorHandlerRector;
+use DrupalRector\Drupal11\Rector\Deprecation\LoadAllIncludesRector;
+use Rector\Config\RectorConfig;
+
+return static function (RectorConfig $rectorConfig): void {
+    $rectorConfig->rule(LoadAllIncludesRector::class);
+
+    $rectorConfig->rule(ErrorCurrentErrorHandlerRector::class);
+};

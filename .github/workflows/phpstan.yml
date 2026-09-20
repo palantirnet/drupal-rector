@@ -20,7 +20,7 @@ jobs:
             matrix:
                 include:
                     - php-version: "8.3"
-                      rector: "^2"
+                      rector: "^2.6"
                       phpstan-config: phpstan.neon
         steps:
             -   uses: actions/checkout@v3

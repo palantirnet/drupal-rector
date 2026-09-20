@@ -10,6 +10,8 @@ use PhpParser\Node\Name;
 use PhpParser\Node\Name\FullyQualified;
 use PhpParser\Node\Stmt\UseUse;
 use Rector\Rector\AbstractRector;
+use Rector\VersionBonding\Contract\ComposerPackageConstraintInterface;
+use Rector\VersionBonding\ValueObject\ComposerPackageConstraint;
 use Symplify\RuleDocGenerator\Contract\DocumentedRuleInterface;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
@@ -21,8 +23,13 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  *
  * @see https://www.drupal.org/node/3495943
  */
-final class RenameStopProceduralHookScanRector extends AbstractRector implements DocumentedRuleInterface
+final class RenameStopProceduralHookScanRector extends AbstractRector implements ComposerPackageConstraintInterface, DocumentedRuleInterface
 {
+    public function provideComposerPackageConstraint(): ComposerPackageConstraint
+    {
+        return new ComposerPackageConstraint('drupal/core', '>=11.2.0');
+    }
+
     private const OLD_FQCN = 'Drupal\Core\Hook\Attribute\StopProceduralHookScan';
     private const NEW_FQCN = 'Drupal\Core\Hook\Attribute\ProceduralHookScanStop';
     private const NEW_SHORT = 'ProceduralHookScanStop';
