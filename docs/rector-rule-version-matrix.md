@@ -35,6 +35,24 @@ so the second pass went at the symbols directly:
    carry: core's own `@trigger_error` text, and `git log -S` plus
    `git tag --contains` to date a removal.
 
+**Pass 3 — core's own promises, joined by change record.** Core states each
+deprecation in a machine-readable form that *cites the change record*:
+
+```
+ModuleHandler::loadAllIncludes() is deprecated in drupal:11.3.0 and is
+removed from drupal:13.0.0. … See https://www.drupal.org/node/3536432
+```
+
+There are 1,651 such strings in core, 912 of them carrying a node link, covering
+217 distinct change records. Since every rule already has its change record
+nids, `rule → nid → core's promise` is a join rather than research. It resolved
+**17 of the 54 rules that still had no upper bound**, at no cost and with a
+file:line citation for each.
+
+These land as `scheduled`, not `observed` — Drupal 12 does not exist yet, so for
+a Drupal 11 deprecation there is no removal to observe, only core's stated
+intention.
+
 `removal_kind` is the column that matters: **`observed`** means gone from the
 tree — the code-level verification; **`scheduled`** means still present behind
 an `@deprecated` promise, which core can still slip.
@@ -46,16 +64,16 @@ Data: `api.tresbien.tech`, `core_symbol` and `change_record` stamped 2026-09-19;
 
 | Major | Rules | Removal version | Code-observed |
 |---|---|---|---|
-| Drupal8 | 18 | 16 | 16 |
-| Drupal9 | 25 | 23 | 22 |
+| Drupal8 | 17 | 15 | 15 |
+| Drupal9 | 24 | 22 | 22 |
 | Drupal10 | 6 | 4 | 2 |
-| Drupal11 | 93 | 51 | 8 |
+| Drupal11 | 93 | 68 | 8 |
 | Drupal12 | 1 | 0 | 0 |
-| generic | 11 | 6 | 0 |
-| **Total** | **154** | **100** | **48** |
+| generic | 13 | 8 | 1 |
+| **Total** | **154** | **117** | **48** |
 
 Pass 1 alone reached 76 rules with a removal version and 39 observed; pass 2
-took that to 100 and 48. Of the 234 configuration entries, **228 resolved to a
+took that to 100 and 48; pass 3 (below) to 117. Of the 234 configuration entries, **228 resolved to a
 core symbol**. The 6 that did not are not core symbols at all: three
 `GetMockConfiguration` entries name PHPUnit's `getMock()`, and three name
 `Symfony\Cmf\Component\Routing\RouteObjectInterface` constants, which live in
@@ -262,26 +280,26 @@ which pass produced the removal version.
 | `ReplaceRequestTimeConstantRector` | 11.0 | config-bound | — | — | — |
 | `SystemTimeZonesRector` | 10.1 | config-bound | 11.0.0 | observed | change record |
 | `WatchdogExceptionRector` | 10.1 | config-bound | 11.0.0 | observed | change record |
-| `BlockContentSelectionExtendsRector` | 11.4* | `>=11.4.0` | — | — | — |
-| `BlockContentTestBaseStringToArrayRector` | 11.1 | `>=11.1.0` | — | — | — |
+| `BlockContentSelectionExtendsRector` | 11.4* | `>=11.4.0` | 12.0.0 | scheduled | core promise |
+| `BlockContentTestBaseStringToArrayRector` | 11.1 | `>=11.1.0` | 12.0.0 | scheduled | core promise |
 | `CheckMarkupToProcessedTextRector` | 11.4 | `>=11.4.0` | 13.0.0 | scheduled | symbol |
 | `CommentLinkBuilderConstructorRector` | 11.3 | config-bound | — | — | — |
 | `DeprecatedFilterFunctionsRector` | 11.4 | config-bound | 12.0.0 | scheduled/observed | change record |
 | `DrupalGetHeadersAssocArrayRector` | 11.1 | `>=11.1.0` | — | — | — |
 | `EntityFormModeEmptyDescriptionToNullRector` | 11.2 | `>=11.2.0` | — | — | — |
 | `ErrorCurrentErrorHandlerRector` | 11.3 | config-bound | 13.0.0 | scheduled | change record |
-| `FileManagedFileSubmitRector` | 11.3 | config-bound | — | — | — |
+| `FileManagedFileSubmitRector` | 11.3 | config-bound | 12.0.0 | scheduled | core promise |
 | `FileSystemBasenameToNativeRector` | 11.3 | config-bound | 13.0.0 | scheduled | change record |
 | `FilterFormatFunctionsToServiceRector` | 11.4 | config-bound | 13.0.0 | scheduled | change record |
-| `GetDrupalRootToRootPropertyRector` | 11.4 | `>=11.4.0` | — | — | — |
+| `GetDrupalRootToRootPropertyRector` | 11.4 | `>=11.4.0` | 13.0.0 | scheduled | core promise |
 | `GetNameToNameRector` | 11.0 | `>=11.0.0` | — | — | — |
 | `GetOriginalClassToGetDecoratedClassesRector` | 11.4 | config-bound | — | — | — |
 | `HookRequirementsAlterRenameRector` | 11.3* | `>=11.3.0` | — | — | — |
-| `LoadAllIncludesRector` | 11.3 | `>=11.3.0` | — | — | — |
+| `LoadAllIncludesRector` | 11.3 | `>=11.3.0` | 13.0.0 | scheduled | core promise |
 | `LocaleCompareIncToServiceRector` | 11.4 | config-bound | 13.0.0 | scheduled | change record |
 | `MediaFilterFormatEditFormValidateRector` | 11.4 | config-bound | 12.0.0 | scheduled/observed | change record |
 | `MigrateSqlGetMigrationPluginManagerRector` | 11.0 | config-bound | — | — | — |
-| `MovePointerToMouseOverRector` | 11.1 | `>=11.1.0` | — | — | — |
+| `MovePointerToMouseOverRector` | 11.1 | `>=11.1.0` | 12.0.0 | scheduled | core promise |
 | `NodeAccessRebuildFunctionsRector` | 11.4 | config-bound | 13.0.0 | scheduled | change record |
 | `NodeStorageDeprecatedMethodsRector` | 11.3 | `>=11.3.0` | 11.3.0 | scheduled | change record |
 | `PluginBaseIsConfigurableRector` | 11.1 | config-bound | 11.0.0 | observed | change record |
@@ -301,7 +319,7 @@ which pass produced the removal version.
 | `RemoveRootFromConvertDbUrlRector` | 11.3 | config-bound | — | — | — |
 | `RemoveRootFromCreateConnectionOptionsFromUrlRector` | 11.2 | `>=11.2.0` | — | — | — |
 | `RemoveRouteBuilderDeprecatedArgsRector` | 11.4 | config-bound | — | — | — |
-| `RemoveSetUriCallbackRector` | 11.4 | `>=11.4.0` | — | — | — |
+| `RemoveSetUriCallbackRector` | 11.4 | `>=11.4.0` | 13.0.0 | scheduled | core promise |
 | `RemoveSourceModuleFromMigrateSourceAttributeRector` | 11.2* | `>=11.2.0` | — | — | — |
 | `RemoveStateCacheSettingRector` | 11.0 | `>=11.0.0` | — | — | — |
 | `RemoveToolkitArgFromImageToolkitOperationConstructorRector` | 11.4 | `>=11.4.0` | — | — | — |
@@ -319,30 +337,30 @@ which pass produced the removal version.
 | `ReplaceDialogClassOptionRector` | 11.3 | `>=11.3.0` | — | — | — |
 | `ReplaceDrupalStaticResetFileReferencesRector` | 11.4 | config-bound | 13.0.0 | scheduled | change record |
 | `ReplaceEditorLoadRector` | 11.2 | config-bound | 12.0.0 | observed | symbol |
-| `ReplaceEntityOriginalPropertyRector` | 11.2 | config-bound | — | — | — |
+| `ReplaceEntityOriginalPropertyRector` | 11.2 | config-bound | 12.0.0 | scheduled | core promise |
 | `ReplaceEntityReferenceRecursiveLimitRector` | 11.4 | config-bound | 13.0.0 | scheduled | change record |
-| `ReplaceExpectDeprecationRector` | 11.4 | config-bound | — | — | — |
-| `ReplaceFieldgroupToFieldsetRector` | 11.2 | config-bound | — | — | — |
+| `ReplaceExpectDeprecationRector` | 11.4 | config-bound | 12.0.0 | scheduled | core promise |
+| `ReplaceFieldgroupToFieldsetRector` | 11.2 | config-bound | 12.0.0 | scheduled | core promise |
 | `ReplaceHideShowWithPrintedRector` | 11.4 | `>=11.4.0` | 13.0.0 | scheduled | change record |
-| `ReplaceItemAttributesWithAttributesRector` | 11.4 | config-bound | — | — | — |
+| `ReplaceItemAttributesWithAttributesRector` | 11.4 | config-bound | 12.0.0 | scheduled | core promise |
 | `ReplaceLocaleBatchProceduralFunctionsRector` | 11.4 | config-bound | 13.0.0 | scheduled | change record |
 | `ReplaceLocaleConfigBatchFunctionsRector` | 11.1 | config-bound | 12.0.0 | observed/scheduled | change record |
-| `ReplaceLocaleTranslationPathConfigRector` | 11.4 | config-bound | — | — | — |
+| `ReplaceLocaleTranslationPathConfigRector` | 11.4 | config-bound | several | 2 distinct | core promise |
 | `ReplaceNodeAccessViewAllNodesRector` | 11.3 | config-bound | 12.0.0 | observed | symbol |
 | `ReplaceNodeAddBodyFieldRector` | 11.3 | config-bound | 12.0.0 | observed | symbol |
 | `ReplaceNodeModuleProceduralFunctionsRector` | 11.3 | config-bound | 13.0.0 | scheduled | change record |
 | `ReplaceNodeSetPreviewModeRector` | 11.3 | config-bound | — | — | — |
 | `ReplaceNodeViewControllerRector` | 11.4* | `>=11.4.0` | 12.0.0 | scheduled/observed | change record |
-| `ReplaceNonBoolAccessRector` | 11.4 | `>=11.4.0` | — | — | — |
-| `ReplacePdoFetchConstantsRector` | 11.2 | config-bound | — | — | — |
+| `ReplaceNonBoolAccessRector` | 11.4 | `>=11.4.0` | 13.0.0 | scheduled | core promise |
+| `ReplacePdoFetchConstantsRector` | 11.2 | config-bound | 12.0.0 | scheduled | core promise |
 | `ReplaceRecipeRunnerInstallModuleRector` | 11.4 | config-bound | 13.0.0 | scheduled | change record |
 | `ReplaceSessionManagerDeleteRector` | 11.4 | config-bound | 11.4.0 | scheduled | change record |
 | `ReplaceSessionWritesWithRequestSessionRector` | 11.2 | config-bound | — | — | — |
-| `ReplaceSystemPerformanceGzipKeyRector` | 11.4 | config-bound | — | — | — |
+| `ReplaceSystemPerformanceGzipKeyRector` | 11.4 | config-bound | 12.0.0 | scheduled | core promise |
 | `ReplaceThemeGetSettingRector` | 11.3 | config-bound | 13.0.0 | scheduled | change record |
-| `ReplaceTwigExtensionRector` | 11.3 | config-bound | — | — | — |
+| `ReplaceTwigExtensionRector` | 11.3 | config-bound | 12.0.0 | scheduled | core promise |
 | `ReplaceUserOneTimeAuthFunctionsRector` | 11.4 | config-bound | 12.0.0 | scheduled | change record |
-| `ReplaceUserSessionNamePropertyRector` | 11.3 | config-bound | — | — | — |
+| `ReplaceUserSessionNamePropertyRector` | 11.3 | config-bound | 12.0.0 | scheduled | core promise |
 | `ReplaceViewsProceduralFunctionsRector` | 11.4 | config-bound | 13.0.0 | scheduled | change record |
 | `StatementPrefetchIteratorFetchColumnRector` | 11.2 | config-bound | 12.0.0 | scheduled | change record |
 | `StripMigrationDependenciesExpandArgRector` | 11.0 | config-bound | — | — | — |
