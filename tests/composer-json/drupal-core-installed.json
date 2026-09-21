@@ -1,5 +1,5 @@
 {
-    "_comment": "Stands in for the analysed project's composer.json in rule tests: this package does not require drupal/core, so rules bonded to it through ComposerPackageConstraintInterface would all be filtered out. The version is the highest any rule is bonded to, so every rule is active.",
+    "_comment": "Fallback pin for rule tests that do not live under a tests/src/Drupal<major> namespace. Version-specific tests get their own pin from AbstractDrupalRectorTestCase; see drupal-core-<major>.json.",
     "require": {
         "drupal/core": "12.0.0"
     }
