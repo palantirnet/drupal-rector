@@ -8,14 +8,15 @@ use PhpParser\Node;
 use PhpParser\Node\Expr\New_;
 use PHPStan\Analyser\Scope;
 use PHPStan\Rules\Rule;
-use PHPStan\Rules\RuleErrorBuilder;
 use Rector\VersionBonding\ValueObject\ComposerPackageConstraint;
 
 /**
- * Every constraint a rule declares has to name `drupal/core` and the exact
+ * Every constraint a rule declares has to name an allowed package and the
  * version its deprecation was introduced in, so the composer-based set stays
- * comparable across rules. It may also state the major the deprecation is
- * removed in; see BoundRuleConfigurationRule::findConstraintProblem().
+ * comparable across rules. It may also state the major the API is removed in.
+ *
+ * The checks live in BoundRuleConfigurationRule::buildErrors(), so a constraint
+ * declared here and one declared in the set are held to the same shape.
  *
  * @implements Rule<New_>
  *
@@ -43,28 +44,10 @@ final class ComposerPackageConstraintRule implements Rule
             return [];
         }
 
-        $ruleErrors = [];
-
-        $packageName = $this->resolveConstantString($args[0]->value, $scope);
-        if ($packageName !== BoundRuleConfigurationRule::PACKAGE_NAME) {
-            $ruleErrors[] = RuleErrorBuilder::message(sprintf(
-                'Bind the rule to the "%s" package, "%s" given.',
-                BoundRuleConfigurationRule::PACKAGE_NAME,
-                $packageName ?? 'a non-literal value'
-            ))
-                ->identifier('drupalRector.boundRulePackage')
-                ->build();
-        }
-
-        $versionConstraint = $this->resolveConstantString($args[1]->value, $scope);
-        $problem = BoundRuleConfigurationRule::findConstraintProblem($versionConstraint);
-        if ($problem !== null) {
-            $ruleErrors[] = RuleErrorBuilder::message($problem[0])
-                ->identifier($problem[1])
-                ->build();
-        }
-
-        return $ruleErrors;
+        return BoundRuleConfigurationRule::buildErrors(
+            $this->resolveConstantString($args[0]->value, $scope),
+            $this->resolveConstantString($args[1]->value, $scope)
+        );
     }
 
     private function resolveConstantString(Node\Expr $expr, Scope $scope): ?string

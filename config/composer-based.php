@@ -259,14 +259,14 @@ return static function (RectorConfig $rectorConfig): void {
         new FunctionToServiceConfiguration('8.0.0', 'drupal_render_root', 'renderer', 'renderRoot'),
         // https://www.drupal.org/node/1876852
         new FunctionToServiceConfiguration('8.0.0', 'format_date', 'date.formatter', 'format'),
-    ], 'drupal/core', '>=8.0.0');
+    ], 'drupal/core', '>=8.0.0 <10.0.0');
 
     $rectorConfig->rule(EntityInterfaceLinkRector::class);
 
     $rectorConfig->ruleWithConfigurationComposerVersionBound(MethodToMethodWithCheckRector::class, [
         // https://www.drupal.org/node/2614344
         new MethodToMethodWithCheckConfiguration('Drupal\Core\Entity\EntityInterface', 'urlInfo', 'toUrl', '8.0.0'),
-    ], 'drupal/core', '>=8.0.0');
+    ], 'drupal/core', '>=8.0.0 <10.0.0');
 
     $rectorConfig->ruleWithConfigurationComposerVersionBound(EntityLoadRector::class, [
         new EntityLoadConfiguration('entity'),
@@ -295,7 +295,7 @@ return static function (RectorConfig $rectorConfig): void {
             'Drupal\Component\FileSystem\FileSystem',
             'getOsTemporaryDirectory'
         ),
-    ], 'drupal/core', '>=8.2.0');
+    ], 'drupal/core', '>=8.2.0 <10.0.0');
 
     // ---------------------------------------------------------------------
     // Drupal 8.3
@@ -329,7 +329,7 @@ return static function (RectorConfig $rectorConfig): void {
         new ConstantToClassConfiguration('DATETIME_DATE_STORAGE_FORMAT', 'Drupal\datetime\Plugin\Field\FieldType\DateTimeItemInterface', 'DATE_STORAGE_FORMAT', '8.5.0'),
         new ConstantToClassConfiguration('DATETIME_DATETIME_STORAGE_FORMAT', 'Drupal\datetime\Plugin\Field\FieldType\DateTimeItemInterface', 'DATETIME_STORAGE_FORMAT', '8.5.0'),
         new ConstantToClassConfiguration('DATETIME_STORAGE_TIMEZONE', 'Drupal\datetime\Plugin\Field\FieldType\DateTimeItemInterface', 'STORAGE_TIMEZONE', '8.5.0'),
-    ], 'drupal/core', '>=8.5.0');
+    ], 'drupal/core', '>=8.5.0 <10.0.0');
 
     // ---------------------------------------------------------------------
     // Drupal 8.6
@@ -353,7 +353,7 @@ return static function (RectorConfig $rectorConfig): void {
         new FunctionToServiceConfiguration('8.7.0', 'file_prepare_directory', 'file_system', 'prepareDirectory'),
         // https://www.drupal.org/node/3006851
         new FunctionToServiceConfiguration('8.7.0', 'file_unmanaged_save_data', 'file_system', 'saveData'),
-    ], 'drupal/core', '>=8.7.0');
+    ], 'drupal/core', '>=8.7.0 <10.0.0');
 
     /**
      * Replaces deprecated FILE_CREATE_DIRECTORY constant use.
@@ -383,7 +383,7 @@ return static function (RectorConfig $rectorConfig): void {
         $constantToClassFileExistReplace,
         $constantToClassFileExistsRename,
         $constantToClassFileModifyPermissions,
-    ], 'drupal/core', '>=8.7.0');
+    ], 'drupal/core', '>=8.7.0 <10.0.0');
 
     // ---------------------------------------------------------------------
     // Drupal 8.8
@@ -411,12 +411,12 @@ return static function (RectorConfig $rectorConfig): void {
             new FunctionToServiceConfiguration('8.8.0', 'file_scan_directory', 'file_system', 'scanDirectory'),
             // https://www.drupal.org/node/3035273
             new FunctionToServiceConfiguration('8.8.0', 'file_uri_target', 'stream_wrapper_manager', 'getTarget'),
-        ], 'drupal/core', '>=8.8.0');
+        ], 'drupal/core', '>=8.8.0 <10.0.0');
 
     $rectorConfig->ruleWithConfigurationComposerVersionBound(MethodToMethodWithCheckRector::class, [
         // https://www.drupal.org/node/3075567
         new MethodToMethodWithCheckConfiguration('Drupal\Core\Entity\EntityTypeInterface', 'getLowercaseLabel', 'getSingularLabel', '8.8.0'),
-    ], 'drupal/core', '>=8.8.0');
+    ], 'drupal/core', '>=8.8.0 <10.0.0');
 
     // https://www.drupal.org/node/3083055
     $rectorConfig->rule(FunctionalTestDefaultThemePropertyRector::class);
@@ -543,7 +543,7 @@ return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->ruleWithConfigurationComposerVersionBound(MethodToMethodWithCheckRector::class, [
         // https://www.drupal.org/node/3187914
         new MethodToMethodWithCheckConfiguration('Drupal\Core\Session\MetadataBag', 'clearCsrfTokenSeed', 'stampNew', '9.2.0'),
-    ], 'drupal/core', '>=9.2.0');
+    ], 'drupal/core', '>=9.2.0 <11.0.0');
 
     // ---------------------------------------------------------------------
     // Drupal 9.3
@@ -569,7 +569,7 @@ return static function (RectorConfig $rectorConfig): void {
         new FunctionToServiceConfiguration('9.3.0', 'file_save_data', 'file.repository', 'writeData'),
         // Change record: https://www.drupal.org/node/2939099
         new FunctionToServiceConfiguration('9.3.0', 'render', 'renderer', 'render'),
-    ], 'drupal/core', '>=9.3.0');
+    ], 'drupal/core', '>=9.3.0 <11.0.0');
 
     // Change record: https://www.drupal.org/node/3223091.
     $rectorConfig->rule(FileBuildUriRector::class);
@@ -592,7 +592,7 @@ return static function (RectorConfig $rectorConfig): void {
 
     $rectorConfig->ruleWithConfigurationComposerVersionBound(FunctionToStaticRector::class, [
         new FunctionToStaticConfiguration('9.3.0', 'taxonomy_implode_tags', 'Drupal\Core\Entity\Element\EntityAutocomplete', 'getEntityLabels'),
-    ], 'drupal/core', '>=9.3.0');
+    ], 'drupal/core', '>=9.3.0 <11.0.0');
 
     $rectorConfig->ruleWithConfigurationComposerVersionBound(\DrupalRector\Drupal9\Rector\Deprecation\FunctionToFirstArgMethodRector::class, [
         new \DrupalRector\Drupal9\Rector\ValueObject\FunctionToFirstArgMethodConfiguration('taxonomy_term_uri', 'toUrl'),
@@ -607,7 +607,7 @@ return static function (RectorConfig $rectorConfig): void {
             'STATUS_PERMANENT',
             '9.3.0',
         ),
-    ], 'drupal/core', '>=9.3.0');
+    ], 'drupal/core', '>=9.3.0 <11.0.0');
 
     // ---------------------------------------------------------------------
     // Drupal 9.4
@@ -628,7 +628,7 @@ return static function (RectorConfig $rectorConfig): void {
     // https://www.drupal.org/node/3244583
     $rectorConfig->ruleWithConfigurationComposerVersionBound(FunctionToStaticRector::class, [
         new FunctionToStaticConfiguration('10.1.0', 'drupal_rewrite_settings', 'Drupal\Core\Site\SettingsEditor', 'rewrite', [0 => 1, 1 => 0]),
-    ], 'drupal/core', '>=10.1.0');
+    ], 'drupal/core', '>=10.1.0 <12.0.0');
 
     // https://www.drupal.org/node/2932520
     $rectorConfig->ruleWithConfigurationComposerVersionBound(WatchdogExceptionRector::class, [
@@ -647,18 +647,18 @@ return static function (RectorConfig $rectorConfig): void {
     // https://www.drupal.org/node/2999981
     $rectorConfig->ruleWithConfigurationComposerVersionBound(FunctionToStaticRector::class, [
         new FunctionToStaticConfiguration('10.2.0', 'format_size', 'Drupal\Core\StringTranslation\ByteSizeMarkup', 'create'),
-    ], 'drupal/core', '>=10.2.0');
+    ], 'drupal/core', '>=10.2.0 <12.0.0');
 
     // https://www.drupal.org/node/3265963
     $rectorConfig->ruleWithConfigurationComposerVersionBound(MethodToMethodWithCheckRector::class, [
         new MethodToMethodWithCheckConfiguration('Drupal\system\Plugin\ImageToolkit\GDToolkit', 'getResource', 'getImage', '10.2.0'),
         new MethodToMethodWithCheckConfiguration('Drupal\system\Plugin\ImageToolkit\GDToolkit', 'setResource', 'setImage', '10.2.0'),
-    ], 'drupal/core', '>=10.2.0');
+    ], 'drupal/core', '>=10.2.0 <12.0.0');
 
     // https://www.drupal.org/node/3358337
     $rectorConfig->ruleWithConfigurationComposerVersionBound(FunctionToServiceRector::class, [
         new FunctionToServiceConfiguration('10.2.0', '_drupal_flush_css_js', 'asset.query_string', 'reset'),
-    ], 'drupal/core', '>=10.2.0');
+    ], 'drupal/core', '>=10.2.0 <12.0.0');
 
     // ---------------------------------------------------------------------
     // Drupal 10.3
@@ -669,13 +669,13 @@ return static function (RectorConfig $rectorConfig): void {
     // Replaced by RendererInterface::renderInIsolation().
     $rectorConfig->ruleWithConfigurationComposerVersionBound(MethodToMethodWithCheckRector::class, [
         new MethodToMethodWithCheckConfiguration('Drupal\Core\Render\RendererInterface', 'renderPlain', 'renderInIsolation', '10.3.0'),
-    ], 'drupal/core', '>=10.3.0');
+    ], 'drupal/core', '>=10.3.0 <13.0.0');
 
     // https://www.drupal.org/node/3411269 file_icon_class, file_icon_map
     $rectorConfig->ruleWithConfigurationComposerVersionBound(FunctionToStaticRector::class, [
         new FunctionToStaticConfiguration('10.3.0', 'file_icon_class', 'Drupal\file\IconMimeTypes', 'getIconClass'),
         new FunctionToStaticConfiguration('10.3.0', 'file_icon_map', 'Drupal\file\IconMimeTypes', 'getGenericMimeType'),
-    ], 'drupal/core', '>=10.3.0');
+    ], 'drupal/core', '>=10.3.0 <12.0.0');
 
     // https://www.drupal.org/node/3413196
     // ThemeHandlerInterface::rebuildThemeData() deprecated in drupal:10.3.0, removed in drupal:12.0.0.
@@ -716,7 +716,7 @@ return static function (RectorConfig $rectorConfig): void {
             'Error',
             '10.3.0',
         ),
-    ], 'drupal/core', '>=10.3.0');
+    ], 'drupal/core', '>=10.3.0 <13.0.0');
 
     // ---------------------------------------------------------------------
     // Drupal 11.0
@@ -800,7 +800,7 @@ return static function (RectorConfig $rectorConfig): void {
     // is BC-wrapped and remains in this default set.
     $rectorConfig->ruleWithConfigurationComposerVersionBound(MethodToMethodWithCheckRector::class, [
         new MethodToMethodWithCheckConfiguration('Drupal\path_alias\AliasManager', 'pathAliasWhitelistRebuild', 'pathAliasPrefixListRebuild', '11.1.0'),
-    ], 'drupal/core', '>=11.1.0');
+    ], 'drupal/core', '>=11.1.0 <13.0.0');
 
     // https://www.drupal.org/node/3442009
     // https://www.drupal.org/node/3368812 (change record)
@@ -852,7 +852,7 @@ return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->ruleWithConfigurationComposerVersionBound(FunctionToStaticRector::class, [
         new FunctionToStaticConfiguration('11.1.0', 'drupal_common_theme', 'Drupal\Core\Theme\ThemeCommonElements', 'commonElements'),
         new FunctionToStaticConfiguration('11.1.0', 'image_filter_keyword', 'Drupal\Component\Utility\Image', 'getKeywordOffset'),
-    ], 'drupal/core', '>=11.1.0');
+    ], 'drupal/core', '>=11.1.0 <13.0.0');
 
     // https://www.drupal.org/node/3440169
     // https://www.drupal.org/node/3456178 (change record: integer-keyed headers)
@@ -894,7 +894,7 @@ return static function (RectorConfig $rectorConfig): void {
     // Replaced by deleteAll().
     $rectorConfig->ruleWithConfigurationComposerVersionBound(MethodToMethodWithCheckRector::class, [
         new MethodToMethodWithCheckConfiguration('Drupal\Core\Cache\CacheBackendInterface', 'invalidateAll', 'deleteAll', '11.2.0'),
-    ], 'drupal/core', '>=11.2.0');
+    ], 'drupal/core', '>=11.2.0 <13.0.0');
 
     // https://www.drupal.org/node/3504125
     // template_preprocess_*() functions deprecated in drupal:11.2.0, removed in drupal:12.0.0.
@@ -907,7 +907,7 @@ return static function (RectorConfig $rectorConfig): void {
         new FunctionToServiceConfiguration('11.2.0', 'template_preprocess_container', 'Drupal\Core\Theme\ThemePreprocess', 'preprocessContainer'),
         new FunctionToServiceConfiguration('11.2.0', 'template_preprocess_html', 'Drupal\Core\Theme\ThemePreprocess', 'preprocessHtml'),
         new FunctionToServiceConfiguration('11.2.0', 'template_preprocess_page', 'Drupal\Core\Theme\ThemePreprocess', 'preprocessPage'),
-    ], 'drupal/core', '>=11.2.0');
+    ], 'drupal/core', '>=11.2.0 <13.0.0');
 
     // https://www.drupal.org/node/3501136
     // template_preprocess() deprecated in drupal:11.2.0, removed in drupal:12.0.0.
@@ -922,7 +922,7 @@ return static function (RectorConfig $rectorConfig): void {
         new FunctionCallRemovalConfiguration('_update_manager_cache_directory'),
         new FunctionCallRemovalConfiguration('_update_manager_extract_directory'),
         new FunctionCallRemovalConfiguration('_update_manager_unique_identifier'),
-    ], 'drupal/core', '>=11.2.0');
+    ], 'drupal/core', '>=11.2.0 <14.0.0');
 
     // https://www.drupal.org/node/3528899
     // https://www.drupal.org/node/3550193 (change record)
@@ -947,7 +947,7 @@ return static function (RectorConfig $rectorConfig): void {
         new FunctionToStaticConfiguration('11.2.0', 'drupal_requirements_severity', 'Drupal\Core\Extension\Requirement\RequirementSeverity', 'maxSeverityFromRequirements'),
         new FunctionToStaticConfiguration('11.2.0', 'entity_test_create_bundle', 'Drupal\entity_test\EntityTestHelper', 'createBundle'),
         new FunctionToStaticConfiguration('11.2.0', 'entity_test_delete_bundle', 'Drupal\entity_test\EntityTestHelper', 'deleteBundle'),
-    ], 'drupal/core', '>=11.2.0');
+    ], 'drupal/core', '>=11.2.0 <13.0.0');
 
     // https://www.drupal.org/node/3489415
     // views_field_default_views_data() and _views_field_get_entity_type_storage() deprecated in drupal:11.2.0, removed in drupal:12.0.0.
@@ -959,7 +959,7 @@ return static function (RectorConfig $rectorConfig): void {
         new FunctionToServiceConfiguration('11.2.0', 'views_field_default_views_data', 'views.field_data_provider', 'defaultFieldImplementation'),
         new FunctionToServiceConfiguration('11.2.0', '_views_field_get_entity_type_storage', 'views.field_data_provider', 'getSqlStorageForField'),
         new FunctionToServiceConfiguration('11.2.0', 'views_entity_field_label', 'entity_field.manager', 'getFieldLabels'),
-    ], 'drupal/core', '>=11.2.0');
+    ], 'drupal/core', '>=11.2.0 <13.0.0');
 
     // https://www.drupal.org/node/3575841
     // REQUIREMENT_INFO/OK/WARNING/ERROR global constants deprecated in drupal:11.2.0, removed in drupal:12.0.0.
@@ -973,7 +973,7 @@ return static function (RectorConfig $rectorConfig): void {
         new ConstantToClassConfiguration('REQUIREMENT_WARNING', 'Drupal\Core\Extension\Requirement\RequirementSeverity', 'Warning', '11.2.0'),
         new ConstantToClassConfiguration('REQUIREMENT_ERROR', 'Drupal\Core\Extension\Requirement\RequirementSeverity', 'Error', '11.2.0'),
         new ConstantToClassConfiguration('LOCALE_TRANSLATION_DEFAULT_SERVER_PATTERN', 'Drupal', 'TRANSLATION_DEFAULT_SERVER_PATTERN', '11.2.0'),
-    ], 'drupal/core', '>=11.2.0');
+    ], 'drupal/core', '>=11.2.0 <13.0.0');
 
     // https://www.drupal.org/node/3473440
     // https://www.drupal.org/node/3474692 (change record)
@@ -1086,7 +1086,7 @@ return static function (RectorConfig $rectorConfig): void {
             'Error',
             '11.2.0',
         ),
-    ], 'drupal/core', '>=11.2.0');
+    ], 'drupal/core', '>=11.2.0 <13.0.0');
 
     // https://www.drupal.org/node/3520946
     // https://www.drupal.org/node/3522240 (change record)
@@ -1201,7 +1201,7 @@ return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->ruleWithConfigurationComposerVersionBound(FunctionToServiceRector::class, [
         new FunctionToServiceConfiguration('11.3.0', 'node_mass_update', 'Drupal\node\NodeBulkUpdate', 'process', true),
         new FunctionToServiceConfiguration('11.3.0', 'twig_render_template', 'Drupal\Core\Template\TwigThemeEngine', 'renderTemplate'),
-    ], 'drupal/core', '>=11.3.0');
+    ], 'drupal/core', '>=11.3.0 <14.0.0');
 
     // https://www.drupal.org/node/3504125
     // The template_preprocess_*() functions deprecated in drupal:11.3.0,
@@ -1224,7 +1224,7 @@ return static function (RectorConfig $rectorConfig): void {
         new FunctionToServiceConfiguration('11.3.0', 'template_preprocess_field_multiple_value_form', 'Drupal\Core\Field\FieldPreprocess', 'preprocessFieldMultipleValueForm'),
         new FunctionToServiceConfiguration('11.3.0', 'template_preprocess_menu_local_task', 'Drupal\Core\Menu\MenuPreprocess', 'preprocessMenuLocalTask'),
         new FunctionToServiceConfiguration('11.3.0', 'template_preprocess_menu_local_action', 'Drupal\Core\Menu\MenuPreprocess', 'preprocessMenuLocalAction'),
-    ], 'drupal/core', '>=11.3.0');
+    ], 'drupal/core', '>=11.3.0 <13.0.0');
 
     // https://www.drupal.org/node/1685492
     // twig_extension() deprecated in drupal:11.3.0, removed in drupal:12.0.0.
@@ -1242,7 +1242,7 @@ return static function (RectorConfig $rectorConfig): void {
     // The body field is now added via config.
     $rectorConfig->ruleWithConfigurationComposerVersionBound(FunctionCallRemovalRector::class, [
         new FunctionCallRemovalConfiguration('block_content_add_body_field'),
-    ], 'drupal/core', '>=11.3.0');
+    ], 'drupal/core', '>=11.3.0 <13.0.0');
 
     // https://www.drupal.org/node/2010202
     // comment_uri($comment) deprecated in drupal:11.3.0, removed in drupal:12.0.0.
@@ -1273,7 +1273,7 @@ return static function (RectorConfig $rectorConfig): void {
         new FunctionToServiceConfiguration('11.3.0', 'responsive_image_get_image_dimensions', 'Drupal\responsive_image\ResponsiveImageBuilder', 'getImageDimensions', true),
         new FunctionToServiceConfiguration('11.3.0', 'responsive_image_get_mime_type', 'Drupal\responsive_image\ResponsiveImageBuilder', 'getMimeType', true),
         new FunctionToServiceConfiguration('11.3.0', '_responsive_image_image_style_url', 'Drupal\responsive_image\ResponsiveImageBuilder', 'getImageStyleUrl', true),
-    ], 'drupal/core', '>=11.3.0');
+    ], 'drupal/core', '>=11.3.0 <14.0.0');
 
     // https://www.drupal.org/node/3489266
     // https://www.drupal.org/node/3516778 (change record)
@@ -1301,7 +1301,7 @@ return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->ruleWithConfigurationComposerVersionBound(FunctionToStaticRector::class, [
         new FunctionToStaticConfiguration('11.3.0', 'file_system_settings_submit', 'Drupal\file\Hook\FileHooks', 'settingsSubmit'),
         new FunctionToStaticConfiguration('11.3.0', 'file_managed_file_submit', 'Drupal\file\Element\ManagedFile', 'submit'),
-    ], 'drupal/core', '>=11.3.0');
+    ], 'drupal/core', '>=11.3.0 <13.0.0');
 
     // https://www.drupal.org/node/3534089
     // https://www.drupal.org/node/3534091 (change record)
@@ -1319,7 +1319,7 @@ return static function (RectorConfig $rectorConfig): void {
         new ConstantToClassConfiguration('JSONAPI_FILTER_AMONG_PUBLISHED', 'Drupal\jsonapi\JsonApiFilter', 'AMONG_PUBLISHED', '11.3.0'),
         new ConstantToClassConfiguration('JSONAPI_FILTER_AMONG_ENABLED', 'Drupal\jsonapi\JsonApiFilter', 'AMONG_ENABLED', '11.3.0'),
         new ConstantToClassConfiguration('JSONAPI_FILTER_AMONG_OWN', 'Drupal\jsonapi\JsonApiFilter', 'AMONG_OWN', '11.3.0'),
-    ], 'drupal/core', '>=11.3.0');
+    ], 'drupal/core', '>=11.3.0 <14.0.0');
 
     // https://www.drupal.org/node/3538277
     // https://www.drupal.org/node/3538666 (change record)
@@ -1500,7 +1500,7 @@ return static function (RectorConfig $rectorConfig): void {
     // Replaced by \Drupal\node\NodeGrantsHelper::nodeAccessGrants().
     $rectorConfig->ruleWithConfigurationComposerVersionBound(FunctionToServiceRector::class, [
         new FunctionToServiceConfiguration('11.4.0', 'node_access_grants', 'Drupal\node\NodeGrantsHelper', 'nodeAccessGrants', true),
-    ], 'drupal/core', '>=11.4.0');
+    ], 'drupal/core', '>=11.4.0 <14.0.0');
 
     // https://www.drupal.org/node/3533299
     // https://www.drupal.org/node/3534610 (change record)
@@ -1607,7 +1607,7 @@ return static function (RectorConfig $rectorConfig): void {
             'Required',
             '11.4.0',
         ),
-    ], 'drupal/core', '>=11.4.0');
+    ], 'drupal/core', '>=11.4.0 <14.0.0');
 
     // https://www.drupal.org/node/3574727
     // language_configuration_element_submit() deprecated in 11.4.0, removed in 13.0.0.
@@ -1672,7 +1672,7 @@ return static function (RectorConfig $rectorConfig): void {
         // field_ui_form_manage_field_form_submit() deprecated in drupal:11.4.0, removed in drupal:12.0.0.
         // Replaced by \Drupal\field_ui\Hook\FieldUiHooks::manageFieldFormSubmit().
         new FunctionToServiceConfiguration('11.4.0', 'field_ui_form_manage_field_form_submit', 'Drupal\field_ui\Hook\FieldUiHooks', 'manageFieldFormSubmit', true),
-    ], 'drupal/core', '>=11.4.0');
+    ], 'drupal/core', '>=11.4.0 <14.0.0');
 
     // https://www.drupal.org/node/3035340
     // views_ui_contextual_links_suppress*() deprecated in drupal:11.4.0, removed in drupal:13.0.0.
@@ -1694,7 +1694,7 @@ return static function (RectorConfig $rectorConfig): void {
         new FunctionCallRemovalConfiguration('syslog_logging_settings_submit'),
         new FunctionCallRemovalConfiguration('taxonomy_build_node_index'),
         new FunctionCallRemovalConfiguration('taxonomy_delete_node_index'),
-    ], 'drupal/core', '>=11.4.0');
+    ], 'drupal/core', '>=11.4.0 <14.0.0');
 
     // https://www.drupal.org/node/2667040
     // https://www.drupal.org/node/3575062 (change record)
@@ -1797,7 +1797,7 @@ return static function (RectorConfig $rectorConfig): void {
         new FunctionToServiceConfiguration('11.4.0', 'field_purge_batch', 'Drupal\Core\Field\FieldPurger', 'purgeBatch'),
         new FunctionToServiceConfiguration('11.4.0', '_media_library_media_type_form_submit', 'Drupal\media_library\Hook\MediaLibraryHooks', 'mediaTypeFormSubmit'),
         new FunctionToServiceConfiguration('11.4.0', '_media_library_views_form_media_library_after_build', 'Drupal\media_library\Hook\MediaLibraryHooks', 'viewsFormAfterBuild'),
-    ], 'drupal/core', '>=11.4.0');
+    ], 'drupal/core', '>=11.4.0 <14.0.0');
 
     // https://www.drupal.org/node/3566774
     // _media_library_configure_form_display() and _media_library_configure_view_display()
@@ -1806,7 +1806,7 @@ return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->ruleWithConfigurationComposerVersionBound(FunctionToStaticRector::class, [
         new FunctionToStaticConfiguration('11.4.0', '_media_library_configure_form_display', 'Drupal\media_library\MediaLibraryDisplayManager', 'configureFormDisplay'),
         new FunctionToStaticConfiguration('11.4.0', '_media_library_configure_view_display', 'Drupal\media_library\MediaLibraryDisplayManager', 'configureViewDisplay'),
-    ], 'drupal/core', '>=11.4.0');
+    ], 'drupal/core', '>=11.4.0 <13.0.0');
 
     // https://www.drupal.org/node/3574727
     // language_configuration_element_submit() deprecated in 11.4.0, removed in 13.0.0.
@@ -1819,7 +1819,7 @@ return static function (RectorConfig $rectorConfig): void {
         new FunctionToStaticConfiguration('11.4.0', 'views_ui_add_limited_validation', 'Drupal\views\ViewsFormAjaxHelperTrait', 'addLimitedValidation'),
         new FunctionToStaticConfiguration('11.4.0', 'views_ui_add_ajax_wrapper', 'Drupal\views\ViewsFormAjaxHelperTrait', 'addAjaxWrapper'),
         new FunctionToStaticConfiguration('11.4.0', 'views_ui_nojs_submit', 'Drupal\views\ViewsFormAjaxHelperTrait', 'noJsSubmit'),
-    ], 'drupal/core', '>=11.4.0');
+    ], 'drupal/core', '>=11.4.0 <14.0.0');
 
     // https://www.drupal.org/node/3568087
     // contextual_links_to_id() and contextual_id_to_links() deprecated in drupal:11.4.0, removed in drupal:13.0.0.
@@ -1839,7 +1839,7 @@ return static function (RectorConfig $rectorConfig): void {
         new FunctionToServiceConfiguration('11.4.0', 'locale_translation_http_check', 'Drupal\locale\File\LocaleFileManager', 'checkRemoteFileStatus'),
         new FunctionToServiceConfiguration('11.4.0', 'locale_translate_delete_translation_files', 'Drupal\locale\File\LocaleFileManager', 'deleteTranslationFiles'),
         new FunctionToServiceConfiguration('11.4.0', 'locale_translation_download_source', 'Drupal\locale\File\LocaleFileManager', 'downloadTranslationSource'),
-    ], 'drupal/core', '>=11.4.0');
+    ], 'drupal/core', '>=11.4.0 <14.0.0');
 
     // https://www.drupal.org/node/2571679
     // https://www.drupal.org/node/3382344 (change record)
@@ -1847,14 +1847,14 @@ return static function (RectorConfig $rectorConfig): void {
     // Replaced by \Drupal\views\ContextualLinksHelper::addLinks() service call.
     $rectorConfig->ruleWithConfigurationComposerVersionBound(FunctionToServiceRector::class, [
         new FunctionToServiceConfiguration('11.4.0', 'views_add_contextual_links', 'Drupal\views\ContextualLinksHelper', 'addLinks', true),
-    ], 'drupal/core', '>=11.4.0');
+    ], 'drupal/core', '>=11.4.0 <14.0.0');
 
     // https://www.drupal.org/node/3567619
     // IMAGE_DERIVATIVE_TOKEN deprecated in drupal:11.4.0, removed in drupal:13.0.0.
     // Replaced by \Drupal\image\ImageStyleInterface::TOKEN.
     $rectorConfig->ruleWithConfigurationComposerVersionBound(ConstantToClassConstantRector::class, [
         new ConstantToClassConfiguration('IMAGE_DERIVATIVE_TOKEN', 'Drupal\image\ImageStyleInterface', 'TOKEN', '11.4.0'),
-    ], 'drupal/core', '>=11.4.0');
+    ], 'drupal/core', '>=11.4.0 <14.0.0');
 
     // https://www.drupal.org/node/2940605
     // EntityReferenceEntityFormatter::RECURSIVE_RENDER_LIMIT deprecated in drupal:11.4.0, removed in drupal:13.0.0.
