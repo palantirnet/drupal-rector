@@ -14,7 +14,8 @@ use Rector\VersionBonding\ValueObject\ComposerPackageConstraint;
 /**
  * Every constraint a rule declares has to name `drupal/core` and the exact
  * version its deprecation was introduced in, so the composer-based set stays
- * comparable across rules.
+ * comparable across rules. It may also state the major the deprecation is
+ * removed in; see BoundRuleConfigurationRule::findConstraintProblem().
  *
  * @implements Rule<New_>
  *
@@ -56,12 +57,10 @@ final class ComposerPackageConstraintRule implements Rule
         }
 
         $versionConstraint = $this->resolveConstantString($args[1]->value, $scope);
-        if ($versionConstraint === null || preg_match(BoundRuleConfigurationRule::VERSION_CONSTRAINT_REGEX, $versionConstraint) !== 1) {
-            $ruleErrors[] = RuleErrorBuilder::message(sprintf(
-                'Bind the rule to an exact version the deprecation was introduced in, e.g. ">=11.3.0", "%s" given.',
-                $versionConstraint ?? 'a non-literal value'
-            ))
-                ->identifier('drupalRector.boundRuleVersion')
+        $problem = BoundRuleConfigurationRule::findConstraintProblem($versionConstraint);
+        if ($problem !== null) {
+            $ruleErrors[] = RuleErrorBuilder::message($problem[0])
+                ->identifier($problem[1])
                 ->build();
         }
 

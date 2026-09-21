@@ -18,3 +18,18 @@ function provideConstraintWithoutAPatchVersion(): ComposerPackageConstraint
 {
     return new ComposerPackageConstraint('drupal/core', '^11.3');
 }
+
+function provideConstraintBoundedToTheRemovalMajor(): ComposerPackageConstraint
+{
+    return new ComposerPackageConstraint('drupal/core', '>=11.3.0 <13.0.0');
+}
+
+function provideConstraintRemovedMidMajor(): ComposerPackageConstraint
+{
+    return new ComposerPackageConstraint('drupal/core', '>=11.3.0 <12.1.0');
+}
+
+function provideConstraintWithAnInvertedSpan(): ComposerPackageConstraint
+{
+    return new ComposerPackageConstraint('drupal/core', '>=11.3.0 <11.0.0');
+}

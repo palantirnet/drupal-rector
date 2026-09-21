@@ -21,8 +21,16 @@ final class ComposerPackageConstraintRuleTest extends RuleTestCase
                 14,
             ],
             [
-                'Bind the rule to an exact version the deprecation was introduced in, e.g. ">=11.3.0", "^11.3" given.',
+                'Bind the rule to the exact version the deprecation was introduced in, optionally with the major it is removed in, e.g. ">=11.3.0" or ">=11.3.0 <13.0.0", "^11.3" given.',
                 19,
+            ],
+            [
+                'Bind the rule to the exact version the deprecation was introduced in, optionally with the major it is removed in, e.g. ">=11.3.0" or ">=11.3.0 <13.0.0", ">=11.3.0 <12.1.0" given.',
+                29,
+            ],
+            [
+                'Bind the rule to an upper bound that is a later major than its lower bound, ">=11.3.0 <11.0.0" given.',
+                34,
             ],
         ]);
     }
