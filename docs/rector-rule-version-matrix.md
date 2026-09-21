@@ -274,6 +274,34 @@ throw new \Exception('Drupal\Tests\BrowserTestBase::$defaultTheme is required.
 
 Bound: `>=8.8.0 <9.0.0`.
 
+**Why an allowlist is not the fix.** The obvious repair is to widen the
+PHPStan package check from a hard-coded `drupal/core` to a short allowlist, so
+these six can name the package they really track. That was tried and backed
+out, because it contradicts the rest of this PR: the bundled PHPUnit, Symfony
+and Twig sets were dropped precisely on the grounds that those deprecations
+are not ours to track, and the README now points users at
+`->withComposerBased(phpunit: true, symfony: true, twig: true)`. An allowlist
+quietly re-adopts that responsibility one layer down, and commits
+drupal-rector to following PHPUnit's release cycle.
+
+It would also entrench a duplicate. `rector-phpunit` ships its **own**
+`GetMockRector` at `rules/PHPUnit50/Rector/StaticCall/GetMockRector.php`,
+doing the same `getMock()` to `createMock()` rewrite as ours, and registers it
+in its own composer-based set — so a user who follows our README already gets
+it. Three of the six (`RunTestsInSeparateProcesses`, the `getName()` to
+`name()` rename, the Symfony validator type declarations) have no upstream
+equivalent found, and those are the ones worth contributing upstream rather
+than binding here.
+
+The constraint still matters for correctness, which is why leaving them
+unconstrained is not an option either: `GetNameToNameRector` rewrites
+`getName()` to `name()`, which exists only from PHPUnit 10, so running it
+against a PHPUnit 9 project breaks the tests. A `drupal/core` bound merely
+correlates — a D11 site usually has PHPUnit 10 or 11, but nothing guarantees
+it. So the six keep a bound that is not true of them until the rules are
+either contributed upstream or given a real package, and that decision is
+deliberately left out of this PR.
+
 **A sixth wrong-package rule.** `AddSymfonyConstraintValidatorTypeDeclarationsRector`
 links `symfony/symfony` `blob/8.0/…/ConstraintValidatorInterface.php` in its own
 docblock: it tracks **Symfony 8.0**, not `drupal/core`. PR #419 gives it

@@ -11,9 +11,9 @@ use PHPStan\Rules\Rule;
 use PHPStan\Rules\RuleErrorBuilder;
 
 /**
- * A rule registered in the composer-based set has to say which versions of its
- * package it applies to, so Rector only activates it where the deprecation
- * actually exists.
+ * A rule registered in the composer-based set has to state the `drupal/core`
+ * version its deprecation was introduced in, so Rector only activates it on a
+ * core that has the deprecation.
  *
  * The lower bound is the version the deprecation was introduced in. The upper
  * bound, when given, is the major *after* the one the API was removed in:
@@ -29,31 +29,15 @@ use PHPStan\Rules\RuleErrorBuilder;
 final class BoundRuleConfigurationRule implements Rule
 {
     /**
-     * The packages a rule may bind itself to.
-     *
-     * Almost every rule tracks `drupal/core`, but a handful target a
-     * deprecation that belongs to one of core's own dependencies, and binding
-     * those to `drupal/core` states something untrue. Keep this list short:
-     * each entry should be a package whose release cycle a rule genuinely
-     * follows.
-     *
-     * @var list<string>
+     * @var string
      */
-    public const PACKAGE_NAMES = [
-        'drupal/core',
-        'phpunit/phpunit',
-        'symfony/validator',
-    ];
+    public const PACKAGE_NAME = 'drupal/core';
+
 
     /**
      * @var string
      */
-    public const LOWER_BOUND_REGEX = '#^>=(\d+)\.\d+\.\d+$#';
-
-    /**
-     * @var string
-     */
-    public const UPPER_BOUND_REGEX = '#^<(\d+)\.0\.0$#';
+    public const VERSION_CONSTRAINT_REGEX = '#^>=(\d+)\.\d+\.\d+(?: <(\d+)\.0\.0)?$#';
 
     public function getNodeType(): string
     {
@@ -91,17 +75,17 @@ final class BoundRuleConfigurationRule implements Rule
     {
         $ruleErrors = [];
 
-        if ($packageName === null || !in_array($packageName, self::PACKAGE_NAMES, true)) {
+        if ($packageName !== self::PACKAGE_NAME) {
             $ruleErrors[] = RuleErrorBuilder::message(sprintf(
-                'Bind the rule to one of the packages "%s", "%s" given.',
-                implode('", "', self::PACKAGE_NAMES),
+                'Bind the rule to the "%s" package, "%s" given.',
+                self::PACKAGE_NAME,
                 $packageName ?? 'a non-literal value'
             ))
                 ->identifier('drupalRector.boundRulePackage')
                 ->build();
         }
 
-        $problem = self::findConstraintProblem($packageName, $versionConstraint);
+        $problem = self::findConstraintProblem($versionConstraint);
         if ($problem !== null) {
             $ruleErrors[] = RuleErrorBuilder::message($problem[0])
                 ->identifier($problem[1])
@@ -116,55 +100,24 @@ final class BoundRuleConfigurationRule implements Rule
      *
      * @return array{0: string, 1: string}|null the message and its identifier
      */
-    public static function findConstraintProblem(?string $packageName, ?string $versionConstraint): ?array
+    public static function findConstraintProblem(?string $versionConstraint): ?array
     {
-        $malformed = [
-            sprintf(
-                'Bind the rule to the version the deprecation was introduced in, optionally with the major it is removed in, e.g. ">=11.3.0" or ">=11.3.0 <13.0.0", "%s" given.',
-                $versionConstraint ?? 'a non-literal value'
-            ),
-            'drupalRector.boundRuleVersion',
-        ];
-
-        if ($versionConstraint === null) {
-            return $malformed;
-        }
-
-        $lowerMajor = null;
-        $upperMajor = null;
-        foreach (explode(' ', $versionConstraint) as $part) {
-            if ($lowerMajor === null && preg_match(self::LOWER_BOUND_REGEX, $part, $matches) === 1) {
-                $lowerMajor = (int) $matches[1];
-
-                continue;
-            }
-
-            if ($upperMajor === null && preg_match(self::UPPER_BOUND_REGEX, $part, $matches) === 1) {
-                $upperMajor = (int) $matches[1];
-
-                continue;
-            }
-
-            return $malformed;
-        }
-
-        if ($lowerMajor === null && $upperMajor === null) {
-            return $malformed;
-        }
-
-        // An API that was already gone before the rule was written has no
-        // meaningful lower bound, but a core deprecation always has one.
-        if ($lowerMajor === null && $packageName === 'drupal/core') {
+        if ($versionConstraint === null || preg_match(self::VERSION_CONSTRAINT_REGEX, $versionConstraint, $matches) !== 1) {
             return [
                 sprintf(
-                    'Bind the rule to the "drupal/core" version the deprecation was introduced in, "%s" states only an upper bound.',
-                    $versionConstraint
+                    'Bind the rule to the exact version the deprecation was introduced in, optionally with the major it is removed in, e.g. ">=11.3.0" or ">=11.3.0 <13.0.0", "%s" given.',
+                    $versionConstraint ?? 'a non-literal value'
                 ),
                 'drupalRector.boundRuleVersion',
             ];
         }
 
-        if ($lowerMajor !== null && $upperMajor !== null && $upperMajor <= $lowerMajor) {
+        // An absent upper bound is still allowed while the set is being bounded.
+        if (!isset($matches[2])) {
+            return null;
+        }
+
+        if ((int) $matches[2] <= (int) $matches[1]) {
             return [
                 sprintf(
                     'Bind the rule to an upper bound that is a later major than its lower bound, "%s" given.',
