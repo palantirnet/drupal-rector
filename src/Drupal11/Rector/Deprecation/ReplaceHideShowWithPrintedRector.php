@@ -34,7 +34,7 @@ final class ReplaceHideShowWithPrintedRector extends AbstractRector implements C
 {
     public function provideComposerPackageConstraint(): ComposerPackageConstraint
     {
-        return new ComposerPackageConstraint('drupal/core', '>=11.4.0');
+        return new ComposerPackageConstraint('drupal/core', '>=11.4.0 <14.0.0');
     }
 
     /** @var array<string, bool> */

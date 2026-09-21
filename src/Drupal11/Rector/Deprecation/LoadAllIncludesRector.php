@@ -23,7 +23,7 @@ final class LoadAllIncludesRector extends AbstractRector implements ComposerPack
 {
     public function provideComposerPackageConstraint(): ComposerPackageConstraint
     {
-        return new ComposerPackageConstraint('drupal/core', '>=11.3.0');
+        return new ComposerPackageConstraint('drupal/core', '>=11.3.0 <14.0.0');
     }
 
     public function getNodeTypes(): array

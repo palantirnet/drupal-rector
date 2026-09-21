@@ -36,7 +36,7 @@ class RemoveFilterTipsLongParamRector extends AbstractRector implements Composer
 {
     public function provideComposerPackageConstraint(): ComposerPackageConstraint
     {
-        return new ComposerPackageConstraint('drupal/core', '>=11.4.0');
+        return new ComposerPackageConstraint('drupal/core', '>=11.4.0 <13.0.0');
     }
 
     private const FILTER_SYMBOLS = [

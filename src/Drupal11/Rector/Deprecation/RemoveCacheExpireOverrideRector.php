@@ -28,7 +28,7 @@ final class RemoveCacheExpireOverrideRector extends AbstractRector implements Co
 {
     public function provideComposerPackageConstraint(): ComposerPackageConstraint
     {
-        return new ComposerPackageConstraint('drupal/core', '>=11.4.0');
+        return new ComposerPackageConstraint('drupal/core', '>=11.4.0 <14.0.0');
     }
 
     private const CACHE_PLUGIN_BASE_FQCN = 'Drupal\views\Plugin\views\cache\CachePluginBase';

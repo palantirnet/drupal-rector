@@ -36,7 +36,7 @@ final class TaxonomyTermPageVariableToViewModeRector extends AbstractRector impl
 {
     public function provideComposerPackageConstraint(): ComposerPackageConstraint
     {
-        return new ComposerPackageConstraint('drupal/core', '>=11.3.0');
+        return new ComposerPackageConstraint('drupal/core', '>=11.3.0 <14.0.0');
     }
 
     // TODO PHPSTAN_MESSAGES TaxonomyTermPageVariableToViewModeRector:

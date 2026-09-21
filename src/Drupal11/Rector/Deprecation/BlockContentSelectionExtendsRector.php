@@ -51,7 +51,7 @@ class BlockContentSelectionExtendsRector extends AbstractRector implements Compo
 {
     public function provideComposerPackageConstraint(): ComposerPackageConstraint
     {
-        return new ComposerPackageConstraint('drupal/core', '>=11.4.0');
+        return new ComposerPackageConstraint('drupal/core', '>=11.4.0 <13.0.0');
     }
 
     private const DEFAULT_SELECTION_CLASS = 'Drupal\Core\Entity\Plugin\EntityReferenceSelection\DefaultSelection';

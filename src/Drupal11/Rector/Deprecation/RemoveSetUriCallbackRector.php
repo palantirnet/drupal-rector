@@ -30,7 +30,7 @@ final class RemoveSetUriCallbackRector extends AbstractRector implements Compose
 {
     public function provideComposerPackageConstraint(): ComposerPackageConstraint
     {
-        return new ComposerPackageConstraint('drupal/core', '>=11.4.0');
+        return new ComposerPackageConstraint('drupal/core', '>=11.4.0 <14.0.0');
     }
 
     public function getRuleDefinition(): RuleDefinition

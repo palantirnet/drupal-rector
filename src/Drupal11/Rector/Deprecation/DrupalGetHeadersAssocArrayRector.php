@@ -35,7 +35,7 @@ class DrupalGetHeadersAssocArrayRector extends AbstractRector implements Compose
 {
     public function provideComposerPackageConstraint(): ComposerPackageConstraint
     {
-        return new ComposerPackageConstraint('drupal/core', '>=11.1.0');
+        return new ComposerPackageConstraint('drupal/core', '>=11.1.0 <13.0.0');
     }
 
     // TODO PHPSTAN_MESSAGES DrupalGetHeadersAssocArrayRector: PHPStan emits no

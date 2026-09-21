@@ -20,7 +20,7 @@ final class GetRawContentRector extends AbstractRector implements ComposerPackag
 
     public function provideComposerPackageConstraint(): ComposerPackageConstraint
     {
-        return new ComposerPackageConstraint('drupal/core', '>=9.1.0');
+        return new ComposerPackageConstraint('drupal/core', '>=9.1.0 <11.0.0');
     }
 
     /**

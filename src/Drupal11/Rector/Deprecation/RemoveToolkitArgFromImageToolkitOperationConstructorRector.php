@@ -35,7 +35,7 @@ final class RemoveToolkitArgFromImageToolkitOperationConstructorRector extends A
 {
     public function provideComposerPackageConstraint(): ComposerPackageConstraint
     {
-        return new ComposerPackageConstraint('drupal/core', '>=11.4.0');
+        return new ComposerPackageConstraint('drupal/core', '>=11.4.0 <14.0.0');
     }
 
     private const TOOLKIT_INTERFACE = 'Drupal\\Core\\ImageToolkit\\ImageToolkitInterface';

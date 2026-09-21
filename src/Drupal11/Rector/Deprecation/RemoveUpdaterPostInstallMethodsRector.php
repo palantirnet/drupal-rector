@@ -26,7 +26,7 @@ final class RemoveUpdaterPostInstallMethodsRector extends AbstractRector impleme
 {
     public function provideComposerPackageConstraint(): ComposerPackageConstraint
     {
-        return new ComposerPackageConstraint('drupal/core', '>=11.1.0');
+        return new ComposerPackageConstraint('drupal/core', '>=11.1.0 <13.0.0');
     }
 
     private const DEPRECATED_METHODS = ['postInstall', 'postInstallTasks'];

@@ -27,7 +27,7 @@ final class RenameStopProceduralHookScanRector extends AbstractRector implements
 {
     public function provideComposerPackageConstraint(): ComposerPackageConstraint
     {
-        return new ComposerPackageConstraint('drupal/core', '>=11.2.0');
+        return new ComposerPackageConstraint('drupal/core', '>=11.2.0 <12.0.0');
     }
 
     private const OLD_FQCN = 'Drupal\Core\Hook\Attribute\StopProceduralHookScan';

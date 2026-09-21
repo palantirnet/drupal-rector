@@ -39,7 +39,7 @@ final class HookRequirementsAlterRenameRector extends AbstractRector implements 
 {
     public function provideComposerPackageConstraint(): ComposerPackageConstraint
     {
-        return new ComposerPackageConstraint('drupal/core', '>=11.3.0');
+        return new ComposerPackageConstraint('drupal/core', '>=11.3.0 <14.0.0');
     }
 
     private const SUFFIX = '_requirements_alter';

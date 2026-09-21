@@ -35,7 +35,7 @@ class SystemSortThemesRector extends AbstractRector implements ComposerPackageCo
 {
     public function provideComposerPackageConstraint(): ComposerPackageConstraint
     {
-        return new ComposerPackageConstraint('drupal/core', '>=11.4.0');
+        return new ComposerPackageConstraint('drupal/core', '>=11.4.0 <13.0.0');
     }
 
     public function getRuleDefinition(): RuleDefinition

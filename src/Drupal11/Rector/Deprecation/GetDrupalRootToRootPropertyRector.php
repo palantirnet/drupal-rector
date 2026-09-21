@@ -33,7 +33,7 @@ final class GetDrupalRootToRootPropertyRector extends AbstractRector implements 
 {
     public function provideComposerPackageConstraint(): ComposerPackageConstraint
     {
-        return new ComposerPackageConstraint('drupal/core', '>=11.4.0');
+        return new ComposerPackageConstraint('drupal/core', '>=11.4.0 <14.0.0');
     }
 
     public const PHPSTAN_MESSAGES = [

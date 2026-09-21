@@ -16,7 +16,7 @@ class TaxonomyVocabularyGetNamesDrupalStaticResetRector extends AbstractRector i
 {
     public function provideComposerPackageConstraint(): ComposerPackageConstraint
     {
-        return new ComposerPackageConstraint('drupal/core', '>=9.3.0');
+        return new ComposerPackageConstraint('drupal/core', '>=9.3.0 <11.0.0');
     }
 
     public function getRuleDefinition(): RuleDefinition

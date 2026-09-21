@@ -21,7 +21,7 @@ final class PassRector extends AbstractRector implements ComposerPackageConstrai
 
     public function provideComposerPackageConstraint(): ComposerPackageConstraint
     {
-        return new ComposerPackageConstraint('drupal/core', '>=9.1.0');
+        return new ComposerPackageConstraint('drupal/core', '>=9.1.0 <11.0.0');
     }
 
     public function getRuleDefinition(): RuleDefinition

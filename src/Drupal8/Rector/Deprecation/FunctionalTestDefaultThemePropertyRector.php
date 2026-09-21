@@ -28,7 +28,7 @@ final class FunctionalTestDefaultThemePropertyRector extends AbstractRector impl
 {
     public function provideComposerPackageConstraint(): ComposerPackageConstraint
     {
-        return new ComposerPackageConstraint('drupal/core', '>=8.8.0');
+        return new ComposerPackageConstraint('drupal/core', '>=8.8.0 <10.0.0');
     }
 
     /**

@@ -39,7 +39,7 @@ final class RemoveDrupalToStringTraitRector extends AbstractRector implements Co
 {
     public function provideComposerPackageConstraint(): ComposerPackageConstraint
     {
-        return new ComposerPackageConstraint('drupal/core', '>=11.4.0');
+        return new ComposerPackageConstraint('drupal/core', '>=11.4.0 <14.0.0');
     }
 
     private const TRAIT_FQCN = 'Drupal\Component\Utility\ToStringTrait';

@@ -41,7 +41,7 @@ final class ReplaceDialogClassOptionRector extends AbstractRector implements Com
 {
     public function provideComposerPackageConstraint(): ComposerPackageConstraint
     {
-        return new ComposerPackageConstraint('drupal/core', '>=11.3.0');
+        return new ComposerPackageConstraint('drupal/core', '>=11.3.0 <13.0.0');
     }
 
     /**

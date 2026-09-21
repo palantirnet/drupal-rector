@@ -19,7 +19,7 @@ class ModuleLoadRector extends AbstractRector implements ComposerPackageConstrai
 {
     public function provideComposerPackageConstraint(): ComposerPackageConstraint
     {
-        return new ComposerPackageConstraint('drupal/core', '>=9.4.0');
+        return new ComposerPackageConstraint('drupal/core', '>=9.4.0 <11.0.0');
     }
 
     /**

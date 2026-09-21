@@ -22,7 +22,7 @@ final class AssertNoFieldByNameRector extends AbstractRector implements Composer
 
     public function provideComposerPackageConstraint(): ComposerPackageConstraint
     {
-        return new ComposerPackageConstraint('drupal/core', '>=9.1.0');
+        return new ComposerPackageConstraint('drupal/core', '>=9.1.0 <11.0.0');
     }
 
     protected string $deprecatedMethodName = 'assertNoFieldByName';

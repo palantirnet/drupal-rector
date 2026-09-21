@@ -31,7 +31,7 @@ final class ViewsBlockItemsPerPageNoneToNullRector extends AbstractRector implem
 {
     public function provideComposerPackageConstraint(): ComposerPackageConstraint
     {
-        return new ComposerPackageConstraint('drupal/core', '>=11.2.0');
+        return new ComposerPackageConstraint('drupal/core', '>=11.2.0 <13.0.0');
     }
 
     public function getRuleDefinition(): RuleDefinition

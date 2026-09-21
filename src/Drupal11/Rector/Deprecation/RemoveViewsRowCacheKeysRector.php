@@ -38,7 +38,7 @@ final class RemoveViewsRowCacheKeysRector extends AbstractRector implements Comp
 {
     public function provideComposerPackageConstraint(): ComposerPackageConstraint
     {
-        return new ComposerPackageConstraint('drupal/core', '>=11.4.0');
+        return new ComposerPackageConstraint('drupal/core', '>=11.4.0 <14.0.0');
     }
 
     private const DEPRECATED_METHODS = ['getRowCacheKeys', 'getRowId'];

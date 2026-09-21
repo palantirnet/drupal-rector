@@ -21,7 +21,7 @@ final class FileDefaultSchemeRector extends AbstractRector implements ComposerPa
 {
     public function provideComposerPackageConstraint(): ComposerPackageConstraint
     {
-        return new ComposerPackageConstraint('drupal/core', '>=8.8.0');
+        return new ComposerPackageConstraint('drupal/core', '>=8.8.0 <10.0.0');
     }
 
     protected string $deprecatedFunctionName = 'file_default_scheme';

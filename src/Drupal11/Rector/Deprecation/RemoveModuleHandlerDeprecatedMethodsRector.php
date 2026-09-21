@@ -30,7 +30,7 @@ final class RemoveModuleHandlerDeprecatedMethodsRector extends AbstractRector im
 {
     public function provideComposerPackageConstraint(): ComposerPackageConstraint
     {
-        return new ComposerPackageConstraint('drupal/core', '>=11.1.0');
+        return new ComposerPackageConstraint('drupal/core', '>=11.1.0 <13.0.0');
     }
 
     public function getRuleDefinition(): RuleDefinition

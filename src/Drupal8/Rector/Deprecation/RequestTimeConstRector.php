@@ -16,7 +16,7 @@ class RequestTimeConstRector extends AbstractRector implements ComposerPackageCo
 {
     public function provideComposerPackageConstraint(): ComposerPackageConstraint
     {
-        return new ComposerPackageConstraint('drupal/core', '>=8.3.0');
+        return new ComposerPackageConstraint('drupal/core', '>=8.3.0 <12.0.0');
     }
 
     protected string $deprecatedConstant = 'REQUEST_TIME';

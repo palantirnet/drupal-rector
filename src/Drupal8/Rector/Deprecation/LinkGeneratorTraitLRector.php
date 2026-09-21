@@ -32,7 +32,7 @@ final class LinkGeneratorTraitLRector extends AbstractRector implements Composer
 
     public function provideComposerPackageConstraint(): ComposerPackageConstraint
     {
-        return new ComposerPackageConstraint('drupal/core', '>=8.0.0');
+        return new ComposerPackageConstraint('drupal/core', '>=8.0.0 <10.0.0');
     }
 
     /**
