@@ -509,7 +509,7 @@ return static function (RectorConfig $rectorConfig): void {
             'Drupal\Component\Utility\Bytes',
             'toNumber'
         ),
-    ], 'drupal/core', '>=9.1.0');
+    ], 'drupal/core', '>=9.1.0 <11.0.0');
 
     // Change record: https://www.drupal.org/node/3151009 (only constants are supported)
     $rectorConfig->ruleWithConfigurationComposerVersionBound(ClassConstantToClassConstantRector::class, [
@@ -793,7 +793,7 @@ return static function (RectorConfig $rectorConfig): void {
         'Drupal\Core\Routing\MatchingRouteNotFoundException' => 'Symfony\Component\Routing\Exception\ResourceNotFoundException',
         'Drupal\Core\Asset\LibraryDiscovery' => 'Drupal\Core\Asset\LibraryDiscoveryInterface',
         'Drupal\user\Entity\EntityPermissionsRouteProviderWithCheck' => 'Drupal\user\Entity\EntityPermissionsRouteProvider',
-    ], 'drupal/core', '>=11.1.0');
+    ], 'drupal/core', '>=11.1.0 <13.0.0');
 
     // The MethodToMethodWithCheckRector entry below
     // for AliasManager::pathAliasWhitelistRebuild() → pathAliasPrefixListRebuild()
@@ -875,7 +875,7 @@ return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->ruleWithConfigurationComposerVersionBound(RenameClassRector::class, [
         'Drupal\path_alias\AliasWhitelist' => 'Drupal\path_alias\AliasPrefixList',
         'Drupal\path_alias\AliasWhitelistInterface' => 'Drupal\path_alias\AliasPrefixListInterface',
-    ], 'drupal/core', '>=11.1.0');
+    ], 'drupal/core', '>=11.1.0 <13.0.0');
 
     // ---------------------------------------------------------------------
     // Drupal 11.2
@@ -1165,7 +1165,7 @@ return static function (RectorConfig $rectorConfig): void {
         'Drupal\migrate_drupal\Plugin\migrate\source\ContentEntity' => 'Drupal\migrate\Plugin\migrate\source\ContentEntity',
         'Drupal\migrate_drupal\Plugin\migrate\source\ContentEntityDeriver' => 'Drupal\migrate\Plugin\migrate\source\ContentEntityDeriver',
         'Drupal\content_translation\Plugin\migrate\source\I18nQueryTrait' => 'Drupal\migrate_drupal\Plugin\migrate\source\I18nQueryTrait',
-    ], 'drupal/core', '>=11.2.0');
+    ], 'drupal/core', '>=11.2.0 <13.0.0');
 
     // ---------------------------------------------------------------------
     // Drupal 11.3
@@ -1460,28 +1460,31 @@ return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->ruleWithConfigurationComposerVersionBound(RenameClassRector::class, [
         'Drupal\workspaces\WorkspaceAssociationInterface' => 'Drupal\workspaces\WorkspaceTrackerInterface',
         'Drupal\workspaces\WorkspaceAssociation' => 'Drupal\workspaces\WorkspaceTracker',
-    ], 'drupal/core', '>=11.3.0');
+    ], 'drupal/core', '>=11.3.0 <13.0.0');
 
     // https://www.drupal.org/node/3571874
     // https://www.drupal.org/node/3527501 (change record)
-    // Drupal\block_content\Access\* class aliases deprecated in drupal:11.3.0,
-    // removed in drupal:12.0.0. The canonical Drupal\Core\Access\* homes were
-    // added in 11.3.0; on every Drupal 10.x branch the only copy lives at
-    // Drupal\block_content\Access\*, so rewriting to the Core\Access\* path
-    // will fatal on D10.
+    // Drupal\block_content\Access\* was @internal and was MOVED to
+    // Drupal\Core\Access\* in 2d8018be0a8, first released in 11.2.0. The
+    // commit adds no class_alias and no @deprecated marker, so this was an
+    // internal relocation rather than a deprecation cycle -- which is why it
+    // could land mid-major. There is therefore nothing to retire against: code
+    // on the old path is broken from 11.2.0 onward and stays broken, so the
+    // rewrite keeps its value indefinitely and the constraint stays open.
     //
-    // TODO PHPSTAN_MESSAGES RenameClassRector: capture against a Drupal 11.3.x
-    //   test env (aliases are already gone from 11.4-dev, so live capture is
-    //   not possible here). Expected shape from phpstan-deprecation-rules is
-    //   either "Class MyBlock implements deprecated interface
-    //   Drupal\block_content\Access\..." (for `implements`) or "Extending
-    //   deprecated class Drupal\block_content\Access\..." (for `extends`).
+    // On every Drupal 10.x branch the only copy lives at
+    // Drupal\block_content\Access\*, so rewriting to the Core\Access\* path
+    // will fatal on D10; hence the >=11.2.0 floor.
+    //
+    // No phpstan-deprecation-rules message exists for this one: the old
+    //   classes were never deprecated, only moved, so PHPStan reports an
+    //   ordinary "class not found" on 11.2+ rather than a deprecation.
     $rectorConfig->ruleWithConfigurationComposerVersionBound(RenameClassRector::class, [
         'Drupal\block_content\Access\AccessGroupAnd' => 'Drupal\Core\Access\AccessGroupAnd',
         'Drupal\block_content\Access\DependentAccessInterface' => 'Drupal\Core\Access\DependentAccessInterface',
         'Drupal\block_content\Access\RefinableDependentAccessInterface' => 'Drupal\Core\Access\RefinableDependentAccessInterface',
         'Drupal\block_content\Access\RefinableDependentAccessTrait' => 'Drupal\Core\Access\RefinableDependentAccessTrait',
-    ], 'drupal/core', '>=11.3.0');
+    ], 'drupal/core', '>=11.2.0');
 
     // ---------------------------------------------------------------------
     // Drupal 11.4
@@ -2122,7 +2125,7 @@ return static function (RectorConfig $rectorConfig): void {
         'Drupal\menu_link_content\Plugin\migrate\process\LinkOptions' => 'Drupal\migrate\Plugin\migrate\process\LinkOptions',
         'Drupal\menu_link_content\Plugin\migrate\process\LinkUri' => 'Drupal\migrate\Plugin\migrate\process\LinkUri',
         'Drupal\node\Controller\NodeViewController' => 'Drupal\Core\Entity\Controller\EntityViewController',
-    ], 'drupal/core', '>=11.4.0');
+    ], 'drupal/core', '>=11.4.0 <14.0.0');
 
     // ReplaceNodeViewControllerRector additionally trims the extra
     // $current_user / $entity_repository constructor arguments from
