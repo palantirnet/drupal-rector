@@ -240,7 +240,7 @@ return static function (RectorConfig $rectorConfig): void {
         new DBConfiguration('db_query', 3),
         new DBConfiguration('db_select', 3),
         new DBConfiguration('db_update', 2),
-    ], 'drupal/core', '>=8.0.0');
+    ], 'drupal/core', '>=8.0.0 <10.0.0');
 
     $rectorConfig->rule(DrupalURLRector::class);
 
@@ -273,7 +273,7 @@ return static function (RectorConfig $rectorConfig): void {
         new EntityLoadConfiguration('file'),
         new EntityLoadConfiguration('node'),
         new EntityLoadConfiguration('user'),
-    ], 'drupal/core', '>=8.0.0');
+    ], 'drupal/core', '>=8.0.0 <10.0.0');
 
     $rectorConfig->rule(EntityViewRector::class);
 
@@ -342,7 +342,7 @@ return static function (RectorConfig $rectorConfig): void {
         new StaticToFunctionConfiguration('Drupal\Component\Utility\Unicode', 'strtolower', 'mb_strtolower'),
         // https://www.drupal.org/node/2850048
         new StaticToFunctionConfiguration('Drupal\Component\Utility\Unicode', 'substr', 'mb_substr'),
-    ], 'drupal/core', '>=8.6.0');
+    ], 'drupal/core', '>=8.6.0 <10.0.0');
 
     // ---------------------------------------------------------------------
     // Drupal 8.7
@@ -395,7 +395,7 @@ return static function (RectorConfig $rectorConfig): void {
         new DrupalServiceRenameConfiguration('path_processor_alias', 'path_alias.path_processor'),
         new DrupalServiceRenameConfiguration('path_subscriber', 'path_alias.subscriber'),
         new DrupalServiceRenameConfiguration('path.alias_manager', 'path_alias.manager'),
-    ], 'drupal/core', '>=8.8.0');
+    ], 'drupal/core', '>=8.8.0 <10.0.0');
 
     $rectorConfig->rule(FileDefaultSchemeRector::class);
 
@@ -487,7 +487,7 @@ return static function (RectorConfig $rectorConfig): void {
 
         new AssertLegacyTraitConfiguration('assertNoCacheTag', 'responseHeaderNotContains', '', true, false, 'Drupal\FunctionalTests\AssertLegacyTrait', 'X-Drupal-Cache-Tags'),
         new AssertLegacyTraitConfiguration('assertCacheTag', 'responseHeaderContains', '', true, false, 'Drupal\FunctionalTests\AssertLegacyTrait', 'X-Drupal-Cache-Tags'),
-    ], 'drupal/core', '>=9.1.0');
+    ], 'drupal/core', '>=9.1.0 <11.0.0');
 
     $rectorConfig->rule(AssertNoFieldByIdRector::class);
 
@@ -553,7 +553,7 @@ return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->ruleWithConfigurationComposerVersionBound(ExtensionPathRector::class, [
         new ExtensionPathConfiguration('drupal_get_filename', 'getPathname'),
         new ExtensionPathConfiguration('drupal_get_path', 'getPath'),
-    ], 'drupal/core', '>=9.3.0');
+    ], 'drupal/core', '>=9.3.0 <11.0.0');
 
     // Change record: https://www.drupal.org/node/2940031
     $rectorConfig->rule(FileCreateUrlRector::class);
@@ -633,12 +633,12 @@ return static function (RectorConfig $rectorConfig): void {
     // https://www.drupal.org/node/2932520
     $rectorConfig->ruleWithConfigurationComposerVersionBound(WatchdogExceptionRector::class, [
         new DrupalIntroducedVersionConfiguration('10.1.0'),
-    ], 'drupal/core', '>=10.1.0');
+    ], 'drupal/core', '>=10.1.0 <12.0.0');
 
     // https://www.drupal.org/node/3023528
     $rectorConfig->ruleWithConfigurationComposerVersionBound(SystemTimeZonesRector::class, [
         new DrupalIntroducedVersionConfiguration('10.1.0'),
-    ], 'drupal/core', '>=10.1.0');
+    ], 'drupal/core', '>=10.1.0 <12.0.0');
 
     // ---------------------------------------------------------------------
     // Drupal 10.2
@@ -682,13 +682,13 @@ return static function (RectorConfig $rectorConfig): void {
     // Replaced by \Drupal::service('extension.list.theme')->reset()->getList().
     $rectorConfig->ruleWithConfigurationComposerVersionBound(ReplaceRebuildThemeDataRector::class, [
         new DrupalIntroducedVersionConfiguration('10.3.0'),
-    ], 'drupal/core', '>=10.3.0');
+    ], 'drupal/core', '>=10.3.0 <13.0.0');
 
     // https://www.drupal.org/node/3310017
     // ModuleHandlerInterface::getName() deprecated in drupal:10.3.0, removed in drupal:12.0.0.
     $rectorConfig->ruleWithConfigurationComposerVersionBound(ReplaceModuleHandlerGetNameRector::class, [
         new DrupalIntroducedVersionConfiguration('10.3.0'),
-    ], 'drupal/core', '>=10.3.0');
+    ], 'drupal/core', '>=10.3.0 <13.0.0');
 
     // https://www.drupal.org/node/3426517
     // https://www.drupal.org/node/3575575
@@ -738,7 +738,7 @@ return static function (RectorConfig $rectorConfig): void {
     // Replaced by \Drupal::time()->getRequestTime().
     $rectorConfig->ruleWithConfigurationComposerVersionBound(ReplaceRequestTimeConstantRector::class, [
         new DrupalIntroducedVersionConfiguration('11.0.0'),
-    ], 'drupal/core', '>=11.0.0');
+    ], 'drupal/core', '>=11.0.0 <12.0.0');
 
     // https://www.drupal.org/node/3574717
     // https://www.drupal.org/node/3442785 (change record)
@@ -746,7 +746,7 @@ return static function (RectorConfig $rectorConfig): void {
     // The $expand boolean argument is removed; call without arguments.
     $rectorConfig->ruleWithConfigurationComposerVersionBound(StripMigrationDependenciesExpandArgRector::class, [
         new DrupalIntroducedVersionConfiguration('11.0.0'),
-    ], 'drupal/core', '>=11.0.0');
+    ], 'drupal/core', '>=11.0.0 <13.0.0');
 
     // https://www.drupal.org/node/3439369
     // https://www.drupal.org/node/3282894 (change record)
@@ -754,7 +754,7 @@ return static function (RectorConfig $rectorConfig): void {
     // Replaced by $this->migrationPluginManager property access.
     $rectorConfig->ruleWithConfigurationComposerVersionBound(MigrateSqlGetMigrationPluginManagerRector::class, [
         new DrupalIntroducedVersionConfiguration('11.0.0'),
-    ], 'drupal/core', '>=11.0.0');
+    ], 'drupal/core', '>=11.0.0 <12.0.0');
 
     // https://www.drupal.org/node/3417066 (@group legacy → #[IgnoreDeprecations])
     // https://www.drupal.org/project/drupal/issues/3535662 (annotations → attributes)
@@ -787,7 +787,7 @@ return static function (RectorConfig $rectorConfig): void {
     // Replaced by instanceof \Drupal\Component\Plugin\ConfigurableInterface.
     $rectorConfig->ruleWithConfigurationComposerVersionBound(PluginBaseIsConfigurableRector::class, [
         new DrupalIntroducedVersionConfiguration('11.1.0'),
-    ], 'drupal/core', '>=11.1.0');
+    ], 'drupal/core', '>=11.1.0 <13.0.0');
 
     $rectorConfig->ruleWithConfigurationComposerVersionBound(RenameClassRector::class, [
         'Drupal\Core\Routing\MatchingRouteNotFoundException' => 'Symfony\Component\Routing\Exception\ResourceNotFoundException',
@@ -814,7 +814,7 @@ return static function (RectorConfig $rectorConfig): void {
     // and update_config_translations respectively.
     $rectorConfig->ruleWithConfigurationComposerVersionBound(ReplaceLocaleConfigBatchFunctionsRector::class, [
         new DrupalIntroducedVersionConfiguration('11.1.0'),
-    ], 'drupal/core', '>=11.1.0');
+    ], 'drupal/core', '>=11.1.0 <13.0.0');
 
     // https://www.drupal.org/node/3417136
     // https://www.drupal.org/node/3461934 (change record)
@@ -840,7 +840,7 @@ return static function (RectorConfig $rectorConfig): void {
     // Replaced by the plugin_manager_cache_clear tag approach.
     $rectorConfig->ruleWithConfigurationComposerVersionBound(ReplaceAddCachedDiscoveryMethodCallRector::class, [
         new DrupalIntroducedVersionConfiguration('11.1.0'),
-    ], 'drupal/core', '>=11.1.0');
+    ], 'drupal/core', '>=11.1.0 <13.0.0');
 
     // https://www.drupal.org/node/3488176
     // drupal_common_theme() removed in drupal:11.1.0.
@@ -887,7 +887,7 @@ return static function (RectorConfig $rectorConfig): void {
     // Replaced by fetchField().
     $rectorConfig->ruleWithConfigurationComposerVersionBound(StatementPrefetchIteratorFetchColumnRector::class, [
         new DrupalIntroducedVersionConfiguration('11.2.0'),
-    ], 'drupal/core', '>=11.2.0');
+    ], 'drupal/core', '>=11.2.0 <13.0.0');
 
     // https://www.drupal.org/node/3500622
     // CacheBackendInterface::invalidateAll() deprecated in drupal:11.2.0, removed in drupal:12.0.0.
@@ -981,7 +981,7 @@ return static function (RectorConfig $rectorConfig): void {
     // Drop the argument.
     $rectorConfig->ruleWithConfigurationComposerVersionBound(RemoveTwigNodeTransTagArgumentRector::class, [
         new DrupalIntroducedVersionConfiguration('11.2.0'),
-    ], 'drupal/core', '>=11.2.0');
+    ], 'drupal/core', '>=11.2.0 <12.0.0');
 
     // https://www.drupal.org/node/3442810
     // https://www.drupal.org/node/3494472 (change record)
@@ -989,7 +989,7 @@ return static function (RectorConfig $rectorConfig): void {
     // Both arguments always produced 0; replaced with literal 0.
     $rectorConfig->ruleWithConfigurationComposerVersionBound(ReplaceAlphadecimalToIntNullRector::class, [
         new DrupalIntroducedVersionConfiguration('11.2.0'),
-    ], 'drupal/core', '>=11.2.0');
+    ], 'drupal/core', '>=11.2.0 <13.0.0');
 
     // https://www.drupal.org/node/3512254
     // https://www.drupal.org/node/3515272 (change record)
@@ -997,7 +997,7 @@ return static function (RectorConfig $rectorConfig): void {
     // Replaced by 'fieldset'.
     $rectorConfig->ruleWithConfigurationComposerVersionBound(ReplaceFieldgroupToFieldsetRector::class, [
         new DrupalIntroducedVersionConfiguration('11.2.0'),
-    ], 'drupal/core', '>=11.2.0');
+    ], 'drupal/core', '>=11.2.0 <13.0.0');
 
     // https://www.drupal.org/node/3525077
     // https://www.drupal.org/node/3488338 (change record)
@@ -1005,7 +1005,7 @@ return static function (RectorConfig $rectorConfig): void {
     // Replaced by \Drupal\Core\Database\Statement\FetchAs enum cases.
     $rectorConfig->ruleWithConfigurationComposerVersionBound(ReplacePdoFetchConstantsRector::class, [
         new DrupalIntroducedVersionConfiguration('11.2.0'),
-    ], 'drupal/core', '>=11.2.0');
+    ], 'drupal/core', '>=11.2.0 <13.0.0');
 
     // https://www.drupal.org/node/3574901
     // DateTimeRangeConstantsInterface::BOTH/START_DATE/END_DATE deprecated in drupal:11.2.0, removed in drupal:12.0.0.
@@ -1014,7 +1014,7 @@ return static function (RectorConfig $rectorConfig): void {
     // Replaced by \Drupal::service('datetime.views_helper')->buildViewsData().
     $rectorConfig->ruleWithConfigurationComposerVersionBound(ReplaceDateTimeRangeConstantsRector::class, [
         new DrupalIntroducedVersionConfiguration('11.2.0'),
-    ], 'drupal/core', '>=11.2.0');
+    ], 'drupal/core', '>=11.2.0 <13.0.0');
 
     // https://www.drupal.org/node/3494172
     // file_get_content_headers($file) deprecated in drupal:11.2.0, removed in drupal:12.0.0.
@@ -1029,7 +1029,7 @@ return static function (RectorConfig $rectorConfig): void {
     // Replaced by \Drupal::request()->getSession()->set('key', $value).
     $rectorConfig->ruleWithConfigurationComposerVersionBound(ReplaceSessionWritesWithRequestSessionRector::class, [
         new DrupalIntroducedVersionConfiguration('11.2.0'),
-    ], 'drupal/core', '>=11.2.0');
+    ], 'drupal/core', '>=11.2.0 <13.0.0');
 
     // https://www.drupal.org/node/3447794
     // https://www.drupal.org/node/3509245 (change record)
@@ -1037,14 +1037,14 @@ return static function (RectorConfig $rectorConfig): void {
     // Replaced by entityTypeManager()->getStorage('editor')->load($format_id).
     $rectorConfig->ruleWithConfigurationComposerVersionBound(ReplaceEditorLoadRector::class, [
         new DrupalIntroducedVersionConfiguration('11.2.0'),
-    ], 'drupal/core', '>=11.2.0');
+    ], 'drupal/core', '>=11.2.0 <13.0.0');
 
     // https://www.drupal.org/node/3571065
     // $entity->original magic property deprecated in drupal:11.2.0, removed in drupal:12.0.0.
     // Read access replaced by getOriginal(); write access replaced by setOriginal($value).
     $rectorConfig->ruleWithConfigurationComposerVersionBound(ReplaceEntityOriginalPropertyRector::class, [
         new DrupalIntroducedVersionConfiguration('11.2.0'),
-    ], 'drupal/core', '>=11.2.0');
+    ], 'drupal/core', '>=11.2.0 <13.0.0');
 
     // https://www.drupal.org/node/3495943
     // #[StopProceduralHookScan] attribute renamed to #[ProceduralHookScanStop] in drupal:11.2.0.
@@ -1177,7 +1177,7 @@ return static function (RectorConfig $rectorConfig): void {
     // Replaced by \Drupal\history\HistoryManager::getCountNewComments().
     $rectorConfig->ruleWithConfigurationComposerVersionBound(ReplaceCommentManagerGetCountNewCommentsRector::class, [
         new DrupalIntroducedVersionConfiguration('11.3.0'),
-    ], 'drupal/core', '>=11.3.0');
+    ], 'drupal/core', '>=11.3.0 <13.0.0');
 
     // https://www.drupal.org/node/3536431
     // https://www.drupal.org/node/3536432 (change record)
@@ -1231,11 +1231,11 @@ return static function (RectorConfig $rectorConfig): void {
     // Replaced by the '.html.twig' string literal.
     $rectorConfig->ruleWithConfigurationComposerVersionBound(ReplaceTwigExtensionRector::class, [
         new DrupalIntroducedVersionConfiguration('11.3.0'),
-    ], 'drupal/core', '>=11.3.0');
+    ], 'drupal/core', '>=11.3.0 <13.0.0');
 
     $rectorConfig->ruleWithConfigurationComposerVersionBound(ReplaceNodeModuleProceduralFunctionsRector::class, [
         new DrupalIntroducedVersionConfiguration('11.3.0'),
-    ], 'drupal/core', '>=11.3.0');
+    ], 'drupal/core', '>=11.3.0 <14.0.0');
 
     // https://www.drupal.org/node/3535528
     // block_content_add_body_field() deprecated in drupal:11.3.0, removed in drupal:13.0.0.
@@ -1262,7 +1262,7 @@ return static function (RectorConfig $rectorConfig): void {
     // drupal_static_reset('node_access_view_all_nodes') replaced by node.view_all_nodes_memory_cache->deleteAll().
     $rectorConfig->ruleWithConfigurationComposerVersionBound(ReplaceNodeAccessViewAllNodesRector::class, [
         new DrupalIntroducedVersionConfiguration('11.3.0'),
-    ], 'drupal/core', '>=11.3.0');
+    ], 'drupal/core', '>=11.3.0 <13.0.0');
 
     // https://www.drupal.org/node/3574424 (digest issue)
     // https://www.drupal.org/node/3548329 (change record)
@@ -1281,7 +1281,7 @@ return static function (RectorConfig $rectorConfig): void {
     // Replaced by $this->createBodyField() from BodyFieldCreationTrait.
     $rectorConfig->ruleWithConfigurationComposerVersionBound(ReplaceNodeAddBodyFieldRector::class, [
         new DrupalIntroducedVersionConfiguration('11.3.0'),
-    ], 'drupal/core', '>=11.3.0');
+    ], 'drupal/core', '>=11.3.0 <13.0.0');
 
     // https://www.drupal.org/node/3513856
     // https://www.drupal.org/node/3513877 (change record)
@@ -1289,7 +1289,7 @@ return static function (RectorConfig $rectorConfig): void {
     // Replaced by getAccountName().
     $rectorConfig->ruleWithConfigurationComposerVersionBound(ReplaceUserSessionNamePropertyRector::class, [
         new DrupalIntroducedVersionConfiguration('11.3.0'),
-    ], 'drupal/core', '>=11.3.0');
+    ], 'drupal/core', '>=11.3.0 <13.0.0');
 
     // https://www.drupal.org/node/3534092
     // file_system_settings_submit() deprecated in drupal:11.3.0, removed in drupal:13.0.0.
@@ -1309,7 +1309,7 @@ return static function (RectorConfig $rectorConfig): void {
     // Replaced by [\Drupal\file\Element\ManagedFile::class, 'submit'] array callable.
     $rectorConfig->ruleWithConfigurationComposerVersionBound(FileManagedFileSubmitRector::class, [
         new DrupalIntroducedVersionConfiguration('11.3.0'),
-    ], 'drupal/core', '>=11.3.0');
+    ], 'drupal/core', '>=11.3.0 <13.0.0');
 
     // https://www.drupal.org/node/3495601
     // JSONAPI_FILTER_AMONG_* global constants deprecated in drupal:11.3.0, removed in drupal:13.0.0.
@@ -1328,7 +1328,7 @@ return static function (RectorConfig $rectorConfig): void {
     // Replaced by NodePreviewMode enum cases.
     $rectorConfig->ruleWithConfigurationComposerVersionBound(ReplaceNodeSetPreviewModeRector::class, [
         new DrupalIntroducedVersionConfiguration('11.3.0'),
-    ], 'drupal/core', '>=11.3.0');
+    ], 'drupal/core', '>=11.3.0 <14.0.0');
 
     // https://www.drupal.org/node/3530461
     // https://www.drupal.org/node/3530869 (change record)
@@ -1336,7 +1336,7 @@ return static function (RectorConfig $rectorConfig): void {
     // Replaced by PHP native basename().
     $rectorConfig->ruleWithConfigurationComposerVersionBound(FileSystemBasenameToNativeRector::class, [
         new DrupalIntroducedVersionConfiguration('11.3.0'),
-    ], 'drupal/core', '>=11.3.0');
+    ], 'drupal/core', '>=11.3.0 <14.0.0');
 
     // https://www.drupal.org/node/3526515
     // https://www.drupal.org/node/3529500 (change record)
@@ -1344,14 +1344,14 @@ return static function (RectorConfig $rectorConfig): void {
     // Replaced by PHP built-in get_error_handler().
     $rectorConfig->ruleWithConfigurationComposerVersionBound(ErrorCurrentErrorHandlerRector::class, [
         new DrupalIntroducedVersionConfiguration('11.3.0'),
-    ], 'drupal/core', '>=11.3.0');
+    ], 'drupal/core', '>=11.3.0 <14.0.0');
 
     // https://www.drupal.org/node/3573896
     // theme_get_setting() and _system_default_theme_features() deprecated in drupal:11.3.0, removed in drupal:13.0.0.
     // Replaced by ThemeSettingsProvider service.
     $rectorConfig->ruleWithConfigurationComposerVersionBound(ReplaceThemeGetSettingRector::class, [
         new DrupalIntroducedVersionConfiguration('11.3.0'),
-    ], 'drupal/core', '>=11.3.0');
+    ], 'drupal/core', '>=11.3.0 <14.0.0');
 
     // https://www.drupal.org/node/3522513
     // https://www.drupal.org/node/3511287 (change record)
@@ -1359,7 +1359,7 @@ return static function (RectorConfig $rectorConfig): void {
     // The $root parameter is obsolete; remove it (shift any $include_test_drivers arg left).
     $rectorConfig->ruleWithConfigurationComposerVersionBound(RemoveRootFromConvertDbUrlRector::class, [
         new DrupalIntroducedVersionConfiguration('11.3.0'),
-    ], 'drupal/core', '>=11.3.0');
+    ], 'drupal/core', '>=11.3.0 <13.0.0');
 
     // https://www.drupal.org/node/3525388
     // https://www.drupal.org/node/3525389 (change record)
@@ -1392,7 +1392,7 @@ return static function (RectorConfig $rectorConfig): void {
     // Replaced by Drupal\comment\CommentPreviewMode enum cases.
     $rectorConfig->ruleWithConfigurationComposerVersionBound(ReplaceCommentPreviewConstantsRector::class, [
         new DrupalIntroducedVersionConfiguration('11.3.0'),
-    ], 'drupal/core', '>=11.3.0');
+    ], 'drupal/core', '>=11.3.0 <14.0.0');
 
     // https://www.drupal.org/node/3529274
     // https://www.drupal.org/node/3530638 (change record)
@@ -1413,7 +1413,7 @@ return static function (RectorConfig $rectorConfig): void {
     // BC-wrapped because the 3-argument signature only exists on Drupal >= 11.3.0.
     $rectorConfig->ruleWithConfigurationComposerVersionBound(CommentLinkBuilderConstructorRector::class, [
         new DrupalIntroducedVersionConfiguration('11.3.0'),
-    ], 'drupal/core', '>=11.3.0');
+    ], 'drupal/core', '>=11.3.0 <13.0.0');
 
     // ---------------------------------------------------------------------
     // Drupal 11.3 (breaking)
@@ -1493,7 +1493,7 @@ return static function (RectorConfig $rectorConfig): void {
     // Replaced by \Drupal::service('plugin.manager.views.*') or views.plugin_managers service.
     $rectorConfig->ruleWithConfigurationComposerVersionBound(ViewsPluginHandlerManagerRector::class, [
         new DrupalIntroducedVersionConfiguration('11.4.0'),
-    ], 'drupal/core', '>=11.4.0');
+    ], 'drupal/core', '>=11.4.0 <14.0.0');
 
     // https://www.drupal.org/node/3578055
     // node_access_grants() deprecated in drupal:11.4.0, removed in drupal:13.0.0.
@@ -1508,7 +1508,7 @@ return static function (RectorConfig $rectorConfig): void {
     // Replaced by \Drupal\node\NodeAccessRebuild service.
     $rectorConfig->ruleWithConfigurationComposerVersionBound(NodeAccessRebuildFunctionsRector::class, [
         new DrupalIntroducedVersionConfiguration('11.4.0'),
-    ], 'drupal/core', '>=11.4.0');
+    ], 'drupal/core', '>=11.4.0 <14.0.0');
 
     // https://www.drupal.org/node/2536594
     // https://www.drupal.org/node/3035368 (change record)
@@ -1517,7 +1517,7 @@ return static function (RectorConfig $rectorConfig): void {
     // Replaced by \Drupal\filter\FilterFormatRepositoryInterface service.
     $rectorConfig->ruleWithConfigurationComposerVersionBound(FilterFormatFunctionsToServiceRector::class, [
         new DrupalIntroducedVersionConfiguration('11.4.0'),
-    ], 'drupal/core', '>=11.4.0');
+    ], 'drupal/core', '>=11.4.0 <14.0.0');
 
     // https://www.drupal.org/node/3568124
     // https://www.drupal.org/node/3566774 (change record)
@@ -1525,7 +1525,7 @@ return static function (RectorConfig $rectorConfig): void {
     // Replaced by \Drupal\media\Hook\MediaHooks::formatEditFormValidate().
     $rectorConfig->ruleWithConfigurationComposerVersionBound(MediaFilterFormatEditFormValidateRector::class, [
         new DrupalIntroducedVersionConfiguration('11.4.0'),
-    ], 'drupal/core', '>=11.4.0');
+    ], 'drupal/core', '>=11.4.0 <13.0.0');
 
     // https://www.drupal.org/node/3226806
     // https://www.drupal.org/node/3566774 (change record)
@@ -1534,14 +1534,14 @@ return static function (RectorConfig $rectorConfig): void {
     // Replaced by plugin.manager.filter createInstance() chain.
     $rectorConfig->ruleWithConfigurationComposerVersionBound(DeprecatedFilterFunctionsRector::class, [
         new DrupalIntroducedVersionConfiguration('11.4.0'),
-    ], 'drupal/core', '>=11.4.0');
+    ], 'drupal/core', '>=11.4.0 <13.0.0');
 
     // https://www.drupal.org/node/3570851
     // SessionManager::delete() deprecated in drupal:11.4.0, removed in drupal:12.0.0.
     // Replaced by \Drupal\Core\Session\UserSessionRepositoryInterface::deleteAll().
     $rectorConfig->ruleWithConfigurationComposerVersionBound(ReplaceSessionManagerDeleteRector::class, [
         new DrupalIntroducedVersionConfiguration('11.4.0'),
-    ], 'drupal/core', '>=11.4.0');
+    ], 'drupal/core', '>=11.4.0 <13.0.0');
 
     // https://www.drupal.org/node/3550054
     // CommentItemInterface::FORM_BELOW and FORM_SEPARATE_PAGE deprecated in 11.4.0,
@@ -1707,7 +1707,7 @@ return static function (RectorConfig $rectorConfig): void {
     // RecipeRunner::installModule() deprecated in drupal:11.4.0. Use installModules() with an array.
     $rectorConfig->ruleWithConfigurationComposerVersionBound(ReplaceRecipeRunnerInstallModuleRector::class, [
         new DrupalIntroducedVersionConfiguration('11.4.0'),
-    ], 'drupal/core', '>=11.4.0');
+    ], 'drupal/core', '>=11.4.0 <14.0.0');
 
     // https://www.drupal.org/node/3184242
     // https://www.drupal.org/node/3526344 (change record)
@@ -1715,7 +1715,7 @@ return static function (RectorConfig $rectorConfig): void {
     // Replaced by css.compress and js.compress.
     $rectorConfig->ruleWithConfigurationComposerVersionBound(ReplaceSystemPerformanceGzipKeyRector::class, [
         new DrupalIntroducedVersionConfiguration('11.4.0'),
-    ], 'drupal/core', '>=11.4.0');
+    ], 'drupal/core', '>=11.4.0 <13.0.0');
 
     // https://www.drupal.org/node/3564937
     // https://www.drupal.org/node/3564958 (change record)
@@ -1735,11 +1735,11 @@ return static function (RectorConfig $rectorConfig): void {
     // Config::save($has_trusted_data) boolean arg deprecated in drupal:11.4.0, removed in drupal:13.0.0.
     $rectorConfig->ruleWithConfigurationComposerVersionBound(RemoveTrustDataCallRector::class, [
         new DrupalIntroducedVersionConfiguration('11.4.0'),
-    ], 'drupal/core', '>=11.4.0');
+    ], 'drupal/core', '>=11.4.0 <14.0.0');
 
     $rectorConfig->ruleWithConfigurationComposerVersionBound(RemoveConfigSaveTrustedDataArgRector::class, [
         new DrupalIntroducedVersionConfiguration('11.4.0'),
-    ], 'drupal/core', '>=11.4.0');
+    ], 'drupal/core', '>=11.4.0 <14.0.0');
 
     // https://www.drupal.org/node/3093118
     // https://www.drupal.org/node/3554139 (change record)
@@ -1760,7 +1760,7 @@ return static function (RectorConfig $rectorConfig): void {
     // Replaced by OO equivalents on the view object or Views::getViewResult().
     $rectorConfig->ruleWithConfigurationComposerVersionBound(ReplaceViewsProceduralFunctionsRector::class, [
         new DrupalIntroducedVersionConfiguration('11.4.0'),
-    ], 'drupal/core', '>=11.4.0');
+    ], 'drupal/core', '>=11.4.0 <14.0.0');
 
     // https://www.drupal.org/node/3557461
     // https://www.drupal.org/node/3557464 (change record)
@@ -1768,7 +1768,7 @@ return static function (RectorConfig $rectorConfig): void {
     // Replaced by getDecoratedClasses()[0].
     $rectorConfig->ruleWithConfigurationComposerVersionBound(GetOriginalClassToGetDecoratedClassesRector::class, [
         new DrupalIntroducedVersionConfiguration('11.4.0'),
-    ], 'drupal/core', '>=11.4.0');
+    ], 'drupal/core', '>=11.4.0 <13.0.0');
 
     // https://www.drupal.org/node/3566801
     // https://www.drupal.org/node/3566814 (change record)
@@ -1777,7 +1777,7 @@ return static function (RectorConfig $rectorConfig): void {
     // Replaced by EntityTypeInterface::hasIntegerId() called on the entity type object.
     $rectorConfig->ruleWithConfigurationComposerVersionBound(UseEntityTypeHasIntegerIdRector::class, [
         new DrupalIntroducedVersionConfiguration('11.4.0'),
-    ], 'drupal/core', '>=11.4.0');
+    ], 'drupal/core', '>=11.4.0 <14.0.0');
 
     // https://www.drupal.org/node/3568144
     // editor_filter_xss() deprecated in drupal:11.4.0, removed in drupal:13.0.0.
@@ -1861,14 +1861,14 @@ return static function (RectorConfig $rectorConfig): void {
     // Replaced by literal 20.
     $rectorConfig->ruleWithConfigurationComposerVersionBound(ReplaceEntityReferenceRecursiveLimitRector::class, [
         new DrupalIntroducedVersionConfiguration('11.4.0'),
-    ], 'drupal/core', '>=11.4.0');
+    ], 'drupal/core', '>=11.4.0 <14.0.0');
 
     // https://www.drupal.org/node/3015812
     // system_region_list() and system_default_region() deprecated in drupal:11.4.0, removed in drupal:13.0.0.
     // Replaced by Theme object methods via \Drupal::service('theme_handler')->getTheme().
     $rectorConfig->ruleWithConfigurationComposerVersionBound(SystemRegionFunctionsRector::class, [
         new DrupalIntroducedVersionConfiguration('11.4.0'),
-    ], 'drupal/core', '>=11.4.0');
+    ], 'drupal/core', '>=11.4.0 <13.0.0');
 
     // https://www.drupal.org/node/455724
     // https://www.drupal.org/node/3588040 (change record)
@@ -1888,7 +1888,7 @@ return static function (RectorConfig $rectorConfig): void {
     // Replaced by LocaleProjectRepository and LocaleProjectChecker service methods.
     $rectorConfig->ruleWithConfigurationComposerVersionBound(LocaleCompareIncToServiceRector::class, [
         new DrupalIntroducedVersionConfiguration('11.4.0'),
-    ], 'drupal/core', '>=11.4.0');
+    ], 'drupal/core', '>=11.4.0 <14.0.0');
 
     // https://www.drupal.org/node/3581303
     // https://www.drupal.org/node/3589759 (change record)
@@ -1903,7 +1903,7 @@ return static function (RectorConfig $rectorConfig): void {
     // PHPStan deprecation messages captured in the rector's PHPSTAN_MESSAGES const.
     $rectorConfig->ruleWithConfigurationComposerVersionBound(ReplaceLocaleBatchProceduralFunctionsRector::class, [
         new DrupalIntroducedVersionConfiguration('11.4.0'),
-    ], 'drupal/core', '>=11.4.0');
+    ], 'drupal/core', '>=11.4.0 <14.0.0');
 
     // https://www.drupal.org/node/3335756
     // https://www.drupal.org/node/3349345 (change record)
@@ -1964,7 +1964,7 @@ return static function (RectorConfig $rectorConfig): void {
     //   @deprecated PHP symbol PHPStan analyses. Nothing to match.
     $rectorConfig->ruleWithConfigurationComposerVersionBound(ReplaceDrupalStaticResetFileReferencesRector::class, [
         new DrupalIntroducedVersionConfiguration('11.4.0'),
-    ], 'drupal/core', '>=11.4.0');
+    ], 'drupal/core', '>=11.4.0 <14.0.0');
 
     // https://www.drupal.org/node/3550268
     // https://www.drupal.org/node/3545276 (change record)
@@ -1972,7 +1972,7 @@ return static function (RectorConfig $rectorConfig): void {
     // Replaced by PHPUnit 11+ expectUserDeprecationMessage() / expectUserDeprecationMessageMatches().
     $rectorConfig->ruleWithConfigurationComposerVersionBound(ReplaceExpectDeprecationRector::class, [
         new DrupalIntroducedVersionConfiguration('11.4.0'),
-    ], 'drupal/core', '>=11.4.0');
+    ], 'drupal/core', '>=11.4.0 <13.0.0');
 
     // https://www.drupal.org/node/3571593
     // https://www.drupal.org/node/3571594 (change record)
@@ -1980,7 +1980,7 @@ return static function (RectorConfig $rectorConfig): void {
     // Replaced by \Drupal\Core\Site\Settings::get('locale_translation_path', 'public://translations').
     $rectorConfig->ruleWithConfigurationComposerVersionBound(ReplaceLocaleTranslationPathConfigRector::class, [
         new DrupalIntroducedVersionConfiguration('11.4.0'),
-    ], 'drupal/core', '>=11.4.0');
+    ], 'drupal/core', '>=11.4.0 <14.0.0');
 
     // https://www.drupal.org/node/3582118
     // PhpUnitCompatibilityTrait is DELETED FROM CORE in Drupal 12 — any test
@@ -2018,7 +2018,7 @@ return static function (RectorConfig $rectorConfig): void {
     // Drupal < 11.4.
     $rectorConfig->ruleWithConfigurationComposerVersionBound(UploadedFileConstraintArrayOptionsToNamedArgsRector::class, [
         new DrupalIntroducedVersionConfiguration('11.4.0'),
-    ], 'drupal/core', '>=11.4.0');
+    ], 'drupal/core', '>=11.4.0 <13.0.0');
 
     // https://www.drupal.org/node/3554447
     // https://www.drupal.org/node/3554585 (change record)
@@ -2029,7 +2029,7 @@ return static function (RectorConfig $rectorConfig): void {
     // plain rename silently drops the attributes on Drupal < 11.4.
     $rectorConfig->ruleWithConfigurationComposerVersionBound(ReplaceItemAttributesWithAttributesRector::class, [
         new DrupalIntroducedVersionConfiguration('11.4.0'),
-    ], 'drupal/core', '>=11.4.0');
+    ], 'drupal/core', '>=11.4.0 <13.0.0');
 
     // https://www.drupal.org/node/3311365
     // https://www.drupal.org/node/3324751 (change record)
@@ -2039,7 +2039,7 @@ return static function (RectorConfig $rectorConfig): void {
     // constructor form is rewritten to the new 4-arg form.
     $rectorConfig->ruleWithConfigurationComposerVersionBound(RemoveRouteBuilderDeprecatedArgsRector::class, [
         new DrupalIntroducedVersionConfiguration('11.4.0'),
-    ], 'drupal/core', '>=11.4.0');
+    ], 'drupal/core', '>=11.4.0 <13.0.0');
 
     // https://www.drupal.org/node/3555936
     // user_load_by_name() and user_load_by_mail() deprecated in drupal:11.4.0,
@@ -2065,7 +2065,7 @@ return static function (RectorConfig $rectorConfig): void {
     //   once the test core is updated past that commit.
     $rectorConfig->ruleWithConfigurationComposerVersionBound(ReplaceUserOneTimeAuthFunctionsRector::class, [
         new DrupalIntroducedVersionConfiguration('11.4.0'),
-    ], 'drupal/core', '>=11.4.0');
+    ], 'drupal/core', '>=11.4.0 <13.0.0');
 
     // ---------------------------------------------------------------------
     // Drupal 11.4 (breaking)
