@@ -282,6 +282,74 @@ docblock: it tracks **Symfony 8.0**, not `drupal/core`. PR #419 gives it
 Incidental, and another trap for anyone computing bounds by arithmetic: Classy
 was removed in **10.1.0**, not 10.0.0 (`c3d1caafb5a`, #3110137).
 
+## Pass 6 — the invariant check, and 7 fabricated removal versions
+
+Every earlier pass asked "what is the removal version?". None asked whether the
+answer was *possible*. It is worth asking, because Drupal's policy makes the
+answer cheap: deprecated API is removed at a **major boundary**, so a removal
+must be `X.0.0` and its major must be strictly later than the major the
+deprecation landed in. One `awk` pass over the matrix flagged **11 of 134** rows
+violating that.
+
+Seven were simply wrong — the removal column had captured the **deprecation**
+version instead, and in three cases a version *earlier* than the set the rule
+ships in, which no removal can be. All seven came through the `change record`
+source path; none through git archaeology. Re-read from core and corrected:
+
+| Rule | Was | Is | Core says |
+|---|---|---|---|
+| `NodeStorageDeprecatedMethodsRector` | 11.3.0 | **13.0.0** | `modules/node/src/NodeStorage.php:21` |
+| `PluginBaseIsConfigurableRector` | 11.0.0 | **12.0.0** | `lib/Drupal/Component/Plugin/PluginBase.php:102` |
+| `RemoveInstallSchemaSystemSequencesRector` | 10.5.0 | **12.0.0** | `modules/system/system.install:39` (deprecated 10.2.0) |
+| `RemoveRendererAddCacheableDependencyNonObjectRector` | 11.2.0 | **12.0.0** | `lib/Drupal/Core/Cache/RefinableCacheableDependencyTrait.php:23` |
+| `RemoveUpdaterPostInstallMethodsRector` | 11.1.0 | **12.0.0** | `lib/Drupal/Core/Updater/Updater.php:420` |
+| `ReplaceAddCachedDiscoveryMethodCallRector` | 11.1.0 | **12.0.0** | `lib/Drupal/Core/Plugin/CachedDiscoveryClearer.php:36` |
+| `ReplaceSessionManagerDeleteRector` | 11.4.0 | **12.0.0** | `lib/Drupal/Core/Session/SessionManagerInterface.php:18` |
+
+Two cautions from doing it. `RemoveRendererAddCacheableDependencyNonObjectRector`
+is phrased *"is deprecated in drupal:11.2.0 and **is required** in
+drupal:12.0.0"* — a grep for `removed from drupal:` misses it, and any future
+extractor must match both phrasings. And a first pass over
+`SessionManager.php` returned `11.4.0 → 13.0.0`, which belongs to an unrelated
+`#access` deprecation in `Renderer.php`; the file-scoped grep had merged two
+files. Removal versions must be read from the **declaring method's own**
+docblock, never from a file-wide match.
+
+### The four that remain flagged are genuine
+
+| Rule | Removal | Why it is not a policy breach |
+|---|---|---|
+| `ReplaceRequestTimeConstantRector` | 11.0.0 | Real major removal (`2f44d215e86`). Flagged only because the rule ships in the **11.0** set while `REQUEST_TIME` was deprecated in **10.3.0** — the set is keyed on removal, not deprecation. |
+| `MigrateSqlGetMigrationPluginManagerRector` | 11.0.0 | Same shape (`166f3a39e46`, "Remove deprecated code in migration system"). |
+| `RemoveTwigNodeTransTagArgumentRector` | 11.1.0 | Not a Drupal deprecation. `cec21638d09` drops a constructor argument to satisfy an **upstream Twig** deprecation on an internal template class. |
+| `RenameStopProceduralHookScanRector` | 11.2.0 | Not a deprecation either. `StopProceduralHookScan` was *introduced* 2024-12-03 and renamed to `ProceduralHookScanStop` on 2025-05-01 (`308ad151024`) as part of the still-stabilising OOP-hooks work. |
+
+So **no rule in this matrix bounds on a mid-major removal of deprecated stable
+API** — consistent with core policy. The practical consequence is that the
+upper bound is always a clean `<{major+1}.0.0`, with no special case.
+
+The first two rows also show the **set number is not a safe lower bound**: it is
+sometimes keyed on removal rather than deprecation. Lower bounds must come from
+core's `deprecated_in`, the same conclusion `ReplaceDialogClassOptionRector`
+forces.
+
+### Re-running the check
+
+```
+awk -F'|' 'NF>5 {r=$2;s=$3;v=$5; gsub(/[ `]/,"",r);gsub(/ /,"",s);gsub(/ /,"",v);
+  if (v !~ /^[0-9]+\./) next; split(v,a,"."); split(s,b,".");
+  if (a[1] <= b[1]) print "IMPOSSIBLE: " r "  set=" s "  removed=" v}' \
+  docs/rector-rule-version-matrix.md
+```
+
+Expect exactly the four rows above. Anything else is a bad lookup. This belongs
+in CI alongside the change-record join.
+
+**Known bookkeeping gap.** The coverage table sums to 154 while the full matrix
+holds 153 rows, and `AssertFieldByXPathRector`, `AssertFieldsByValueRector` and
+`AssertNoFieldByXPathRector` are registered in `config/` but absent from the
+matrix. Pre-existing, unrelated to the removal versions, not reconciled here.
+
 ## The 13 rules that still have no upper bound — and should not get one
 
 None is an unfinished lookup; each was chased to a citation.
@@ -399,8 +467,8 @@ which pass produced the removal version.
 | `MigrateSqlGetMigrationPluginManagerRector` | 11.0 | config-bound | 11.0.0 | observed | core git 166f3a39e46 |
 | `MovePointerToMouseOverRector` | 11.1 | `>=11.1.0` | 12.0.0 | scheduled | core promise |
 | `NodeAccessRebuildFunctionsRector` | 11.4 | config-bound | 13.0.0 | scheduled | change record |
-| `NodeStorageDeprecatedMethodsRector` | 11.3 | `>=11.3.0` | 11.3.0 | scheduled | change record |
-| `PluginBaseIsConfigurableRector` | 11.1 | config-bound | 11.0.0 | observed | change record |
+| `NodeStorageDeprecatedMethodsRector` | 11.3 | `>=11.3.0` | 13.0.0 | scheduled | `core/modules/node/src/NodeStorage.php:21` |
+| `PluginBaseIsConfigurableRector` | 11.1 | config-bound | 12.0.0 | scheduled | `core/lib/Drupal/Component/Plugin/PluginBase.php:102` |
 | `RemoveAutomatedCronSubmitHandlerRector` | 11.4 | `>=11.4.0` | 12.0.0 | scheduled/observed | change record |
 | `RemoveCacheExpireOverrideRector` | 11.4 | `>=11.4.0` | 13.0.0 | scheduled | change record |
 | `RemoveCacheTagChecksumAssertionsRector` | 11.2 | `>=11.2.0` | 12.0.0 | observed | change record |
@@ -408,12 +476,12 @@ which pass produced the removal version.
 | `RemoveDrupalToStringTraitRector` | 11.4 | `>=11.4.0` | 13.0.0 | scheduled | change record |
 | `RemoveFilterTipsLongParamRector` | 11.4 11.4* | `>=11.4.0` | 12.0.0 | scheduled | symbol |
 | `RemoveHandlerBaseDefineExtraOptionsRector` | 11.2 | `>=11.2.0` | 12.0.0 | scheduled | change record |
-| `RemoveInstallSchemaSystemSequencesRector` | 11.4 | `>=11.4.0` | 10.5.0 | scheduled | change record |
+| `RemoveInstallSchemaSystemSequencesRector` | 11.4 | `>=11.4.0` | 12.0.0 | scheduled | `core/modules/system/system.install:39` |
 | `RemoveLinkWidgetValidateTitleElementRector` | 11.4 | `>=11.4.0` | 12.0.0 | scheduled | change record |
 | `RemoveModuleHandlerAddModuleCallsRector` | 11.2 | `>=11.2.0` | 12.0.0 | scheduled | change record |
 | `RemoveModuleHandlerDeprecatedMethodsRector` | 11.1 | `>=11.1.0` | 12.0.0 | scheduled | change record |
 | `RemovePhpUnitCompatibilityTraitRector` | 11.4 | config-bound | — | — | — |
-| `RemoveRendererAddCacheableDependencyNonObjectRector` | 11.3 | `>=11.3.0` | 11.2.0 | scheduled/observed | change record |
+| `RemoveRendererAddCacheableDependencyNonObjectRector` | 11.3 | `>=11.3.0` | 12.0.0 | scheduled | `core/lib/Drupal/Core/Cache/RefinableCacheableDependencyTrait.php:23` |
 | `RemoveRootFromConvertDbUrlRector` | 11.3 | config-bound | 12.0.0 | scheduled | core notice |
 | `RemoveRootFromCreateConnectionOptionsFromUrlRector` | 11.2 | `>=11.2.0` | 12.0.0 | scheduled | core notice |
 | `RemoveRouteBuilderDeprecatedArgsRector` | 11.4 | config-bound | 12.0.0 | scheduled | core notice |
@@ -423,11 +491,11 @@ which pass produced the removal version.
 | `RemoveToolkitArgFromImageToolkitOperationConstructorRector` | 11.4 | `>=11.4.0` | 13.0.0 | scheduled | core notice |
 | `RemoveTrustDataCallRector` | 11.4 | config-bound | 13.0.0 | scheduled | change record |
 | `RemoveTwigNodeTransTagArgumentRector` | 11.2 | config-bound | 11.1.0 | observed | core git cec21638d09 |
-| `RemoveUpdaterPostInstallMethodsRector` | 11.1 | `>=11.1.0` | 11.1.0 | observed | change record |
+| `RemoveUpdaterPostInstallMethodsRector` | 11.1 | `>=11.1.0` | 12.0.0 | scheduled | `core/lib/Drupal/Core/Updater/Updater.php:420` |
 | `RemoveViewsRowCacheKeysRector` | 11.4 | `>=11.4.0` | 13.0.0 | scheduled | change record |
 | `RenameHookRankingRector` | 11.3* | `>=11.3.0` | 12.0.0 | observed | change record |
 | `RenameStopProceduralHookScanRector` | 11.2 | `>=11.2.0` | 11.2.0 | observed | core git 308ad151024 |
-| `ReplaceAddCachedDiscoveryMethodCallRector` | 11.1 | config-bound | 11.1.0 | scheduled/observed | change record |
+| `ReplaceAddCachedDiscoveryMethodCallRector` | 11.1 | config-bound | 12.0.0 | scheduled | `core/lib/Drupal/Core/Plugin/CachedDiscoveryClearer.php:36` |
 | `ReplaceAlphadecimalToIntNullRector` | 11.2 | config-bound | 12.0.0 | scheduled | core notice |
 | `ReplaceCommentManagerGetCountNewCommentsRector` | 11.3 | config-bound | 12.0.0 | observed | symbol |
 | `ReplaceCommentPreviewConstantsRector` | 11.3 | config-bound | 13.0.0 | scheduled | core notice |
@@ -452,7 +520,7 @@ which pass produced the removal version.
 | `ReplaceNonBoolAccessRector` | 11.4 | `>=11.4.0` | 13.0.0 | scheduled | core promise |
 | `ReplacePdoFetchConstantsRector` | 11.2 | config-bound | 12.0.0 | scheduled | core promise |
 | `ReplaceRecipeRunnerInstallModuleRector` | 11.4 | config-bound | 13.0.0 | scheduled | change record |
-| `ReplaceSessionManagerDeleteRector` | 11.4 | config-bound | 11.4.0 | scheduled | change record |
+| `ReplaceSessionManagerDeleteRector` | 11.4 | config-bound | 12.0.0 | scheduled | `core/lib/Drupal/Core/Session/SessionManagerInterface.php:18` |
 | `ReplaceSessionWritesWithRequestSessionRector` | 11.2 | config-bound | 12.0.0 | scheduled | core notice |
 | `ReplaceSystemPerformanceGzipKeyRector` | 11.4 | config-bound | 12.0.0 | scheduled | core promise |
 | `ReplaceThemeGetSettingRector` | 11.3 | config-bound | 13.0.0 | scheduled | change record |
