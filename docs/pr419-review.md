@@ -7,6 +7,42 @@ for feedback and explicitly said not to merge yet
 Companion data: [`rector-rule-version-matrix.md`](rector-rule-version-matrix.md)
 — every rule's deprecation and removal version, verified against the code.
 
+## Update 2026-10-01: Drupal 8/9 out of the composer-based set
+
+Resolves "should the Drupal 8 / 9 rules stay?" for this PR and the catch under
+"bounded constraints". The bounding commits (`23e741a5` … `bd25bf7a`) had put
+upper bounds on 71 rule *classes*. Because the constraint filter is global, the
+35 Drupal 8/9 ones went silent even under an explicit `Drupal8SetList` /
+`Drupal9SetList`, the one place they are still useful.
+
+Rather than move those bounds into the set (Rector has no plain-rule
+counterpart of `ruleWithConfigurationComposerVersionBound()`), Drupal 8/9 left
+the composer-based set:
+
+- the 35 Drupal 8/9 rule classes keep their lower bound (`>=8.0.0`, `>=9.1.0`,
+  …, identical to before `673762ac`) but lose the upper bound, so an explicit
+  setlist applies them on any newer core;
+- `config/composer-based.php` drops every Drupal 8/9 registration (23 bound
+  configuration entries plus the plain `rule()` calls). `ShouldCallParentMethodsRector`
+  stays, under a new Drupal 10.0 heading, because `drupal-10.0-deprecations.php`
+  registers it too;
+- `ComposerBasedSetCoverageRule` only holds the Drupal 10+ per-minor configs
+  to the set.
+
+Validated on simulated sites (core 8.9, 9.5, 10.3, 11.2, 11.4, 12.0): the
+`rector composer-based` report differs from the previous revision by exactly
+those 23 Drupal 8/9 rows, with nothing added or changed. Four of them were
+active on 11.x (`GetMockRector`, `FunctionToEntityTypeStorageMethod`,
+`FunctionToFirstArgMethodRector`, the 9.1 `ClassConstantToClassConstantRector`),
+and all four target APIs that are gone from core 11.x or PHPUnit. On core 11.4,
+`Drupal8SetList::DRUPAL_8` rewrites `drupal_set_message()` again, and the
+composer-based set does not.
+
+The Drupal 11 class bounds stay on the classes. They are `<13.0.0` / `<14.0.0`,
+so they filter nothing until Drupal 13. The exception is
+`RenameStopProceduralHookScanRector` at `>=11.2.0 <12.0.0`: the
+"major after removal" convention would give `<13.0.0`.
+
 ## What the PR does
 
 Replaces `DrupalSetProvider` (Rector deprecated `SetProviderInterface` and

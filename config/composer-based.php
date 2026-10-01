@@ -101,57 +101,6 @@ use DrupalRector\Drupal11\Rector\Deprecation\ViewsBlockItemsPerPageNoneToNullRec
 use DrupalRector\Drupal11\Rector\Deprecation\ViewsConfigUpdaterClassResolverToServiceRector;
 use DrupalRector\Drupal11\Rector\Deprecation\ViewsPluginHandlerManagerRector;
 use DrupalRector\Drupal12\Rector\Deprecation\AddSymfonyConstraintValidatorTypeDeclarationsRector;
-use DrupalRector\Drupal8\Rector\Deprecation\DBRector;
-use DrupalRector\Drupal8\Rector\Deprecation\DrupalLRector;
-use DrupalRector\Drupal8\Rector\Deprecation\DrupalServiceRenameRector;
-use DrupalRector\Drupal8\Rector\Deprecation\DrupalSetMessageRector;
-use DrupalRector\Drupal8\Rector\Deprecation\DrupalURLRector;
-use DrupalRector\Drupal8\Rector\Deprecation\EntityCreateRector;
-use DrupalRector\Drupal8\Rector\Deprecation\EntityDeleteMultipleRector;
-use DrupalRector\Drupal8\Rector\Deprecation\EntityInterfaceLinkRector;
-use DrupalRector\Drupal8\Rector\Deprecation\EntityLoadRector;
-use DrupalRector\Drupal8\Rector\Deprecation\EntityManagerRector;
-use DrupalRector\Drupal8\Rector\Deprecation\EntityViewRector;
-use DrupalRector\Drupal8\Rector\Deprecation\FileDefaultSchemeRector;
-use DrupalRector\Drupal8\Rector\Deprecation\FunctionalTestDefaultThemePropertyRector;
-use DrupalRector\Drupal8\Rector\Deprecation\GetMockRector;
-use DrupalRector\Drupal8\Rector\Deprecation\LinkGeneratorTraitLRector;
-use DrupalRector\Drupal8\Rector\Deprecation\RequestTimeConstRector;
-use DrupalRector\Drupal8\Rector\Deprecation\SafeMarkupFormatRector;
-use DrupalRector\Drupal8\Rector\Deprecation\StaticToFunctionRector;
-use DrupalRector\Drupal8\Rector\ValueObject\DBConfiguration;
-use DrupalRector\Drupal8\Rector\ValueObject\DrupalServiceRenameConfiguration;
-use DrupalRector\Drupal8\Rector\ValueObject\EntityLoadConfiguration;
-use DrupalRector\Drupal8\Rector\ValueObject\GetMockConfiguration;
-use DrupalRector\Drupal8\Rector\ValueObject\StaticToFunctionConfiguration;
-use DrupalRector\Drupal9\Rector\Deprecation\AssertFieldByIdRector;
-use DrupalRector\Drupal9\Rector\Deprecation\AssertFieldByNameRector;
-use DrupalRector\Drupal9\Rector\Deprecation\AssertLegacyTraitRector;
-use DrupalRector\Drupal9\Rector\Deprecation\AssertNoFieldByIdRector;
-use DrupalRector\Drupal9\Rector\Deprecation\AssertNoFieldByNameRector;
-use DrupalRector\Drupal9\Rector\Deprecation\AssertNoUniqueTextRector;
-use DrupalRector\Drupal9\Rector\Deprecation\AssertOptionSelectedRector;
-use DrupalRector\Drupal9\Rector\Deprecation\ConstructFieldXpathRector;
-use DrupalRector\Drupal9\Rector\Deprecation\ExtensionPathRector;
-use DrupalRector\Drupal9\Rector\Deprecation\FileBuildUriRector;
-use DrupalRector\Drupal9\Rector\Deprecation\FileCreateUrlRector;
-use DrupalRector\Drupal9\Rector\Deprecation\FileUrlTransformRelativeRector;
-use DrupalRector\Drupal9\Rector\Deprecation\FromUriRector;
-use DrupalRector\Drupal9\Rector\Deprecation\FunctionToEntityTypeStorageMethod;
-use DrupalRector\Drupal9\Rector\Deprecation\GetAllOptionsRector;
-use DrupalRector\Drupal9\Rector\Deprecation\GetRawContentRector;
-use DrupalRector\Drupal9\Rector\Deprecation\ModuleLoadRector;
-use DrupalRector\Drupal9\Rector\Deprecation\PassRector;
-use DrupalRector\Drupal9\Rector\Deprecation\SystemSortByInfoNameRector;
-use DrupalRector\Drupal9\Rector\Deprecation\TaxonomyTermLoadMultipleByNameRector;
-use DrupalRector\Drupal9\Rector\Deprecation\TaxonomyVocabularyGetNamesDrupalStaticResetRector;
-use DrupalRector\Drupal9\Rector\Deprecation\TaxonomyVocabularyGetNamesRector;
-use DrupalRector\Drupal9\Rector\Deprecation\UiHelperTraitDrupalPostFormRector;
-use DrupalRector\Drupal9\Rector\Deprecation\UserPasswordRector;
-use DrupalRector\Drupal9\Rector\Property\ProtectedStaticModulesPropertyRector;
-use DrupalRector\Drupal9\Rector\ValueObject\AssertLegacyTraitConfiguration;
-use DrupalRector\Drupal9\Rector\ValueObject\ExtensionPathConfiguration;
-use DrupalRector\Drupal9\Rector\ValueObject\FunctionToEntityTypeStorageConfiguration;
 use DrupalRector\Rector\Deprecation\ClassConstantToClassConstantRector;
 use DrupalRector\Rector\Deprecation\ConstantToClassConstantRector;
 use DrupalRector\Rector\Deprecation\FunctionCallRemovalRector;
@@ -173,8 +122,6 @@ use DrupalRector\Services\AddCommentService;
 use Rector\Composer\InstalledPackageResolver;
 use Rector\Config\RectorConfig;
 use Rector\Renaming\Rector\Name\RenameClassRector;
-use Rector\Renaming\Rector\StaticCall\RenameStaticMethodRector;
-use Rector\Renaming\ValueObject\RenameStaticMethod;
 
 /**
  * Every drupal-rector rule, bound to the exact `drupal/core` version its
@@ -192,9 +139,16 @@ use Rector\Renaming\ValueObject\RenameStaticMethod;
  * \DrupalRector\PHPStan\Rule\ComposerBasedSetCoverageRule fails the build when a
  * rule of a per-minor config is missing here.
  *
+ * The Drupal 8 and 9 rules are deliberately left out. Every API they rewrite was
+ * removed by Drupal 10 or 11, so they have nothing to fix in a codebase that runs
+ * on a supported core; they are salvage tooling for older code and stay opt-in
+ * through \DrupalRector\Set\Drupal8SetList and \DrupalRector\Set\Drupal9SetList.
+ * Their rule classes keep only the lower bound, the version the deprecation
+ * landed in, so those sets apply them on any core from then on.
+ *
  * Instead of picking set lists by hand, this set lets Rector pick the rules from
  * the installed `drupal/core` version: a site on 11.2 gets the rules bound to
- * `>=8.0.0` through `>=11.2.0` and never a later minor's. Because the installed
+ * `>=10.0.0` through `>=11.2.0` and never a later minor's. Because the installed
  * core is known exactly, the otherwise opt-in "breaking" renames (whose
  * replacement symbol only exists from a given minor onward) are safe to include
  * — they cannot fatal on a core that is guaranteed to have the replacement.
@@ -210,10 +164,12 @@ use Rector\Renaming\ValueObject\RenameStaticMethod;
  * accurate than inferring them from the Drupal minor. Add
  * `symfony: true, phpunit: true` to the call above to get those too.
  *
- * The explicit \DrupalRector\Set\Drupal11SetList sets stay the way to pick rules
- * by hand. Note that the rules bonded through ComposerPackageConstraintInterface
- * are filtered by the installed core there as well — that filter is global, not
- * per set — so those sets no longer fire every rule on an older core.
+ * The explicit \DrupalRector\Set\Drupal10SetList and
+ * \DrupalRector\Set\Drupal11SetList sets stay the way to pick rules by hand. Note
+ * that the rules bonded through ComposerPackageConstraintInterface are filtered
+ * by the installed core there as well — that filter is global, not per set — so
+ * those sets no longer fire every rule on an older core. The Drupal 8 and 9 rule
+ * classes carry no upper bound, so their sets are never filtered on a newer one.
  *
  * @see \DrupalRector\Set\DrupalSetList::COMPOSER_BASED
  */
@@ -228,396 +184,11 @@ return static function (RectorConfig $rectorConfig): void {
         $rectorConfig->import(__DIR__.'/drupal-bootstrap.php');
     }
 
-
     // ---------------------------------------------------------------------
-    // Drupal 8.0
+    // Drupal 10.0
     // ---------------------------------------------------------------------
-
-    $rectorConfig->ruleWithConfigurationComposerVersionBound(DBRector::class, [
-        // https://www.drupal.org/node/2993033
-        new DBConfiguration('db_delete', 2),
-        new DBConfiguration('db_insert', 2),
-        new DBConfiguration('db_query', 3),
-        new DBConfiguration('db_select', 3),
-        new DBConfiguration('db_update', 2),
-    ], 'drupal/core', '>=8.0.0 <10.0.0');
-
-    $rectorConfig->rule(DrupalURLRector::class);
-
-    $rectorConfig->rule(DrupalLRector::class);
-
-    $rectorConfig->rule(EntityCreateRector::class);
-
-    $rectorConfig->rule(EntityDeleteMultipleRector::class);
-
-    $rectorConfig->ruleWithConfigurationComposerVersionBound(FunctionToServiceRector::class, [
-        // https://www.drupal.org/node/2418133
-        new FunctionToServiceConfiguration('8.0.0', 'drupal_realpath', 'file_system', 'realpath'),
-        // https://www.drupal.org/node/2912696
-        new FunctionToServiceConfiguration('8.0.0', 'drupal_render', 'renderer', 'render'),
-        // https://www.drupal.org/node/2912696
-        new FunctionToServiceConfiguration('8.0.0', 'drupal_render_root', 'renderer', 'renderRoot'),
-        // https://www.drupal.org/node/1876852
-        new FunctionToServiceConfiguration('8.0.0', 'format_date', 'date.formatter', 'format'),
-    ], 'drupal/core', '>=8.0.0 <10.0.0');
-
-    $rectorConfig->rule(EntityInterfaceLinkRector::class);
-
-    $rectorConfig->ruleWithConfigurationComposerVersionBound(MethodToMethodWithCheckRector::class, [
-        // https://www.drupal.org/node/2614344
-        new MethodToMethodWithCheckConfiguration('Drupal\Core\Entity\EntityInterface', 'urlInfo', 'toUrl', '8.0.0'),
-    ], 'drupal/core', '>=8.0.0 <10.0.0');
-
-    $rectorConfig->ruleWithConfigurationComposerVersionBound(EntityLoadRector::class, [
-        new EntityLoadConfiguration('entity'),
-        new EntityLoadConfiguration('file'),
-        new EntityLoadConfiguration('node'),
-        new EntityLoadConfiguration('user'),
-    ], 'drupal/core', '>=8.0.0 <10.0.0');
-
-    $rectorConfig->rule(EntityViewRector::class);
-
-    $rectorConfig->rule(EntityManagerRector::class);
-
-    $rectorConfig->rule(LinkGeneratorTraitLRector::class);
-
-    $rectorConfig->rule(SafeMarkupFormatRector::class);
-
-    // ---------------------------------------------------------------------
-    // Drupal 8.2
-    // ---------------------------------------------------------------------
-
-    // https://www.drupal.org/node/2418133
-    $rectorConfig->ruleWithConfigurationComposerVersionBound(FunctionToStaticRector::class, [
-        new FunctionToStaticConfiguration(
-            '8.2.0',
-            'file_directory_os_temp',
-            'Drupal\Component\FileSystem\FileSystem',
-            'getOsTemporaryDirectory'
-        ),
-    ], 'drupal/core', '>=8.2.0 <10.0.0');
-
-    // ---------------------------------------------------------------------
-    // Drupal 8.3
-    // ---------------------------------------------------------------------
-
-    $rectorConfig->rule(RequestTimeConstRector::class);
-
-    // ---------------------------------------------------------------------
-    // Drupal 8.4
-    // ---------------------------------------------------------------------
-
-    // https://www.drupal.org/node/2907725
-    $rectorConfig->ruleWithConfigurationComposerVersionBound(GetMockRector::class, [
-        new GetMockConfiguration('Drupal\Tests\BrowserTestBase'),
-        new GetMockConfiguration('Drupal\KernelTests\KernelTestBase'),
-        new GetMockConfiguration('Drupal\Tests\UnitTestCase'),
-    ], 'drupal/core', '>=8.4.0');
-
-    // ---------------------------------------------------------------------
-    // Drupal 8.5
-    // ---------------------------------------------------------------------
-
-    $rectorConfig->rule(DrupalSetMessageRector::class);
-
-    /*
-     * Replaces deprecated DATETIME_DATE_STORAGE_FORMAT, DATETIME_DATETIME_STORAGE_FORMAT, DATETIME_STORAGE_TIMEZONE constant use.
-     *
-     * See https://www.drupal.org/node/2912980 for change record.
-     */
-    $rectorConfig->ruleWithConfigurationComposerVersionBound(ConstantToClassConstantRector::class, [
-        new ConstantToClassConfiguration('DATETIME_DATE_STORAGE_FORMAT', 'Drupal\datetime\Plugin\Field\FieldType\DateTimeItemInterface', 'DATE_STORAGE_FORMAT', '8.5.0'),
-        new ConstantToClassConfiguration('DATETIME_DATETIME_STORAGE_FORMAT', 'Drupal\datetime\Plugin\Field\FieldType\DateTimeItemInterface', 'DATETIME_STORAGE_FORMAT', '8.5.0'),
-        new ConstantToClassConfiguration('DATETIME_STORAGE_TIMEZONE', 'Drupal\datetime\Plugin\Field\FieldType\DateTimeItemInterface', 'STORAGE_TIMEZONE', '8.5.0'),
-    ], 'drupal/core', '>=8.5.0 <10.0.0');
-
-    // ---------------------------------------------------------------------
-    // Drupal 8.6
-    // ---------------------------------------------------------------------
-
-    $rectorConfig->ruleWithConfigurationComposerVersionBound(StaticToFunctionRector::class, [
-        // https://www.drupal.org/node/2850048
-        new StaticToFunctionConfiguration('Drupal\Component\Utility\Unicode', 'strlen', 'mb_strlen'),
-        // https://www.drupal.org/node/2850048
-        new StaticToFunctionConfiguration('Drupal\Component\Utility\Unicode', 'strtolower', 'mb_strtolower'),
-        // https://www.drupal.org/node/2850048
-        new StaticToFunctionConfiguration('Drupal\Component\Utility\Unicode', 'substr', 'mb_substr'),
-    ], 'drupal/core', '>=8.6.0 <10.0.0');
-
-    // ---------------------------------------------------------------------
-    // Drupal 8.7
-    // ---------------------------------------------------------------------
-
-    $rectorConfig->ruleWithConfigurationComposerVersionBound(FunctionToServiceRector::class, [
-        // https://www.drupal.org/node/3006851
-        new FunctionToServiceConfiguration('8.7.0', 'file_prepare_directory', 'file_system', 'prepareDirectory'),
-        // https://www.drupal.org/node/3006851
-        new FunctionToServiceConfiguration('8.7.0', 'file_unmanaged_save_data', 'file_system', 'saveData'),
-    ], 'drupal/core', '>=8.7.0 <10.0.0');
-
-    /**
-     * Replaces deprecated FILE_CREATE_DIRECTORY constant use.
-     *
-     * No change record found.
-     */
-    $constantToClassFileCreateDirectory = new ConstantToClassConfiguration('FILE_CREATE_DIRECTORY', 'Drupal\Core\File\FileSystemInterface', 'CREATE_DIRECTORY', '8.7.0');
-
-    /**
-     * Replaces deprecated FILE_EXISTS_REPLACE, FILE_EXISTS_RENAME constant use.
-     *
-     * See https://www.drupal.org/node/3006851 for change record.
-     */
-    $constantToClassFileExistReplace = new ConstantToClassConfiguration('FILE_EXISTS_REPLACE', 'Drupal\Core\File\FileSystemInterface', 'EXISTS_REPLACE', '8.7.0');
-
-    $constantToClassFileExistsRename = new ConstantToClassConfiguration('FILE_EXISTS_RENAME', 'Drupal\Core\File\FileSystemInterface', 'EXISTS_RENAME', '8.7.0');
-
-    /**
-     * Replaces deprecated FILE_MODIFY_PERMISSIONS constant use.
-     *
-     * No change record found.
-     */
-    $constantToClassFileModifyPermissions = new ConstantToClassConfiguration('FILE_MODIFY_PERMISSIONS', 'Drupal\Core\File\FileSystemInterface', 'MODIFY_PERMISSIONS', '8.7.0');
-
-    $rectorConfig->ruleWithConfigurationComposerVersionBound(ConstantToClassConstantRector::class, [
-        $constantToClassFileCreateDirectory,
-        $constantToClassFileExistReplace,
-        $constantToClassFileExistsRename,
-        $constantToClassFileModifyPermissions,
-    ], 'drupal/core', '>=8.7.0 <10.0.0');
-
-    // ---------------------------------------------------------------------
-    // Drupal 8.8
-    // ---------------------------------------------------------------------
-
-    $rectorConfig->ruleWithConfigurationComposerVersionBound(DrupalServiceRenameRector::class, [
-        new DrupalServiceRenameConfiguration('path.alias_repository', 'path_alias.repository'),
-        new DrupalServiceRenameConfiguration('path.alias_whitelist', 'path_alias.whitelist'),
-        new DrupalServiceRenameConfiguration('path_processor_alias', 'path_alias.path_processor'),
-        new DrupalServiceRenameConfiguration('path_subscriber', 'path_alias.subscriber'),
-        new DrupalServiceRenameConfiguration('path.alias_manager', 'path_alias.manager'),
-    ], 'drupal/core', '>=8.8.0 <10.0.0');
-
-    $rectorConfig->rule(FileDefaultSchemeRector::class);
-
-    $rectorConfig->ruleWithConfigurationComposerVersionBound(FunctionToServiceRector::class,
-        [
-            // https://www.drupal.org/node/2835616
-            new FunctionToServiceConfiguration('8.8.0', 'entity_get_display', 'entity_display.repository', 'getViewDisplay'),
-            // https://www.drupal.org/node/2835616
-            new FunctionToServiceConfiguration('8.8.0', 'entity_get_form_display', 'entity_display.repository', 'getFormDisplay'),
-            // https://www.drupal.org/node/3039255
-            new FunctionToServiceConfiguration('8.8.0', 'file_directory_temp', 'file_system', 'getTempDirectory'),
-            // https://www.drupal.org/node/3038437
-            new FunctionToServiceConfiguration('8.8.0', 'file_scan_directory', 'file_system', 'scanDirectory'),
-            // https://www.drupal.org/node/3035273
-            new FunctionToServiceConfiguration('8.8.0', 'file_uri_target', 'stream_wrapper_manager', 'getTarget'),
-        ], 'drupal/core', '>=8.8.0 <10.0.0');
-
-    $rectorConfig->ruleWithConfigurationComposerVersionBound(MethodToMethodWithCheckRector::class, [
-        // https://www.drupal.org/node/3075567
-        new MethodToMethodWithCheckConfiguration('Drupal\Core\Entity\EntityTypeInterface', 'getLowercaseLabel', 'getSingularLabel', '8.8.0'),
-    ], 'drupal/core', '>=8.8.0 <10.0.0');
-
-    // https://www.drupal.org/node/3083055
-    $rectorConfig->rule(FunctionalTestDefaultThemePropertyRector::class);
-
-    // ---------------------------------------------------------------------
-    // Drupal 9.0
-    // ---------------------------------------------------------------------
-
-    $rectorConfig->rule(ProtectedStaticModulesPropertyRector::class);
 
     $rectorConfig->rule(ShouldCallParentMethodsRector::class);
-
-    // ---------------------------------------------------------------------
-    // Drupal 9.1
-    // ---------------------------------------------------------------------
-
-    $rectorConfig->rule(UiHelperTraitDrupalPostFormRector::class);
-
-    $rectorConfig->rule(PassRector::class);
-
-    $rectorConfig->rule(AssertNoUniqueTextRector::class);
-
-    $rectorConfig->rule(AssertFieldByNameRector::class);
-
-    $rectorConfig->rule(AssertNoFieldByNameRector::class);
-
-    $rectorConfig->rule(AssertFieldByIdRector::class);
-
-    $rectorConfig->ruleWithConfigurationComposerVersionBound(AssertLegacyTraitRector::class, [
-        new AssertLegacyTraitConfiguration('assertLinkByHref', 'linkByHrefExists'),
-        new AssertLegacyTraitConfiguration('assertLink', 'linkExists'),
-        new AssertLegacyTraitConfiguration('assertNoEscaped', 'assertNoEscaped'),
-        new AssertLegacyTraitConfiguration('assertNoFieldChecked', 'checkboxNotChecked'),
-        new AssertLegacyTraitConfiguration('assertNoLinkByHref', 'linkByHrefNotExists'),
-        new AssertLegacyTraitConfiguration('assertNoLink', 'linkNotExists'),
-        new AssertLegacyTraitConfiguration('assertNoOption', 'optionNotExists'),
-        new AssertLegacyTraitConfiguration('assertNoPattern', 'responseNotMatches'),
-        new AssertLegacyTraitConfiguration('assertPattern', 'responseMatches'),
-        new AssertLegacyTraitConfiguration('assertElementNotPresent', 'elementNotExists'),
-        new AssertLegacyTraitConfiguration('assertElementPresent', 'elementExists'),
-        new AssertLegacyTraitConfiguration('assertFieldChecked', 'checkboxChecked'),
-        new AssertLegacyTraitConfiguration('assertHeader', 'responseHeaderEquals'),
-        new AssertLegacyTraitConfiguration('assertOptionByText', 'optionExists'),
-        new AssertLegacyTraitConfiguration('assertOption', 'optionExists'),
-        new AssertLegacyTraitConfiguration('assertResponse', 'statusCodeEquals'),
-        new AssertLegacyTraitConfiguration('assertTitle', 'titleEquals'),
-        new AssertLegacyTraitConfiguration('assertUniqueText', 'pageTextContainsOnce'),
-        new AssertLegacyTraitConfiguration('assertUrl', 'addressEquals'),
-        new AssertLegacyTraitConfiguration('buildXPathQuery', 'buildXPathQuery'),
-        new AssertLegacyTraitConfiguration('assertEscaped', 'assertEscaped'),
-        new AssertLegacyTraitConfiguration('assertNoEscaped', 'assertNoEscaped'),
-
-        new AssertLegacyTraitConfiguration('assertField', 'fieldExists', 'Change assertion to buttonExists() if checking for a button.'),
-        new AssertLegacyTraitConfiguration('assertNoField', 'fieldNotExists', 'Change assertion to buttonExists() if checking for a button.'),
-
-        new AssertLegacyTraitConfiguration('assertNoRaw', 'responseNotContains', '', true, true),
-        new AssertLegacyTraitConfiguration('assertRaw', 'responseContains', '', true, true),
-
-        new AssertLegacyTraitConfiguration('assertNoText', 'pageTextNotContains', 'Verify the assertion: pageTextNotContains() for HTML responses, responseNotContains() for non-HTML responses.'.PHP_EOL.'// The passed text should be HTML decoded, exactly as a human sees it in the browser.', true, true),
-        new AssertLegacyTraitConfiguration('assertText', 'pageTextContains', 'Verify the assertion: pageTextContains() for HTML responses, responseContains() for non-HTML responses.'.PHP_EOL.'// The passed text should be HTML decoded, exactly as a human sees it in the browser.', true, true),
-
-        new AssertLegacyTraitConfiguration('assertEqual', 'assertEquals', '', false, false, 'Drupal\KernelTests\AssertLegacyTrait'),
-        new AssertLegacyTraitConfiguration('assertNotEqual', 'assertNotEquals', '', false, false, 'Drupal\KernelTests\AssertLegacyTrait'),
-        new AssertLegacyTraitConfiguration('assertIdenticalObject', 'assertEquals', '', false, false, 'Drupal\KernelTests\AssertLegacyTrait'),
-        new AssertLegacyTraitConfiguration('assertIdentical', 'assertSame', '', false, false, 'Drupal\KernelTests\AssertLegacyTrait'),
-        new AssertLegacyTraitConfiguration('assertNotIdentical', 'assertNotSame', '', false, false, 'Drupal\KernelTests\AssertLegacyTrait'),
-        new AssertLegacyTraitConfiguration('assert', 'assertTrue', '', false, false, 'Drupal\KernelTests\AssertLegacyTrait'),
-
-        new AssertLegacyTraitConfiguration('assertNoCacheTag', 'responseHeaderNotContains', '', true, false, 'Drupal\FunctionalTests\AssertLegacyTrait', 'X-Drupal-Cache-Tags'),
-        new AssertLegacyTraitConfiguration('assertCacheTag', 'responseHeaderContains', '', true, false, 'Drupal\FunctionalTests\AssertLegacyTrait', 'X-Drupal-Cache-Tags'),
-    ], 'drupal/core', '>=9.1.0 <11.0.0');
-
-    $rectorConfig->rule(AssertNoFieldByIdRector::class);
-
-    $rectorConfig->rule(AssertOptionSelectedRector::class);
-
-    $rectorConfig->rule(ConstructFieldXpathRector::class);
-
-    $rectorConfig->rule(GetRawContentRector::class);
-
-    $rectorConfig->rule(GetAllOptionsRector::class);
-
-    $rectorConfig->rule(UserPasswordRector::class);
-
-    // Change record: https://www.drupal.org/node/3162663
-    $rectorConfig->ruleWithConfigurationComposerVersionBound(RenameStaticMethodRector::class, [
-        new RenameStaticMethod(
-            'Drupal\Component\Utility\Bytes',
-            'toInt',
-            'Drupal\Component\Utility\Bytes',
-            'toNumber'
-        ),
-    ], 'drupal/core', '>=9.1.0 <11.0.0');
-
-    // Change record: https://www.drupal.org/node/3151009 (only constants are supported)
-    $rectorConfig->ruleWithConfigurationComposerVersionBound(ClassConstantToClassConstantRector::class, [
-        new ClassConstantToClassConstantConfiguration(
-            'Symfony\Cmf\Component\Routing\RouteObjectInterface',
-            'ROUTE_NAME',
-            'Drupal\Core\Routing\RouteObjectInterface',
-            'ROUTE_NAME',
-            '9.1.0',
-        ),
-        new ClassConstantToClassConstantConfiguration(
-            'Symfony\Cmf\Component\Routing\RouteObjectInterface',
-            'ROUTE_OBJECT',
-            'Drupal\Core\Routing\RouteObjectInterface',
-            'ROUTE_OBJECT',
-            '9.1.0',
-        ),
-        new ClassConstantToClassConstantConfiguration(
-            'Symfony\Cmf\Component\Routing\RouteObjectInterface',
-            'CONTROLLER_NAME',
-            'Drupal\Core\Routing\RouteObjectInterface',
-            'CONTROLLER_NAME',
-            '9.1.0',
-        ),
-    ], 'drupal/core', '>=9.1.0');
-
-    // ---------------------------------------------------------------------
-    // Drupal 9.2
-    // ---------------------------------------------------------------------
-
-    $rectorConfig->ruleWithConfigurationComposerVersionBound(MethodToMethodWithCheckRector::class, [
-        // https://www.drupal.org/node/3187914
-        new MethodToMethodWithCheckConfiguration('Drupal\Core\Session\MetadataBag', 'clearCsrfTokenSeed', 'stampNew', '9.2.0'),
-    ], 'drupal/core', '>=9.2.0 <11.0.0');
-
-    // ---------------------------------------------------------------------
-    // Drupal 9.3
-    // ---------------------------------------------------------------------
-
-    // Change record: https://www.drupal.org/node/2940438.
-    $rectorConfig->ruleWithConfigurationComposerVersionBound(ExtensionPathRector::class, [
-        new ExtensionPathConfiguration('drupal_get_filename', 'getPathname'),
-        new ExtensionPathConfiguration('drupal_get_path', 'getPath'),
-    ], 'drupal/core', '>=9.3.0 <11.0.0');
-
-    // Change record: https://www.drupal.org/node/2940031
-    $rectorConfig->rule(FileCreateUrlRector::class);
-
-    $rectorConfig->rule(FileUrlTransformRelativeRector::class);
-
-    $rectorConfig->rule(FromUriRector::class);
-
-    // Change record: https://www.drupal.org/node/3223520
-    $rectorConfig->ruleWithConfigurationComposerVersionBound(FunctionToServiceRector::class, [
-        new FunctionToServiceConfiguration('9.3.0', 'file_copy', 'file.repository', 'copy'),
-        new FunctionToServiceConfiguration('9.3.0', 'file_move', 'file.repository', 'move'),
-        new FunctionToServiceConfiguration('9.3.0', 'file_save_data', 'file.repository', 'writeData'),
-        // Change record: https://www.drupal.org/node/2939099
-        new FunctionToServiceConfiguration('9.3.0', 'render', 'renderer', 'render'),
-    ], 'drupal/core', '>=9.3.0 <11.0.0');
-
-    // Change record: https://www.drupal.org/node/3223091.
-    $rectorConfig->rule(FileBuildUriRector::class);
-
-    // Change record: https://www.drupal.org/node/3225999
-    $rectorConfig->rule(SystemSortByInfoNameRector::class);
-
-    // Change rector: https://www.drupal.org/node/3039041
-    // Missing: $url = $term->toUrl(); AND $name = taxonomy_term_title($term); AND taxonomy_implode_tags();
-    $rectorConfig->ruleWithConfigurationComposerVersionBound(FunctionToEntityTypeStorageMethod::class, [
-        new FunctionToEntityTypeStorageConfiguration('taxonomy_terms_static_reset', 'taxonomy_term', 'resetCache'),
-        new FunctionToEntityTypeStorageConfiguration('taxonomy_vocabulary_static_reset', 'taxonomy_vocabulary', 'resetCache'),
-    ], 'drupal/core', '>=9.3.0');
-
-    $rectorConfig->rule(TaxonomyVocabularyGetNamesRector::class);
-
-    $rectorConfig->rule(TaxonomyTermLoadMultipleByNameRector::class);
-
-    $rectorConfig->rule(TaxonomyVocabularyGetNamesDrupalStaticResetRector::class);
-
-    $rectorConfig->ruleWithConfigurationComposerVersionBound(FunctionToStaticRector::class, [
-        new FunctionToStaticConfiguration('9.3.0', 'taxonomy_implode_tags', 'Drupal\Core\Entity\Element\EntityAutocomplete', 'getEntityLabels'),
-    ], 'drupal/core', '>=9.3.0 <11.0.0');
-
-    $rectorConfig->ruleWithConfigurationComposerVersionBound(\DrupalRector\Drupal9\Rector\Deprecation\FunctionToFirstArgMethodRector::class, [
-        new \DrupalRector\Drupal9\Rector\ValueObject\FunctionToFirstArgMethodConfiguration('taxonomy_term_uri', 'toUrl'),
-        new \DrupalRector\Drupal9\Rector\ValueObject\FunctionToFirstArgMethodConfiguration('taxonomy_term_title', 'label'),
-    ], 'drupal/core', '>=9.3.0');
-
-    // Change record: https://www.drupal.org/node/3022147
-    $rectorConfig->ruleWithConfigurationComposerVersionBound(ConstantToClassConstantRector::class, [
-        new ConstantToClassConfiguration(
-            'FILE_STATUS_PERMANENT',
-            'Drupal\file\FileInterface',
-            'STATUS_PERMANENT',
-            '9.3.0',
-        ),
-    ], 'drupal/core', '>=9.3.0 <11.0.0');
-
-    // ---------------------------------------------------------------------
-    // Drupal 9.4
-    // ---------------------------------------------------------------------
-
-    // Change record https://www.drupal.org/node/3220952
-    $rectorConfig->rule(ModuleLoadRector::class);
-
-    // Drupal 10.0 registers ShouldCallParentMethodsRector too; the rule is bonded
-    // to the lower of the two versions, >=9.0.0, so it is registered once above.
 
     // ---------------------------------------------------------------------
     // Drupal 10.1

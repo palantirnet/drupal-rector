@@ -40,6 +40,21 @@ final class ComposerBasedSetCoverageRuleTest extends RuleTestCase
     }
 
     /**
+     * The Drupal 8 and 9 rules are left out of the composer-based set on purpose,
+     * so their per-minor configs must not be held to it.
+     */
+    public function testSkipsDrupal8And9Configs(): void
+    {
+        $this->analyse(
+            [
+                __DIR__.'/Fixture/Coverage/Set/composer-based.php',
+                __DIR__.'/Fixture/Coverage/PerMinor/drupal-9.3-deprecations.php',
+            ],
+            []
+        );
+    }
+
+    /**
      * @return \PHPStan\Collectors\Collector[]
      */
     protected function getCollectors(): array

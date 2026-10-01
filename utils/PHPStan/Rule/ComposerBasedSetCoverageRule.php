@@ -17,6 +17,9 @@ use PHPStan\Rules\RuleErrorBuilder;
  * to a per-minor config and forgotten here would silently never be picked up by
  * composer-based selection.
  *
+ * The Drupal 8 and 9 configs are not checked: their rules are left out of the
+ * composer-based set on purpose and stay opt-in through their own set lists.
+ *
  * @implements Rule<CollectedDataNode>
  *
  * @see \DrupalRector\Tests\PHPStan\Rule\ComposerBasedSetCoverageRuleTest
@@ -24,9 +27,12 @@ use PHPStan\Rules\RuleErrorBuilder;
 final class ComposerBasedSetCoverageRule implements Rule
 {
     /**
+     * Matches the per-minor configs of Drupal 10 and later; a two-digit major
+     * keeps the Drupal 8 and 9 configs out.
+     *
      * @var string
      */
-    private const PER_MINOR_CONFIG_FILE_NAME_REGEX = '#^drupal-\d+\.\d+-(deprecations|breaking)\.php$#';
+    private const PER_MINOR_CONFIG_FILE_NAME_REGEX = '#^drupal-[1-9]\d+\.\d+-(deprecations|breaking)\.php$#';
 
     public function getNodeType(): string
     {

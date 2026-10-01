@@ -126,11 +126,11 @@ return RectorConfig::configure()
     ->withComposerBased(drupal: true);
 ```
 
-`DrupalSetList::COMPOSER_BASED` registers every drupal-rector rule at once, each
-one bound to the exact `drupal/core` version its deprecation was introduced in —
-`>=11.3.0`, `>=10.2.0`, and so on. Rector activates only the rules whose
-constraint the installed core satisfies, so a site on 11.2 gets the `>=8.0.0` …
-`>=11.2.0` rules and never a later minor's. Because the installed version is
+`DrupalSetList::COMPOSER_BASED` registers every Drupal 10 and later rule at
+once, each one bound to the exact `drupal/core` version its deprecation was
+introduced in — `>=11.3.0`, `>=10.2.0`, and so on. Rector activates only the
+rules whose constraint the installed core satisfies, so a site on 11.2 gets the
+`>=10.0.0` … `>=11.2.0` rules and never a later minor's. Because the installed version is
 known exactly, the otherwise opt-in *breaking* renames (whose replacement only
 exists from a given minor onward) are included — they cannot fatal on a core
 that is guaranteed to have the replacement.
@@ -146,6 +146,12 @@ A rule that takes no configuration states its version on the rule class instead,
 through Rector's `ComposerPackageConstraintInterface`, so it is skipped on a core
 below it too. That filter is global, not per set: those rules stay off on an
 older core even when you load a `Drupal11SetList` set by hand.
+
+The Drupal 8 and 9 rules are not part of this set. Every API they rewrite was
+removed by Drupal 10 or 11, so on a supported core they have nothing left to
+fix. They stay available for older code through `Drupal8SetList` and
+`Drupal9SetList`. Their rule classes keep only the lower bound, the version the
+deprecation landed in, so those sets apply them on any core from then on.
 
 This is the backward-compatibility-safe counterpart to listing sets manually:
 it fixes what is deprecated on *your* installed core.
