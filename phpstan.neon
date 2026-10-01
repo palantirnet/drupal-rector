@@ -8,5 +8,22 @@ parameters:
 	    - vendor/rector/rector/vendor/autoload.php
 	dynamicConstantNames:
 		- Drupal::VERSION
+services:
+	-
+		class: DrupalRector\PHPStan\Rule\BoundRuleConfigurationRule
+		tags: [phpstan.rules.rule]
+	-
+		class: DrupalRector\PHPStan\Rule\PlainlyRegisteredRuleRule
+		tags: [phpstan.rules.rule]
+	-
+		class: DrupalRector\PHPStan\Rule\ComposerPackageConstraintRule
+		tags: [phpstan.rules.rule]
+	-
+		class: DrupalRector\PHPStan\Rule\ComposerBasedSetCoverageRule
+		tags: [phpstan.rules.rule]
+	-
+		class: DrupalRector\PHPStan\Collector\RegisteredRectorClassCollector
+		tags: [phpstan.collector]
+
 includes:
 	- phpstan-baseline.neon

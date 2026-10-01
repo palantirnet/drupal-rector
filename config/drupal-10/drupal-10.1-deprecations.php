@@ -11,13 +11,8 @@ use Rector\Config\RectorConfig;
 use Rector\PHPUnit\PHPUnit100\Rector\Class_\PublicDataProviderClassMethodRector;
 use Rector\PHPUnit\PHPUnit100\Rector\Class_\StaticDataProviderClassMethodRector;
 use Rector\PHPUnit\PHPUnit100\Rector\MethodCall\RemoveSetMethodsMethodCallRector;
-use Rector\Symfony\Set\SymfonySetList;
 
 return static function (RectorConfig $rectorConfig): void {
-    $rectorConfig->sets([
-        SymfonySetList::SYMFONY_63,
-    ]);
-
     // PHPUnit 10.0 rules
     $rectorConfig->rules([
         PublicDataProviderClassMethodRector::class,
