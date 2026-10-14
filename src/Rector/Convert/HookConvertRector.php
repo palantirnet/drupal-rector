@@ -42,6 +42,12 @@ class HookConvertRector extends AbstractRector implements DocumentedRuleInterfac
 
     protected string $moduleDir = '';
 
+    /**
+     * This skips the legacy hook and services.yml from being created.
+     *
+     * This is true if the rule is called with the --skip-legacy option or if
+     * a theme or core extension are being converted.
+     */
     protected bool $skipLegacy = FALSE;
 
     /**
