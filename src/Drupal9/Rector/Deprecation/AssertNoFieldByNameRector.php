@@ -104,7 +104,7 @@ CODE_AFTER
      */
     protected function createAssertSessionMethodCall(string $method, array $args): Node\Expr\MethodCall
     {
-        $assertSessionNode = $this->nodeFactory->createLocalMethodCall('assertSession');
+        $assertSessionNode = $this->nodeFactory->createMethodCall('this', 'assertSession');
 
         return $this->nodeFactory->createMethodCall($assertSessionNode, $method, $args);
     }

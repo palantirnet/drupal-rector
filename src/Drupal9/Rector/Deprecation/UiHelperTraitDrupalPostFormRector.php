@@ -89,17 +89,17 @@ CODE_AFTER
             [$path, $edit, $button, $options, $htmlId] = $this->safeArgDestructure($node->expr);
 
             if ($htmlId === null) {
-                $submitFormNode = $this->nodeFactory->createLocalMethodCall('submitForm', [$edit, $button]);
+                $submitFormNode = $this->nodeFactory->createMethodCall('this', 'submitForm', [$edit, $button]);
             } else {
-                $submitFormNode = $this->nodeFactory->createLocalMethodCall('submitForm', [$edit, $button, $htmlId]);
+                $submitFormNode = $this->nodeFactory->createMethodCall('this', 'submitForm', [$edit, $button, $htmlId]);
             }
 
             $pathValue = $path->value;
             if (!$pathValue instanceof Node\Expr\ConstFetch || strtolower((string) $pathValue->name) !== 'null') {
                 if ($options === null) {
-                    $drupalGetNode = $this->nodeFactory->createLocalMethodCall('drupalGet', [$path]);
+                    $drupalGetNode = $this->nodeFactory->createMethodCall('this', 'drupalGet', [$path]);
                 } else {
-                    $drupalGetNode = $this->nodeFactory->createLocalMethodCall('drupalGet', [$path, $options]);
+                    $drupalGetNode = $this->nodeFactory->createMethodCall('this', 'drupalGet', [$path, $options]);
                 }
                 $nodes[] = new Node\Stmt\Expression($drupalGetNode);
             }

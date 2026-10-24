@@ -9,11 +9,11 @@ use Rector\Config\RectorConfig;
  * Composer-based selection defaults: PHPUnit bootstrap + settings.
  *
  * Standalone set used by composer-based selection (see
- * \DrupalRector\Set\DrupalSetProvider). The per-minor deprecation configs do
- * not register the bootstrap themselves — only the aggregated
+ * \DrupalRector\Set\ComposerBasedSetResolver). The per-minor deprecation configs
+ * do not register the bootstrap themselves — only the aggregated
  * `drupal-{10,11}-all-deprecations.php` sets do. Composer-based selection loads
- * the per-minor configs directly, so this set is matched once per Drupal major
- * (drupal/core ^10.0 and ^11.0) to guarantee the defaults below are present.
+ * the per-minor configs directly, so this set is added once for any supported
+ * Drupal major to guarantee the defaults below are present.
  *
  * Kept separate from the deprecation configs on purpose: the bootstrap file
  * throws when it cannot detect a Drupal installation, and composer-based sets

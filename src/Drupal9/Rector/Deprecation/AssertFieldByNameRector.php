@@ -48,7 +48,7 @@ CODE_AFTER
         if (count($args) === 3) {
             array_pop($args);
         }
-        $assertSessionNode = $this->nodeFactory->createLocalMethodCall('assertSession');
+        $assertSessionNode = $this->nodeFactory->createMethodCall('this', 'assertSession');
 
         // If we have one argument, change to fieldExists and return early.
         if (count($args) === 1) {

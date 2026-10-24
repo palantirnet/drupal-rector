@@ -46,7 +46,7 @@ CODE_AFTER
             return null;
         }
         $args = $node->args;
-        $getSessionNode = $this->nodeFactory->createLocalMethodCall('getSession');
+        $getSessionNode = $this->nodeFactory->createMethodCall('this', 'getSession');
         $getPageNode = $this->nodeFactory->createMethodCall($getSessionNode, 'getPage');
 
         return $this->nodeFactory->createMethodCall($getPageNode, 'findField', [$args[1]]);

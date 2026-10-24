@@ -12,6 +12,18 @@ release-by-release.
 
 ## [Unreleased]
 
+### Added
+
+- **`DrupalSetList::COMPOSER_BASED`** — a single composer-based set that loads the Drupal deprecation and breaking sets matching the installed `drupal/core` version, plus `config/drupal-bootstrap.php`. Load it with `withSets([DrupalSetList::COMPOSER_BASED])`, or with `withComposerBased(drupal: true)` on Rector releases that support it.
+
+### Removed
+
+- **`DrupalSetProvider`** — Rector removed `SetProviderInterface` and `ComposerTriggeredSet` ([rectorphp/rector-src#8807](https://github.com/rectorphp/rector-src/pull/8807)), so `withSetProviders(DrupalSetProvider::class)` is replaced by `DrupalSetList::COMPOSER_BASED`, which selects the same sets.
+
+### Fixed
+
+- **Compatibility with Rector dev-main** — the Drupal 9 test-assertion rectors no longer call `NodeFactory::createLocalMethodCall()`, removed in [rectorphp/rector-src#8794](https://github.com/rectorphp/rector-src/pull/8794).
+
 ## [1.1.3] — 2026-09-03
 
 ### Changed

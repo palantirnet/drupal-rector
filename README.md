@@ -105,15 +105,19 @@ This is more granular than the `Drupal10SetList::DRUPAL_10` set. Since Drupal 10
 
 ### Composer-based sets (automatic version selection)
 
-> [!WARNING]
-> This feature depends on an unreleased Rector version. Only usable right now using `composer require --dev rector/rector:"dev-main as 2.4.6"`
-
 Instead of listing sets by hand, you can let Rector pick them from the installed
-`drupal/core` version. Register the set provider and enable the `drupal` group:
+`drupal/core` version with the composer-based set:
 
 ```php
 return RectorConfig::configure()
-    ->withSetProviders(\DrupalRector\Set\DrupalSetProvider::class)
+    ->withSets([\DrupalRector\Set\DrupalSetList::COMPOSER_BASED]);
+```
+
+On a Rector release whose `withComposerBased()` supports Drupal, the same set
+is loaded with:
+
+```php
+return RectorConfig::configure()
     ->withComposerBased(drupal: true);
 ```
 
@@ -129,10 +133,6 @@ This is the backward-compatibility-safe counterpart to listing sets manually:
 it fixes what is deprecated on *your* installed core. To look ahead and prepare
 for the next major before upgrading, keep using the explicit `Drupal11SetList`
 sets with `setDrupalVersion()` as described above.
-
-> **Requires** a Rector release that ships `SetGroup::DRUPAL` and the
-> `withComposerBased(drupal: ...)` toggle (see
-> [rectorphp/rector#9778](https://github.com/rectorphp/rector/issues/9778)).
 
 ### DrupalRectorSettings
 

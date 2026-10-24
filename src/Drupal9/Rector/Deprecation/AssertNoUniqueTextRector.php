@@ -61,7 +61,7 @@ CODE_AFTER
 
         /** @var Node\Stmt[] $nodes */
         $nodes = [];
-        $getSessionNode = $this->nodeFactory->createLocalMethodCall('getSession');
+        $getSessionNode = $this->nodeFactory->createMethodCall('this', 'getSession');
         $getPageNode = $this->nodeFactory->createMethodCall($getSessionNode, 'getPage');
         $getTextNode = $this->nodeFactory->createMethodCall($getPageNode, 'getText');
         $pageTextVar = new Node\Expr\Variable('page_text');
@@ -85,7 +85,8 @@ CODE_AFTER
             throw new \RuntimeException(__CLASS__.' cannot handle argument of type '.get_class($assertedText));
         }
 
-        $methodCall = $this->nodeFactory->createLocalMethodCall(
+        $methodCall = $this->nodeFactory->createMethodCall(
+            'this',
             'assertGreaterThan',
             [
                 new Node\Arg(new Node\Scalar\LNumber(1)),
