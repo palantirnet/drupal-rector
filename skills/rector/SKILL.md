@@ -23,7 +23,7 @@ elif command -v rector >/dev/null 2>&1; then
   RECTOR_BIN="$(command -v rector)"
 else
   composer --working-dir="$RECTOR_DIR" init --no-interaction --name="agent/rector-env" >/dev/null 2>&1
-  composer --working-dir="$RECTOR_DIR" require --no-interaction --prefer-dist --no-progress rector/rector palantirnet/drupal-rector
+  composer --working-dir="$RECTOR_DIR" require --no-interaction --prefer-dist --no-progress rector/rector palantirnet/drupal-rector:^1.1.3
   RECTOR_BIN="$RECTOR_DIR/vendor/bin/rector"
 fi
 ```
