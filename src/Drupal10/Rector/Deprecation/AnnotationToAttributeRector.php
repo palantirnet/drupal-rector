@@ -198,6 +198,7 @@ CODE_SAMPLE,
         }
 
         $docBlockHasChanged = \false;
+        $attributeAdded = \false;
         foreach ($tagsByName as $valueNode) {
             if (!$valueNode->value instanceof GenericTagValueNode && !$valueNode->value instanceof DoctrineAnnotationTagValueNode) {
                 continue;
@@ -211,9 +212,11 @@ CODE_SAMPLE,
                     $data = $this->arrayParser->parseCurlyArray($tokenIterator, $node);
                     $attribute = $this->createAttribute($configuration->getAttributeClass(), $data);
                     $node->attrGroups[] = new AttributeGroup([$attribute]);
+                    $attributeAdded = \true;
                 } elseif ($valueNode->value instanceof DoctrineAnnotationTagValueNode) {
                     $attribute = $this->createAttribute($configuration->getAttributeClass(), $valueNode->value->values);
                     $node->attrGroups[] = new AttributeGroup([$attribute]);
+                    $attributeAdded = \true;
                 }
             }
 
@@ -228,7 +231,7 @@ CODE_SAMPLE,
             return $node;
         }
 
-        return null;
+        return $attributeAdded ? $node : null;
     }
 
     /**
