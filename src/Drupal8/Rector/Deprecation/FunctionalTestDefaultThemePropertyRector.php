@@ -83,6 +83,12 @@ CODE_SAMPLE
         if ($node->isAbstract() || $node->isAnonymous()) {
             return null;
         }
+
+        // already declared on the class itself, e.g. added on a previous pass;
+        // the class reflection still reads the original file, so it cannot tell
+        if ($node->getProperty('defaultTheme') instanceof Node\Stmt\Property) {
+            return null;
+        }
         $type = $this->nodeTypeResolver->getType($node);
 
         if (count($type->getObjectClassNames()) === 0 || !$type->isObject()->yes()) {
