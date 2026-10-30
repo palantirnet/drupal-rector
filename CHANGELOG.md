@@ -22,6 +22,8 @@ release-by-release.
 
 ### Removed
 
+- **`DrupalRector\Set\DrupalSetProvider`** — removed, together with the `drupal` / `drupal (breaking)` set groups it provided. Rector 2.8.0 deleted `SetProviderInterface` and `ComposerTriggeredSet`, so the class can no longer load; rules now carry their `drupal/core` version themselves, which `DrupalSetList::COMPOSER_BASED` uses. Replace `->withSetProviders(DrupalSetProvider::class)->withComposerBased(drupal: true)` with `->withComposerBased(drupal: true)`. The per-minor `Drupal*SetList` constants are unchanged and stay the way to pick rules by hand.
+- **`Bytes::toInt()` → `Bytes::toNumber()` rename dropped from the Drupal 9.1 set** — it was registered through Rector's `RenameStaticMethodRector`, which Rector 2.8 deprecated and no longer runs. `Bytes::toInt()` was removed in Drupal 10.0, so no supported site still calls it.
 - **Symfony, PHPUnit and Twig sets no longer ship inside the Drupal sets** — the Drupal 8, 9 and 10 sets used to pull in `SymfonySetList::SYMFONY_40`–`SYMFONY_64`, `PHPUnitSetList::PHPUNIT_60`–`PHPUNIT_90` and `TwigSetList::TWIG_24`, so a Drupal set silently rewrote Symfony, PHPUnit and Twig code as well. Rector 2.6.2 deleted those per-version set files and the constants that name them ([rectorphp/rector-phpunit#760](https://github.com/rectorphp/rector-phpunit/pull/760)), which is what the `rector/rector >=2.6.2` conflict of 1.1.3 was holding back: on 2.6 those sets abort with `Undefined constant Rector\Symfony\Set\SymfonySetList::SYMFONY_64`. There is no per-version replacement to point at — upstream replaced them with one composer-based set per package — so the references are dropped rather than remapped, and the Drupal sets now contain Drupal rules only. To keep the old behaviour, enable the upstream sets yourself alongside the Drupal ones:
 
   ```php
@@ -31,10 +33,6 @@ release-by-release.
   ```
 
   Note that composer-based selection keys off the *installed* PHPUnit/Symfony/Twig version rather than the Drupal version, so it is not a like-for-like swap. The `AddDoesNotPerformAssertionToNonAssertingTestRector` skip that the Drupal 8 set carried is dropped with it — it only existed to suppress a rule from the PHPUnit 6 set, and Drupal performs assertions in `::setUp()`, so re-add it in your own config if you enable the PHPUnit set. The three PHPUnit 10 rules the Drupal 10.1 set registers by hand are unaffected. ([#420](https://github.com/palantirnet/drupal-rector/issues/420))
-
-### Deprecated
-
-- **`DrupalRector\Set\DrupalSetProvider`** — deprecated, together with the `drupal` / `drupal (breaking)` set groups it provides; still registered, so existing configs keep working, and removed in a later release. Rector deprecated `SetProviderInterface` and `ComposerTriggeredSet` in favour of binding rules to a package version directly, which `DrupalSetList::COMPOSER_BASED` now does. Replace `->withSetProviders(DrupalSetProvider::class)->withComposerBased(drupal: true)` with `->withComposerBased(drupal: true)`. The per-minor `Drupal*SetList` constants are unchanged and stay the way to pick rules by hand.
 
 ### Changed
 
