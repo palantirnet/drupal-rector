@@ -63,7 +63,7 @@ The canonical prompt covers:
 
 **Registration and version bounds** are specified once, in `.claude/skills/prompts/version-bounds.md`.
 Read it before writing the class: every rule is registered twice, every rule carries a
-`drupal/core` bound, and three PHPStan rules fail the build otherwise. Fix those errors at the
+`drupal/core` bound, and four PHPStan rules fail the build otherwise. Fix those errors at the
 source; never baseline them.
 
 ---
@@ -249,8 +249,10 @@ Applies to every rector, custom class or config-only.
    ```bash
    rg -n '<ClassName>' config/composer-based.php config/drupal-*/
    ```
-   Must show the per-minor file **and** `config/composer-based.php`. A breaking rename is in
-   `-breaking.php` and under the `(breaking)` heading.
+   Must show the per-minor file **and** `config/composer-based.php`. For a config-only entry on a
+   generic rector, grep the deprecated symbol instead: the class name already matches both files,
+   and `drupalRector.composerBasedSetCoverage` only compares classes, so a missing entry passes
+   phpstan. A breaking rename is in `-breaking.php` and under the `(breaking)` heading.
 4. **Test pin satisfies the bound.** The test namespace's installed-core pin (`Drupal11` →
    `11.99.99`) must fall inside a class bound, or the rule is filtered out of its own test.
 5. `ddev composer phpstan` shows none of `drupalRector.composerBasedSetCoverage`,

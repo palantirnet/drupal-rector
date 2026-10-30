@@ -20,7 +20,7 @@ Maintains `docs/rector-index.yml` as a derived index — regenerated automatical
 
 ### `/rector-implement <digest-rule-file>`
 
-Converts a single drupal-digests rule into a complete drupal-rector implementation with tests. Follows the 14-step canonical workflow in `.claude/skills/prompts/digest-to-rector-prompt.md` and enforces two additional quality gates:
+Converts a single drupal-digests rule into a complete drupal-rector implementation with tests. Follows the 14-step canonical workflow in `.claude/skills/prompts/digest-to-rector-prompt.md` and enforces four additional quality gates:
 
 - **QG-A — Type Guard Audit**: ensures every `MethodCall`/`PropertyFetch` node is guarded by `isObjectType()` to avoid false positives on untyped code.
 - **QG-B — Version-Gating Tests**: for BC-wrapped rectors (`AbstractDrupalCoreRector`), adds a `testBelowVersion()` test and a `fixture-below-version/` fixture proving the transformation is suppressed on older Drupal versions.
@@ -44,7 +44,7 @@ Seven-pass quality review of an existing rector. Use before merging or when audi
 | 3 — BC Decision | Base class (`AbstractRector` vs `AbstractDrupalCoreRector`) matches the deprecation's version and node type |
 | 4 — @see URL | Docblock URL points to the correct Drupal.org issue or change record |
 | 5 — Registration / bound | Registered in the per-minor config and `config/composer-based.php`; `drupal/core` bound correct and in the right place |
-| 6 — Common Bugs | Idempotency, e.g. attribute dedup by short name |
+| 6 — Common Bugs | Idempotency (e.g. attribute dedup by short name) and Rector 2.8 traps (mutate-then-`null`, removed APIs) |
 | 7 — By-Reference | BC-wrapped by-reference calls capture by reference |
 
 Produces a `PASS / WARN / FAIL` verdict per pass and an overall merge-readiness summary.
@@ -83,7 +83,6 @@ The live-test integration setup lives alongside its skill in `.claude/skills/rec
 | File | Purpose |
 |------|---------|
 | `setup-rector-test.sh` | Creates a DDEV Drupal 11 project with all contrib test modules wired to the local rector branch. |
-| `drupal-rector-test/` | Companion directory for the generated test project. |
 
 ## Workflow
 
@@ -104,7 +103,8 @@ A typical cycle for adding a new rector:
   → final seven-pass quality check before opening a PR
 ```
 
-Registration and version bounds are specified once, in
+Registration, version bounds and how to load the sets (`DrupalSetList::COMPOSER_BASED` vs. explicit
+sets for BC wrappers) are specified once, in
 [`prompts/version-bounds.md`](prompts/version-bounds.md); the skills and recipes link to it.
 
 ## Requirements
