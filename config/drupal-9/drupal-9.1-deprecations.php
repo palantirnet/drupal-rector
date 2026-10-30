@@ -20,8 +20,6 @@ use DrupalRector\Rector\Deprecation\ClassConstantToClassConstantRector;
 use DrupalRector\Rector\ValueObject\ClassConstantToClassConstantConfiguration;
 use DrupalRector\Services\AddCommentService;
 use Rector\Config\RectorConfig;
-use Rector\Renaming\Rector\StaticCall\RenameStaticMethodRector;
-use Rector\Renaming\ValueObject\RenameStaticMethod;
 
 return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->singleton(AddCommentService::class, function () {
@@ -95,16 +93,6 @@ return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->rule(GetRawContentRector::class);
     $rectorConfig->rule(GetAllOptionsRector::class);
     $rectorConfig->rule(UserPasswordRector::class);
-
-    // Change record: https://www.drupal.org/node/3162663
-    $rectorConfig->ruleWithConfiguration(RenameStaticMethodRector::class, [
-        new RenameStaticMethod(
-            'Drupal\Component\Utility\Bytes',
-            'toInt',
-            'Drupal\Component\Utility\Bytes',
-            'toNumber'
-        ),
-    ]);
 
     // Change record: https://www.drupal.org/node/3151009 (only constants are supported)
     $rectorConfig->ruleWithConfiguration(ClassConstantToClassConstantRector::class, [
