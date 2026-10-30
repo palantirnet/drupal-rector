@@ -146,10 +146,20 @@ CODE_SAMPLE
             $this->initializeHookClass();
         }
         if ($node instanceof Use_) {
-            // For some unknown reason some Use_ statements are passed twice
-            // to this method.
-            $newNode = new Use_($node->uses, $node->type, ['comments' => []] + $node->getAttributes());
-            $this->useStmts[$this->printer->prettyPrint([$newNode])] = $newNode;
+            // Rector re-runs rules on a file while it keeps changing (2.8+), so
+            // with importNames() a later pass also sees the imports added for
+            // the LegacyHook wrappers. Those belong to the procedural file; in
+            // the hook class the self-import is a fatal "name already in use".
+            $uses = array_values(array_filter(
+                $node->uses,
+                fn ($use): bool => !in_array($use->name->toString(), $this->wrapperImports(), true),
+            ));
+            if ($uses !== []) {
+                // For some unknown reason some Use_ statements are passed twice
+                // to this method.
+                $newNode = new Use_($uses, $node->type, ['comments' => []] + $node->getAttributes());
+                $this->useStmts[$this->printer->prettyPrint([$newNode])] = $newNode;
+            }
         }
 
         if ($node instanceof Function_) {
@@ -186,6 +196,21 @@ CODE_SAMPLE
         }
 
         return null;
+    }
+
+    /**
+     * Names the LegacyHook wrappers in the procedural file refer to.
+     *
+     * @return string[]
+     */
+    protected function wrapperImports(): array
+    {
+        $imports = ['Drupal\Core\Hook\Attribute\LegacyHook'];
+        if ($this->module !== '' && isset($this->hookClass->name)) {
+            $imports[] = "Drupal\\$this->module\\Hook\\".$this->hookClass->name->toString();
+        }
+
+        return $imports;
     }
 
     protected function initializeHookClass(): void

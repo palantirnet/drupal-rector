@@ -18,7 +18,7 @@ release-by-release.
 
 ### Fixed
 
-- **Rector 2.8 compatibility** — `AnnotationToAttributeRector` added the attribute but returned `null` when it kept the annotation, which Rector 2.8 no longer prints, so the attribute was silently lost; the rule now returns the node whenever it adds an attribute. The Drupal 8 and 9 rules no longer use `NodeFactory::createLocalMethodCall()` and `ParentClassScopeResolver`, both removed in Rector 2.8.0, and `HookConvertRector` drops its fallback to the removed `AbstractRector::$file` property.
+- **Rector 2.8 compatibility** — `AnnotationToAttributeRector` added the attribute but returned `null` when it kept the annotation, which Rector 2.8 no longer prints, so the attribute was silently lost; the rule now returns the node whenever it adds an attribute. The Drupal 8 and 9 rules no longer use `NodeFactory::createLocalMethodCall()` and `ParentClassScopeResolver`, both removed in Rector 2.8.0, and `HookConvertRector` drops its fallback to the removed `AbstractRector::$file` property. `HookConvertRector` no longer copies the `LegacyHook` and hook-class imports into the generated hook class: with `importNames()`, Rector 2.8 re-runs rules on the changed procedural file, which by then carries those imports, and the class importing its own name is a fatal "name already in use".
 
 ### Removed
 
