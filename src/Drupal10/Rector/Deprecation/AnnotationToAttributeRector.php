@@ -21,9 +21,7 @@ use Rector\BetterPhpDocParser\PhpDoc\ArrayItemNode;
 use Rector\BetterPhpDocParser\PhpDoc\DoctrineAnnotationTagValueNode;
 use Rector\BetterPhpDocParser\PhpDocInfo\PhpDocInfo;
 use Rector\BetterPhpDocParser\PhpDocInfo\PhpDocInfoFactory;
-use Rector\BetterPhpDocParser\PhpDocInfo\TokenIteratorFactory;
 use Rector\BetterPhpDocParser\PhpDocManipulator\PhpDocTagRemover;
-use Rector\BetterPhpDocParser\PhpDocParser\StaticDoctrineAnnotationParser\ArrayParser;
 use Rector\Comments\NodeDocBlock\DocBlockUpdater;
 use Rector\PhpAttribute\AnnotationToAttributeMapper;
 use Rector\ValueObject\PhpVersion;
@@ -47,10 +45,6 @@ final class AnnotationToAttributeRector extends AbstractDrupalCoreRector impleme
 
     private DocBlockUpdater $docBlockUpdater;
 
-    private ArrayParser $arrayParser;
-
-    private TokenIteratorFactory $tokenIteratorFactory;
-
     private PhpDocInfoFactory $phpDocInfoFactory;
 
     /**
@@ -58,14 +52,12 @@ final class AnnotationToAttributeRector extends AbstractDrupalCoreRector impleme
      */
     private AnnotationToAttributeMapper $annotationToAttributeMapper;
 
-    public function __construct(DrupalRectorSettings $drupalRectorSettings, PhpDocTagRemover $phpDocTagRemover, DocBlockUpdater $docBlockUpdater, PhpDocInfoFactory $phpDocInfoFactory, ArrayParser $arrayParser, TokenIteratorFactory $tokenIteratorFactory, AnnotationToAttributeMapper $annotationToAttributeMapper)
+    public function __construct(DrupalRectorSettings $drupalRectorSettings, PhpDocTagRemover $phpDocTagRemover, DocBlockUpdater $docBlockUpdater, PhpDocInfoFactory $phpDocInfoFactory, AnnotationToAttributeMapper $annotationToAttributeMapper)
     {
         parent::__construct($drupalRectorSettings);
         $this->phpDocTagRemover = $phpDocTagRemover;
         $this->docBlockUpdater = $docBlockUpdater;
         $this->phpDocInfoFactory = $phpDocInfoFactory;
-        $this->arrayParser = $arrayParser;
-        $this->tokenIteratorFactory = $tokenIteratorFactory;
         $this->annotationToAttributeMapper = $annotationToAttributeMapper;
     }
 
@@ -206,11 +198,16 @@ CODE_SAMPLE,
 
             if ($hasAttribute === false) {
                 if ($valueNode->value instanceof GenericTagValueNode) {
-                    $stringValue = $valueNode->value->value;
-                    $stringValue = '{'.trim($stringValue, '()').'}';
-                    $tokenIterator = $this->tokenIteratorFactory->create($stringValue);
-                    $data = $this->arrayParser->parseCurlyArray($tokenIterator, $node);
-                    $attribute = $this->createAttribute($configuration->getAttributeClass(), $data);
+                    // Rector only leaves a GenericTagValueNode for a tag it could
+                    // not parse as a Doctrine annotation. The only shape we can
+                    // convert reliably is the argument-less `@Action`; anything
+                    // else (e.g. arguments starting on the next line) is left
+                    // untouched, annotation included, rather than guessed at.
+                    if (trim($valueNode->value->value, " \t\r\n*()") !== '') {
+                        continue;
+                    }
+
+                    $attribute = $this->createAttribute($configuration->getAttributeClass(), []);
                     $node->attrGroups[] = new AttributeGroup([$attribute]);
                     $attributeAdded = \true;
                 } elseif ($valueNode->value instanceof DoctrineAnnotationTagValueNode) {
