@@ -146,10 +146,7 @@ CODE_SAMPLE
 
     public function refactor(Node $node): Node|int|null
     {
-
-        $filePath = method_exists($this, 'getFile')
-            ? $this->getFile()->getFilePath()
-            : $this->file->getFilePath();
+        $filePath = $this->getFile()->getFilePath();
         $ext = pathinfo($filePath, \PATHINFO_EXTENSION);
         if ($ext === 'theme' || str_starts_with($filePath, $this->drupalCorePath)) {
             $this->skipLegacy = TRUE;
@@ -161,10 +158,20 @@ CODE_SAMPLE
             $this->initializeHookClass();
         }
         if ($node instanceof Use_) {
-            // For some unknown reason some Use_ statements are passed twice
-            // to this method.
-            $newNode = new Use_($node->uses, $node->type, ['comments' => []] + $node->getAttributes());
-            $this->useStmts[$this->printer->prettyPrint([$newNode])] = $newNode;
+            // Rector re-runs rules on a file while it keeps changing (2.8+), so
+            // with importNames() a later pass also sees the imports added for
+            // the LegacyHook wrappers. Those belong to the procedural file; in
+            // the hook class the self-import is a fatal "name already in use".
+            $uses = array_values(array_filter(
+                $node->uses,
+                fn ($use): bool => !in_array($use->name->toString(), $this->wrapperImports(), true),
+            ));
+            if ($uses !== []) {
+                // For some unknown reason some Use_ statements are passed twice
+                // to this method.
+                $newNode = new Use_($uses, $node->type, ['comments' => []] + $node->getAttributes());
+                $this->useStmts[$this->printer->prettyPrint([$newNode])] = $newNode;
+            }
         }
 
         if ($node instanceof Function_) {
@@ -203,12 +210,25 @@ CODE_SAMPLE
         return null;
     }
 
+    /**
+     * Names the LegacyHook wrappers in the procedural file refer to.
+     *
+     * @return string[]
+     */
+    protected function wrapperImports(): array
+    {
+        $imports = ['Drupal\Core\Hook\Attribute\LegacyHook'];
+        if ($this->module !== '' && isset($this->hookClass->name)) {
+            $imports[] = "Drupal\\$this->module\\Hook\\".$this->hookClass->name->toString();
+        }
+
+        return $imports;
+    }
+
     protected function initializeHookClass(): void
     {
         $this->__destruct();
-        $this->moduleDir = method_exists($this, 'getFile')
-            ? $this->getFile()->getFilePath()
-            : $this->file->getFilePath();
+        $this->moduleDir = $this->getFile()->getFilePath();
         $this->inputFilename = $this->moduleDir;
         // Find the relevant info.yml: it's either in the current directory or
         // one of the parents.
@@ -217,7 +237,7 @@ CODE_SAMPLE
         if (!empty($info)) {
             $infoFile = reset($info);
             $this->module = basename($infoFile, '.info.yml');
-            $filename = pathinfo(method_exists($this, 'getFile') ? $this->getFile()->getFilePath() : $this->file->getFilePath(), \PATHINFO_FILENAME);
+            $filename = pathinfo($this->getFile()->getFilePath(), \PATHINFO_FILENAME);
             $hookClassName = ucfirst(CaseStringHelper::camelCase(str_replace('.', '_', $filename).'_hooks'));
             $counter = '';
             do {

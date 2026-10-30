@@ -12,6 +12,45 @@ release-by-release.
 
 ## [Unreleased]
 
+### Feature
+
+- **`DrupalSetList::COMPOSER_BASED`** — one set with every Drupal 10 and later rule, each bound to the `drupal/core` version its deprecation landed in. Rector only runs the rules that apply to your installed core. Because that version is known, the breaking renames are included too. `vendor/bin/rector composer-based` lists the configurable rules and whether they are active. The Drupal 8 and 9 rules are not in it; load `Drupal8SetList` or `Drupal9SetList` for those. ([rectorphp/rector#9778](https://github.com/rectorphp/rector/issues/9778))
+
+  Load it with `->withSets([DrupalSetList::COMPOSER_BASED])`. Rector's `withComposerBased(drupal: true)`, and a bare `withComposerBased()` since Rector 2.8.2, crash on every current Rector release with `Class "RectorPrefix…\DrupalRector\Set\DrupalSetList" not found` until [rectorphp/rector-src#8897](https://github.com/rectorphp/rector-src/pull/8897) is released. On 1.1.x those calls did nothing.
+- **`rector.contrib.php`** — a starting config for contrib modules and themes. It loads the `DRUPAL_10` and `DRUPAL_11` sets with backward-compatibility wrappers on, and lets you set the minimum Drupal version you support.
+
+### Fixed
+
+- **Rector 2.8 compatibility:**
+  - `AnnotationToAttributeRector` lost the attribute when it kept the annotation.
+  - `HookConvertRector` no longer imports the hook class into itself when `importNames()` is on, which was a fatal "name already in use".
+  - Files with test classes no longer abort with "Call to a member function getFunctionCallStackWithParameters() on null".
+  - The Drupal 8 and 9 rules and `HookConvertRector` no longer use Rector APIs removed in 2.8.0.
+
+### Removed
+
+- **`Bytes::toInt()` → `Bytes::toNumber()`** is dropped from the Drupal 9.1 set. Rector 2.8 no longer runs `RenameStaticMethodRector`, and Drupal 10.0 removed `Bytes::toInt()` anyway.
+- **The Drupal 8, 9 and 10 sets no longer include Rector's Symfony, PHPUnit and Twig sets.** Rector 2.6.2 deleted those per-version sets ([rectorphp/rector-phpunit#760](https://github.com/rectorphp/rector-phpunit/pull/760)), which is why 1.1.3 blocked it. The Drupal sets now only contain Drupal rules. To get the upstream rules back:
+
+  ```php
+  return RectorConfig::configure()
+      ->withComposerBased(phpunit: true, symfony: true, twig: true)
+      ->withSets([Drupal10SetList::DRUPAL_10]);
+  ```
+
+  These follow the installed Symfony, PHPUnit and Twig versions, not the Drupal version. The Drupal 8 set's skip of `AddDoesNotPerformAssertionToNonAssertingTestRector` is gone as well; add it back if you enable the PHPUnit set. ([#420](https://github.com/palantirnet/drupal-rector/issues/420))
+
+### Deprecated
+
+- **`DrupalRector\Set\DrupalSetProvider`** is now an empty class and will be removed in 2.0.0. Rector 2.8 removed `SetProviderInterface`, and since 2.6.5 it ignores `withSetProviders()`. The class only stays so existing configs still pass static analysis. Replace `->withSetProviders(DrupalSetProvider::class)` with `->withSets([DrupalSetList::COMPOSER_BASED])`.
+
+### Changed
+
+- **Requires `rector/rector` ^2.6.5.** Coming from 1.1.x, Composer has to be allowed to update Rector: `composer require --dev palantirnet/drupal-rector:^1.2 -W`.
+- **The shipped `rector.php` is now for sites.** It loads `DrupalSetList::COMPOSER_BASED` instead of the `DRUPAL_10` and `DRUPAL_11` sets, without backward-compatibility wrappers. The composer-based set always turns wrappers off, so `DrupalRectorSettings` in your own config has no effect with it. Re-copy `rector.php`, or `rector.contrib.php` for a module or theme.
+- **Rules without configuration only run on a core that has their deprecation**, also when you load a `Drupal*SetList` set by hand. You can no longer apply a newer Drupal's rules from an older installed core with these 76 rules.
+- **`HookConvertRector` no longer makes converted hook methods `static`.** Core always calls hooks on an object, so an implementation shouldn't be static. Reverts [#3600921](https://git.drupalcode.org/project/rector/-/work_items/3600921). Reported by Berdir ([#3600963](https://git.drupalcode.org/project/rector/-/work_items/3600963)).
+
 ## [1.1.3] — 2026-09-03
 
 ### Changed

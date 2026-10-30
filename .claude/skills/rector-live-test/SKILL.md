@@ -90,6 +90,23 @@ return static function (RectorConfig $rectorConfig): void {
 RECTOR_EOF
 ```
 
+That registration is for a configurable rule (`extends AbstractDrupalCoreRector`). For a **plain**
+rule (`extends AbstractRector`, registered with `rule()` in the config), replace it with
+`$rectorConfig->rule(<ClassName>::class);` and drop the `DrupalIntroducedVersionConfiguration`
+import. For a generic rector, copy its configuration entry from the per-minor config.
+
+**Check the rule is active before running.** Plain rules carry a `drupal/core` bound on the class,
+and Rector drops them silently when the site's installed core is outside it
+(`.claude/skills/prompts/version-bounds.md` §3, §5). The test site installs core as `11.x-dev`, which
+satisfies every 11.x bound, but confirm — especially for a rule bound to a minor newer than the
+site, or after the site's core was changed:
+```bash
+cd ~/projects/drupal-rector-test
+ddev exec -d /var/www/html vendor/bin/rector composer-based --config rector-live-test.php
+```
+The rule's row must say `yes` in the active column. A configurable rule has no class bound and
+does not appear there.
+
 **Run rector** against the found modules:
 ```bash
 cd ~/projects/drupal-rector-test
@@ -165,6 +182,10 @@ Add the normalized string to the rector source:
   $rectorConfig->ruleWithConfiguration(FunctionToServiceRector::class, [ /* ... */ ]);
   ```
 
+  Copy the same comment block to the matching entry in `config/composer-based.php`. The
+  per-minor file stays the source (the registry script only reads `config/drupal-*/`), but the
+  two copies should not drift.
+
 Then regenerate the flat registry:
 
 ```bash
@@ -223,4 +244,5 @@ For **every** module that produced no changes, you must:
 | `.module` file silently skipped | File extension is `.module`, `.install`, etc. | Config is missing `fileExtensions()` — this should not happen if step 2 was followed |
 | Module already updated | The call site no longer uses the deprecated API | Expected — the module has already migrated |
 | Wrong rector class | The rector targets a different method/function | Verify the rector's `isName()` matches the actual call in the module |
+| Rule filtered by its version bound | **Every** module shows zero changes, including ones with an obviously typed call; `rector process` still says "Rector is done!" | Run `vendor/bin/rector composer-based --config rector-live-test.php` — the rule shows `no`. Installed `drupal/core` is outside the class bound (older than the lower bound, past the upper, or `dev-main`). Fix the site's core or the bound, not the rule logic |
 

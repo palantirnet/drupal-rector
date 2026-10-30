@@ -6,7 +6,7 @@ Automate fixing deprecated Drupal code.
 
 [![Packagist Version](https://img.shields.io/packagist/v/palantirnet/drupal-rector)](https://packagist.org/packages/palantirnet/drupal-rector) ![Functional tests](https://img.shields.io/github/actions/workflow/status/palantirnet/drupal-rector/functional_test__single_rectors.yml?logo=github&label=Functional%20tests) ![Unit tests](https://img.shields.io/github/actions/workflow/status/palantirnet/drupal-rector/phpunit.yml?logo=github&label=Unit%20tests)  ![PHPStan](https://img.shields.io/github/actions/workflow/status/palantirnet/drupal-rector/phpstan.yml?logo=github&label=PHPStan)
 
-If upgrading from an older version, refresh `rector.php` by copying from the vendor copy: `cp vendor/palantirnet/drupal-rector/rector.php .`
+If upgrading from an older version, refresh `rector.php` by copying from the vendor copy: `cp vendor/palantirnet/drupal-rector/rector.php .` for a site, or `cp vendor/palantirnet/drupal-rector/rector.contrib.php rector.php` for a contrib module or theme.
 
 ## Introduction
 
@@ -81,15 +81,29 @@ You will need to have a `rector.php` configuration in the root of your repositor
 
 This project uses [`webflo/drupal-finder`](https://packagist.org/packages/webflo/drupal-finder) to find your document root that contains Drupal.
 
-To get started, copy the `rector.php` configuration file provided by this package:
+This package ships two starting points. Copy the one that matches what you are upgrading.
+
+**Sites.** The code only has to run on the Drupal version you have installed:
 
 ```bash
 cp vendor/palantirnet/drupal-rector/rector.php .
 ```
 
-By default, Drupal Rector will fix deprecated code for all versions of Drupal. If you want to change this behavior, modify
-the sets used in the `rector.php` config. For example, if your site is still on Drupal 10.3, and you do not want to fix deprecations
-made in Drupal 10.4, use the following configuration:
+It loads the [composer-based set](#composer-based-sets-automatic-version-selection), which fixes what is deprecated on your
+installed `drupal/core` and nothing newer, without backward-compatibility wrappers.
+
+**Contrib modules and themes.** The code has to keep working on every Drupal version in `core_version_requirement`:
+
+```bash
+cp vendor/palantirnet/drupal-rector/rector.contrib.php rector.php
+```
+
+It lists the `Drupal10SetList::DRUPAL_10` and `Drupal11SetList::DRUPAL_11` sets by hand and turns on
+[backward-compatibility wrapping](#drupalrectorsettings). Set `setMinimumCoreVersionSupported()` to the lowest Drupal version
+your module supports, and run it against the newest Drupal version you support: a rule is skipped on a core older than its
+deprecation.
+
+To pick the sets yourself, for example to stop at Drupal 10.3 and leave the deprecations made in Drupal 10.4 alone:
 
 ```php
 return RectorConfig::configure()
@@ -103,42 +117,89 @@ return RectorConfig::configure()
 
 This is more granular than the `Drupal10SetList::DRUPAL_10` set. Since Drupal 10.1 there is not real reason not to include later versions. It will detect the installed Drupal version and supply BC wrappers as needed if you enable it in the config.
 
+> [!NOTE]
+> The Drupal sets contain Drupal rules only. Up to 1.1.3 the Drupal 8, 9 and 10
+> sets also pulled in Rector's Symfony, PHPUnit and Twig sets; Rector 2.6.2
+> removed the per-version sets they referenced, so those references are gone.
+> Add the upstream rules yourself if you want them — bearing in mind they follow
+> the installed Symfony/PHPUnit/Twig version, not the Drupal one:
+>
+> ```php
+> return RectorConfig::configure()
+>     ->withComposerBased(phpunit: true, symfony: true, twig: true)
+>     ->withSets([Drupal10SetList::DRUPAL_10]);
+> ```
+>
+> On a Drupal 11 site that means Symfony 7 rules, which break code that still
+> has to run on Drupal 10. If your module supports both, register the individual
+> upstream rules you need instead of the whole composer-based set.
+
 ### Composer-based sets (automatic version selection)
 
-> [!WARNING]
-> This feature depends on an unreleased Rector version. Only usable right now using `composer require --dev rector/rector:"dev-main as 2.4.6"`
-
-Instead of listing sets by hand, you can let Rector pick them from the installed
-`drupal/core` version. Register the set provider and enable the `drupal` group:
+Instead of listing sets by hand, you can let Rector pick the rules from the
+installed `drupal/core` version:
 
 ```php
 return RectorConfig::configure()
-    ->withSetProviders(\DrupalRector\Set\DrupalSetProvider::class)
-    ->withComposerBased(drupal: true);
+    ->withSets([DrupalSetList::COMPOSER_BASED]);
 ```
 
-Rector reads the installed `drupal/core` version and loads every set up to and
-including that minor — a site on 11.4 loads the 11.0 → 11.4 rules, a site on
-11.2 loads 11.0 → 11.2, and a future minor's rules are never applied. Because the
-matched version is known exactly, the otherwise opt-in *breaking* sets (renames
-whose replacement only exists from a given minor onward) are included
-automatically — they cannot fatal on a core that is guaranteed to have the
-replacement.
+> [!WARNING]
+> Load the set with `withSets()`, as above. Rector also loads it through
+> `withComposerBased(drupal: true)`, and from 2.8.2 through a bare
+> `withComposerBased()` on any project with `drupal/core` installed. Released
+> Rector builds up to at least 2.8.3 prefix the class that toggle refers to, so
+> both fail with `Class "RectorPrefix…\DrupalRector\Set\DrupalSetList" not
+> found` ([rectorphp/rector-src#8897](https://github.com/rectorphp/rector-src/pull/8897)).
+
+`DrupalSetList::COMPOSER_BASED` registers every Drupal 10 and later rule at
+once, each one bound to the `drupal/core` versions its deprecation applies to:
+from the version it was introduced in up to, but not including, the major after
+the one the API is removed in — `>=11.4.0 <14.0.0` for a deprecation removed in
+13.0.0. Rector activates only the rules whose constraint the installed core
+satisfies, so a site on 11.2 gets every rule whose deprecation landed in 11.2 or
+earlier and whose removal is not more than one major behind it, and never a
+later minor's. Because the installed version is
+known exactly, the otherwise opt-in *breaking* renames (whose replacement only
+exists from a given minor onward) are included — they cannot fatal on a core
+that is guaranteed to have the replacement.
+
+To see the rules that carry their configuration in the set, and whether the
+installed core activates them:
+
+```bash
+vendor/bin/rector composer-based
+```
+
+A rule that takes no configuration states its version on the rule class instead,
+through Rector's `ComposerPackageConstraintInterface`, so it is skipped on a core
+outside it too: below the lower bound, past the upper bound, or when `drupal/core`
+is installed as a branch version such as `dev-main`. That filter is global, not
+per set: those rules stay off even when you load a `Drupal11SetList` set by hand.
+Configurable rules carry their bound only in the composer-based set, so the
+per-minor sets run them on any core.
+
+The Drupal 8 and 9 rules are not part of this set. Every API they rewrite was
+removed by Drupal 10 or 11, so on a supported core they have nothing left to
+fix. They stay available for older code through `Drupal8SetList` and
+`Drupal9SetList`. Their rule classes keep only the lower bound, the version the
+deprecation landed in, so those sets apply them on any core from then on.
 
 This is the backward-compatibility-safe counterpart to listing sets manually:
-it fixes what is deprecated on *your* installed core. To look ahead and prepare
-for the next major before upgrading, keep using the explicit `Drupal11SetList`
-sets with `setDrupalVersion()` as described above.
+it fixes what is deprecated on *your* installed core.
 
-> **Requires** a Rector release that ships `SetGroup::DRUPAL` and the
-> `withComposerBased(drupal: ...)` toggle (see
-> [rectorphp/rector#9778](https://github.com/rectorphp/rector/issues/9778)).
+> **Requires** `rector/rector` ^2.6.5.
+> `RectorConfig::ruleWithConfigurationComposerVersionBound()` landed in 2.6
+> ([rectorphp/rector-src#8244](https://github.com/rectorphp/rector-src/pull/8244)),
+> and from 2.6.5 `withSetProviders()` ignores its arguments, so the deprecated
+> `DrupalSetProvider` can stay an empty class
+> (see [rectorphp/rector#9778](https://github.com/rectorphp/rector/issues/9778)).
 
 ### DrupalRectorSettings
 
-The copied `rector.php` includes a `DrupalRectorSettings` block that controls two behaviours:
+Both shipped configs include a `DrupalRectorSettings` block that controls two behaviours:
 
-**Backward-compatibility wrapping** — when enabled, rule results are wrapped in `DeprecationHelper::backwardsCompatibleCall()` so the code works on both the old and new Drupal API simultaneously. The default in `rector.php` is **disabled** (recommended for most projects). Enable it when you need the output to run on multiple Drupal versions at the same time:
+**Backward-compatibility wrapping** — when enabled, rule results are wrapped in `DeprecationHelper::backwardsCompatibleCall()` so the code works on both the old and new Drupal API simultaneously. `rector.php` **disables** it, `rector.contrib.php` enables it. Enable it when you need the output to run on multiple Drupal versions at the same time:
 
 ```php
 $rectorConfig->singleton(DrupalRectorSettings::class, fn () =>
@@ -156,6 +217,11 @@ $rectorConfig->singleton(DrupalRectorSettings::class, fn () =>
         ->setMinimumCoreVersionSupported('10.5.0')
 );
 ```
+
+> [!NOTE]
+> These settings only take effect with sets you list yourself. The composer-based set registers its own
+> `DrupalRectorSettings` with backward-compatibility wrapping off, and Rector keeps the first registration, so the one in
+> your `rector.php` is ignored.
 
 ### Cleaning up BC wrappers (contrib modules)
 
@@ -185,7 +251,7 @@ becomes:
 \Drupal::service('password_generator')->generate();
 ```
 
-Wrappers for deprecations introduced at or after your minimum version are left untouched. The rule is commented out in `rector.php` — uncomment and set the version when you are ready to clean up.
+Wrappers for deprecations introduced at or after your minimum version are left untouched. The rule is commented out in `rector.contrib.php` — uncomment and set the version when you are ready to clean up.
 
 ## Suggested workflow
 

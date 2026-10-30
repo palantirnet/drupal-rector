@@ -6,24 +6,20 @@ namespace DrupalRector\Drupal9\Rector\Deprecation;
 
 use DrupalRector\Utility\GetDeclaringSourceTrait;
 use PhpParser\Node;
-use Rector\NodeCollector\ScopeResolver\ParentClassScopeResolver;
 use Rector\Rector\AbstractRector;
+use Rector\VersionBonding\Contract\ComposerPackageConstraintInterface;
+use Rector\VersionBonding\ValueObject\ComposerPackageConstraint;
 use Symplify\RuleDocGenerator\Contract\DocumentedRuleInterface;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
-final class GetRawContentRector extends AbstractRector implements DocumentedRuleInterface
+final class GetRawContentRector extends AbstractRector implements ComposerPackageConstraintInterface, DocumentedRuleInterface
 {
     use GetDeclaringSourceTrait;
 
-    /**
-     * @var ParentClassScopeResolver
-     */
-    protected $parentClassScopeResolver;
-
-    public function __construct(ParentClassScopeResolver $parentClassScopeResolver)
+    public function provideComposerPackageConstraint(): ComposerPackageConstraint
     {
-        $this->parentClassScopeResolver = $parentClassScopeResolver;
+        return new ComposerPackageConstraint('drupal/core', '>=9.1.0');
     }
 
     public function getRuleDefinition(): RuleDefinition
@@ -57,7 +53,7 @@ CODE_AFTER
             return null;
         }
 
-        $getSessionNode = $this->nodeFactory->createLocalMethodCall('getSession');
+        $getSessionNode = $this->nodeFactory->createMethodCall('this', 'getSession');
         $getPageNode = $this->nodeFactory->createMethodCall($getSessionNode, 'getPage');
 
         return $this->nodeFactory->createMethodCall($getPageNode, 'getContent');

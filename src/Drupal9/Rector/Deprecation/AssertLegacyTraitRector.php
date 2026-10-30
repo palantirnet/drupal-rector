@@ -61,7 +61,7 @@ class AssertLegacyTraitRector extends AbstractRector implements ConfigurableRect
      */
     protected function createAssertSessionMethodCall(string $method, array $args): Node\Expr\MethodCall
     {
-        $assertSessionNode = $this->nodeFactory->createLocalMethodCall('assertSession');
+        $assertSessionNode = $this->nodeFactory->createMethodCall('this', 'assertSession');
 
         return $this->nodeFactory->createMethodCall($assertSessionNode, $method, $args);
     }
@@ -102,7 +102,7 @@ class AssertLegacyTraitRector extends AbstractRector implements ConfigurableRect
             if ($configuration->isAssertSessionMethod()) {
                 $newExpr = $this->createAssertSessionMethodCall($configuration->getMethodName(), $args);
             } else {
-                $newExpr = $this->nodeFactory->createLocalMethodCall($configuration->getMethodName(), $args);
+                $newExpr = $this->nodeFactory->createMethodCall('this', $configuration->getMethodName(), $args);
             }
 
             if ($node->expr instanceof Node\Expr\MethodCall) {
