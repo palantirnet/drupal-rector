@@ -4,6 +4,7 @@ parameters:
 		- config
 		- src
 		- rector.php
+		- rector.contrib.php
 	bootstrapFiles:
 	    - vendor/rector/rector/vendor/autoload.php
 	dynamicConstantNames:

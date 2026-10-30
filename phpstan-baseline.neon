@@ -104,7 +104,37 @@ parameters:
 
 		-
 			message: '''
+				#^Call to method __construct\(\) of deprecated class DrupalFinder\\DrupalFinder\:
+				in drupal\-finder\:1\.3\.0 and is removed from drupal\-finder\:2\.0\.0\.
+				  Use \\DrupalFinder\\DrupalFinderComposerRuntime instead\.$#
+			'''
+			identifier: method.deprecatedClass
+			count: 1
+			path: rector.contrib.php
+
+		-
+			message: '''
 				#^Call to method getDrupalRoot\(\) of deprecated class DrupalFinder\\DrupalFinder\:
+				in drupal\-finder\:1\.3\.0 and is removed from drupal\-finder\:2\.0\.0\.
+				  Use \\DrupalFinder\\DrupalFinderComposerRuntime instead\.$#
+			'''
+			identifier: method.deprecatedClass
+			count: 1
+			path: rector.php
+
+		-
+			message: '''
+				#^Call to method getDrupalRoot\(\) of deprecated class DrupalFinder\\DrupalFinder\:
+				in drupal\-finder\:1\.3\.0 and is removed from drupal\-finder\:2\.0\.0\.
+				  Use \\DrupalFinder\\DrupalFinderComposerRuntime instead\.$#
+			'''
+			identifier: method.deprecatedClass
+			count: 1
+			path: rector.contrib.php
+
+		-
+			message: '''
+				#^Call to method locateRoot\(\) of deprecated class DrupalFinder\\DrupalFinder\:
 				in drupal\-finder\:1\.3\.0 and is removed from drupal\-finder\:2\.0\.0\.
 				  Use \\DrupalFinder\\DrupalFinderComposerRuntime instead\.$#
 			'''
@@ -120,7 +150,7 @@ parameters:
 			'''
 			identifier: method.deprecatedClass
 			count: 1
-			path: rector.php
+			path: rector.contrib.php
 
 		-
 			message: '''
@@ -131,6 +161,16 @@ parameters:
 			identifier: new.deprecatedClass
 			count: 1
 			path: rector.php
+
+		-
+			message: '''
+				#^Instantiation of deprecated class DrupalFinder\\DrupalFinder\:
+				in drupal\-finder\:1\.3\.0 and is removed from drupal\-finder\:2\.0\.0\.
+				  Use \\DrupalFinder\\DrupalFinderComposerRuntime instead\.$#
+			'''
+			identifier: new.deprecatedClass
+			count: 1
+			path: rector.contrib.php
 
 		-
 			message: '#^Access to an undefined property PhpParser\\Node\\Expr\:\:\$value\.$#'
