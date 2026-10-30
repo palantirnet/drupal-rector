@@ -15,7 +15,7 @@ Resolve an existing binary or provision an isolated installation in `.cache/agen
 RECTOR_DIR="${RECTOR_CACHE_DIR:-.cache/agent-rector}"
 mkdir -p "$RECTOR_DIR"
 
-if [ -x "vendor/bin/rector" ]; then
+if [ -x "vendor/bin/rector" ] && [ -d "vendor/palantirnet/drupal-rector" ]; then
   RECTOR_BIN="vendor/bin/rector"
 elif [ -x "$RECTOR_DIR/vendor/bin/rector" ]; then
   RECTOR_BIN="$RECTOR_DIR/vendor/bin/rector"
@@ -23,16 +23,18 @@ elif command -v rector >/dev/null 2>&1; then
   RECTOR_BIN="$(command -v rector)"
 else
   composer --working-dir="$RECTOR_DIR" init --no-interaction --name="agent/rector-env" >/dev/null 2>&1
-  composer --working-dir="$RECTOR_DIR" require --no-interaction --prefer-dist --no-progress rector/rector palantirnet/drupal-rector:^1.1.3
+  composer --working-dir="$RECTOR_DIR" require --no-interaction --prefer-dist --no-progress rector/rector palantirnet/drupal-rector:^1.2
   RECTOR_BIN="$RECTOR_DIR/vendor/bin/rector"
 fi
 ```
 
 Done when `$RECTOR_BIN --version` exits `0`.
 
+Leave the Rector version to Composer: drupal-rector constrains `rector/rector`, so the unversioned `rector/rector` resolves to a release it supports. drupal-rector 1.1.x cannot run the Drupal sets below.
+
 ### 2. Write `.cache/agent-rector/rector.php`
 
-Point Rector at the project autoloader so it resolves Drupal and project types, scope `withPaths()` to the target directories, and attach the sets or rules for your task (see [Configuration reference](#configuration-reference)):
+Load the project autoloader so Rector resolves Drupal and project types, scope `withPaths()` to the target directories, and attach the sets or rules for your task (see [Configuration reference](#configuration-reference)):
 
 ```php
 <?php
@@ -42,16 +44,18 @@ declare(strict_types=1);
 use Rector\Config\RectorConfig;
 
 $projectRoot = dirname(__DIR__, 2);
+require_once $projectRoot . '/vendor/autoload.php';
 
 return RectorConfig::configure()
-    ->withAutoloadPaths([$projectRoot . '/vendor/autoload.php'])
     ->withPaths([$projectRoot . '/web/modules/custom']);
     // Attach set, configured rule, or custom rule here.
 ```
 
+Use `require_once`, not `withAutoloadPaths()`. `withAutoloadPaths()` only feeds files to static reflection, so `Composer\InstalledVersions` in the drupal-rector sets sees the isolated vendor without `drupal/core`. The run then fails with `Package "drupal/core" is not installed`. `withBootstrapFiles()` loads it too late: the sets have already been configured without the Drupal autoload paths and phpstan-drupal, and rules miss call sites. `dirname(__DIR__, 2)` assumes the default `.cache/agent-rector`; adjust it if `RECTOR_CACHE_DIR` is set elsewhere.
+
 ### 3. Dry-run and verify the diff
 
-Preview the AST diff before touching working files:
+Preview the AST diff before touching working files. Run from the project root: Rector reads installed package versions from `./vendor/composer/installed.json` in the working directory, and run from `.cache/agent-rector` it sees no `drupal/core` and silently skips every version-bound Drupal rule.
 
 ```bash
 $RECTOR_BIN process \
@@ -61,7 +65,7 @@ $RECTOR_BIN process \
   --no-progress-bar
 ```
 
-Refine `.cache/agent-rector/rector.php` (or your custom rule) until the dry-run exits `0` and the diff transforms every target call site and nothing else.
+Refine `.cache/agent-rector/rector.php` (or your custom rule) until the dry-run reports no errors and the diff transforms every target call site and nothing else. A dry-run exits `2` when it would change files, `1` on errors, and `0` when there is nothing to change.
 
 ### 4. Apply, clean up, and verify
 
@@ -99,16 +103,30 @@ Chain the branch-specific builder methods onto `RectorConfig::configure()` in `.
 
 ### Drupal deprecations & upgrade sets
 
+For a site, fix what is deprecated on the installed `drupal/core`. Every rule is bound to the core version its deprecation landed in, and backward-compatibility wrapping is off:
+
 ```php
 use DrupalRector\Set\DrupalSetList;
-use DrupalRector\Set\DrupalSetProvider;
 
-    ->withSetProviders(DrupalSetProvider::class)
-    ->withComposerBased(drupal: true)
-    ->withSets([
-        DrupalSetList::DRUPAL_10,
-    ])
+    ->withSets([DrupalSetList::COMPOSER_BASED])
 ```
+
+For a contrib module or theme that must keep working on older cores, list the major sets. Rewrites are wrapped in `DeprecationHelper::backwardsCompatibleCall()`, and these sets do not add Drupal's file extensions:
+
+```php
+use DrupalRector\Set\Drupal10SetList;
+use DrupalRector\Set\Drupal11SetList;
+
+    ->withSets([
+        Drupal10SetList::DRUPAL_10,
+        Drupal11SetList::DRUPAL_11,
+    ])
+    ->withFileExtensions(['php', 'module', 'theme', 'install', 'profile', 'inc', 'engine'])
+```
+
+BC wrapping assumes the lowest supported core is `10.1.0`. To change it, `DrupalRectorSettings` has to be registered with `$rectorConfig->singleton()`, which the `configure()` builder does not offer: write the scratch config in the closure form (`return static function (RectorConfig $rectorConfig): void { ... };`) as drupal-rector's `rector.contrib.php` does, and call `setMinimumCoreVersionSupported()` there.
+
+Do not use `withComposerBased(drupal: true)`, or a bare `withComposerBased()` on Rector 2.8.2+ in a Drupal project: released Rector up to 2.8.3 fails with `Class "RectorPrefix…\DrupalRector\Set\DrupalSetList" not found`. `withSetProviders(DrupalSetProvider::class)` is ignored since Rector 2.6.5.
 
 ### Symbol & signature renames
 
@@ -129,7 +147,9 @@ use Rector\Renaming\ValueObject\MethodCallRename;
 
 When no built-in rule matches the structural pattern, write `.cache/agent-rector/CustomRule.php` and load it in `rector.php` with `require_once __DIR__ . '/CustomRule.php'` and `->withRules([\AgentRector\CustomRule::class])`.
 
-`refactor()` must be **idempotent**: return `null` when a node does not match or is already in its target form, otherwise Rector re-transforms the node in an infinite loop.
+`refactor()` must be **idempotent**: return `null` when a node does not match or is already in its target form. Rector re-runs all rules on a changed file until it stops changing, so a rule that matches its own output loops forever.
+
+Return the node when you changed it. Mutating the node and returning `null` drops the change. Return only `null`, a node, a non-empty array of nodes, or `PhpParser\NodeVisitor::REMOVE_NODE`; `[]` or any other int throws.
 
 ```php
 <?php
