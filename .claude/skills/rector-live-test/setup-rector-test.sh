@@ -31,9 +31,12 @@ if [ -d "$TARGET_DIR/.ddev" ]; then
         ddev start -y
     fi
     echo ""
-    echo "  To run a single rector:"
-    echo "  ddev exec -d /var/www/html vendor/bin/rector process web/modules/contrib/<module> \\"
-    echo "    --only=\"DrupalRector\\\\Drupal11\\\\Rector\\\\Deprecation\\\\<ClassName>\" --no-cache"
+    echo "  Check its Rector matches the drupal-rector repo's (^2.6.5, developed on 2.8.x):"
+    echo "  rg -o \"PACKAGE_VERSION = '[^']+'\" vendor/rector/rector/src/Application/VersionResolver.php"
+    echo "  If older: ddev composer update rector/rector palantirnet/drupal-rector -W --no-interaction"
+    echo ""
+    echo "  To run a single rector, write rector-live-test.php and run it as described in"
+    echo "  .claude/skills/rector-live-test/SKILL.md step 2."
     exit 0
 fi
 
@@ -101,7 +104,10 @@ ddev composer update --no-interaction --with-all-dependencies
 
 # Upgrade to 11.x-dev so the Drupal 11.4 version gate in AbstractDrupalCoreRector
 # is satisfied, enabling rectors like RemoveTrustDataCallRector and
-# ReplaceSessionManagerDeleteRector to produce diffs.
+# ReplaceSessionManagerDeleteRector to produce diffs. 11.x-dev also satisfies the
+# drupal/core bound on every plain (class-bound) 10.x/11.x rule; those are dropped
+# on an older core even when loaded through the sets below. Never use main /
+# dev-main here: it satisfies no numeric bound.
 echo ""
 echo "==> Upgrading Drupal core to 11.x-dev (satisfies 11.4 version gates)…"
 ddev composer require \
@@ -137,6 +143,9 @@ git commit -m "Install Drupal 11 + contrib modules for rector testing"
 # ---------------------------------------------------------------------------
 echo ""
 echo "==> Writing rector.php…"
+# Explicit sets, not DrupalSetList::COMPOSER_BASED: that set forces BC wrapping
+# off, and the live tests need to see the DeprecationHelper wrappers (BC is on by
+# default here). Don't use withComposerBased() / withSetProviders() either.
 cat > rector.php << 'RECTOR'
 <?php
 

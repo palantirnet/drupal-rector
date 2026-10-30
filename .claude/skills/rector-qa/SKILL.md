@@ -224,7 +224,7 @@ Do not run the other passes in bulk mode.
 
 **Output:** `Pass 3: [PASS|FAIL] — expected <base class>, found <base class> (note Q4b result)`
 
-**If FAIL:** The base class is wrong. Propose the corrected class and note that `configure()`, `refactorWithConfiguration()`, and the test class will need updating.
+**If FAIL:** The base class is wrong. Propose the corrected class and note that `configure()`, `refactorWithConfiguration()`, and the test class will need updating, and that the bound moves with it (class constraint for a plain rule ↔ `ruleWithConfigurationComposerVersionBound()` in `composer-based.php` for a configurable one — Pass 5).
 
 ---
 
@@ -308,10 +308,16 @@ and carries a correct `drupal/core` bound in the right place. Spec:
    rg -l "<ClassName>" config/drupal-*/   # must list the per-minor (or -breaking) file
    rg -n "<ClassName>" config/composer-based.php   # must also match
    ```
+   - Config-only entry on a generic rector (`FunctionToServiceRector`, `RenameClassRector`, …):
+     grep the **deprecated symbol** instead. The class name matches both files anyway, and
+     `drupalRector.composerBasedSetCoverage` compares classes only, so a missing
+     `composer-based.php` entry passes phpstan.
    - Per-minor file = the introduced minor (`drupal:11.2.0` → `config/drupal-11/drupal-11.2-deprecations.php`).
      A rename whose target only exists from that minor on belongs in `-breaking.php` instead,
      and under the `(breaking)` heading in `composer-based.php`.
    - Drupal 8/9 rules must **not** appear in `composer-based.php`.
+   - `rg -n 'ruleWithConfiguration\(' config/composer-based.php` must print nothing: a plain
+     `ruleWithConfiguration()` there runs unbound, and no PHPStan rule catches it.
    - The `composer-based.php` entry sits under the matching `// Drupal X.Y` heading and copies
      the per-minor comment block (`@see` URLs, deprecated/removed line, `PHPSTAN_MESSAGES`).
 
@@ -353,12 +359,23 @@ This pass is a checklist of known recurring bugs. Add new rows as they are found
 
 | Bug | Who is at risk | The trap | Fix |
 |-----|----------------|----------|-----|
+| **Mutate in place, return `null`** (Rector ≥ 2.8) | Any rector that edits `$node` (args, name, attributes) instead of building a new node | Rector 2.8 drops the change when `refactor()` returns `null`, even though the node was mutated. Fixtures show "no change". | Return `$node` after mutating. Returning `[]` or an int other than `NodeVisitor::REMOVE_NODE` throws. |
+| **Not idempotent under re-runs** (Rector ≥ 2.8) | Rectors that add or wrap code | Rector re-runs the rules on a file while it keeps changing, so a rule that re-fires on its own output loops or stacks. | Guard on the output shape (e.g. `isInBackwardsCompatibleCall()`, already-renamed name) and return `null` when there is nothing to do. |
+| **Null scope** (Rector ≥ 2.8) | Rectors that read `$node->getAttribute(AttributeKey::SCOPE)` | `SCOPE` can be `null` (e.g. on nodes Rector created). | Check for `null` before calling methods on it. |
+| **Removed Rector APIs** (Rector 2.8) | Older rectors, digest bodies copied as-is | `NodeFactory::createLocalMethodCall()`, `ParentClassScopeResolver`, `AbstractRector::$file` are gone; `RenameStaticMethodRector` no longer runs. | `$this->nodeFactory->createMethodCall('this', …)`; `$scope->getClassReflection()?->getParentClass()`; `$this->getFile()`. Don't configure `RenameStaticMethodRector`. |
 | **Attribute/use-import dedup by FQCN** | Any rector that **adds** a PHP attribute (`#[Group]`, `#[RunTestsInSeparateProcesses]`, …) or a `use` import and guards against duplicates | The "already present?" check compares the candidate's **fully-qualified** name against `$attr->name->toString()`. After Rector's `importNames()` post-pass reprints the attribute as a short `use`-imported `#[Group]` — or the import is dropped across passes and the short name resolves to the current namespace — `toString()` no longer equals the FQCN, the check misses, and the attribute is re-appended every pass. | Compare on the **short (last) name segment**: `$attr->name->getLast() === $candidate->name->getLast()`. Keep any value comparison (`#[Group('a')]` vs `#[Group('b')]`) to disambiguate. |
 
 **Steps:**
 
+0. **Rector 2.8 traps.** Scan the class for the removed APIs and suspicious returns, then check
+   each `return null;` that follows a mutation of `$node`:
+   ```bash
+   rg -n 'createLocalMethodCall|ParentClassScopeResolver|\$this->file\b|RenameStaticMethodRector|return \[\];|AttributeKey::SCOPE|return null;' "$(find src -name '<ClassName>.php')"
+   ```
+   Any hit on the first four, a `return [];`, an unguarded `SCOPE`, or a mutate-then-`null`
+   → **AT-RISK**.
 1. Does the rector **add** an `AttributeGroup`/`Attribute` node, a `use` import, or any
-   node whose name is later subject to name-importing? If no → **N/A**.
+   node whose name is later subject to name-importing? If no, skip steps 2–3.
 2. If yes, find the duplicate-guard (`attributeAlreadyPresent`, `hasAttribute`, etc.)
    and check whether it compares `->toString()`/`ltrim(...,'\\')` against a fully-qualified
    string. If so → **AT-RISK** (apply the short-name fix above).

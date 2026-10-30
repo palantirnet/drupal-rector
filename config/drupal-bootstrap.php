@@ -29,8 +29,10 @@ return static function (RectorConfig $rectorConfig): void {
     // version and only loads sets for deprecations that are live on it, so the
     // rewritten code only ever runs against that one version. There is no older
     // minor to stay compatible with, which makes the DeprecationHelper BC
-    // wrappers pure noise here — disable them by default. (A project that does
-    // need them can re-register this singleton in its own rector.php.)
+    // wrappers pure noise here — disable them. Rector keeps the first singleton
+    // registered for a class, so a DrupalRectorSettings singleton in the
+    // project's rector.php has no effect with this set; code that needs the
+    // wrappers loads the per-major sets instead (see rector.contrib.php).
     $rectorConfig->singleton(DrupalRectorSettings::class, fn () => (new DrupalRectorSettings())
         ->disableBackwardCompatibility());
 
