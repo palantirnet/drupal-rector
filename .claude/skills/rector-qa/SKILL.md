@@ -316,6 +316,8 @@ and carries a correct `drupal/core` bound in the right place. Spec:
      A rename whose target only exists from that minor on belongs in `-breaking.php` instead,
      and under the `(breaking)` heading in `composer-based.php`.
    - Drupal 8/9 rules must **not** appear in `composer-based.php`.
+   - `rg -n 'ruleWithConfiguration\(' config/composer-based.php` must print nothing: a plain
+     `ruleWithConfiguration()` there runs unbound, and no PHPStan rule catches it.
    - The `composer-based.php` entry sits under the matching `// Drupal X.Y` heading and copies
      the per-minor comment block (`@see` URLs, deprecated/removed line, `PHPSTAN_MESSAGES`).
 

@@ -118,8 +118,8 @@ core `10.1.0`, so a configurable rule emits `DeprecationHelper::backwardsCompati
 To see the unwrapped output, add
 `$rectorConfig->singleton(\DrupalRector\Services\DrupalRectorSettings::class, fn () => (new \DrupalRector\Services\DrupalRectorSettings())->disableBackwardCompatibility());`.
 Do **not** load `DrupalSetList::COMPOSER_BASED` in this config: it registers its own settings
-with BC off, and Rector keeps that first registration, so your singleton and the BC wrappers are
-silently dropped (`.claude/skills/prompts/version-bounds.md` §6). Never use `withComposerBased()` or
+with BC off, and on Rector 2.8 the first registration wins, so your singleton and the BC wrappers
+are silently dropped (`.claude/skills/prompts/version-bounds.md` §6). Never use `withComposerBased()` or
 `withSetProviders()` here either.
 
 **Check the rule is active before running.** Plain rules carry a `drupal/core` bound on the class,

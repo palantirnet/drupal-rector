@@ -60,6 +60,10 @@ $rectorConfig->ruleWithConfigurationComposerVersionBound(FunctionToServiceRector
 ```
 
 The per-minor file keeps its plain `ruleWithConfiguration()` — no bound there.
+The reverse slip is not caught by any PHPStan rule: a plain `ruleWithConfiguration()`
+pasted into `composer-based.php` runs **unbound** on every core. Every configurable
+entry there uses the `…ComposerVersionBound` variant, so
+`rg -n 'ruleWithConfiguration\(' config/composer-based.php` must print nothing.
 
 **Plain rule** (`AbstractRector`, registered with `rule()`): the bound goes on the
 **rule class**, and both config files use a plain `rule()` call.
@@ -126,9 +130,11 @@ satisfies no numeric bound, so every class-bound rule is dropped there.
   set groups are dead: Rector ignores `withSetProviders()` since 2.6.5 and
   `DrupalSetProvider` is an empty deprecated class.
 - `COMPOSER_BASED` imports `config/drupal-bootstrap.php`, which registers
-  `DrupalRectorSettings` with BC wrapping **off**. Rector keeps the first
-  `singleton()` factory for a class, so a `DrupalRectorSettings` singleton in the
-  same config after the set is ignored. Anything that needs BC wrappers — BC
+  `DrupalRectorSettings` with BC wrapping **off**. On Rector 2.8 (what the repo
+  runs) `singleton()` keeps the first factory for a class, so a
+  `DrupalRectorSettings` singleton after the set is ignored; older Rector (≤ 2.6,
+  Illuminate container) let the last one win. Don't rely on either order. Anything
+  that needs BC wrappers — BC
   fixtures run by hand, live-testing an `AbstractDrupalCoreRector` rule — loads
   explicit sets (`Drupal10SetList::DRUPAL_10`, `Drupal11SetList::DRUPAL_11`) or the
   rule itself, with its own settings singleton, like `rector.contrib.php`.

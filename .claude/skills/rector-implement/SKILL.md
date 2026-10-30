@@ -253,6 +253,8 @@ Applies to every rector, custom class or config-only.
    generic rector, grep the deprecated symbol instead: the class name already matches both files,
    and `drupalRector.composerBasedSetCoverage` only compares classes, so a missing entry passes
    phpstan. A breaking rename is in `-breaking.php` and under the `(breaking)` heading.
+   `rg -n 'ruleWithConfiguration\(' config/composer-based.php` must print nothing — a configurable
+   rule copied there verbatim from the per-minor file runs unbound and no PHPStan rule notices.
 4. **Test pin satisfies the bound.** The test namespace's installed-core pin (`Drupal11` →
    `11.99.99`) must fall inside a class bound, or the rule is filtered out of its own test.
 5. `ddev composer phpstan` shows none of `drupalRector.composerBasedSetCoverage`,
