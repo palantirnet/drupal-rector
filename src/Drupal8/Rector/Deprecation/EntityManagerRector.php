@@ -8,7 +8,6 @@ use DrupalRector\Services\AddCommentService;
 use PhpParser\Node;
 use PHPStan\Analyser\Scope;
 use Rector\Exception\ShouldNotHappenException;
-use Rector\NodeCollector\ScopeResolver\ParentClassScopeResolver;
 use Rector\NodeTypeResolver\Node\AttributeKey;
 use Rector\Rector\AbstractRector;
 use Rector\VersionBonding\Contract\ComposerPackageConstraintInterface;
@@ -44,18 +43,12 @@ final class EntityManagerRector extends AbstractRector implements ComposerPackag
     }
 
     /**
-     * @var ParentClassScopeResolver
-     */
-    protected $parentClassScopeResolver;
-
-    /**
      * @var AddCommentService
      */
     private AddCommentService $commentService;
 
-    public function __construct(ParentClassScopeResolver $parentClassScopeResolver, AddCommentService $commentService)
+    public function __construct(AddCommentService $commentService)
     {
-        $this->parentClassScopeResolver = $parentClassScopeResolver;
         $this->commentService = $commentService;
     }
 
@@ -374,7 +367,8 @@ CODE_AFTER
 
         $scope = $expr->getAttribute(AttributeKey::SCOPE);
         if ($scope instanceof Scope) {
-            $parentClassName = $this->parentClassScopeResolver->resolveParentClassName($scope);
+            /** @var string|null $parentClassName */
+            $parentClassName = $scope->getClassReflection()?->getParentClass()?->getName();
 
             if ($expr instanceof Node\Expr\MethodCall && $parentClassName === 'Drupal\Core\Controller\ControllerBase') {
                 $expr = $this->refactorMethodCall($expr, $statement);

@@ -52,7 +52,7 @@ CODE_AFTER
             $message = $node->args[2];
         }
 
-        $assertSessionNode = $this->nodeFactory->createLocalMethodCall('assertSession');
+        $assertSessionNode = $this->nodeFactory->createMethodCall('this', 'assertSession');
         $optionExistsNode = $this->nodeFactory->createMethodCall($assertSessionNode, 'optionExists', [
             $node->args[0],
             $node->args[1],
@@ -64,12 +64,12 @@ CODE_AFTER
         );
 
         if ($message === null) {
-            return $this->nodeFactory->createLocalMethodCall('assertTrue', [
+            return $this->nodeFactory->createMethodCall('this', 'assertTrue', [
                 $this->nodeFactory->createArg($hasAttributeNode),
             ]);
         }
 
-        return $this->nodeFactory->createLocalMethodCall('assertTrue', [
+        return $this->nodeFactory->createMethodCall('this', 'assertTrue', [
             $this->nodeFactory->createArg($hasAttributeNode),
             $this->nodeFactory->createArg($message),
         ]);
