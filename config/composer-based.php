@@ -161,7 +161,11 @@ use Rector\Renaming\Rector\Name\RenameClassRector;
  * Usage:
  *
  *     return RectorConfig::configure()
- *         ->withComposerBased(drupal: true);
+ *         ->withSets([DrupalSetList::COMPOSER_BASED]);
+ *
+ * Not through withComposerBased(drupal: true): released Rector builds scope
+ * the class that toggle refers to, so it fails with "Class
+ * RectorPrefix...\DrupalRector\Set\DrupalSetList not found".
  *
  * Drupal rules only. Rector's own Symfony, PHPUnit and Twig sets are not
  * included: since Rector 2.6.2 they exist only as composer-based sets bound to
