@@ -13,6 +13,7 @@
 # Other ignored paths and files.
 /vendor
 /composer.lock
+/patches.lock.json
 
 /features/tmp/*
 !/features/tmp/.placeholder

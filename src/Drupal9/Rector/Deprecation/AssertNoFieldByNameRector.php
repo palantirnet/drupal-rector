@@ -10,13 +10,20 @@ use PhpParser\Node;
 use PhpParser\Node\Arg;
 use PhpParser\Node\VariadicPlaceholder;
 use Rector\Rector\AbstractRector;
+use Rector\VersionBonding\Contract\ComposerPackageConstraintInterface;
+use Rector\VersionBonding\ValueObject\ComposerPackageConstraint;
 use Symplify\RuleDocGenerator\Contract\DocumentedRuleInterface;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
-final class AssertNoFieldByNameRector extends AbstractRector implements DocumentedRuleInterface
+final class AssertNoFieldByNameRector extends AbstractRector implements ComposerPackageConstraintInterface, DocumentedRuleInterface
 {
     use GetDeclaringSourceTrait;
+
+    public function provideComposerPackageConstraint(): ComposerPackageConstraint
+    {
+        return new ComposerPackageConstraint('drupal/core', '>=9.1.0');
+    }
 
     protected string $deprecatedMethodName = 'assertNoFieldByName';
     protected string $methodName = 'fieldNotExists';
@@ -104,7 +111,7 @@ CODE_AFTER
      */
     protected function createAssertSessionMethodCall(string $method, array $args): Node\Expr\MethodCall
     {
-        $assertSessionNode = $this->nodeFactory->createLocalMethodCall('assertSession');
+        $assertSessionNode = $this->nodeFactory->createMethodCall('this', 'assertSession');
 
         return $this->nodeFactory->createMethodCall($assertSessionNode, $method, $args);
     }

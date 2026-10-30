@@ -32,6 +32,12 @@ container. Cleanup is handled automatically by `AbstractDrupalRectorTestCase::te
 not add a `try`/`finally` block. Standard conversion tests do not need this — the stub default
 (`11.99.x-dev`) is sufficient for normal fixture testing.
 
+**Second version mechanism — installed `drupal/core`.** Separate from `\Drupal::VERSION`, the
+test harness pins the *installed* core per test namespace (`Tests\Drupal11\…` → `11.99.99`), and
+class-bound rules are filtered against it. Every new rule also needs a version bound and a second
+registration in `config/composer-based.php`. Read `.claude/skills/prompts/version-bounds.md`
+before Step 6 — it is short and Steps 6, 9b and 12 depend on it.
+
 ---
 
 ## Step 1 — Confirm input
@@ -81,7 +87,10 @@ The issue markdown is at:
 Read it completely. Extract:
 - **Introduced version** — from the `## Impact` section, e.g.:
   `deprecated in drupal:11.4.0` → `'11.4.0'`
-- **Removal version** — e.g., `removed in drupal:13.0.0` → `'13.0.0'`
+- **Removal version** — e.g., `removed in drupal:13.0.0` → `'13.0.0'`. Together with the
+  introduced version this gives the rule's bound: `>=11.4.0 <14.0.0` (upper = the major *after*
+  removal, see `version-bounds.md` §2). Confirm both against `repos/drupal-core`'s
+  `@deprecated` / `trigger_error` text — change records are often wrong about removal.
 - **New API FQCN** — the fully-qualified class name of the replacement API, from `## Upgrade` or `## Technical details`
 - **Description** — one-sentence summary of what this rule does
 - **Change record number** — scan for any `drupal.org/node/` link in the "Upgrade path",
@@ -228,6 +237,10 @@ preferred path — it avoids creating new classes for patterns that drupal-recto
 
 1. Add the configuration entry to `config/drupal-11/drupal-11.4-deprecations.php` (or the
    appropriate versioned file), inside the matching `$rectorConfig->ruleWithConfiguration()` block.
+   Then add it to `config/composer-based.php` as its **own**
+   `ruleWithConfigurationComposerVersionBound(..., 'drupal/core', '>=X.Y.0 <N.0.0')` call under the
+   matching `// Drupal X.Y` heading — one call per deprecation, not appended to an existing block
+   (`version-bounds.md` §1 and §3).
 
 2. Add a fixture file to the existing generic rector's test directory:
    `tests/src/Rector/Deprecation/[GenericRectorName]/fixture/[descriptive-name].php.inc`
@@ -241,6 +254,10 @@ preferred path — it avoids creating new classes for patterns that drupal-recto
    ```
 
 5. Skip to Step 11 (fix-style) then Step 12 (phpstan) then Step 13 (test).
+
+`RenameClassRector` entries for renames whose target only exists from that minor on are
+**breaking**: they go in the per-minor `-breaking.php` file and under the `(breaking)` heading in
+`composer-based.php`, not in the deprecations file.
 
 **Configuration entry syntax by generic rector:**
 
@@ -301,6 +318,11 @@ tests/src/Drupal11/Rector/Deprecation/[ClassName]/config/configured_rule.php
 tests/src/Drupal11/Rector/Deprecation/[ClassName]/fixture/basic.php.inc
 ```
 
+`Drupal11` is the major the deprecation was **introduced** in. A deprecation introduced in 12.x
+goes under `Drupal12` (source *and* tests) — the test namespace selects the installed-core pin
+(`version-bounds.md` §4), so a mismatch silently filters a class-bound rule out of its own test.
+The rest of this prompt writes `Drupal11`; substitute the real major throughout.
+
 ---
 
 ## Step 6 — Generate the rule class
@@ -321,6 +343,9 @@ namespace DrupalRector\Drupal11\Rector\Deprecation;
 use PhpParser\Node;
 // [copy only the use statements actually needed by the refactor logic — omit Rector\Config\RectorConfig]
 use Rector\Rector\AbstractRector;
+use Rector\VersionBonding\Contract\ComposerPackageConstraintInterface;
+use Rector\VersionBonding\ValueObject\ComposerPackageConstraint;
+use Symplify\RuleDocGenerator\Contract\DocumentedRuleInterface;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
@@ -330,8 +355,15 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  * @see https://www.drupal.org/node/[issue-number]
  * @see https://www.drupal.org/node/[change-record-number]
  */
-class [ClassName] extends AbstractRector
+final class [ClassName] extends AbstractRector implements ComposerPackageConstraintInterface, DocumentedRuleInterface
 {
+    // The bound from Step 2: >=introduced <(major after removal).0.0 — see version-bounds.md §2.
+    // A plain rule must declare it here: it is registered with rule(), which cannot carry one.
+    public function provideComposerPackageConstraint(): ComposerPackageConstraint
+    {
+        return new ComposerPackageConstraint('drupal/core', '>=[introduced version] <[major after removal].0.0');
+    }
+
     // [copy private constants and properties from the digests rule unchanged]
 
     public function getRuleDefinition(): RuleDefinition
@@ -400,7 +432,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  * @see https://www.drupal.org/node/[issue-number]
  * @see https://www.drupal.org/node/[change-record-number]
  */
-class [ClassName] extends AbstractDrupalCoreRector
+final class [ClassName] extends AbstractDrupalCoreRector
 {
     /** @var DrupalIntroducedVersionConfiguration[] */
     protected array $configuration;
@@ -451,7 +483,10 @@ CODE_AFTER,
 ```
 
 **Adaptation notes:**
-- Remove `final` keyword — drupal-rector classes are not final.
+- Keep the `final` keyword — most drupal-rector rule classes are `final` (63 of 93 in
+  `src/Drupal11`). Drop it only if another rule is meant to extend the class.
+- Template B gets **no** class constraint: it is configurable, so its bound goes in
+  `composer-based.php` (Step 9b). Only plain `rule()`-registered classes carry one.
 - Remove `use Rector\Config\RectorConfig` from the rule class (it belongs only in config files).
 - Keep all private constants, arrays, and helper methods unchanged.
 - For multi-node-type rules (two or more different node types in `getNodeTypes()`):
@@ -649,6 +684,29 @@ $this->commentService->addDrupalRectorComment($node, 'Please verify this change 
 
 ---
 
+## Step 9b — Register the rule (two files)
+
+Full rules and examples: `.claude/skills/prompts/version-bounds.md`.
+
+1. **Per-minor config** — `config/drupal-11/drupal-11.[Y]-deprecations.php` for the introduced
+   minor (`-breaking.php` if the replacement only exists from that minor on). Add the `use`
+   statement and a comment block (`@see` URLs, "deprecated in … removed in …", replacement):
+   - Template A: `$rectorConfig->rule([ClassName]::class);`
+   - Template B: `$rectorConfig->ruleWithConfiguration([ClassName]::class, [new DrupalIntroducedVersionConfiguration('[introduced version]')]);`
+
+2. **`config/composer-based.php`** — the same rule under the matching `// Drupal 11.[Y]` (or
+   `(breaking)`) heading, in the same position as in the per-minor file, with the same comment
+   block:
+   - Template A: `$rectorConfig->rule([ClassName]::class);` — the bound is on the class.
+   - Template B:
+     ```php
+     $rectorConfig->ruleWithConfigurationComposerVersionBound([ClassName]::class, [
+         new DrupalIntroducedVersionConfiguration('[introduced version]'),
+     ], 'drupal/core', '>=[introduced version] <[major after removal].0.0');
+     ```
+
+---
+
 ## Step 10 — Write all files
 
 Using the write tool, create all four files at the paths derived in Step 5:
@@ -656,6 +714,8 @@ Using the write tool, create all four files at the paths derived in Step 5:
 2. `tests/src/Drupal11/Rector/Deprecation/[ClassName]/[ClassName]Test.php`
 3. `tests/src/Drupal11/Rector/Deprecation/[ClassName]/config/configured_rule.php`
 4. `tests/src/Drupal11/Rector/Deprecation/[ClassName]/fixture/basic.php.inc`
+
+…and apply the two config edits from Step 9b.
 
 ---
 
@@ -682,6 +742,16 @@ Fix any reported issues before proceeding. Common issues:
 - Incorrect type hints (e.g., `Node` vs a specific subtype)
 - `refactorWithConfiguration()` must declare its return type as mixed or `Node|Node[]|null`
 
+The registration guards report under these identifiers. Fix the registration — **never add them
+to the baseline**:
+
+| Identifier | Meaning | Fix |
+|---|---|---|
+| `drupalRector.composerBasedSetCoverage` | Rule is in a per-minor config but not in `composer-based.php` | Step 9b.2 |
+| `drupalRector.unboundRule` | A `rule()` in `composer-based.php` whose class has no `ComposerPackageConstraintInterface` | Add the constraint to the class (Template A) |
+| `drupalRector.boundRulePackage` | Bound names a package other than `drupal/core` | Use `'drupal/core'` |
+| `drupalRector.boundRuleVersion` / `drupalRector.boundRuleVersionOrder` | Constraint is not `>=X.Y.Z` or `>=X.Y.Z <N.0.0`, or `N` is not above the lower major | Fix the string (`version-bounds.md` §2) |
+
 ---
 
 ## Step 13 — Run the test
@@ -690,7 +760,7 @@ Fix any reported issues before proceeding. Common issues:
 vendor/bin/phpunit tests/src/Drupal11/Rector/Deprecation/[ClassName]/
 ```
 
-**If tests pass:** The conversion is complete. Commit all four files together.
+**If tests pass:** The conversion is complete — continue to Step 14 (no commit).
 
 **If tests fail:** Diagnose the failure:
 
@@ -699,6 +769,9 @@ vendor/bin/phpunit tests/src/Drupal11/Rector/Deprecation/[ClassName]/
 - **"Class not found"** — Check the namespace declaration and file path match.
 - **"Method not found"** — Verify the base class was chosen correctly (Step 4).
 - **"Fixture has no before/after separator"** — The `-----` line is missing or has extra spaces.
+- **Every fixture fails as "no change" on a plain rule** — the class bound is filtering the rule
+  out: the test namespace pins an installed core outside the bound (`version-bounds.md` §4), or
+  the bound itself is wrong.
 - **phpstan errors** — Fix type declarations in the rule class and re-run.
 
 After fixing failures, update the conversion prompt (this file) with any decision rule that
@@ -723,6 +796,9 @@ Before marking a conversion complete, verify:
 - [ ] (Custom class only) `use Rector\Config\RectorConfig` is NOT in the rule class
 - [ ] (Custom class only) Base class matches the BC decision from Step 4
 - [ ] (Custom class only) `getNodeTypes()` lists all node types from the original rule
+- [ ] (Template A only) Class implements `ComposerPackageConstraintInterface` + `DocumentedRuleInterface` with the Step 2 bound
+- [ ] Registered in the per-minor config **and** in `config/composer-based.php` (Step 9b); configurable rules carry the bound there
+- [ ] Bound is `>=introduced <(major after removal).0.0`, both numbers checked against `repos/drupal-core`
 - [ ] Fixture `-----` separator is on its own line
 - [ ] `vendor/bin/phpunit` passes for the relevant test directory
 - [ ] `ddev composer fix-style` has been run

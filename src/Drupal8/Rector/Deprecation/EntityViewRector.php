@@ -6,6 +6,8 @@ namespace DrupalRector\Drupal8\Rector\Deprecation;
 
 use PhpParser\Node;
 use Rector\Rector\AbstractRector;
+use Rector\VersionBonding\Contract\ComposerPackageConstraintInterface;
+use Rector\VersionBonding\ValueObject\ComposerPackageConstraint;
 use Symplify\RuleDocGenerator\Contract\DocumentedRuleInterface;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
@@ -22,8 +24,13 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  * Improvement opportunities
  * - Include support for cache rest parameter.
  */
-final class EntityViewRector extends AbstractRector implements DocumentedRuleInterface
+final class EntityViewRector extends AbstractRector implements ComposerPackageConstraintInterface, DocumentedRuleInterface
 {
+    public function provideComposerPackageConstraint(): ComposerPackageConstraint
+    {
+        return new ComposerPackageConstraint('drupal/core', '>=8.0.0');
+    }
+
     /**
      * {@inheritdoc}
      */
