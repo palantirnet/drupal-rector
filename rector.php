@@ -5,46 +5,31 @@ declare(strict_types=1);
 use DrupalRector\Rector\Deprecation\DeprecationHelperRemoveRector;
 use DrupalRector\Rector\ValueObject\DeprecationHelperRemoveConfiguration;
 use DrupalRector\Services\DrupalRectorSettings;
-use DrupalRector\Set\Drupal10SetList;
-use DrupalRector\Set\Drupal11SetList;
-use DrupalRector\Set\Drupal8SetList;
-use DrupalRector\Set\Drupal9SetList;
+use DrupalRector\Set\DrupalSetList;
 use Rector\Config\RectorConfig;
 
 return static function (RectorConfig $rectorConfig): void {
-    // Adjust the set lists to be more granular to your Drupal requirements.
+    // The composer-based set binds every rule to the drupal/core versions its
+    // deprecation applies to, so it fixes what is deprecated on your installed
+    // core and nothing newer. This is the config for sites; for a contrib
+    // module or theme, copy rector.contrib.php instead.
     //
-    // To load only the rules that are relevant for your installed Drupal
-    // version, replace the sets below with the composer-based set, which binds
-    // every rule to the drupal/core version its deprecation was introduced in:
-    //
-    //   $rectorConfig->sets([DrupalSetList::COMPOSER_BASED]);
-    $rectorConfig->sets([
-        Drupal10SetList::DRUPAL_10,
-        Drupal11SetList::DRUPAL_11,
-    ]);
+    // Load the set directly rather than through Rector's
+    // withComposerBased(drupal: true): released Rector builds up to 2.8.3
+    // scope the class that toggle refers to, so it fails with "Class
+    // RectorPrefix...\DrupalRector\Set\DrupalSetList not found".
+    $rectorConfig->sets([DrupalSetList::COMPOSER_BASED]);
 
-    // Configure DrupalRectorSettings to control rule behaviour.
-    // By default, backward-compatibility wrapping is enabled. Disable it if
-    // you don't need to support multiple Drupal versions simultaneously.
+    // The rewritten code only has to run on the installed core, so
+    // backward-compatibility wrapping is off. The composer-based set turns it
+    // off as well, and its setting wins over this one. Contrib modules that
+    // need DeprecationHelper wrappers use rector.contrib.php instead.
     $rectorConfig->singleton(DrupalRectorSettings::class, fn () => (new DrupalRectorSettings())
-            ->disableBackwardCompatibility()
-        // Contrib module developers: set the minimum Drupal version your
-        // module needs to support so that BC wrappers are emitted correctly.
-        // Example: ->setMinimumCoreVersionSupported('10.5.0')
+        ->disableBackwardCompatibility()
     );
 
-    // Contrib modules: once you raise your minimum supported Drupal version,
-    // uncomment and configure this rule to strip DeprecationHelper BC wrappers
-    // for any deprecation introduced before that version. The wrappers are
-    // replaced with the new API call directly.
-    //
-    // $rectorConfig->ruleWithConfiguration(DeprecationHelperRemoveRector::class, [
-    //     new DeprecationHelperRemoveConfiguration('10.3.0'),
-    // ]);
-
-    // If you wish to remove all DeprecationHelper BC wrappers based on your
-    // installed Drupal version, you can use the following rule instead:
+    // To remove DeprecationHelper BC wrappers left in your code by an earlier
+    // run, for every deprecation up to your installed Drupal version:
     //
     // $rectorConfig->ruleWithConfiguration(DeprecationHelperRemoveRector::class, [
     //     new DeprecationHelperRemoveConfiguration(\Drupal::VERSION),
