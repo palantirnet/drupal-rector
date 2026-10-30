@@ -166,11 +166,10 @@ deprecation landed in, so those sets apply them on any core from then on.
 This is the backward-compatibility-safe counterpart to listing sets manually:
 it fixes what is deprecated on *your* installed core.
 
-> **Requires** a Rector release that ships `SetGroup::DRUPAL` and the
-> `withComposerBased(drupal: ...)` toggle (see
-> [rectorphp/rector#9778](https://github.com/rectorphp/rector/issues/9778)),
-> and `rector/rector` ^2.6, which is where
-> `RectorConfig::ruleWithConfigurationComposerVersionBound()` landed
+> **Requires** `rector/rector` ^2.6.5, the first release where
+> `withComposerBased(drupal: true)` loads `DrupalSetList::COMPOSER_BASED` itself
+> (see [rectorphp/rector#9778](https://github.com/rectorphp/rector/issues/9778)).
+> `RectorConfig::ruleWithConfigurationComposerVersionBound()` landed in 2.6
 > ([rectorphp/rector-src#8244](https://github.com/rectorphp/rector-src/pull/8244)).
 
 ### DrupalRectorSettings
