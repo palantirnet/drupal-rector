@@ -130,10 +130,11 @@ satisfies no numeric bound, so every class-bound rule is dropped there.
   set groups are dead: Rector ignores `withSetProviders()` since 2.6.5 and
   `DrupalSetProvider` is an empty deprecated class.
 - `COMPOSER_BASED` imports `config/drupal-bootstrap.php`, which registers
-  `DrupalRectorSettings` with BC wrapping **off**. On Rector 2.8 (what the repo
-  runs) `singleton()` keeps the first factory for a class, so a
-  `DrupalRectorSettings` singleton after the set is ignored; older Rector (≤ 2.6,
-  Illuminate container) let the last one win. Don't rely on either order. Anything
+  `DrupalRectorSettings` with BC wrapping **off**. Since Rector 2.6.4, so on every
+  version the package supports, `singleton()` keeps the first factory for a class,
+  and a `DrupalRectorSettings` singleton after the set is ignored. (Rector 2.6.3
+  and older let the last one win, which is what an outdated test project shows.)
+  Anything
   that needs BC wrappers — BC
   fixtures run by hand, live-testing an `AbstractDrupalCoreRector` rule — loads
   explicit sets (`Drupal10SetList::DRUPAL_10`, `Drupal11SetList::DRUPAL_11`) or the
