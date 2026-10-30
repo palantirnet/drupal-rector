@@ -1,18 +1,18 @@
 ---
 name: rector-qa
-description: Comprehensive quality review of an existing Drupal rector. Runs six audit passes — type guards, fixture coverage, BC decision correctness, @see URL accuracy, registration, and common bugs / idempotency — and produces a PASS/FAIL/WARN checklist. Use before merging a rector or when reviewing existing ones for regressions. Pass 'all' to walk the full branch type-guard checklist.
+description: Comprehensive quality review of an existing Drupal rector. Runs seven audit passes — type guards, fixture coverage, BC decision correctness, @see URL accuracy, registration and version bounds, common bugs / idempotency, and by-reference capture — and produces a PASS/FAIL/WARN checklist. Use before merging a rector or when reviewing existing ones for regressions. Pass 'all' to walk the full branch type-guard checklist.
 argument-hint: "<RectorClassName | all>"
 allowed-tools: Read, Bash, Edit, Write, Glob
 ---
 
 # Rector QA
 
-Comprehensive six-pass quality review for a drupal-rector implementation.
+Comprehensive seven-pass quality review for a drupal-rector implementation.
 
 ## Input
 
 `$ARGUMENTS` — one of:
-- Rector class name, e.g. `ReplaceSessionManagerDeleteRector` — runs all four passes on that rector.
+- Rector class name, e.g. `ReplaceSessionManagerDeleteRector` — runs all seven passes on that rector.
 - `all` — walks every Drupal-rector source file under `src/` and runs Pass 1 (type-guard audit) on each, fixing as it goes.
 
 ## Finding the files
@@ -295,26 +295,50 @@ consecutively, issue first:
 
 ---
 
-## Pass 5 — Registration Audit
+## Pass 5 — Registration and Version Bound Audit
 
-**Goal:** The rector must be wired into a `config/drupal-11/drupal-11.N-deprecations.php` file so it actually runs when users invoke drupal-rector.
+**Goal:** The rector is registered in **both** its per-minor config and `config/composer-based.php`,
+and carries a correct `drupal/core` bound in the right place. Spec:
+`.claude/skills/prompts/version-bounds.md`.
 
 **Steps:**
 
-1. Check if the class is referenced in any config file:
+1. **Both registrations.** A bare `grep config/` is not enough — it passes when only one exists:
    ```bash
-   grep -rq "<ClassName>" config/ && echo "REGISTERED" || echo "FAIL — not registered"
+   rg -l "<ClassName>" config/drupal-*/   # must list the per-minor (or -breaking) file
+   rg -n "<ClassName>" config/composer-based.php   # must also match
    ```
+   - Per-minor file = the introduced minor (`drupal:11.2.0` → `config/drupal-11/drupal-11.2-deprecations.php`).
+     A rename whose target only exists from that minor on belongs in `-breaking.php` instead,
+     and under the `(breaking)` heading in `composer-based.php`.
+   - Drupal 8/9 rules must **not** appear in `composer-based.php`.
+   - The `composer-based.php` entry sits under the matching `// Drupal X.Y` heading and copies
+     the per-minor comment block (`@see` URLs, deprecated/removed line, `PHPSTAN_MESSAGES`).
 
-2. If unregistered, identify the correct config file from the deprecation version in the rector docblock (e.g. `drupal:11.2.0` → `config/drupal-11/drupal-11.2-deprecations.php`).
+2. **Bound location** matches how the rule is registered:
+   - Plain `rule()` (extends `AbstractRector`, no configuration) → the class implements
+     `ComposerPackageConstraintInterface` (+ `DocumentedRuleInterface`) and
+     `provideComposerPackageConstraint()` returns the bound. Both config files use plain `rule()`.
+   - Configurable (`AbstractDrupalCoreRector`, generic rectors) → `composer-based.php` uses
+     `ruleWithConfigurationComposerVersionBound(..., 'drupal/core', '<bound>')`, one call per
+     deprecation; no class constraint. A BC-wrapping rule must **never** carry a class bound —
+     that filter is global and would stop the BC wrapper from running ahead of the installed core.
 
-3. Determine the entry type:
-   - Extends `AbstractDrupalCoreRector` → `$rectorConfig->ruleWithConfiguration(<ClassName>::class, [new DrupalIntroducedVersionConfiguration('11.N.0')])`
-   - Extends `AbstractRector` → `$rectorConfig->rule(<ClassName>::class)`
+3. **Bound values.** Lower = introduced version; upper = `<N.0.0`, `N` = removal major + 1.
+   Verify against `repos/drupal-core` (`@deprecated` / `trigger_error` text, or `git log -S` for an
+   already-removed symbol), not the change record alone. No upper bound only when core never
+   removes the old form — the config comment must say so.
 
-**Output:** `Pass 5: [PASS|FAIL] — <registered in config/drupal-11/drupal-11.N-deprecations.php | not registered>`
+4. **Test pin.** For a class bound, the test's `Tests\Drupal<major>` namespace pin
+   (`11.99.99`, `12.99.99`; `12.0.0` outside those namespaces) must satisfy the bound.
 
-**If FAIL:** Add the `use` statement and `rule`/`ruleWithConfiguration` entry to the correct config file.
+5. `ddev composer phpstan` reports none of `drupalRector.composerBasedSetCoverage`,
+   `drupalRector.unboundRule`, `drupalRector.boundRulePackage`, `drupalRector.boundRuleVersion`,
+   `drupalRector.boundRuleVersionOrder`, and none of them are in `phpstan-baseline.neon`.
+
+**Output:** `Pass 5: [PASS|FAIL] — per-minor: <file|missing>, composer-based: <yes|missing>, bound: <constraint> on <class|set> — <verified|wrong: why>`
+
+**If FAIL:** Add the missing registration, move or correct the bound, and re-run phpstan + the rule's tests.
 
 ---
 
@@ -408,7 +432,7 @@ Pass 1 — Type Guard:    [SAFE|AT-RISK|EXEMPT]
 Pass 2 — Fixtures:      [PASS|WARN] — <note>
 Pass 3 — BC Decision:   [PASS|FAIL] — <note>
 Pass 4 — @see URL:      [PASS|WARN|FAIL] — issue:<n> CR:<n> — <present/missing>
-Pass 5 — Registration:  [PASS|FAIL] — <note>
+Pass 5 — Registration / bound: [PASS|FAIL] — <note>
 Pass 6 — Common Bugs:   [SAFE|AT-RISK|N/A] — <note>
 Pass 7 — By-Reference:  [SAFE|AT-RISK|N/A] — <note>
 

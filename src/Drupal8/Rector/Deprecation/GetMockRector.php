@@ -8,7 +8,6 @@ use DrupalRector\Drupal8\Rector\ValueObject\GetMockConfiguration;
 use PhpParser\Node;
 use PHPStan\Analyser\Scope;
 use Rector\Contract\Rector\ConfigurableRectorInterface;
-use Rector\NodeCollector\ScopeResolver\ParentClassScopeResolver;
 use Rector\NodeTypeResolver\Node\AttributeKey;
 use Rector\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\Contract\DocumentedRuleInterface;
@@ -26,19 +25,9 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 class GetMockRector extends AbstractRector implements ConfigurableRectorInterface, DocumentedRuleInterface
 {
     /**
-     * @var ParentClassScopeResolver
-     */
-    protected ParentClassScopeResolver $parentClassScopeResolver;
-
-    /**
      * @var GetMockConfiguration[]
      */
     private array $configuration;
-
-    public function __construct(ParentClassScopeResolver $parentClassScopeResolver)
-    {
-        $this->parentClassScopeResolver = $parentClassScopeResolver;
-    }
 
     /**
      * {@inheritdoc}
@@ -73,7 +62,7 @@ class GetMockRector extends AbstractRector implements ConfigurableRectorInterfac
             return null;
         }
 
-        $parentClassName = $this->parentClassScopeResolver->resolveParentClassName($scope);
+        $parentClassName = $scope->getClassReflection()?->getParentClass()?->getName();
         // This checks for a method call with the method name of `getMock` and that
         // the variable calling `getMock` is `$this`, not some other variable call,
         // such as `$myOtherService->getMock` and have unintended consequences.

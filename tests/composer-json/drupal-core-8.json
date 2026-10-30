@@ -1,0 +1,6 @@
+{
+    "_comment": "Stands in for the analysed project's composer.json in rule tests under tests/src/Drupal8. Rules bonded through ComposerPackageConstraintInterface state a closed range, so no single version can activate every rule: a rule for an API removed in Drupal 10 caps at <11.0.0, one deprecated in 11.4 starts at >=11.4.0. Each major therefore gets its own pin, high within the major so every rule in that set is active.",
+    "require": {
+        "drupal/core": "8.99.99"
+    }
+}

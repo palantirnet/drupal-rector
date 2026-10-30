@@ -2,7 +2,6 @@
 
 namespace Drupal\hookconvertrector\Hook;
 
-use Drupal\Core\Hook\Attribute\LegacyHook;
 use Drupal\Core\Hook\Attribute\Hook;
 /**
  * Hook implementations for hookconvertrector.

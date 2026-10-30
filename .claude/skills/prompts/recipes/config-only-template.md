@@ -9,24 +9,47 @@ the exact config syntax and fixture shape for one generic rector.
 
 ### Step 1 — Identify the config file
 
-| introducedVersion | File |
-|---|---|
-| 11.4.x | `config/drupal-11/drupal-11.4-deprecations.php` |
-| 11.3.x | `config/drupal-11/drupal-11.3-deprecations.php` |
-| 11.2.x | `config/drupal-11/drupal-11.2-deprecations.php` |
-| 11.1.x | `config/drupal-11/drupal-11.1-deprecations.php` |
-| 11.0.x | `config/drupal-11/drupal-11.0-deprecations.php` |
+The file is named after the minor the deprecation was **introduced** in:
+`config/drupal-<major>/drupal-<major>.<minor>-deprecations.php`, e.g. 11.4.x →
+`config/drupal-11/drupal-11.4-deprecations.php`. If that minor has no file yet, create it
+(copy an existing one) and add its constant to `src/Set/Drupal<major>SetList.php` and the
+`drupal-<major>-all-deprecations.php` aggregate.
 
-### Step 2 — Add the config entry
+A `RenameClassRector` entry whose target class only exists from that minor on is **breaking**:
+it goes in `drupal-<major>.<minor>-breaking.php` instead.
+
+Also work out the bound now (`../version-bounds.md` §2): `>={{introducedVersion}} <{{majorAfterRemoval}}.0.0`,
+e.g. deprecated in 11.4.0, removed in 13.0.0 → `>=11.4.0 <14.0.0`.
+
+### Step 2 — Add the config entry (two files)
 
 See the specific recipe for the exact entry syntax.
-Add the `use` statement for the configuration value object if it is not yet imported.
+
+1. **Per-minor file** from Step 1: add the entry inside the matching
+   `$rectorConfig->ruleWithConfiguration()` block. Add the `use` statement for the
+   configuration value object if it is not yet imported.
+2. **`config/composer-based.php`**: add the same entry as its **own** call under the matching
+   `// Drupal X.Y` (or `// Drupal X.Y (breaking)`) heading, copying the comment block above it:
+   ```php
+   // https://www.drupal.org/node/{{issueNumber}}
+   // {{deprecatedSymbol}} deprecated in drupal:{{introducedVersion}}, removed in drupal:{{removedVersion}}.
+   $rectorConfig->ruleWithConfigurationComposerVersionBound({{GenericRectorName}}::class, [
+       {{configEntry}}
+   ], 'drupal/core', '>={{introducedVersion}} <{{majorAfterRemoval}}.0.0');
+   ```
+   One call per deprecation — do not append to another entry's call, its bound may differ.
 
 ### Step 3 — Add a fixture to the generic rector's test directory
 
 Path: `tests/src/Rector/Deprecation/{{GenericRectorName}}/fixture/{{descriptive-name}}.php.inc`
 
-Format (no BC wrapper — generic rectors do not produce one):
+Format below is for the unwrapped generics (`FunctionCallRemovalRector`,
+`MethodToMethodWithCheckRector`, `ClassConstantToClassConstantRector`, `RenameClassRector`).
+The generics that take an `introducedVersion` (`FunctionToStaticRector`, `FunctionToServiceRector`,
+`FunctionToFirstArgMethodRector`, `DrupalServiceRenameRector`, `ConstantToClassConstantRector`)
+are BC-wrapped for versions >= 10.1.0: their "after" is the
+`\Drupal\Component\Utility\DeprecationHelper::backwardsCompatibleCall(\Drupal::VERSION, '…', fn() => <new>, fn() => <old>)`
+form — copy the exact shape from a sibling fixture or from the first failing test diff.
 ```
 <?php
 
@@ -52,9 +75,13 @@ ddev composer fix-style
 ddev composer phpstan
 vendor/bin/phpunit tests/src/Rector/Deprecation/{{GenericRectorName}}/
 git add config/drupal-11/drupal-11.{{X}}-deprecations.php \
+        config/composer-based.php \
         tests/src/Rector/Deprecation/{{GenericRectorName}}/
-git commit -m "feat(Drupal11): Add {{GenericRectorName}} config for issue #{{issueNumber}}"
+git commit -m "feat: add {{GenericRectorName}} config for #{{issueNumber}}"
 ```
+
+A `drupalRector.composerBasedSetCoverage` PHPStan error means Step 2.2 was skipped. Add a
+`CHANGELOG.md` entry under `[Unreleased] / ### Added` (a separate `docs:` commit is fine).
 
 ---
 
@@ -165,13 +192,14 @@ Fixture "after": `{{NewClass}}::{{NEW_CONST}}`
 
 ### ConstantToClassConstantRector
 
-Values: `{{GLOBAL_CONST}}`, `{{TargetClass}}`, `{{CONST_NAME}}`
+Values: `{{GLOBAL_CONST}}`, `{{TargetClass}}`, `{{CONST_NAME}}`, `{{introducedVersion}}`
 
 ```php
-new ConstantToClassConfiguration('{{GLOBAL_CONST}}', '{{TargetClass}}', '{{CONST_NAME}}'),
+new ConstantToClassConfiguration('{{GLOBAL_CONST}}', '{{TargetClass}}', '{{CONST_NAME}}', '{{introducedVersion}}'),
 ```
 
-No BC wrapping.
+`introducedVersion` is required. BC-wrapped (introduced >= 10.1.0) — the fixture "after" shows the
+`DeprecationHelper::backwardsCompatibleCall()` form.
 Fixture "after": `\{{TargetClass}}::{{CONST_NAME}}`
 
 ---

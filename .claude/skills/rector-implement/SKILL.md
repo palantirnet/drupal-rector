@@ -1,6 +1,6 @@
 ---
 name: rector-implement
-description: Converts a single drupal-digests rule to a drupal-rector-compliant implementation. Follows .claude/skills/prompts/digest-to-rector-prompt.md steps 1–14 and adds quality gates for type guards (QG-A) and version-gating tests (QG-B). Pass the path to the digests rule file as argument.
+description: Converts a single drupal-digests rule to a drupal-rector-compliant implementation. Follows .claude/skills/prompts/digest-to-rector-prompt.md steps 1–14 and adds quality gates for type guards (QG-A), version-gating tests (QG-B), by-reference capture (QG-C) and the composer-based version bound + dual registration (QG-D). Pass the path to the digests rule file as argument.
 argument-hint: "repos/drupal-digests/rector/rules/<rule-filename>.php"
 allowed-tools: Read, Write, Edit, Bash, Glob
 ---
@@ -52,13 +52,19 @@ The canonical prompt covers:
 - Step 7: Generate the fixture file
 - Step 8: Generate the test class
 - Step 9: Generate the test config
+- Step 9b: Register the rule in its per-minor config **and** in `config/composer-based.php`, with a version bound
 - Step 10: Write all files
 - Step 11: Fix code style (`ddev composer fix-style`)
 - Step 12: Run static analysis (`ddev composer phpstan`)
-- Step 13: Run the test (`vendor/bin/phpunit tests/src/Drupal11/Rector/Deprecation/[ClassName]/`)
+- Step 13: Run the test (`vendor/bin/phpunit tests/src/Drupal11/Rector/Deprecation/[ClassName]/` — `Drupal11` is the introduced major; use `Drupal12` for a 12.x deprecation)
 - Step 14: Done (no commit — leave that to the reviewer)
 
 **Do not skip or abbreviate any step.** The `.claude/skills/prompts/digest-to-rector-prompt.md` prompt is authoritative.
+
+**Registration and version bounds** are specified once, in `.claude/skills/prompts/version-bounds.md`.
+Read it before writing the class: every rule is registered twice, every rule carries a
+`drupal/core` bound, and three PHPStan rules fail the build otherwise. Fix those errors at the
+source; never baseline them.
 
 ---
 
@@ -225,6 +231,41 @@ See `project_byref_bc_wrapper_fix` in memory for the full mechanism.
 
 ---
 
+### After QG-C: Quality Gate QG-D — Version Bound and Registration
+
+Applies to every rector, custom class or config-only.
+
+1. **Bound numbers.** Lower = introduced version; upper = `<N.0.0` with `N` = removal major + 1.
+   Confirm both in `repos/drupal-core`, not just the issue markdown:
+   ```bash
+   rg -n '<symbol>' repos/drupal-core/core --type php | rg -i 'deprecated in|trigger_error'
+   ```
+   Omit the upper bound only when core never removes the old form, and say so in the comment.
+2. **Where it lives.** Plain `rule()` class → `provideComposerPackageConstraint()` on the class
+   (plus `ComposerPackageConstraintInterface`, `DocumentedRuleInterface`). Configurable rule →
+   `ruleWithConfigurationComposerVersionBound()` in `config/composer-based.php`, one call per
+   deprecation.
+3. **Both registrations present**, in matching positions, same comment block:
+   ```bash
+   rg -n '<ClassName>' config/composer-based.php config/drupal-*/
+   ```
+   Must show the per-minor file **and** `config/composer-based.php`. A breaking rename is in
+   `-breaking.php` and under the `(breaking)` heading.
+4. **Test pin satisfies the bound.** The test namespace's installed-core pin (`Drupal11` →
+   `11.99.99`) must fall inside a class bound, or the rule is filtered out of its own test.
+5. `ddev composer phpstan` shows none of `drupalRector.composerBasedSetCoverage`,
+   `drupalRector.unboundRule`, `drupalRector.boundRule*`.
+
+---
+
+### After QG-D: CHANGELOG entry
+
+Add a line to `CHANGELOG.md` under `## [Unreleased]` → `### Added`, in the style of the
+surrounding entries (rector name, what it rewrites, issue link). A separate `docs:` commit is
+fine; the human reviewer commits.
+
+---
+
 ### After Step 14: Record the implemented digest
 
 `docs/implemented-digests.yml` is the **authoritative, hand-maintained** record of
@@ -263,7 +304,7 @@ No regeneration step — the edit is the record.
 
 ### After the index update: Run rector-qa
 
-Read `.claude/skills/rector-qa/SKILL.md` and execute all four passes for `[ClassName]`.
+Read `.claude/skills/rector-qa/SKILL.md` and execute all seven passes for `[ClassName]`.
 
 Apply any fixes the QA reveals. Do not declare the implementation complete until rector-qa reports **Overall: PASS**.
 
@@ -277,6 +318,9 @@ Before declaring the implementation complete, verify all items from `.claude/ski
 - [ ] QG-A: `no_change_unrelated.php.inc` fixture exists if a type guard was added
 - [ ] QG-B: `testAboveVersion()` + `testBelowVersion()` (with `DrupalRectorSettings::setDrupalVersion`) and `fixture-below-version/basic.php.inc` present if BC-wrapped
 - [ ] QG-C: by-reference parameters on the target/deprecated function checked; if present, stub (`&` positions + return type) and long-closure fixture added (or explicitly N/A)
+- [ ] QG-D: bound `>=introduced <(removal major + 1).0.0` verified against `repos/drupal-core`; on the class (plain rule) or in `composer-based.php` (configurable)
+- [ ] QG-D: registered in the per-minor config **and** `config/composer-based.php`
+- [ ] `CHANGELOG.md` `[Unreleased] / ### Added` entry
 - [ ] `vendor/bin/phpunit tests/src/Drupal11/Rector/Deprecation/[ClassName]/` passes
 - [ ] `ddev composer phpstan` reports no new errors
 - [ ] `ddev composer fix-style` produces no changes
@@ -285,4 +329,4 @@ Before declaring the implementation complete, verify all items from `.claude/ski
 
 ## Quick Reference: Phase 1 (config-only) path
 
-If Step 4b determines a generic rector handles this rule, follow the "config-only" path in `.claude/skills/prompts/digest-to-rector-prompt.md` Step 4b instead of generating a custom class. No custom PHP class is written — only a config entry and fixture are added.
+If Step 4b determines a generic rector handles this rule, follow the "config-only" path in `.claude/skills/prompts/digest-to-rector-prompt.md` Step 4b instead of generating a custom class. No custom PHP class is written — only the config entry (in the per-minor file **and**, with its bound, in `config/composer-based.php`) and a fixture are added.

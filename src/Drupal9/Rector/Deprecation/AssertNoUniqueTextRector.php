@@ -8,13 +8,20 @@ use DrupalRector\Utility\GetDeclaringSourceTrait;
 use PhpParser\Node;
 use Rector\Exception\ShouldNotHappenException;
 use Rector\Rector\AbstractRector;
+use Rector\VersionBonding\Contract\ComposerPackageConstraintInterface;
+use Rector\VersionBonding\ValueObject\ComposerPackageConstraint;
 use Symplify\RuleDocGenerator\Contract\DocumentedRuleInterface;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
-final class AssertNoUniqueTextRector extends AbstractRector implements DocumentedRuleInterface
+final class AssertNoUniqueTextRector extends AbstractRector implements ComposerPackageConstraintInterface, DocumentedRuleInterface
 {
     use GetDeclaringSourceTrait;
+
+    public function provideComposerPackageConstraint(): ComposerPackageConstraint
+    {
+        return new ComposerPackageConstraint('drupal/core', '>=9.1.0');
+    }
 
     public function getRuleDefinition(): RuleDefinition
     {
@@ -61,7 +68,7 @@ CODE_AFTER
 
         /** @var Node\Stmt[] $nodes */
         $nodes = [];
-        $getSessionNode = $this->nodeFactory->createLocalMethodCall('getSession');
+        $getSessionNode = $this->nodeFactory->createMethodCall('this', 'getSession');
         $getPageNode = $this->nodeFactory->createMethodCall($getSessionNode, 'getPage');
         $getTextNode = $this->nodeFactory->createMethodCall($getPageNode, 'getText');
         $pageTextVar = new Node\Expr\Variable('page_text');
@@ -85,7 +92,8 @@ CODE_AFTER
             throw new \RuntimeException(__CLASS__.' cannot handle argument of type '.get_class($assertedText));
         }
 
-        $methodCall = $this->nodeFactory->createLocalMethodCall(
+        $methodCall = $this->nodeFactory->createMethodCall(
+            'this',
             'assertGreaterThan',
             [
                 new Node\Arg(new Node\Scalar\LNumber(1)),
