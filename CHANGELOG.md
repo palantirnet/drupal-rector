@@ -26,6 +26,7 @@ release-by-release.
   - `HookConvertRector` no longer imports the hook class into itself when `importNames()` is on, which was a fatal "name already in use".
   - Files with test classes no longer abort with "Call to a member function getFunctionCallStackWithParameters() on null".
   - The Drupal 8 and 9 rules and `HookConvertRector` no longer use Rector APIs removed in 2.8.0.
+- **`AnnotationToAttributeRector` on Rector dev-main:** it no longer depends on Rector's `ArrayParser`, which was removed in [rectorphp/rector-src#8881](https://github.com/rectorphp/rector-src/pull/8881) and made the rule fail to load. Annotations Rector cannot parse, such as arguments starting on the line after the tag, are now left alone instead of being converted to a broken attribute.
 
 ### Removed
 
