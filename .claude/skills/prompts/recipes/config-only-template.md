@@ -12,8 +12,9 @@ the exact config syntax and fixture shape for one generic rector.
 The file is named after the minor the deprecation was **introduced** in:
 `config/drupal-<major>/drupal-<major>.<minor>-deprecations.php`, e.g. 11.4.x →
 `config/drupal-11/drupal-11.4-deprecations.php`. If that minor has no file yet, create it
-(copy an existing one) and add its constant to `src/Set/Drupal<major>SetList.php` and the
-`drupal-<major>-all-deprecations.php` aggregate.
+(copy an existing one), add its constant to `src/Set/Drupal<major>SetList.php` and the
+`drupal-<major>-all-deprecations.php` aggregate, and add a matching `// Drupal X.Y` heading to
+`config/composer-based.php` (in version order).
 
 A `RenameClassRector` entry whose target class only exists from that minor on is **breaking**:
 it goes in `drupal-<major>.<minor>-breaking.php` instead.
@@ -80,7 +81,10 @@ git add config/drupal-11/drupal-11.{{X}}-deprecations.php \
 git commit -m "feat: add {{GenericRectorName}} config for #{{issueNumber}}"
 ```
 
-A `drupalRector.composerBasedSetCoverage` PHPStan error means Step 2.2 was skipped. Add a
+A `drupalRector.composerBasedSetCoverage` PHPStan error means Step 2.2 was skipped — but it only
+fires for a rector class `composer-based.php` does not register yet. Generic rectors are almost
+always registered there already, so a skipped Step 2.2 usually passes phpstan. Check it by hand:
+`rg -n '{{deprecatedSymbol}}' config/composer-based.php config/drupal-*/` must hit both. Add a
 `CHANGELOG.md` entry under `[Unreleased] / ### Added` (a separate `docs:` commit is fine).
 
 ---

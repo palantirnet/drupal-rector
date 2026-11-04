@@ -2,7 +2,7 @@
 
 Every Drupal 10+ rule is registered **twice** and bound to the `drupal/core`
 versions it applies to. The skills and recipes link here instead of repeating it.
-Three custom PHPStan rules (`utils/PHPStan/Rule/`) enforce all of this, so a rule
+Four custom PHPStan rules (`utils/PHPStan/Rule/`) enforce most of this, so a rule
 that skips a step fails `ddev composer phpstan` — fix the registration, never
 baseline those errors.
 
@@ -13,9 +13,12 @@ baseline those errors.
 | `config/drupal-<major>/drupal-<X.Y>-deprecations.php` (or `-breaking.php`) | The plain registration, as before: `rule()` or `ruleWithConfiguration()`. Source of truth for `PHPSTAN_MESSAGES` comments — `scripts/generate-coverage-registry.php` reads only these files. |
 | `config/composer-based.php` | The same rule again, under the matching `// Drupal X.Y` (or `// Drupal X.Y (breaking)`) heading, in the same order as the per-minor file. Copy the comment block (`@see` URLs, "deprecated in … removed in …", `PHPSTAN_MESSAGES`) along with it. |
 
-`ComposerBasedSetCoverageRule` fails when a rule is in a Drupal 10+ per-minor
-config but missing from `composer-based.php`. Drupal 8/9 rules are deliberately
-**not** in `composer-based.php`; never add one there.
+`ComposerBasedSetCoverageRule` fails when a rule **class** is in a Drupal 10+
+per-minor config but missing from `composer-based.php`. It compares classes, not
+entries: a new entry for a generic rector that `composer-based.php` already
+registers (`FunctionToServiceRector`, `RenameClassRector`, …) is not checked, so
+grep for the deprecated symbol in both files yourself. Drupal 8/9 rules are
+deliberately **not** in `composer-based.php`; never add one there.
 
 A breaking rename (replacement symbol only exists from that minor on, see
 `DRUPAL_11X_BREAKING`) goes in the per-minor `-breaking.php` file **and** under
@@ -36,7 +39,8 @@ breaking renames safely because it knows the installed core exactly.
   text), not only the issue markdown — change records are often wrong about the
   removal version.
 
-Format is enforced by `BoundRuleConfigurationRule`:
+Format is enforced by `BoundRuleConfigurationRule` (set-local bounds) and
+`ComposerPackageConstraintRule` (class bounds):
 `#^>=(\d+)\.\d+\.\d+(?: <(\d+)\.0\.0)?$#`, upper major later than the lower one.
 
 ## 3. Where the bound lives — depends on how the rule is registered
@@ -56,6 +60,10 @@ $rectorConfig->ruleWithConfigurationComposerVersionBound(FunctionToServiceRector
 ```
 
 The per-minor file keeps its plain `ruleWithConfiguration()` — no bound there.
+The reverse slip is not caught by any PHPStan rule: a plain `ruleWithConfiguration()`
+pasted into `composer-based.php` runs **unbound** on every core. Every configurable
+entry there uses the `…ComposerVersionBound` variant, so
+`rg -n 'ruleWithConfiguration\(' config/composer-based.php` must print nothing.
 
 **Plain rule** (`AbstractRector`, registered with `rule()`): the bound goes on the
 **rule class**, and both config files use a plain `rule()` call.
@@ -86,7 +94,7 @@ bound.
 | Mechanism | Read by | Test default | Override |
 |---|---|---|---|
 | `\Drupal::VERSION` (stub `stubs/Drupal/Drupal.php`) | `AbstractDrupalCoreRector` BC wrapping | `11.99.x-dev` | `DrupalRectorSettings::setDrupalVersion()` |
-| Installed `drupal/core` (stub `tests/composer-json/drupal-core-<major>.json`) | The class-bound filter above | Picked by test **namespace**: `Tests\Drupal11\…` → `11.99.99`, `Tests\Drupal12\…` → `12.99.99`; anything else → `12.0.0` (`drupal-core-installed.json`) | — (`AbstractDrupalRectorTestCase::provideComposerJsonFilePath()`) |
+| Installed `drupal/core` (stub `tests/composer-json/drupal-core-<major>.json`) | The class-bound filter above | Picked by test **namespace**: `Tests\Drupal<N>\…` → `<N>.99.99` (8–12, e.g. `Tests\Drupal11\…` → `11.99.99`); anything else → `12.0.0` (`drupal-core-installed.json`) | — (`AbstractDrupalRectorTestCase::provideComposerJsonFilePath()`) |
 
 The pin of the test's namespace must **satisfy** a class-bound rule's bound.
 Normally that means the `Drupal<major>` namespace of the lower bound (source and
@@ -97,10 +105,40 @@ would be silently filtered there and every fixture would fail as "no change".
 ## 5. Checking what actually runs
 
 `vendor/bin/rector composer-based --config <file>` lists every bound rule with
-whether it is active against the installed `drupal/core`. Use it whenever a rule
-produces no change on a real site (live tests, the project_analysis bot) — the
-filter is silent in `rector process`.
+whether it is active against the installed `drupal/core`: class bounds in the first
+table, set-local bounds (configurable rules) in the second. The second table is
+only filled when `<file>` loads `DrupalSetList::COMPOSER_BASED`; a hand-written
+`ruleWithConfiguration()` has no bound to show. Use it whenever a rule produces no
+change on a real site (live tests, the project_analysis bot) — the filter is
+silent in `rector process`.
 
 Known trap: a `drupal.git` **main** checkout installs core as `dev-main`, which
 satisfies no numeric bound, so every class-bound rule is dropped there.
 `11.x` checkouts install as `11.x-dev` and satisfy every 11.x lower bound.
+
+## 6. Loading the set
+
+- Load it with `->withSets([DrupalSetList::COMPOSER_BASED])` (or
+  `$rectorConfig->sets([...])`, as the shipped `rector.php` does). It holds every
+  Drupal 10+ rule; Drupal 8/9 rules stay opt-in via `Drupal8SetList` /
+  `Drupal9SetList`.
+- Do **not** use `withComposerBased(drupal: true)`, or a bare `withComposerBased()`
+  on a project with `drupal/core` (Rector ≥ 2.8.2). Every released Rector up to
+  2.8.3 fatals with `Class "RectorPrefix…\DrupalRector\Set\DrupalSetList" not found`
+  until rectorphp/rector-src#8897 ships (drupal-rector #441).
+- `withSetProviders(DrupalSetProvider::class)` and the `drupal` / `drupal (breaking)`
+  set groups are dead: Rector ignores `withSetProviders()` since 2.6.5 and
+  `DrupalSetProvider` is an empty deprecated class.
+- `COMPOSER_BASED` imports `config/drupal-bootstrap.php`, which registers
+  `DrupalRectorSettings` with BC wrapping **off**. Since Rector 2.6.4, so on every
+  version the package supports, `singleton()` keeps the first factory for a class,
+  and a `DrupalRectorSettings` singleton after the set is ignored. (Rector 2.6.3
+  and older let the last one win, which is what an outdated test project shows.)
+  Anything
+  that needs BC wrappers — BC
+  fixtures run by hand, live-testing an `AbstractDrupalCoreRector` rule — loads
+  explicit sets (`Drupal10SetList::DRUPAL_10`, `Drupal11SetList::DRUPAL_11`) or the
+  rule itself, with its own settings singleton, like `rector.contrib.php`.
+- Shipped configs: `rector.php` (sites: `COMPOSER_BASED`, BC off) and
+  `rector.contrib.php` (modules/themes: `DRUPAL_10` + `DRUPAL_11`, BC on,
+  `setMinimumCoreVersionSupported('10.3.0')`).

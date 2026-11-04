@@ -240,7 +240,9 @@ preferred path — it avoids creating new classes for patterns that drupal-recto
    Then add it to `config/composer-based.php` as its **own**
    `ruleWithConfigurationComposerVersionBound(..., 'drupal/core', '>=X.Y.0 <N.0.0')` call under the
    matching `// Drupal X.Y` heading — one call per deprecation, not appended to an existing block
-   (`version-bounds.md` §1 and §3).
+   (`version-bounds.md` §1 and §3). PHPStan does not catch a forgotten entry here when the
+   generic rector is already in `composer-based.php`; confirm with
+   `rg -n '<deprecated symbol>' config/composer-based.php config/drupal-*/`.
 
 2. Add a fixture file to the existing generic rector's test directory:
    `tests/src/Rector/Deprecation/[GenericRectorName]/fixture/[descriptive-name].php.inc`
@@ -488,6 +490,16 @@ CODE_AFTER,
 - Template B gets **no** class constraint: it is configurable, so its bound goes in
   `composer-based.php` (Step 9b). Only plain `rule()`-registered classes carry one.
 - Remove `use Rector\Config\RectorConfig` from the rule class (it belongs only in config files).
+- **Rector 2.8 (the repo runs 2.8.x):** digest bodies can predate it, so check the copied logic:
+  - A `refactor()` that mutates `$node` and then returns `null` has its change **dropped** —
+    return `$node`. Returning `[]` or an int other than `NodeVisitor::REMOVE_NODE` throws.
+  - Rector re-runs rules on a file while it keeps changing, so the rule must not re-fire on its
+    own output.
+  - `$node->getAttribute(AttributeKey::SCOPE)` can be `null`; check before using it.
+  - Removed: `NodeFactory::createLocalMethodCall()` → `$this->nodeFactory->createMethodCall('this', …)`;
+    `ParentClassScopeResolver` → `$scope->getClassReflection()?->getParentClass()`;
+    `$this->file` → `$this->getFile()`. `RenameStaticMethodRector` no longer runs — don't use it
+    as the generic rector in Step 4b.
 - Keep all private constants, arrays, and helper methods unchanged.
 - For multi-node-type rules (two or more different node types in `getNodeTypes()`):
   - **If both transformations are simple (no BC):** Keep them in one class, use `AbstractRector`.
@@ -747,7 +759,7 @@ to the baseline**:
 
 | Identifier | Meaning | Fix |
 |---|---|---|
-| `drupalRector.composerBasedSetCoverage` | Rule is in a per-minor config but not in `composer-based.php` | Step 9b.2 |
+| `drupalRector.composerBasedSetCoverage` | Rule class is in a per-minor config but not in `composer-based.php`. Compares classes only — a missing entry for a generic rector already registered there is **not** reported | Step 9b.2 (Step 4b.1 for generic rectors: grep the symbol) |
 | `drupalRector.unboundRule` | A `rule()` in `composer-based.php` whose class has no `ComposerPackageConstraintInterface` | Add the constraint to the class (Template A) |
 | `drupalRector.boundRulePackage` | Bound names a package other than `drupal/core` | Use `'drupal/core'` |
 | `drupalRector.boundRuleVersion` / `drupalRector.boundRuleVersionOrder` | Constraint is not `>=X.Y.Z` or `>=X.Y.Z <N.0.0`, or `N` is not above the lower major | Fix the string (`version-bounds.md` §2) |
@@ -769,6 +781,8 @@ vendor/bin/phpunit tests/src/Drupal11/Rector/Deprecation/[ClassName]/
 - **"Class not found"** — Check the namespace declaration and file path match.
 - **"Method not found"** — Verify the base class was chosen correctly (Step 4).
 - **"Fixture has no before/after separator"** — The `-----` line is missing or has extra spaces.
+- **The rule matches but the fixture shows no change** — `refactor()` mutated `$node` in place
+  and returned `null`; Rector 2.8 drops that change. Return `$node`.
 - **Every fixture fails as "no change" on a plain rule** — the class bound is filtering the rule
   out: the test namespace pins an installed core outside the bound (`version-bounds.md` §4), or
   the bound itself is wrong.
@@ -792,7 +806,7 @@ Before marking a conversion complete, verify:
 - [ ] Step 4b was checked — a generic rector was used if the pattern matched, custom class only if it didn't
 - [ ] (Custom class only) `declare(strict_types=1)` is present in the rule class
 - [ ] (Custom class only) Namespace is `DrupalRector\Drupal11\Rector\Deprecation`
-- [ ] (Custom class only) `final` keyword is removed
+- [ ] (Custom class only) `final` keyword is kept (unless another rule extends the class)
 - [ ] (Custom class only) `use Rector\Config\RectorConfig` is NOT in the rule class
 - [ ] (Custom class only) Base class matches the BC decision from Step 4
 - [ ] (Custom class only) `getNodeTypes()` lists all node types from the original rule
