@@ -141,16 +141,17 @@ installed `drupal/core` version:
 
 ```php
 return RectorConfig::configure()
-    ->withSets([DrupalSetList::COMPOSER_BASED]);
+    ->withComposerBased(drupal: true);
 ```
 
-> [!WARNING]
-> Load the set with `withSets()`, as above. Rector also loads it through
-> `withComposerBased(drupal: true)`, and from 2.8.2 through a bare
-> `withComposerBased()` on any project with `drupal/core` installed. Released
-> Rector builds up to at least 2.8.3 prefix the class that toggle refers to, so
-> both fail with `Class "RectorPrefix…\DrupalRector\Set\DrupalSetList" not
-> found` ([rectorphp/rector-src#8897](https://github.com/rectorphp/rector-src/pull/8897)).
+> [!NOTE]
+> `withComposerBased(drupal: true)` needs Rector 2.8.4 or newer. Earlier
+> releases prefix the class that toggle refers to, and fail with `Class
+> "RectorPrefix…\DrupalRector\Set\DrupalSetList" not found`
+> ([rectorphp/rector-src#8897](https://github.com/rectorphp/rector-src/pull/8897)).
+> A bare `->withComposerBased()` enables the same thing from Rector 2.8.2 on any
+> project with `drupal/core` installed. `->withSets([DrupalSetList::COMPOSER_BASED])`
+> is equivalent and works on every supported version.
 
 `DrupalSetList::COMPOSER_BASED` registers every Drupal 10 and later rule at
 once, each one bound to the `drupal/core` versions its deprecation applies to:
