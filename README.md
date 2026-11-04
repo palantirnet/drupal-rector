@@ -188,7 +188,7 @@ deprecation landed in, so those sets apply them on any core from then on.
 This is the backward-compatibility-safe counterpart to listing sets manually:
 it fixes what is deprecated on *your* installed core.
 
-> **Requires** `rector/rector` ^2.6.5.
+> **Requires** `rector/rector` ^2.8.4.
 > `RectorConfig::ruleWithConfigurationComposerVersionBound()` landed in 2.6
 > ([rectorphp/rector-src#8244](https://github.com/rectorphp/rector-src/pull/8244)),
 > and from 2.6.5 `withSetProviders()` ignores its arguments, so the deprecated
