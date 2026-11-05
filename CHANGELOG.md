@@ -47,7 +47,7 @@ release-by-release.
 
 ### Changed
 
-- **Requires `rector/rector` ^2.6.5.** Coming from 1.1.x, Composer has to be allowed to update Rector: `composer require --dev palantirnet/drupal-rector:^1.2 -W`.
+- **Requires `rector/rector` ^2.8.4.** Coming from 1.1.x, Composer has to be allowed to update Rector: `composer require --dev palantirnet/drupal-rector:^1.2 -W`.
 - **The shipped `rector.php` is now for sites.** It loads `DrupalSetList::COMPOSER_BASED` instead of the `DRUPAL_10` and `DRUPAL_11` sets, without backward-compatibility wrappers. The composer-based set always turns wrappers off, so `DrupalRectorSettings` in your own config has no effect with it. Re-copy `rector.php`, or `rector.contrib.php` for a module or theme.
 - **Rules without configuration only run on a core that has their deprecation**, also when you load a `Drupal*SetList` set by hand. You can no longer apply a newer Drupal's rules from an older installed core with these 76 rules.
 - **`HookConvertRector` no longer makes converted hook methods `static`.** Core always calls hooks on an object, so an implementation shouldn't be static. Reverts [#3600921](https://git.drupalcode.org/project/rector/-/work_items/3600921). Reported by Berdir ([#3600963](https://git.drupalcode.org/project/rector/-/work_items/3600963)).
