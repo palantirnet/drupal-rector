@@ -43,6 +43,14 @@ class HookConvertRector extends AbstractRector implements DocumentedRuleInterfac
     protected string $moduleDir = '';
 
     /**
+     * This skips the legacy hook and services.yml from being created.
+     *
+     * This is true if the rule is called with the --skip-legacy option or if
+     * a theme or core extension are being converted.
+     */
+    protected bool $skipLegacy = FALSE;
+
+    /**
      * Whether any converted method needed StringTranslationTrait.
      *
      * Set when a t() call is rewritten to $this->t(); consumed when the hook
@@ -70,6 +78,7 @@ class HookConvertRector extends AbstractRector implements DocumentedRuleInterfac
     {
         $this->isDryRun = in_array('--'.Option::DRY_RUN, $_SERVER['argv'] ?? []) || in_array('-'.Option::DRY_RUN_SHORT, $_SERVER['argv'] ?? []);
         $this->printer = $printer;
+        $this->skipLegacy = in_array('--skip-legacy', $_SERVER['argv'] ?? []);
 
         try {
             if (class_exists(InstalledVersions::class) && ($corePath = InstalledVersions::getInstallPath('drupal/core'))) {
@@ -139,6 +148,9 @@ CODE_SAMPLE
     {
         $filePath = $this->getFile()->getFilePath();
         $ext = pathinfo($filePath, \PATHINFO_EXTENSION);
+        if ($ext === 'theme' || str_starts_with($filePath, $this->drupalCorePath)) {
+            $this->skipLegacy = TRUE;
+        }
         if (!in_array($ext, ['inc', 'module', 'theme'])) {
             return null;
         }
@@ -191,7 +203,7 @@ CODE_SAMPLE
                     $remove_node = NodeTraverser::REMOVE_NODE;
                 }
 
-                return str_starts_with($filePath, $this->drupalCorePath) ? $remove_node : $this->getLegacyHookFunction($node);
+                return $this->skipLegacy ? $remove_node : $this->getLegacyHookFunction($node);
             }
         }
 
@@ -256,7 +268,7 @@ CODE_SAMPLE
                 @mkdir("$this->moduleDir/src/Hook");
 
                 file_put_contents("$this->moduleDir/src/Hook/$className.php", $this->printer->prettyPrintFile($hookClassStmts));
-                if (!str_starts_with($this->moduleDir, $this->drupalCorePath)) {
+                if (!$this->skipLegacy) {
                     static::writeServicesYml("$this->moduleDir/$this->module.services.yml", "$namespace\\$className");
                 }
             }
