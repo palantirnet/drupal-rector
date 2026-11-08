@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__drupal-code-query__get_change_record",
+      "mcp__drupal-code-query__lookup_core_symbol",
+      "mcp__drupal-code-query__search_code",
+      "mcp__drupal-code-query__query_dataset",
+      "mcp__phpstorm__open_file_in_editor",
+      "mcp__plugin_claude-mem_mcp-search__search",
+      "Bash(ddev describe *)",
+      "Bash(git ls-tree *)",
+      "Bash(git merge-base *)"
+    ]
+  }
+}
