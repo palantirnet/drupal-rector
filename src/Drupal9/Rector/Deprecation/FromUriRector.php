@@ -8,13 +8,20 @@ use DrupalRector\Utility\GetDeclaringSourceTrait;
 use PhpParser\Node;
 use Rector\Rector\AbstractRector;
 use Rector\StaticTypeMapper\ValueObject\Type\FullyQualifiedObjectType;
+use Rector\VersionBonding\Contract\ComposerPackageConstraintInterface;
+use Rector\VersionBonding\ValueObject\ComposerPackageConstraint;
 use Symplify\RuleDocGenerator\Contract\DocumentedRuleInterface;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
-final class FromUriRector extends AbstractRector implements DocumentedRuleInterface
+final class FromUriRector extends AbstractRector implements ComposerPackageConstraintInterface, DocumentedRuleInterface
 {
     use GetDeclaringSourceTrait;
+
+    public function provideComposerPackageConstraint(): ComposerPackageConstraint
+    {
+        return new ComposerPackageConstraint('drupal/core', '>=9.3.0');
+    }
 
     public function getRuleDefinition(): RuleDefinition
     {

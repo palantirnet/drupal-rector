@@ -61,13 +61,18 @@ Read the digest. Answer these questions in order:
 Config-only recipes do **not** create a new PHP class. They:
 
 1. Add one entry to an existing config file (e.g. `config/drupal-11/drupal-11.4-deprecations.php`)
-2. Add one fixture file to the existing generic rector's test directory
-3. Add the entry to that rector's test config
-4. Run the existing test suite for that rector
+2. Add the same entry to `config/composer-based.php` as its own
+   `ruleWithConfigurationComposerVersionBound()` call with the version bound
+3. Add one fixture file to the existing generic rector's test directory
+4. Add the entry to that rector's test config
+5. Run the existing test suite for that rector
 
 The config file to edit depends on `introducedVersion` — same lookup table as the
 custom-class recipes. If the file does not yet import the generic rector class, add the
 `use` statement.
+
+**Every recipe registers twice and states a version bound.** The rules, the bound formula and
+the PHPStan guards that enforce them are in [`../version-bounds.md`](../version-bounds.md).
 
 ---
 

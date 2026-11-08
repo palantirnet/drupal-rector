@@ -6,12 +6,19 @@ namespace DrupalRector\Drupal9\Rector\Deprecation;
 
 use PhpParser\Node;
 use Rector\Rector\AbstractRector;
+use Rector\VersionBonding\Contract\ComposerPackageConstraintInterface;
+use Rector\VersionBonding\ValueObject\ComposerPackageConstraint;
 use Symplify\RuleDocGenerator\Contract\DocumentedRuleInterface;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
-final class AssertOptionSelectedRector extends AbstractRector implements DocumentedRuleInterface
+final class AssertOptionSelectedRector extends AbstractRector implements ComposerPackageConstraintInterface, DocumentedRuleInterface
 {
+    public function provideComposerPackageConstraint(): ComposerPackageConstraint
+    {
+        return new ComposerPackageConstraint('drupal/core', '>=9.1.0');
+    }
+
     public function getRuleDefinition(): RuleDefinition
     {
         return new RuleDefinition('Fixes deprecated AssertLegacyTrait::assertOptionSelected() calls', [
@@ -45,7 +52,7 @@ CODE_AFTER
             $message = $node->args[2];
         }
 
-        $assertSessionNode = $this->nodeFactory->createLocalMethodCall('assertSession');
+        $assertSessionNode = $this->nodeFactory->createMethodCall('this', 'assertSession');
         $optionExistsNode = $this->nodeFactory->createMethodCall($assertSessionNode, 'optionExists', [
             $node->args[0],
             $node->args[1],
@@ -57,12 +64,12 @@ CODE_AFTER
         );
 
         if ($message === null) {
-            return $this->nodeFactory->createLocalMethodCall('assertTrue', [
+            return $this->nodeFactory->createMethodCall('this', 'assertTrue', [
                 $this->nodeFactory->createArg($hasAttributeNode),
             ]);
         }
 
-        return $this->nodeFactory->createLocalMethodCall('assertTrue', [
+        return $this->nodeFactory->createMethodCall('this', 'assertTrue', [
             $this->nodeFactory->createArg($hasAttributeNode),
             $this->nodeFactory->createArg($message),
         ]);

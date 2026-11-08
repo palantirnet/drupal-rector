@@ -7,12 +7,19 @@ namespace DrupalRector\Drupal9\Rector\Deprecation;
 use PhpParser\Node;
 use Rector\Exception\ShouldNotHappenException;
 use Rector\Rector\AbstractRector;
+use Rector\VersionBonding\Contract\ComposerPackageConstraintInterface;
+use Rector\VersionBonding\ValueObject\ComposerPackageConstraint;
 use Symplify\RuleDocGenerator\Contract\DocumentedRuleInterface;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
-final class UiHelperTraitDrupalPostFormRector extends AbstractRector implements DocumentedRuleInterface
+final class UiHelperTraitDrupalPostFormRector extends AbstractRector implements ComposerPackageConstraintInterface, DocumentedRuleInterface
 {
+    public function provideComposerPackageConstraint(): ComposerPackageConstraint
+    {
+        return new ComposerPackageConstraint('drupal/core', '>=9.1.0');
+    }
+
     public function getRuleDefinition(): RuleDefinition
     {
         return new RuleDefinition('Fixes deprecated UiHelperTrait::drupalPostForm() calls', [
@@ -89,17 +96,17 @@ CODE_AFTER
             [$path, $edit, $button, $options, $htmlId] = $this->safeArgDestructure($node->expr);
 
             if ($htmlId === null) {
-                $submitFormNode = $this->nodeFactory->createLocalMethodCall('submitForm', [$edit, $button]);
+                $submitFormNode = $this->nodeFactory->createMethodCall('this', 'submitForm', [$edit, $button]);
             } else {
-                $submitFormNode = $this->nodeFactory->createLocalMethodCall('submitForm', [$edit, $button, $htmlId]);
+                $submitFormNode = $this->nodeFactory->createMethodCall('this', 'submitForm', [$edit, $button, $htmlId]);
             }
 
             $pathValue = $path->value;
             if (!$pathValue instanceof Node\Expr\ConstFetch || strtolower((string) $pathValue->name) !== 'null') {
                 if ($options === null) {
-                    $drupalGetNode = $this->nodeFactory->createLocalMethodCall('drupalGet', [$path]);
+                    $drupalGetNode = $this->nodeFactory->createMethodCall('this', 'drupalGet', [$path]);
                 } else {
-                    $drupalGetNode = $this->nodeFactory->createLocalMethodCall('drupalGet', [$path, $options]);
+                    $drupalGetNode = $this->nodeFactory->createMethodCall('this', 'drupalGet', [$path, $options]);
                 }
                 $nodes[] = new Node\Stmt\Expression($drupalGetNode);
             }

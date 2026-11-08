@@ -22,20 +22,22 @@ as a config-only entry instead (see `config-only-template.md`).
 | `{{methodName}}` | Method to call on the service, e.g. `nodeAccessGrants` |
 | `{{introducedVersion}}` | From issue markdown `## Impact` section, e.g. `11.4.0` |
 | `{{removedVersion}}` | From issue markdown `## Impact` section, e.g. `13.0.0` |
+| `{{majorAfterRemoval}}` | Removal major + 1, e.g. `14` for `13.0.0` — the upper bound (`../version-bounds.md` §2) |
 | `{{issueNumber}}` | From filename or `@see` comment, e.g. `2473041` |
 | `{{beforeCode}}` | CodeSample "before" snippet, e.g. `node_access_grants($operation, $account);` |
 | `{{afterCode}}` | CodeSample "after" snippet (clean, no BC wrapper), e.g. `\Drupal::service(\Drupal\node\NodeGrantsHelper::class)->nodeAccessGrants($operation, $account);` |
 
 ---
 
-## Step 2 — Determine the target config file
+## Step 2 — Determine the target config file and bound
 
-| introducedVersion | Config file |
-|---|---|
-| 11.4.x | `config/drupal-11/drupal-11.4-deprecations.php` |
-| 11.3.x | `config/drupal-11/drupal-11.3-deprecations.php` |
-| 11.2.x | `config/drupal-11/drupal-11.2-deprecations.php` |
-| 11.1.x | `config/drupal-11/drupal-11.1-deprecations.php` |
+The per-minor file is named after the introduced minor:
+`config/drupal-11/drupal-11.{{X}}-deprecations.php` (11.4.x → `drupal-11.4-deprecations.php`).
+The rule is also registered in `config/composer-based.php` (Step 7).
+
+The bound is `>={{introducedVersion}} <{{majorAfterRemoval}}.0.0` — the major **after** removal,
+so `removed in drupal:13.0.0` → `<14.0.0` (`../version-bounds.md` §2). This recipe's class is
+configurable (BC-wrapped), so the bound lives in `composer-based.php`, not on the class.
 
 ---
 
@@ -264,6 +266,22 @@ $rectorConfig->ruleWithConfiguration({{ClassName}}::class, [
 ]);
 ```
 
+Then register it again in `config/composer-based.php`, under the `// Drupal 11.{{X}}` heading in
+the same position, with the same comment block and the bound from Step 2:
+
+```php
+use DrupalRector\Drupal11\Rector\Deprecation\{{ClassName}};
+// (add to the use block at the top)
+
+// https://www.drupal.org/node/{{issueNumber}}
+// {{functionName}}() deprecated in drupal:{{introducedVersion}}, removed in drupal:{{removedVersion}}.
+$rectorConfig->ruleWithConfigurationComposerVersionBound({{ClassName}}::class, [
+    new DrupalIntroducedVersionConfiguration('{{introducedVersion}}'),
+], 'drupal/core', '>={{introducedVersion}} <{{majorAfterRemoval}}.0.0');
+```
+
+Skipping this fails PHPStan with `drupalRector.composerBasedSetCoverage`.
+
 ---
 
 ## Step 8 — Run quality checks
@@ -283,6 +301,9 @@ All three must pass before committing.
 ```bash
 git add src/Drupal11/Rector/Deprecation/{{ClassName}}.php \
         tests/src/Drupal11/Rector/Deprecation/{{ClassName}}/ \
-        config/drupal-11/drupal-11.{{X}}-deprecations.php
-git commit -m "feat(Drupal11): Add {{ClassName}} for issue #{{issueNumber}}"
+        config/drupal-11/drupal-11.{{X}}-deprecations.php \
+        config/composer-based.php
+git commit -m "feat: add {{ClassName}} for #{{issueNumber}}"
 ```
+
+Add a `CHANGELOG.md` entry under `[Unreleased] / ### Added` (a separate `docs:` commit is fine).
