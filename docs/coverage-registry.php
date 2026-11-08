@@ -20,6 +20,11 @@ declare(strict_types=1);
  */
 
 return array (
+  'FunctionToServiceRector' => 
+  array (
+    0 => 'Call to deprecated function user_login_finalize(). Deprecated in drupal:11.5.0 and is removed from drupal:13.0.0. Use Drupal\\user\\LoginFinalizer::finalizeLogin() instead.',
+    1 => 'Call to deprecated function user_logout(). Deprecated in drupal:11.5.0 and is removed from drupal:13.0.0. Use Drupal\\user\\LogoutFinalizer::finalizeLogout() instead.',
+  ),
   'GetDrupalRootToRootPropertyRector' => 
   array (
     0 => 'Call to deprecated method getDrupalRoot() of class Drupal\\KernelTests\\KernelTestBase. Deprecated in drupal:11.4.0 and is removed from drupal:13.0.0. Access $this->root directly.',
@@ -37,6 +42,12 @@ return array (
   'ReplaceExpectDeprecationRector' => 
   array (
     0 => 'Call to deprecated method expectDeprecation() of class Drupal\\KernelTests\\KernelTestBase. Deprecated in drupal:11.4.0 and is removed from drupal:12.0.0. Use $this->expectUserDeprecationMessage() or $this->expectUserDeprecationMessageMatches() instead.',
+  ),
+  'ReplaceFileSaveUploadFunctionsRector' => 
+  array (
+    0 => 'Call to deprecated function _file_save_upload_from_form(). Deprecated in drupal:11.5.0 and is removed from drupal:13.0.0. Use Drupal::service(ManagedFileElementHelper::class)->saveFileUploads() instead.',
+    1 => 'Call to deprecated function file_managed_file_save_upload(). Deprecated in drupal:11.5.0 and is removed from drupal:13.0.0. Use Drupal::service(ManagedFileElementHelper::class)->managedFileSaveUpload() instead.',
+    2 => 'Call to deprecated function file_save_upload(). Deprecated in drupal:11.5.0 and is removed from drupal:13.0.0. Use Drupal::service(FormFileUploader::class)->saveFormUploadedFiles() instead.',
   ),
   'ReplaceLocaleBatchProceduralFunctionsRector' => 
   array (
