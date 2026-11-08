@@ -19,6 +19,10 @@ release-by-release.
   Load it with `->withSets([DrupalSetList::COMPOSER_BASED])`. Rector's `withComposerBased(drupal: true)`, and a bare `withComposerBased()` since Rector 2.8.2, crash on every current Rector release with `Class "RectorPrefix…\DrupalRector\Set\DrupalSetList" not found` until [rectorphp/rector-src#8897](https://github.com/rectorphp/rector-src/pull/8897) is released. On 1.1.x those calls did nothing.
 - **`rector.contrib.php`** — a starting config for contrib modules and themes. It loads the `DRUPAL_10` and `DRUPAL_11` sets with backward-compatibility wrappers on, and lets you set the minimum Drupal version you support.
 
+### Added
+
+- **`module_set_weight()` and `module_config_sort()` → `ModuleWeight` service** — both functions in `core/includes/module.inc` are deprecated in drupal:11.5.0 and removed in drupal:13.0.0; they are rewritten to `\Drupal::service(\Drupal\Core\Extension\ModuleWeight::class)->set()` / `->sort()` via `FunctionToServiceRector`, BC-wrapped in `DeprecationHelper::backwardsCompatibleCall()` because the service does not exist on Drupal < 11.5. `module_set_weight()` is the single most widely-called pending deprecation in contrib (209 projects, including pathauto, webform and paragraphs, mostly from `hook_install()`). This is the first rule on the Drupal 11.5 set, so it also adds `Drupal11SetList::DRUPAL_115`. The composer-based set picks it up on drupal/core >=11.5. ([#3595652](https://www.drupal.org/i/3595652), [change record](https://www.drupal.org/node/3595653))
+
 ### Fixed
 
 - **Rector 2.8 compatibility:**

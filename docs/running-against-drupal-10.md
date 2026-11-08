@@ -89,6 +89,7 @@ return static function (RectorConfig $rectorConfig): void {
         Drupal10SetList::DRUPAL_102, Drupal10SetList::DRUPAL_103,
         Drupal11SetList::DRUPAL_110, Drupal11SetList::DRUPAL_111, Drupal11SetList::DRUPAL_112,
         Drupal11SetList::DRUPAL_113, Drupal11SetList::DRUPAL_114,
+        Drupal11SetList::DRUPAL_115,
     ]);
 
     // Enable BC wrapping so rewritten code still runs on your current Drupal 10.
