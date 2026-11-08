@@ -12,12 +12,52 @@ release-by-release.
 
 ## [Unreleased]
 
+### Feature
+
+- **`DrupalSetList::COMPOSER_BASED`** — one set with every Drupal 10 and later rule, each bound to the `drupal/core` version its deprecation landed in. Rector only runs the rules that apply to your installed core. Because that version is known, the breaking renames are included too. `vendor/bin/rector composer-based` lists the configurable rules and whether they are active. The Drupal 8 and 9 rules are not in it; load `Drupal8SetList` or `Drupal9SetList` for those. ([rectorphp/rector#9778](https://github.com/rectorphp/rector/issues/9778))
+
+  Load it with `->withSets([DrupalSetList::COMPOSER_BASED])`. Rector's `withComposerBased(drupal: true)`, and a bare `withComposerBased()` since Rector 2.8.2, crash on every current Rector release with `Class "RectorPrefix…\DrupalRector\Set\DrupalSetList" not found` until [rectorphp/rector-src#8897](https://github.com/rectorphp/rector-src/pull/8897) is released. On 1.1.x those calls did nothing.
+- **`rector.contrib.php`** — a starting config for contrib modules and themes. It loads the `DRUPAL_10` and `DRUPAL_11` sets with backward-compatibility wrappers on, and lets you set the minimum Drupal version you support.
+
 ### Added
 
-- **Drupal 11.5 deprecation set** — added `Drupal11SetList::DRUPAL_115` (`config/drupal-11/drupal-11.5-deprecations.php`), registered in `drupal-11-all-deprecations.php` and in the composer-based `DrupalSetProvider`, so a site on `drupal/core ^11.5` picks it up automatically.
+- **Drupal 11.5 deprecation set** — added `Drupal11SetList::DRUPAL_115` (`config/drupal-11/drupal-11.5-deprecations.php`), registered in `drupal-11-all-deprecations.php`. The same rules are bound in `DrupalSetList::COMPOSER_BASED`, where they are active on `drupal/core` >=11.5, so a site on `drupal/core ^11.5` picks them up automatically.
 - **`ReplaceUserRolePermissionFunctionsRector`** — rewrites `user_role_grant_permissions()`, `user_role_revoke_permissions()` and `user_role_change_permissions()`, deprecated in drupal:11.5.0 and removed in drupal:13.0.0 ([#2025089](https://www.drupal.org/node/2025089), [change record](https://www.drupal.org/node/3348027)), to the matching `\Drupal\user\RoleInterface` method on a role loaded with `\Drupal\user\Entity\Role::loadOverrideFree()` — the nullsafe chain core itself adopted in `media_install()` and `node_install()`. BC-wrapped, because `loadOverrideFree()` is new in 11.5.0 ([#3620216](https://www.drupal.org/i/3620216)) and the rewritten chain would fatal on older minors. Calls with named arguments, argument unpacking or an argument count the deprecated functions never had are left untouched.
 - **`user_login_finalize()` / `user_logout()` → `LoginFinalizer` / `LogoutFinalizer`** — two `FunctionToServiceRector` entries in the Drupal 11.5 set rewrite the procedural login/logout functions, deprecated in drupal:11.5.0 and removed in drupal:13.0.0 ([#2012976](https://www.drupal.org/node/2012976), [change record](https://www.drupal.org/node/3379194)), to `\Drupal::service(\Drupal\user\LoginFinalizer::class)->finalizeLogin($account)` and `\Drupal::service(\Drupal\user\LogoutFinalizer::class)->finalizeLogout()`. Both service classes arrive with the deprecation itself, so the rewrite is BC-wrapped. The mapping is 1-to-1 — core moved both function bodies verbatim — with one caveat: the service parameter is `$user` where the function's was `$account`, so a named argument would not survive the rewrite. No contrib project calls either function that way.
 - **`ReplaceFileSaveUploadFunctionsRector`** — rewrites `file_save_upload()`, `file_managed_file_save_upload()` and `_file_save_upload_from_form()`, deprecated in drupal:11.5.0 and removed in drupal:13.0.0 ([#3375423](https://www.drupal.org/node/3375423), [change record](https://www.drupal.org/node/3382414)), to `\Drupal::service(\Drupal\file\Upload\FormFileUploader::class)->saveFormUploadedFiles()` and the matching `\Drupal\file\Upload\ManagedFileElementHelper` methods. BC-wrapped, because both service classes arrive with the deprecation itself. The deprecated functions also normalised their arguments, which the service methods do not: a literal `FALSE`/`NULL` `$destination` is rewritten to `'temporary://'` (the shape 47 contrib files use) because the new parameter is typed `string`, and a call passing an integer literal for `$fileExists` is left untouched because the new parameter only accepts the `\Drupal\Core\File\FileExists` enum — a `FileSystemInterface::EXISTS_*` constant is already converted by the Drupal 10.3 set. Calls with named arguments, argument unpacking or an argument count the deprecated functions never had are skipped.
+
+### Fixed
+
+- **Rector 2.8 compatibility:**
+  - `AnnotationToAttributeRector` lost the attribute when it kept the annotation.
+  - `HookConvertRector` no longer imports the hook class into itself when `importNames()` is on, which was a fatal "name already in use".
+  - Files with test classes no longer abort with "Call to a member function getFunctionCallStackWithParameters() on null".
+  - The Drupal 8 and 9 rules and `HookConvertRector` no longer use Rector APIs removed in 2.8.0.
+- **`AnnotationToAttributeRector` on Rector dev-main:** it no longer depends on Rector's `ArrayParser`, which was removed in [rectorphp/rector-src#8881](https://github.com/rectorphp/rector-src/pull/8881) and made the rule fail to load. Annotations Rector cannot parse, such as arguments starting on the line after the tag, are now left alone instead of being converted to a broken attribute.
+
+### Removed
+
+- **`Bytes::toInt()` → `Bytes::toNumber()`** is dropped from the Drupal 9.1 set. Rector 2.8 no longer runs `RenameStaticMethodRector`, and Drupal 10.0 removed `Bytes::toInt()` anyway.
+- **The Drupal 8, 9 and 10 sets no longer include Rector's Symfony, PHPUnit and Twig sets.** Rector 2.6.2 deleted those per-version sets ([rectorphp/rector-phpunit#760](https://github.com/rectorphp/rector-phpunit/pull/760)), which is why 1.1.3 blocked it. The Drupal sets now only contain Drupal rules. To get the upstream rules back:
+
+  ```php
+  return RectorConfig::configure()
+      ->withComposerBased(phpunit: true, symfony: true, twig: true)
+      ->withSets([Drupal10SetList::DRUPAL_10]);
+  ```
+
+  These follow the installed Symfony, PHPUnit and Twig versions, not the Drupal version. The Drupal 8 set's skip of `AddDoesNotPerformAssertionToNonAssertingTestRector` is gone as well; add it back if you enable the PHPUnit set. ([#420](https://github.com/palantirnet/drupal-rector/issues/420))
+
+### Deprecated
+
+- **`DrupalRector\Set\DrupalSetProvider`** is now an empty class and will be removed in 2.0.0. Rector 2.8 removed `SetProviderInterface`, and since 2.6.5 it ignores `withSetProviders()`. The class only stays so existing configs still pass static analysis. Replace `->withSetProviders(DrupalSetProvider::class)` with `->withSets([DrupalSetList::COMPOSER_BASED])`.
+
+### Changed
+
+- **Requires `rector/rector` ^2.8.4.** Coming from 1.1.x, Composer has to be allowed to update Rector: `composer require --dev palantirnet/drupal-rector:^1.2 -W`.
+- **The shipped `rector.php` is now for sites.** It loads `DrupalSetList::COMPOSER_BASED` instead of the `DRUPAL_10` and `DRUPAL_11` sets, without backward-compatibility wrappers. The composer-based set always turns wrappers off, so `DrupalRectorSettings` in your own config has no effect with it. Re-copy `rector.php`, or `rector.contrib.php` for a module or theme.
+- **Rules without configuration only run on a core that has their deprecation**, also when you load a `Drupal*SetList` set by hand. You can no longer apply a newer Drupal's rules from an older installed core with these 76 rules.
+- **`HookConvertRector` no longer makes converted hook methods `static`.** Core always calls hooks on an object, so an implementation shouldn't be static. Reverts [#3600921](https://git.drupalcode.org/project/rector/-/work_items/3600921). Reported by Berdir ([#3600963](https://git.drupalcode.org/project/rector/-/work_items/3600963)).
 
 ## [1.1.3] — 2026-09-03
 

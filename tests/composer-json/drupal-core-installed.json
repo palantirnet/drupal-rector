@@ -1,0 +1,6 @@
+{
+    "_comment": "Fallback pin for rule tests that do not live under a tests/src/Drupal<major> namespace. Version-specific tests get their own pin from AbstractDrupalRectorTestCase; see drupal-core-<major>.json.",
+    "require": {
+        "drupal/core": "12.0.0"
+    }
+}

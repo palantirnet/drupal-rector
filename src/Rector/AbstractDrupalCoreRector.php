@@ -14,6 +14,7 @@ use PhpParser\Node\Expr\ArrowFunction;
 use PhpParser\Node\Expr\Closure;
 use PhpParser\Node\Stmt\Expression;
 use PhpParser\Node\Stmt\Return_;
+use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\MethodReflection;
 use Rector\Contract\Rector\ConfigurableRectorInterface;
 use Rector\NodeTypeResolver\Node\AttributeKey;
@@ -49,6 +50,11 @@ abstract class AbstractDrupalCoreRector extends AbstractRector implements Config
         }
 
         $scope = $node->getAttribute(AttributeKey::SCOPE);
+        // Rector 2.8 leaves some nodes without a scope (seen in test classes);
+        // calling through null aborted the whole file.
+        if (!$scope instanceof Scope) {
+            return false;
+        }
 
         foreach ($scope->getFunctionCallStackWithParameters() as [$function, $parameter]) {
             if (!$function instanceof MethodReflection) {

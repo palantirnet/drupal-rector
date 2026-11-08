@@ -25,6 +25,7 @@ when there is only one function to replace.
 | `{{serviceClass}}` | Shared service FQCN, e.g. `Drupal\node\NodeAccessRebuild` |
 | `{{introducedVersion}}` | From issue markdown `## Impact`, e.g. `11.4.0` |
 | `{{removedVersion}}` | From issue markdown `## Impact`, e.g. `13.0.0` |
+| `{{majorAfterRemoval}}` | Removal major + 1, e.g. `14` for `13.0.0` — the upper bound (`../version-bounds.md` §2) |
 | `{{issueNumber}}` | From filename or `@see` comment |
 
 **Per-function values** (repeat for each deprecated function):
@@ -39,7 +40,9 @@ when there is only one function to replace.
 
 ## Step 2 — Determine the target config file
 
-Same lookup as `func-to-class-service-bc.md` Step 2.
+Same lookup as `func-to-class-service-bc.md` Step 2, including the version bound. If the
+functions have different removal versions, use the **latest** removal for the bound — one class
+has one bound in `composer-based.php`.
 
 ---
 

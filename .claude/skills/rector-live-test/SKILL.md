@@ -54,6 +54,24 @@ DDEV_STATUS=$(ddev status --json-output 2>/dev/null | python3 -c "import json,sy
 [ "$DDEV_STATUS" = "running" ] || ddev start -y
 ```
 
+**Check the test site's Rector matches the repo's.** The site's `vendor/` keeps whatever Rector
+it locked at setup, while `palantirnet/drupal-rector` is a symlink to the current checkout, which
+requires `rector/rector ^2.6.5` and is developed against 2.8.x. On an older Rector the rule can
+behave differently from the test suite (Rector 2.8 drops mutate-then-`null` changes, for one):
+```bash
+# from the drupal-rector repo root
+rg -o "PACKAGE_VERSION = '[^']+'" vendor/rector/rector/src/Application/VersionResolver.php
+rg -o "PACKAGE_VERSION = '[^']+'" ~/projects/drupal-rector-test/vendor/rector/rector/src/Application/VersionResolver.php
+```
+If the site's version is older, update it (`-W` is needed to move Rector past the old lock):
+```bash
+cd ~/projects/drupal-rector-test
+ddev composer update rector/rector palantirnet/drupal-rector -W --no-interaction
+```
+If that fails on the site's `palantirnet/drupal-rector` pin (`dev-<branch> as 1.x-dev` for a branch
+that no longer exists), re-require it for the checked-out branch first:
+`ddev composer require "palantirnet/drupal-rector:dev-<branch> as 1.x-dev" -W --no-interaction`.
+
 **If a module found in step 1 is not pre-installed**, add it before running:
 ```bash
 cd ~/projects/drupal-rector-test
@@ -89,6 +107,34 @@ return static function (RectorConfig $rectorConfig): void {
 };
 RECTOR_EOF
 ```
+
+That registration is for a configurable rule (`extends AbstractDrupalCoreRector`). For a **plain**
+rule (`extends AbstractRector`, registered with `rule()` in the config), replace it with
+`$rectorConfig->rule(<ClassName>::class);` and drop the `DrupalIntroducedVersionConfiguration`
+import. For a generic rector, copy its configuration entry from the per-minor config.
+
+With no `DrupalRectorSettings` singleton the defaults apply: BC wrapping **on**, minimum supported
+core `10.1.0`, so a configurable rule emits `DeprecationHelper::backwardsCompatibleCall()` wrappers.
+To see the unwrapped output, add
+`$rectorConfig->singleton(\DrupalRector\Services\DrupalRectorSettings::class, fn () => (new \DrupalRector\Services\DrupalRectorSettings())->disableBackwardCompatibility());`.
+Do **not** load `DrupalSetList::COMPOSER_BASED` in this config: it registers its own settings
+with BC off, and since Rector 2.6.4 the first registration wins, so your singleton and the BC wrappers
+are silently dropped (`.claude/skills/prompts/version-bounds.md` §6). Never use `withComposerBased()` or
+`withSetProviders()` here either.
+
+**Check the rule is active before running.** Plain rules carry a `drupal/core` bound on the class,
+and Rector drops them silently when the site's installed core is outside it
+(`.claude/skills/prompts/version-bounds.md` §3, §5). The test site installs core as `11.x-dev`, which
+satisfies every 11.x bound, but confirm — especially for a rule bound to a minor newer than the
+site, or after the site's core was changed:
+```bash
+cd ~/projects/drupal-rector-test
+ddev exec -d /var/www/html vendor/bin/rector composer-based --config rector-live-test.php
+```
+The rule's row must say `yes` in the active column. A configurable rule registered with plain
+`ruleWithConfiguration()` has no bound and does not appear there; its set-local bound is only
+listed (second table) when the config loads `DrupalSetList::COMPOSER_BASED`. To check it, run the
+same command against a throwaway config that only does `$rectorConfig->sets([DrupalSetList::COMPOSER_BASED]);`.
 
 **Run rector** against the found modules:
 ```bash
@@ -165,6 +211,10 @@ Add the normalized string to the rector source:
   $rectorConfig->ruleWithConfiguration(FunctionToServiceRector::class, [ /* ... */ ]);
   ```
 
+  Copy the same comment block to the matching entry in `config/composer-based.php`. The
+  per-minor file stays the source (the registry script only reads `config/drupal-*/`), but the
+  two copies should not drift.
+
 Then regenerate the flat registry:
 
 ```bash
@@ -223,4 +273,5 @@ For **every** module that produced no changes, you must:
 | `.module` file silently skipped | File extension is `.module`, `.install`, etc. | Config is missing `fileExtensions()` — this should not happen if step 2 was followed |
 | Module already updated | The call site no longer uses the deprecated API | Expected — the module has already migrated |
 | Wrong rector class | The rector targets a different method/function | Verify the rector's `isName()` matches the actual call in the module |
+| Rule filtered by its version bound | **Every** module shows zero changes, including ones with an obviously typed call; `rector process` still says "Rector is done!" | Run `vendor/bin/rector composer-based --config rector-live-test.php` — the rule shows `no`. Installed `drupal/core` is outside the class bound (older than the lower bound, past the upper, or `dev-main`). Fix the site's core or the bound, not the rule logic |
 
