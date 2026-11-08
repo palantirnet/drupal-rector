@@ -121,5 +121,8 @@ return static function (RectorConfig $rectorConfig): void {
         // https://www.drupal.org/node/2012976 (Drupal 11.5)
         new FunctionToServiceConfiguration('11.5.0', 'user_login_finalize', 'Drupal\user\LoginFinalizer', 'finalizeLogin', true),
         new FunctionToServiceConfiguration('11.5.0', 'user_logout', 'Drupal\user\LogoutFinalizer', 'finalizeLogout', true),
+        // https://www.drupal.org/node/3595652 (Drupal 11.5)
+        new FunctionToServiceConfiguration('11.5.0', 'module_set_weight', 'Drupal\Core\Extension\ModuleWeight', 'set', true),
+        new FunctionToServiceConfiguration('11.5.0', 'module_config_sort', 'Drupal\Core\Extension\ModuleWeight', 'sort', true),
     ]);
 };
