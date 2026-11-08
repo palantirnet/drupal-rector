@@ -12,11 +12,13 @@ release-by-release.
 
 ## [Unreleased]
 
+## [1.2.0] — 2026-11-08
+
 ### Feature
 
 - **`DrupalSetList::COMPOSER_BASED`** — one set with every Drupal 10 and later rule, each bound to the `drupal/core` version its deprecation landed in. Rector only runs the rules that apply to your installed core. Because that version is known, the breaking renames are included too. `vendor/bin/rector composer-based` lists the configurable rules and whether they are active. The Drupal 8 and 9 rules are not in it; load `Drupal8SetList` or `Drupal9SetList` for those. ([rectorphp/rector#9778](https://github.com/rectorphp/rector/issues/9778))
 
-  Load it with `->withSets([DrupalSetList::COMPOSER_BASED])`. Rector's `withComposerBased(drupal: true)`, and a bare `withComposerBased()` since Rector 2.8.2, crash on every current Rector release with `Class "RectorPrefix…\DrupalRector\Set\DrupalSetList" not found` until [rectorphp/rector-src#8897](https://github.com/rectorphp/rector-src/pull/8897) is released. On 1.1.x those calls did nothing.
+  Load it with `->withSets([DrupalSetList::COMPOSER_BASED])`, or with Rector's `->withComposerBased(drupal: true)`. A bare `->withComposerBased()` enables it too, from Rector 2.8.2 on any project with `drupal/core` installed. Rector 2.8.3 and older fail on those toggles with `Class "RectorPrefix…\DrupalRector\Set\DrupalSetList" not found` ([rectorphp/rector-src#8897](https://github.com/rectorphp/rector-src/pull/8897)), fixed in 2.8.4, which this release requires. On 1.1.x those calls did nothing.
 - **`rector.contrib.php`** — a starting config for contrib modules and themes. It loads the `DRUPAL_10` and `DRUPAL_11` sets with backward-compatibility wrappers on, and lets you set the minimum Drupal version you support.
 
 ### Added
