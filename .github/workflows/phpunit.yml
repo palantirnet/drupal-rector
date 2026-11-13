@@ -1,4 +1,4 @@
-name: phpunit
+name: '🔬 PHPUnit'
 
 # This test will run on every pull request, and on every commit on any branch
 on:
@@ -7,25 +7,56 @@ on:
       - main
   schedule:
     # Run tests every week (to check for rector changes)
-    - cron:  '0 0 * * 0'
+    - cron: '0 0 * * 0'
   pull_request:
     types: [opened, synchronize, reopened, closed]
 
+permissions: {}
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
-    tests:
-        name: 'PHPUnit | rector/rector:${{ matrix.rector }}'
-        runs-on: ubuntu-latest
-        strategy:
-            matrix:
-                include:
-                    - php-version: "8.3"
-                      rector: "^2.8.4"
-        steps:
-            -   uses: actions/checkout@v3
-            -   uses: shivammathur/setup-php@v2
-                with:
-                    php-version: ${{ matrix.php-version }}
-                    coverage: none
-                    tools: composer:v2
-            - run: composer require rector/rector:${{ matrix.rector }} --dev
-            - run: composer test
+  tests:
+    name: '🔬 PHPUnit | rector/rector:${{ matrix.rector }}'
+    runs-on: ubuntu-latest
+    permissions: {}
+
+    strategy:
+      matrix:
+        include:
+          - php-version: '8.3'
+            rector: '^2.8.4'
+
+    steps:
+      - name: '🛎 Checkout'
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: '🐘 Setup PHP'
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-version }}
+          coverage: none
+          tools: composer:v2
+
+      - name: '🗃 Get composer cache directory'
+        id: composer-cache
+        run: echo "dir=$(composer config cache-files-dir)" >> "$GITHUB_OUTPUT"
+
+      - name: '💽 Cache composer dependencies'
+        uses: actions/cache@v6
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('composer.json') }}
+          restore-keys: ${{ runner.os }}-composer-
+
+      - name: '🏠 Install rector/rector:${{ matrix.rector }}'
+        run: composer require "rector/rector:$RECTOR_VERSION" --dev --no-interaction --no-progress --ansi
+        env:
+          RECTOR_VERSION: ${{ matrix.rector }}
+
+      - name: '🔬 Unit tests'
+        run: composer test --ansi -- --colors=always --no-progress

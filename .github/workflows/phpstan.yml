@@ -1,4 +1,4 @@
-name: phpstan
+name: '🔍 PHPStan'
 
 # This test will run on every pull request, and on every commit on any branch
 on:
@@ -7,29 +7,63 @@ on:
       - main
   schedule:
     # Run tests every week (to check for rector changes)
-    - cron:  '0 0 * * 0'
+    - cron: '0 0 * * 0'
   pull_request:
     types: [opened, synchronize, reopened, closed]
 
-jobs:
-    run_static_analysis_phpstan_analyze:
-        name: Static analysis with PHPStan
-        # START: SHARED SETUP
-        runs-on: ubuntu-latest
-        strategy:
-            matrix:
-                include:
-                    - php-version: "8.3"
-                      rector: "^2.8.4"
-                      phpstan-config: phpstan.neon
-        steps:
-            -   uses: actions/checkout@v3
-            -   uses: shivammathur/setup-php@v2
-                with:
-                    php-version: 8.3
-                    coverage: none # disable xdebug, pcov
-                    tools: composer:v2
-                    extensions: dom, curl, libxml, mbstring, zip, pdo, mysql, pdo_mysql, bcmath, gd, exif, iconv
+  # Allows running this workflow manually from the Actions tab.
+  workflow_dispatch:
 
-            - run: composer require rector/rector:${{ matrix.rector }} --dev
-            - run: vendor/bin/phpstan analyse -c ${{ matrix.phpstan-config }}
+permissions: {}
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  run_static_analysis_phpstan_analyze:
+    name: '🔍 Static analysis with PHPStan'
+    runs-on: ubuntu-latest
+    permissions: {}
+
+    strategy:
+      matrix:
+        include:
+          - php-version: '8.3'
+            rector: '^2.8.4'
+            phpstan-config: phpstan.neon
+
+    steps:
+      - name: '🛎 Checkout'
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: '🐘 Setup PHP'
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 8.3
+          coverage: none
+          tools: composer:v2
+          extensions: dom, curl, libxml, mbstring, zip, pdo, mysql, pdo_mysql, bcmath, gd, exif, iconv
+
+      - name: '🗃 Get composer cache directory'
+        id: composer-cache
+        run: echo "dir=$(composer config cache-files-dir)" >> "$GITHUB_OUTPUT"
+
+      - name: '💽 Cache composer dependencies'
+        uses: actions/cache@v6
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('composer.json') }}
+          restore-keys: ${{ runner.os }}-composer-
+
+      - name: '🏠 Install rector/rector:${{ matrix.rector }}'
+        run: composer require "rector/rector:$RECTOR_VERSION" --dev --no-interaction --no-progress --ansi
+        env:
+          RECTOR_VERSION: ${{ matrix.rector }}
+
+      - name: '🔍 PHPStan validate'
+        run: vendor/bin/phpstan analyse --no-progress --ansi -c "$PHPSTAN_CONFIG"
+        env:
+          PHPSTAN_CONFIG: ${{ matrix.phpstan-config }}

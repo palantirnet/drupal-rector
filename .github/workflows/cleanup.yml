@@ -1,0 +1,40 @@
+name: '🧹 Cleanup'
+
+on:
+  schedule:
+    # Run weekly.
+    - cron: '0 0 * * 0'
+
+  # Allows running this workflow manually from the Actions tab.
+  workflow_dispatch:
+
+permissions: {}
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+jobs:
+  cleanup:
+    name: '🧹 Clean up GitHub repo'
+    runs-on: ubuntu-latest
+    permissions:
+      actions: write # Delete old workflow runs.
+      deployments: write # Delete old deployments.
+
+    steps:
+      # Keep the latest deployment, delete the rest (API returns newest first).
+      - name: '🗑 Delete old deployments'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+        run: |
+          gh api --paginate "repos/$REPO/deployments?environment=github-pages" --jq '.[].id' |
+            tail -n +2 |
+            while read -r id; do
+              gh api -X POST "repos/$REPO/deployments/$id/statuses" -f state=inactive > /dev/null
+              gh api -X DELETE "repos/$REPO/deployments/$id"
+            done
+
+      - name: '🗑 Delete workflow runs'
+        uses: Mattraks/delete-workflow-runs@v2
