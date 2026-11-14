@@ -66,6 +66,18 @@ class HookConvertRector extends AbstractRector implements DocumentedRuleInterfac
 
     private bool $isDryRun;
 
+    /**
+     * Runs the other active rules over hook bodies before they are converted.
+     *
+     * Only set when the container was wired in, see NestedRuleRunner::register().
+     */
+    private ?NestedRuleRunner $nestedRuleRunner = null;
+
+    /**
+     * True while the nested rule run is in progress; makes this rule inert.
+     */
+    private bool $nested = false;
+
     public function __construct(BetterStandardPrinter $printer)
     {
         $this->isDryRun = in_array('--'.Option::DRY_RUN, $_SERVER['argv'] ?? []) || in_array('-'.Option::DRY_RUN_SHORT, $_SERVER['argv'] ?? []);
@@ -77,6 +89,14 @@ class HookConvertRector extends AbstractRector implements DocumentedRuleInterfac
             }
         } catch (\OutOfBoundsException $e) {
         }
+    }
+
+    /**
+     * @internal
+     */
+    public function useNestedRuleRunner(?NestedRuleRunner $runner): void
+    {
+        $this->nestedRuleRunner = $runner;
     }
 
     public function getRuleDefinition(): RuleDefinition
@@ -137,6 +157,9 @@ CODE_SAMPLE
 
     public function refactor(Node $node): Node|int|null
     {
+        if ($this->nested) {
+            return null;
+        }
         $filePath = $this->getFile()->getFilePath();
         $ext = pathinfo($filePath, \PATHINFO_EXTENSION);
         if (!in_array($ext, ['inc', 'module', 'theme'])) {
@@ -172,6 +195,17 @@ CODE_SAMPLE
                     if ($this->getName($attribute->name) == 'Drupal\\Core\\Hook\\Attribute\\LegacyHook') {
                         return null;
                     }
+                }
+            }
+
+            if ($this->module && $this->nestedRuleRunner && $this->willBeConverted($node)) {
+                // Rector visits parents first, so the deprecation rules have not
+                // seen this body yet and would never see the hook class copy.
+                $this->nested = true;
+                try {
+                    $node->stmts = $this->nestedRuleRunner->run($node->stmts, $this->getFile());
+                } finally {
+                    $this->nested = false;
                 }
             }
 
@@ -301,24 +335,38 @@ CODE_SAMPLE
         ];
     }
 
+    /**
+     * Hooks that must stay procedural.
+     */
+    private const PROCEDURAL_ONLY_HOOKS = [
+        'hook_info',
+        'install',
+        'install_tasks',
+        'install_tasks_alter',
+        'module_implements_alter',
+        'removed_post_updates',
+        'requirements',
+        'schema',
+        'uninstall',
+        'update_dependencies',
+        'update_last_removed',
+    ];
+
+    /**
+     * Whether createMethodFromFunction() will turn this function into a method.
+     */
+    protected function willBeConverted(Function_ $node): bool
+    {
+        $info = $this->getHookAndModuleName($node);
+
+        return $info !== [] && !in_array($info['hook'], self::PROCEDURAL_ONLY_HOOKS);
+    }
+
     protected function createMethodFromFunction(Function_ $node): ?ClassMethod
     {
         if ($info = $this->getHookAndModuleName($node)) {
             ['hook' => $hook, 'module' => $implementsModule] = $info;
-            $procOnly = [
-                'hook_info',
-                'install',
-                'install_tasks',
-                'install_tasks_alter',
-                'module_implements_alter',
-                'removed_post_updates',
-                'requirements',
-                'schema',
-                'uninstall',
-                'update_dependencies',
-                'update_last_removed',
-            ];
-            if (in_array($hook, $procOnly)) {
+            if (in_array($hook, self::PROCEDURAL_ONLY_HOOKS)) {
                 return null;
             }
             // Resolve __FUNCTION__ and unqualify things so TRUE doesn't

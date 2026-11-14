@@ -2,31 +2,39 @@
 
 declare(strict_types=1);
 
-use DrupalRector\Rector\Convert\HookConvertRector;
 use Rector\Config\RectorConfig;
 
 /**
  * Standalone configuration for converting procedural hook implementations into
  * OOP hook classes (#[Hook] attributes).
  *
- * IMPORTANT: run this as a SEPARATE rector pass, AFTER your deprecation pass.
+ * Two ways to use it:
  *
- * HookConvertRector moves each hook body into a brand-new `src/Hook/*Hooks.php`
- * file that it writes directly to disk. Rector (2.x) has no way to feed a
- * newly-created file back through the rule pipeline within the same run, so any
- * deprecated API call that lives inside a hook body would NOT be fixed if this
- * rule ran together with the deprecation sets — the unfixed body would be copied
- * into the new class and never revisited.
+ * 1. Same run as the deprecation rules (recommended). Rector visits a function
+ *    before the code inside it, and HookConvertRector copies the hook body into
+ *    a new hook class file right then, so deprecation rules would never see that
+ *    copy. This config (via config/hook-convert.php) wires in the container so
+ *    HookConvertRector first runs the other active rules over each hook body.
+ *    Combine it with your deprecation set in one config:
  *
- * Therefore: do not add this rule to a config that also loads the Drupal
- * deprecation sets. Run two passes instead:
+ *      return RectorConfig::configure()
+ *          ->withSets([DrupalSetList::COMPOSER_BASED, DrupalSetList::HOOK_CONVERT]);
  *
- *   vendor/bin/rector process modules/contrib/my_module                       # pass 1: deprecations
- *   vendor/bin/rector process modules/contrib/my_module \
- *     --config=vendor/palantirnet/drupal-rector/rector-hook-convert.php # pass 2: hook conversion
+ *    Remaining difference: the hook class keeps fully-qualified class names
+ *    (Rector's name-import step only runs on the procedural file).
+ *
+ * 2. As a separate second pass, AFTER the deprecation pass, with this file as
+ *    the config:
+ *
+ *      vendor/bin/rector process modules/contrib/my_module                       # pass 1: deprecations
+ *      vendor/bin/rector process modules/contrib/my_module \
+ *        --config=vendor/palantirnet/drupal-rector/rector-hook-convert.php # pass 2: hook conversion
+ *
+ * Registering HookConvertRector with a plain `$rectorConfig->rule()` (without
+ * config/hook-convert.php) only supports option 2.
  */
 return static function (RectorConfig $rectorConfig): void {
-    $rectorConfig->rule(HookConvertRector::class);
+    $rectorConfig->import(__DIR__.'/config/hook-convert.php');
 
     if (class_exists('DrupalFinder\DrupalFinderComposerRuntime')) {
         $drupalFinder = new DrupalFinder\DrupalFinderComposerRuntime();

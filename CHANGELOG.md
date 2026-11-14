@@ -12,6 +12,10 @@ release-by-release.
 
 ## [Unreleased]
 
+### Added
+
+- `HookConvertRector` can now run in the same Rector run as the deprecation rules. Load `DrupalSetList::HOOK_CONVERT` next to your set, and deprecated calls inside a hook body are fixed before the body is moved into the hook class. Before, that needed a second run, because Rector visits a function before its body and the generated hook class is never processed. A plain `rule(HookConvertRector::class)` and the two-pass setup keep working. The hook class keeps fully-qualified names.
+
 ### Fixed
 
 - Skip Rector's Symfony `EventSubscriberToAttributeRector` when a Drupal set is loaded. `withComposerBased(symfony: true)` turns it on because Drupal core depends on Symfony, but Drupal only registers event subscribers that implement `EventSubscriberInterface`, so the `#[AsEventListener]` rewrite broke the container rebuild. ([#446](https://github.com/palantirnet/drupal-rector/issues/446))
