@@ -1,0 +1,4 @@
+name: 'Hook convert rector theme'
+type: theme
+base theme: stable9
+core_version_requirement: ^11.3

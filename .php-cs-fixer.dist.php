@@ -9,6 +9,7 @@ $finder = (new PhpCsFixer\Finder())
     ])
     ->exclude([
         'functional/hookconvertrector/fixture',
+        'functional/hookconvertrector_theme/fixture',
     ])
 ;
 

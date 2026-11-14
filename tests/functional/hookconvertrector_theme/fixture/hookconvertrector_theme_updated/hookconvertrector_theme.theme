@@ -1,0 +1,8 @@
+<?php
+
+/**
+ * @file
+ * Functions to support theming in the Hook convert rector theme.
+ */
+
+require_once __DIR__ . '/includes/node.inc';
