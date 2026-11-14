@@ -18,4 +18,7 @@ return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->bootstrapFiles([
         __DIR__.'/../drupal-phpunit-bootstrap-file.php',
     ]);
+
+    // Third-party rules (e.g. from withComposerBased(symfony: true)) that break Drupal.
+    $rectorConfig->import(__DIR__.'/../drupal-skip-incompatible-rules.php');
 };
