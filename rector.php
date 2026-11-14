@@ -14,10 +14,10 @@ return static function (RectorConfig $rectorConfig): void {
     // core and nothing newer. This is the config for sites; for a contrib
     // module or theme, copy rector.contrib.php instead.
     //
-    // Load the set directly rather than through Rector's
-    // withComposerBased(drupal: true): released Rector builds up to 2.8.3
-    // scope the class that toggle refers to, so it fails with "Class
-    // RectorPrefix...\DrupalRector\Set\DrupalSetList not found".
+    // Rector's withComposerBased(drupal: true) loads the same set, but needs
+    // Rector 2.8.4 or newer and silently adds nothing when drupal-rector is
+    // missing or older than 1.2. Loading the set directly works on every
+    // supported Rector and fails loudly instead.
     $rectorConfig->sets([DrupalSetList::COMPOSER_BASED]);
 
     // The rewritten code only has to run on the installed core, so
