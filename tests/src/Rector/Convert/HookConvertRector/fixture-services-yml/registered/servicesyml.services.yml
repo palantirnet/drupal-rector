@@ -1,0 +1,4 @@
+services:
+  Drupal\servicesyml\Hook\AppendHooks:
+    class: Drupal\servicesyml\Hook\AppendHooks
+    autowire: true
