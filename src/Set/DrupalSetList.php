@@ -26,4 +26,10 @@ final class DrupalSetList
      * include here.
      */
     public const COMPOSER_BASED = __DIR__.'/../../config/composer-based.php';
+
+    /**
+     * HookConvertRector, wired so hook bodies get the other rules' fixes before
+     * they are moved into the generated hook class (single run).
+     */
+    public const HOOK_CONVERT = __DIR__.'/../../config/hook-convert.php';
 }
