@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use Rector\Config\RectorConfig;
 use Rector\PHPUnit\PHPUnit120\Rector\CallLike\CreateStubOverCreateMockArgRector;
+use Rector\PHPUnit\PHPUnit120\Rector\ClassMethod\ExpressionCreateMockToCreateStubRector;
 use Rector\PHPUnit\PHPUnit60\Rector\ClassMethod\AddDoesNotPerformAssertionToNonAssertingTestRector;
 use Rector\Symfony\CodeQuality\Rector\Class_\EventSubscriberToAttributeRector;
 use Rector\Symfony\Symfony61\Rector\Class_\CommandConfigureToAttributeRector;
@@ -62,6 +63,23 @@ return static function (RectorConfig $rectorConfig): void {
     // https://www.drupal.org/i/3638148
     if (class_exists(CreateStubOverCreateMockArgRector::class)) {
         $rectorConfig->skip([CreateStubOverCreateMockArgRector::class]);
+    }
+
+    // Turns `$a = $this->createMock(X::class);` expression assignments into
+    // createStub() when it can't see expects() on that variable. It misses
+    // mocks configured through an alias, e.g. core's
+    // RecipeConfigStorageWrapperTest::testCreateCollection(), where $a and $b
+    // get ->expects() inside foreach ([$a, $b] as $mock). The later
+    // ->expects() then fails with "Call to undefined method
+    // TestStub_...::expects()". MockObjectExprDetector::isUsedForMocking()
+    // doesn't follow aliases, so both `$alias = $a; $alias->expects()` and the
+    // foreach form get rewritten. Fixed upstream; remove the skip once
+    // drupal-rector requires the Rector release that includes it:
+    // https://github.com/rectorphp/rector/issues/9967
+    // https://github.com/rectorphp/rector-phpunit/pull/823
+    // https://www.drupal.org/i/3638148
+    if (class_exists(ExpressionCreateMockToCreateStubRector::class)) {
+        $rectorConfig->skip([ExpressionCreateMockToCreateStubRector::class]);
     }
 
     // Moves setDescription()/setAliases()/setHidden() from configure() into
