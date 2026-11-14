@@ -1,0 +1,4 @@
+name: 'Skip legacy theme'
+type: theme
+base theme: stable9
+core_version_requirement: ^10 || ^11
