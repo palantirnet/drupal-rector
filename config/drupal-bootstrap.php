@@ -42,6 +42,9 @@ return static function (RectorConfig $rectorConfig): void {
     // upgrade_status ships intentionally broken test modules.
     $rectorConfig->skip(['*/upgrade_status/tests/modules/*']);
 
+    // Third-party rules (e.g. from withComposerBased(symfony: true)) that break Drupal.
+    $rectorConfig->import(__DIR__.'/drupal-skip-incompatible-rules.php');
+
     // Autoloading and phpstan-drupal only make sense when Drupal is actually
     // present. Bail out otherwise — DrupalFinderComposerRuntime::getDrupalRoot()
     // calls Composer\InstalledVersions::getInstallPath('drupal/core'), which
