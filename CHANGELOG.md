@@ -16,6 +16,10 @@ release-by-release.
 
 - **Agent skill for running Rector (`skills/rector/SKILL.md`)** — tells a coding agent how to run Rector on a PHP or Drupal project from an isolated install in `.cache/agent-rector`, without touching the project's `composer.json`. It covers the recommended Drupal config (`DrupalSetList::COMPOSER_BASED` for sites, the major sets with BC wrapping for contrib), a mandatory dry-run, cleanup and QA, and writing idempotent custom rules. By mxr576 ([#439](https://github.com/palantirnet/drupal-rector/issues/439), [#440](https://github.com/palantirnet/drupal-rector/pull/440))
 
+### Changed
+
+- `HookConvertRector` now decides per file, from `DrupalRectorSettings`, whether to leave a `#[LegacyHook]` wrapper and write a `services.yml` entry. Modules keep both by default; with backwards compatibility disabled or a minimum supported core of 11.1.0 or higher the procedural function is removed instead. Themes never get a wrapper, and are skipped (left untouched) while backwards compatibility is on and the minimum supported core is below 11.3.0, converted otherwise. ([#436](https://github.com/palantirnet/drupal-rector/pull/436))
+
 ### Fixed
 
 - Skip Rector's Symfony `EventSubscriberToAttributeRector` when a Drupal set is loaded. `withComposerBased(symfony: true)` turns it on because Drupal core depends on Symfony, but Drupal only registers event subscribers that implement `EventSubscriberInterface`, so the `#[AsEventListener]` rewrite broke the container rebuild. ([#446](https://github.com/palantirnet/drupal-rector/issues/446))
