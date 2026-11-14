@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use Rector\Config\RectorConfig;
+use Rector\PHPUnit\PHPUnit60\Rector\ClassMethod\AddDoesNotPerformAssertionToNonAssertingTestRector;
 use Rector\Symfony\CodeQuality\Rector\Class_\EventSubscriberToAttributeRector;
 use Rector\Symfony\Symfony61\Rector\Class_\CommandConfigureToAttributeRector;
 
@@ -23,6 +24,27 @@ return static function (RectorConfig $rectorConfig): void {
     // https://github.com/palantirnet/drupal-rector/issues/446
     if (class_exists(EventSubscriberToAttributeRector::class)) {
         $rectorConfig->skip([EventSubscriberToAttributeRector::class]);
+    }
+
+    // Adds #[DoesNotPerformAssertions] to test methods it thinks don't assert.
+    // It only looks inside the test method, but in Drupal tests often assert
+    // elsewhere: in PHPUnit lifecycle methods such as setUp(), tearDown() or
+    // assertPostConditions() of the test class or a base class (e.g. core's
+    // PackageManagerKernelTestBase and KernelTestBaseShutdownTest), via
+    // parent::testX() calls, through expectUserDeprecationMessage() (each
+    // expected deprecation counts as an assertion), or through helpers it can't
+    // resolve. Core runs PHPUnit with failOnRisky="true", so those tests fail
+    // with "This test is not expected to perform assertions but performed N
+    // assertions".
+    // The upstream fix for https://github.com/rectorphp/rector/issues/9965
+    // (https://github.com/rectorphp/rector-phpunit/pull/822) covers parent::,
+    // expectUserDeprecationMessage() and lifecycle methods. Assertions in
+    // helpers the rule can't resolve (dynamic calls, deep call chains, helpers
+    // not named assert*) stay invisible, and a wrong attribute fails the test
+    // run, so this skip is meant to stay after that fix is released.
+    // https://www.drupal.org/i/3638148
+    if (class_exists(AddDoesNotPerformAssertionToNonAssertingTestRector::class)) {
+        $rectorConfig->skip([AddDoesNotPerformAssertionToNonAssertingTestRector::class]);
     }
 
     // Moves setDescription()/setAliases()/setHidden() from configure() into
