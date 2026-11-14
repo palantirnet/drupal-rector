@@ -5,7 +5,7 @@ declare(strict_types=1);
 use Rector\Config\RectorConfig;
 use Rector\Symfony\CodeQuality\Rector\Class_\EventSubscriberToAttributeRector;
 
-/**
+/*
  * Skips third-party Rector rules that produce code Drupal cannot run.
  *
  * Rector's own composer-based sets (e.g. `withComposerBased(symfony: true)`)
