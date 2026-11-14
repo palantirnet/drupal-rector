@@ -38,10 +38,12 @@ return static function (RectorConfig $rectorConfig): void {
     // assertions".
     // The upstream fix for https://github.com/rectorphp/rector/issues/9965
     // (https://github.com/rectorphp/rector-phpunit/pull/822) covers parent::,
-    // expectUserDeprecationMessage() and lifecycle methods. Assertions in
-    // helpers the rule can't resolve (dynamic calls, deep call chains, helpers
-    // not named assert*) stay invisible, and a wrong attribute fails the test
-    // run, so this skip is meant to stay after that fix is released.
+    // expectUserDeprecationMessage() and lifecycle methods. Still invisible to
+    // it: helpers that count assertions with addToAssertionCount(), such as
+    // UiHelperTrait::drupalGet() used by most functional tests, and lifecycle
+    // methods declared in traits (e.g. DrupalTestCaseTrait's #[After]). A
+    // wrong attribute fails the test run, so this skip is meant to stay after
+    // that fix is released.
     // https://www.drupal.org/i/3638148
     if (class_exists(AddDoesNotPerformAssertionToNonAssertingTestRector::class)) {
         $rectorConfig->skip([AddDoesNotPerformAssertionToNonAssertingTestRector::class]);
