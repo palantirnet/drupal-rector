@@ -299,6 +299,40 @@ Running deprecations first means the bodies are already fixed before they are
 moved. For this reason the example `rector.php` above intentionally does **not**
 register `HookConvertRector`.
 
+### Backwards compatibility of the converted hooks
+
+`HookConvertRector` decides per file how to convert, from the same
+`DrupalRectorSettings` the deprecation rules use (backwards compatibility on,
+minimum supported core `10.1.0` by default):
+
+| File | Result |
+|---|---|
+| Module (`.module`, `.inc`) | The procedural function stays as a `#[LegacyHook]` wrapper and the hook class is registered in `<module>.services.yml`, so the module keeps working on Drupal before 11.1. With backwards compatibility disabled, or a minimum supported core of 11.1.0 or higher, the procedural function is removed and no `services.yml` entry is written. |
+| Theme (`.theme`, or any file of an extension whose `info.yml` has `type: theme`) | A theme can't register services, so it never gets a wrapper or `services.yml` entry. Hooks in themes are only discovered from Drupal 11.3, so while backwards compatibility is on and the minimum supported core is below 11.3.0 the file is **skipped and left untouched**. With backwards compatibility off, or a minimum of 11.3.0 or higher, the theme is converted and the procedural function removed. |
+| Files in `drupal/core` | Converted, procedural function removed. |
+
+The defaults keep today's output for modules. A skipped theme keeps working:
+procedural hooks in `.theme` files are deprecated in Drupal 11.5 and are only
+removed in Drupal 13.0.
+
+For custom site code that doesn't need to run on old Drupal versions, copy
+`rector-hook-convert.php` and add a settings singleton:
+
+```php
+use DrupalRector\Services\DrupalRectorSettings;
+
+return static function (RectorConfig $rectorConfig): void {
+    $rectorConfig->rule(HookConvertRector::class);
+    $rectorConfig->singleton(DrupalRectorSettings::class, fn () => (new DrupalRectorSettings())
+        // Either drop backwards compatibility entirely...
+        ->disableBackwardCompatibility()
+        // ...or state the oldest Drupal core you still support:
+        // ->setMinimumCoreVersionSupported('11.1.0')
+    );
+    // ... the rest of rector-hook-convert.php
+};
+```
+
 ## Development and contribution suggestions
 
 Thanks for your interest in contributing!
