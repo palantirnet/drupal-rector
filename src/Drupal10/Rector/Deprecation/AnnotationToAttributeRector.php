@@ -325,7 +325,7 @@ CODE_SAMPLE,
         // TranslatableMarkup::__construct($string, $arguments, $options): the
         // context is an option, so pad $arguments when only a context is set.
         if ($argumentArg !== null || $contextArg !== null) {
-          $argArray[] = $argumentArg ?? $this->nodeFactory->createArg([]);
+            $argArray[] = $argumentArg ?? $this->nodeFactory->createArg([]);
         }
         if ($contextArg !== null) {
             $argArray[] = $contextArg;
