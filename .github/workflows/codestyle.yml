@@ -1,4 +1,4 @@
-name: php-cs-fixer
+name: '🪶 PHP CS Fixer'
 
 # This test will run on every pull request, on every push on main branch, and
 # weekly on a schedule.
@@ -8,25 +8,48 @@ on:
       - main
   schedule:
     # Run weekly (to check for php-cs-fixer changes)
-    - cron:  '0 0 * * 0'
+    - cron: '0 0 * * 0'
   pull_request:
 
-jobs:
-    php-cs-fixer:
-      name: Codestyle checks with php-cs-fixer
-      runs-on: ubuntu-latest
-      steps:
-          -   uses: actions/checkout@v3
-          -   uses: shivammathur/setup-php@v2
-              with:
-                  php-version: 8.3
-                  coverage: none # disable xdebug, pcov
-                  tools: composer:v2
-                  extensions: zip
-          # Uncomment to enable SSH access to Github Actions - https://github.com/marketplace/actions/debugging-with-tmate#getting-started
-          # -   name: Debugging with tmate
-          #     uses: mxschmitt/action-tmate@v2
-          # END: SHARED SETUP
+permissions: {}
 
-          - run: composer install
-          - run: composer check-style
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  php-cs-fixer:
+    name: '🪶 Codestyle checks with php-cs-fixer'
+    runs-on: ubuntu-latest
+    permissions: {}
+
+    steps:
+      - name: '🛎 Checkout'
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: '🐘 Setup PHP'
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 8.3
+          coverage: none
+          tools: composer:v2
+          extensions: zip
+
+      - name: '🗃 Get composer cache directory'
+        id: composer-cache
+        run: echo "dir=$(composer config cache-files-dir)" >> "$GITHUB_OUTPUT"
+
+      - name: '💽 Cache composer dependencies'
+        uses: actions/cache@v6
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('composer.json') }}
+          restore-keys: ${{ runner.os }}-composer-
+
+      - name: '📦 Install dependencies'
+        run: composer install --no-interaction --no-progress --ansi
+
+      - name: '🪶 PHP CS Fixer validate'
+        run: composer check-style --ansi -- --ansi --show-progress=none
