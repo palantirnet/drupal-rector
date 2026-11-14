@@ -15,6 +15,7 @@ release-by-release.
 ### Added
 
 - **Agent skill for running Rector (`skills/rector/SKILL.md`)** — tells a coding agent how to run Rector on a PHP or Drupal project from an isolated install in `.cache/agent-rector`, without touching the project's `composer.json`. It covers the recommended Drupal config (`DrupalSetList::COMPOSER_BASED` for sites, the major sets with BC wrapping for contrib), a mandatory dry-run, cleanup and QA, and writing idempotent custom rules. By mxr576 ([#439](https://github.com/palantirnet/drupal-rector/issues/439), [#440](https://github.com/palantirnet/drupal-rector/pull/440))
+- `HookConvertRector` can now run in the same Rector run as the deprecation rules. Load `DrupalSetList::HOOK_CONVERT` next to your set, and deprecated calls inside a hook body are fixed before the body is moved into the hook class. Before, that needed a second run, because Rector visits a function before its body and the generated hook class is never processed. A plain `rule(HookConvertRector::class)` and the two-pass setup keep working. The hook class keeps fully-qualified names.
 
 ### Fixed
 
