@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace DrupalRector\Tests\Rector\Convert\HookConvertRector;
 
 use DrupalRector\Rector\Convert\HookConvertRector;
+use DrupalRector\Services\DrupalRectorSettings;
 use PhpParser\Node;
 use PhpParser\Node\Identifier;
 use PhpParser\Node\Name\FullyQualified;
@@ -30,7 +31,7 @@ class HookConvertRectorTest extends TestCase
         // ExprAnalyzer now requires NodeNameResolver, which transitively
         // needs ReflectionProvider).
         $printer = (new \ReflectionClass(BetterStandardPrinter::class))->newInstanceWithoutConstructor();
-        $this->rector = new HookConvertRector($printer);
+        $this->rector = new HookConvertRector($printer, new DrupalRectorSettings());
 
         $ref = new \ReflectionClass($this->rector);
 
@@ -263,7 +264,7 @@ CODE);
 
     public function testGeneratedHookClassFileIsPrintedCorrectly(): void
     {
-        $rector = new HookConvertRector($this->realPrinter());
+        $rector = new HookConvertRector($this->realPrinter(), new DrupalRectorSettings());
         // Prevent the destructor from writing the generated file to disk.
         $isDryRun = new \ReflectionProperty($rector, 'isDryRun');
         $isDryRun->setAccessible(true);

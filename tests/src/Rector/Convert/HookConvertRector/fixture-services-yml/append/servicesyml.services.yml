@@ -1,0 +1,3 @@
+services:
+  servicesyml.unrelated:
+    class: Drupal\servicesyml\Unrelated
