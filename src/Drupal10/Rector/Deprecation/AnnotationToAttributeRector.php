@@ -322,8 +322,10 @@ CODE_SAMPLE,
         if ($valueArg !== null) {
             $argArray[] = $valueArg;
         }
-        if ($argumentArg !== null) {
-            $argArray[] = $argumentArg;
+        // TranslatableMarkup::__construct($string, $arguments, $options): the
+        // context is an option, so pad $arguments when only a context is set.
+        if ($argumentArg !== null || $contextArg !== null) {
+            $argArray[] = $argumentArg ?? $this->nodeFactory->createArg([]);
         }
         if ($contextArg !== null) {
             $argArray[] = $contextArg;
