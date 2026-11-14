@@ -15,6 +15,7 @@ release-by-release.
 ### Fixed
 
 - Skip Rector's Symfony `EventSubscriberToAttributeRector` when a Drupal set is loaded. `withComposerBased(symfony: true)` turns it on because Drupal core depends on Symfony, but Drupal only registers event subscribers that implement `EventSubscriberInterface`, so the `#[AsEventListener]` rewrite broke the container rebuild. ([#446](https://github.com/palantirnet/drupal-rector/issues/446))
+- Skip Rector's Symfony `CommandConfigureToAttributeRector` when a Drupal set is loaded. With `withComposerBased(symfony: true)` it moves `setDescription()` into `#[AsCommand(...)]` without a name for commands that name themselves in the constructor, such as core's `ServerCommand`, and the console then fails with `AsCommand::__construct(): Argument #1 ($name) not passed`. The skip goes once [rectorphp/rector-symfony#1102](https://github.com/rectorphp/rector-symfony/pull/1102) is released. ([#3638148](https://www.drupal.org/i/3638148))
 
 ## [1.2.0] — 2026-11-08
 
