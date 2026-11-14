@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use Rector\Config\RectorConfig;
+use Rector\PHPUnit\PHPUnit120\Rector\CallLike\CreateStubOverCreateMockArgRector;
 use Rector\PHPUnit\PHPUnit60\Rector\ClassMethod\AddDoesNotPerformAssertionToNonAssertingTestRector;
 use Rector\Symfony\CodeQuality\Rector\Class_\EventSubscriberToAttributeRector;
 use Rector\Symfony\Symfony61\Rector\Class_\CommandConfigureToAttributeRector;
@@ -47,6 +48,20 @@ return static function (RectorConfig $rectorConfig): void {
     // https://www.drupal.org/i/3638148
     if (class_exists(AddDoesNotPerformAssertionToNonAssertingTestRector::class)) {
         $rectorConfig->skip([AddDoesNotPerformAssertionToNonAssertingTestRector::class]);
+    }
+
+    // Turns createMock() into createStub() when it can't see the mock being
+    // configured with expects(). It misses mocks that escape the call: stored
+    // in a property by a helper (MigrateTestCase::getMigration() keeps the id
+    // map in $this->idMap), kept in an array property from setUp(), or
+    // configured through another variable (foreach ([$a, $b] as $mock)). The
+    // later ->expects() then fails with "Call to undefined method
+    // TestStub_...::expects()". This is common Drupal test style, so keep the
+    // skip until upstream handles these cases:
+    // https://github.com/rectorphp/rector/issues/9966
+    // https://www.drupal.org/i/3638148
+    if (class_exists(CreateStubOverCreateMockArgRector::class)) {
+        $rectorConfig->skip([CreateStubOverCreateMockArgRector::class]);
     }
 
     // Moves setDescription()/setAliases()/setHidden() from configure() into
