@@ -603,7 +603,7 @@ which pass produced the removal version.
 | `ReplacePdoFetchConstantsRector` | 11.2 | config-bound | 11.2.0 | 12.0.0 | scheduled | core promise |
 | `ReplaceRecipeRunnerInstallModuleRector` | 11.4 | config-bound | 11.4.0 | 13.0.0 | scheduled | change record |
 | `ReplaceSessionManagerDeleteRector` | 11.4 | config-bound | 11.4.0 | 12.0.0 | scheduled | `core/lib/Drupal/Core/Session/SessionManagerInterface.php:18` |
-| `ReplaceSessionWritesWithRequestSessionRector` | 11.2 | config-bound | 11.2.0 | 12.0.0 | scheduled | core notice |
+| `ReplaceSessionSuperglobalWithRequestSessionRector` | 11.2 | `>=11.2.0 <13.0.0` | 11.2.0 | 12.0.0 | scheduled | core notice |
 | `ReplaceSystemPerformanceGzipKeyRector` | 11.4 | config-bound | 11.4.0 | 12.0.0 | scheduled | core promise |
 | `ReplaceThemeGetSettingRector` | 11.3 | config-bound | 11.3.0 | 13.0.0 | scheduled | change record |
 | `ReplaceTwigExtensionRector` | 11.3 | config-bound | 11.3.0 | 12.0.0 | scheduled | core promise |

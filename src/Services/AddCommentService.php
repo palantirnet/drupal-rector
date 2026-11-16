@@ -26,8 +26,8 @@ class AddCommentService
     /**
      * Add a comment to the parent statement.
      *
-     * @param Node\Stmt\Expression $node
-     * @param string               $comment
+     * @param Node   $node
+     * @param string $comment
      *
      * @return void
      */

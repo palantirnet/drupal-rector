@@ -359,8 +359,8 @@ run_test ReplaceRecipeRunnerInstallModuleRector \
 run_test ReplaceSessionManagerDeleteRector \
     role_expire
 
-run_test ReplaceSessionWritesWithRequestSessionRector
-    # No contrib usage: direct $_SESSION writes not present in any D11-compatible contrib module found
+run_test ReplaceSessionSuperglobalWithRequestSessionRector \
+    basket commerce_swiss_post ark
 
 run_test ReplaceSystemPerformanceGzipKeyRector
     # No contrib usage: advagg (only known caller) declares "core_version_requirement: ^9.3 || ^10" — not D11-compatible
