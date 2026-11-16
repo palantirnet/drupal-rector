@@ -40,6 +40,24 @@ class ReplacePdoFetchConstantsRectorTest extends AbstractDrupalRectorTestCase
         return self::yieldFilesFromDirectory(__DIR__.'/fixture-below-version');
     }
 
+    #[DataProvider('provideDataMinimumCoreAtIntroducedVersion')]
+    public function testMinimumCoreAtIntroducedVersion(string $filePath): void
+    {
+        // No backwards compatibility needed: plain FetchAs replacement.
+        static::getContainer()->make(DrupalRectorSettings::class)
+            ->setDrupalVersion('99.99.99')
+            ->setMinimumCoreVersionSupported('11.2.0');
+        $this->doTestFile($filePath);
+    }
+
+    /**
+     * @return \Iterator<<string>>
+     */
+    public static function provideDataMinimumCoreAtIntroducedVersion(): \Iterator
+    {
+        return self::yieldFilesFromDirectory(__DIR__.'/fixture-min-core-11-2');
+    }
+
     public function provideConfigFilePath(): string
     {
         return __DIR__.'/config/configured_rule.php';
