@@ -51,7 +51,7 @@ Done when `$RECTOR_BIN --version` exits `0`.
 
 ### 2. Write `$RECTOR_DIR/rector.php`
 
-Create the scratch configuration in `$RECTOR_DIR/rector.php`. Load the project autoloader with `require_once`, scope `withPaths()` to the target files or directories, and attach the required rule sets (see [Configuration reference](#configuration-reference)):
+Configure `$RECTOR_DIR/rector.php` with the project autoloader, target paths, and rules (see [Configuration reference](#configuration-reference)):
 
 ```php
 <?php
@@ -70,11 +70,11 @@ return RectorConfig::configure()
     // Attach sets, configured rules, or custom rules here.
 ```
 
-Done when `php -l "$RECTOR_DIR/rector.php"` exits `0` and target paths and rules/sets for the task are configured.
+Done when `php -l "$RECTOR_DIR/rector.php"` exits `0` and target paths and rules are configured.
 
 ### 3. Dry-run and verify the diff
 
-Execute from the project root so package discovery resolves `./vendor/composer/installed.json`:
+Run from `$PROJECT_ROOT` so Rector resolves `./vendor/composer/installed.json`:
 
 ```bash
 $RECTOR_BIN process \
@@ -84,16 +84,11 @@ $RECTOR_BIN process \
   --no-progress-bar
 ```
 
-Rector CLI status codes:
-- `2`: Target patterns matched and diff generated (expected success state for pending refactors).
-- `0`: No files matched or files already comply with target rules.
-- `1`: Configuration or syntax error.
+Rector exit codes: `2` = diff generated, `0` = no changes needed, `1` = error.
 
-Done when dry-run exits `2` with an AST diff transforming only the intended call sites (or `0` when targets already comply) with `0` fatal errors.
+Done when dry-run exits `2` (or `0` if targets already comply) with `0` errors and the diff transforms only the intended call sites.
 
 ### 4. Apply, clean up, and verify
-
-Apply the transformation and remove scratch configuration files:
 
 ```bash
 $RECTOR_BIN process \
@@ -104,12 +99,7 @@ $RECTOR_BIN process \
 rm -f "$RECTOR_DIR"/*.php
 ```
 
-Format modified files using the project code beautifier, then run automated checks.
-
-Done when:
-- Scratch files (`$RECTOR_DIR/*.php`) are removed and root `composer.json` / `composer.lock` are untouched.
-- Only intended file modifications are staged in git.
-- All automated QA checks (linting, static analysis, covering tests) pass on modified files with `0` errors.
+Done when `$RECTOR_DIR/*.php` scratch files are removed, `composer.json` and `composer.lock` are untouched, and all automated QA checks (linting, static analysis, covering tests) pass on modified files with `0` errors.
 
 ---
 
@@ -191,7 +181,7 @@ use Rector\Renaming\ValueObject\MethodCallRename;
 
 When no built-in rule matches the structural pattern, write `$RECTOR_DIR/CustomRule.php` and load it via `require_once __DIR__ . '/CustomRule.php'` and `->withRules([\AgentRector\CustomRule::class])`.
 
-`refactor()` must be **idempotent**: return the modified node, an array of replacement nodes, or `PhpParser\NodeVisitor::REMOVE_NODE`. Return `null` when a node does not match or is already transformed.
+`refactor()` must be **idempotent**: return the modified node, an array of replacement nodes, or `PhpParser\NodeVisitor::REMOVE_NODE` when transforming; return `null` when the node already matches the target state.
 
 ```php
 <?php
