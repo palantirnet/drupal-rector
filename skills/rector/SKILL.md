@@ -9,10 +9,31 @@ Run Rector from an isolated directory (`.cache/agent-rector`) so project `compos
 
 ### 1. Provision Rector
 
-Resolve an existing project binary (drupal-rector >= 1.2) or provision an isolated installation:
+Locate the project root dynamically and resolve an existing binary (drupal-rector >= 1.2) or provision an isolated installation:
 
 ```bash
-RECTOR_DIR="${RECTOR_CACHE_DIR:-.cache/agent-rector}"
+# Locate the nearest Composer project root containing vendor/autoload.php
+PROJECT_ROOT="$PWD"
+while [ "$PROJECT_ROOT" != "/" ] && [ "$PROJECT_ROOT" != "." ]; do
+  if [ -f "$PROJECT_ROOT/composer.json" ] && [ -f "$PROJECT_ROOT/vendor/autoload.php" ]; then
+    break
+  fi
+  PROJECT_ROOT="$(dirname "$PROJECT_ROOT")"
+done
+
+# Fallback: nearest composer.json (if vendor is not yet installed) or git root
+if [ ! -f "$PROJECT_ROOT/composer.json" ]; then
+  if git rev-parse --show-toplevel >/dev/null 2>&1; then
+    PROJECT_ROOT="$(git rev-parse --show-toplevel)"
+  else
+    PROJECT_ROOT="$PWD"
+  fi
+fi
+
+# Always execute from the project root so Rector resolves ./vendor/composer/installed.json
+cd "$PROJECT_ROOT"
+
+RECTOR_DIR="${RECTOR_CACHE_DIR:-$PROJECT_ROOT/.cache/agent-rector}"
 mkdir -p "$RECTOR_DIR"
 
 if [ -x "vendor/bin/rector" ] && [ -f "vendor/palantirnet/drupal-rector/config/composer-based.php" ]; then
@@ -30,7 +51,7 @@ Done when `$RECTOR_BIN --version` exits `0`.
 
 ### 2. Write `$RECTOR_DIR/rector.php`
 
-Create the configuration in `$RECTOR_DIR/rector.php`. Load the project autoloader with `require_once`, target the target paths, and attach sets or rules (see [Configuration reference](#configuration-reference)):
+Create the scratch configuration in `$RECTOR_DIR/rector.php`. Load the project autoloader with `require_once`, scope `withPaths()` to the target files or directories, and attach the required rule sets (see [Configuration reference](#configuration-reference)):
 
 ```php
 <?php
@@ -49,11 +70,11 @@ return RectorConfig::configure()
     // Attach sets, configured rules, or custom rules here.
 ```
 
-Done when `php -l "$RECTOR_DIR/rector.php"` exits `0`.
+Done when `php -l "$RECTOR_DIR/rector.php"` exits `0` and target paths and rules/sets for the task are configured.
 
 ### 3. Dry-run and verify the diff
 
-Always run from the project root so package discovery resolves `./vendor/composer/installed.json`:
+Execute from the project root so package discovery resolves `./vendor/composer/installed.json`:
 
 ```bash
 $RECTOR_BIN process \
@@ -68,7 +89,7 @@ Rector CLI status codes:
 - `0`: No files matched or files already comply with target rules.
 - `1`: Configuration or syntax error.
 
-Done when dry-run exits `2` with an AST diff transforming only the intended call sites (or `0` if targets already comply) with `0` errors.
+Done when dry-run exits `2` with an AST diff transforming only the intended call sites (or `0` when targets already comply) with `0` fatal errors.
 
 ### 4. Apply, clean up, and verify
 
@@ -83,11 +104,11 @@ $RECTOR_BIN process \
 rm -f "$RECTOR_DIR"/*.php
 ```
 
-Format modified files with the project code beautifier, then run automated checks.
+Format modified files using the project code beautifier, then run automated checks.
 
 Done when:
 - Scratch files (`$RECTOR_DIR/*.php`) are removed and root `composer.json` / `composer.lock` are untouched.
-- `.cache/` is not staged or committed.
+- Only intended file modifications are staged in git.
 - All automated QA checks (linting, static analysis, covering tests) pass on modified files with `0` errors.
 
 ---
@@ -132,23 +153,6 @@ return RectorConfig::configure()
     ])
     ->withFileExtensions(['php', 'module', 'theme', 'install', 'profile', 'inc', 'engine'])
     ->withPHPStanConfigs(array_filter([$projectRoot . '/vendor/mglaman/phpstan-drupal/extension.neon'], 'file_exists'));
-```
-
-To customize the minimum supported core version (defaults to `10.1.0`), use the closure format:
-
-```php
-use DrupalRector\Services\DrupalRectorSettings;
-use DrupalRector\Set\Drupal10SetList;
-use Rector\Config\RectorConfig;
-
-return static function (RectorConfig $rectorConfig): void {
-    $rectorConfig->sets([Drupal10SetList::DRUPAL_10]);
-    $rectorConfig->singleton(DrupalRectorSettings::class, function () {
-        $settings = new DrupalRectorSettings();
-        $settings->setMinimumCoreVersionSupported('10.2.0');
-        return $settings;
-    });
-};
 ```
 
 ### Symbol & signature renames
