@@ -1,18 +1,39 @@
 ---
 name: rector
-description: PHP AST refactoring and codemods. Use for PHP version or Drupal deprecation upgrades, annotation-to-attribute migrations, type-declaration or dead-code sets, cross-file symbol/signature renames, and multi-file structural PHP changes.
+description: AST refactoring and codemods for PHP. Use for Drupal or PHP upgrades, type-declarations, dead-code removal, symbol renames, or custom AST rules.
 ---
 
-Run Rector from an isolated directory (`.cache/agent-rector`) so root `composer.json` and `composer.lock` stay untouched.
+Run Rector from an isolated directory (`.cache/agent-rector`) so project `composer.json` and `composer.lock` stay untouched.
 
 ## Steps
 
 ### 1. Provision Rector
 
-Resolve an existing binary or provision an isolated installation in `.cache/agent-rector`:
+Locate the project root dynamically and resolve an existing binary (drupal-rector >= 1.2) or provision an isolated installation:
 
 ```bash
-RECTOR_DIR="${RECTOR_CACHE_DIR:-.cache/agent-rector}"
+# Locate the nearest Composer project root containing vendor/autoload.php
+PROJECT_ROOT="$PWD"
+while [ "$PROJECT_ROOT" != "/" ] && [ "$PROJECT_ROOT" != "." ]; do
+  if [ -f "$PROJECT_ROOT/composer.json" ] && [ -f "$PROJECT_ROOT/vendor/autoload.php" ]; then
+    break
+  fi
+  PROJECT_ROOT="$(dirname "$PROJECT_ROOT")"
+done
+
+# Fallback: nearest composer.json (if vendor is not yet installed) or git root
+if [ ! -f "$PROJECT_ROOT/composer.json" ]; then
+  if git rev-parse --show-toplevel >/dev/null 2>&1; then
+    PROJECT_ROOT="$(git rev-parse --show-toplevel)"
+  else
+    PROJECT_ROOT="$PWD"
+  fi
+fi
+
+# Always execute from the project root so Rector resolves ./vendor/composer/installed.json
+cd "$PROJECT_ROOT"
+
+RECTOR_DIR="${RECTOR_CACHE_DIR:-$PROJECT_ROOT/.cache/agent-rector}"
 mkdir -p "$RECTOR_DIR"
 
 if [ -x "vendor/bin/rector" ] && [ -f "vendor/palantirnet/drupal-rector/config/composer-based.php" ]; then
@@ -28,11 +49,9 @@ fi
 
 Done when `$RECTOR_BIN --version` exits `0`.
 
-Leave the Rector version to Composer: drupal-rector 1.2 requires `rector/rector` `^2.8.4`, so the unversioned `rector/rector` resolves to a release it supports. The project's own install is used only when it is drupal-rector 1.2 or newer (the check for `config/composer-based.php`); 1.1.x has no `DrupalSetList`. A globally installed `rector` is not used, because it cannot load drupal-rector.
+### 2. Write `$RECTOR_DIR/rector.php`
 
-### 2. Write `.cache/agent-rector/rector.php`
-
-Load the project autoloader so Rector resolves Drupal and project types, scope `withPaths()` to the target directories, and attach the sets or rules for your task (see [Configuration reference](#configuration-reference)):
+Configure `$RECTOR_DIR/rector.php` with the project autoloader, target paths, and rules (see [Configuration reference](#configuration-reference)):
 
 ```php
 <?php
@@ -41,53 +60,50 @@ declare(strict_types=1);
 
 use Rector\Config\RectorConfig;
 
-$projectRoot = dirname(__DIR__, 2);
+$projectRoot = getcwd();
 require_once $projectRoot . '/vendor/autoload.php';
 
 return RectorConfig::configure()
-    ->withPaths([$projectRoot . '/web/modules/custom']);
-    // Attach set, configured rule, or custom rule here.
+    ->withPaths([
+        $projectRoot . '/web/modules/custom',
+    ]);
+    // Attach sets, configured rules, or custom rules here.
 ```
 
-Keep the `require_once`. Rector loads `./vendor/autoload.php` itself only when the project has no `vendor/rector/rector`. On a project that ships its own Rector the isolated binary skips it, `Composer\InstalledVersions` sees the isolated vendor without `drupal/core`, and the run fails with `Package "drupal/core" is not installed`. `withAutoloadPaths()` does not fix that: it only feeds files to static reflection. `withBootstrapFiles()` replaces the bootstrap file the Drupal sets register, and rules then miss call sites such as `\Drupal::service('renderer')->…`. `dirname(__DIR__, 2)` assumes the default `.cache/agent-rector`; adjust it if `RECTOR_CACHE_DIR` is set elsewhere.
+Done when `php -l "$RECTOR_DIR/rector.php"` exits `0` and target paths and rules are configured.
 
 ### 3. Dry-run and verify the diff
 
-Preview the AST diff before touching working files. Run from the project root: Rector reads installed package versions from `./vendor/composer/installed.json` in the working directory, and run from `.cache/agent-rector` it sees no `drupal/core` and silently skips every version-bound Drupal rule.
+Run from `$PROJECT_ROOT` so Rector resolves `./vendor/composer/installed.json`:
 
 ```bash
 $RECTOR_BIN process \
-  --config=.cache/agent-rector/rector.php \
+  --config="$RECTOR_DIR/rector.php" \
   --dry-run \
   --memory-limit=1G \
   --no-progress-bar
 ```
 
-Refine `.cache/agent-rector/rector.php` (or your custom rule) until the dry-run reports no errors and the diff transforms every target call site and nothing else. A dry-run exits `2` when it would change files, `1` on errors, and `0` when there is nothing to change.
+Rector exit codes: `2` = diff generated, `0` = no changes needed, `1` = error.
+
+Done when dry-run exits `2` (or `0` if targets already comply) with `0` errors and the diff transforms only the intended call sites.
 
 ### 4. Apply, clean up, and verify
 
-Apply the transformation and remove the scratch config files (keeping `.cache/agent-rector/vendor` cached for future runs):
-
 ```bash
 $RECTOR_BIN process \
-  --config=.cache/agent-rector/rector.php \
+  --config="$RECTOR_DIR/rector.php" \
   --memory-limit=1G \
   --no-progress-bar
 
-rm -f .cache/agent-rector/*.php
+rm -f "$RECTOR_DIR"/*.php
 ```
 
-Rector's AST printer reformats modified nodes without project style rules. Format the modified files using the project's code beautifier, then run the project's automated QA checks (linting, static analysis, and covering tests) as defined by the runtime environment.
+Done when `$RECTOR_DIR/*.php` scratch files are removed, `composer.json` and `composer.lock` are untouched, and all automated QA checks (linting, static analysis, covering tests) pass on modified files with `0` errors.
 
-Done when:
-- `.cache/agent-rector/*.php` scratch files are removed and `composer.json` / `composer.lock` are untouched.
-- `.cache/` is not staged or committed (add it to `.gitignore` if the project does not ignore it).
-- All automated QA checks pass on the modified paths with `0` errors.
+---
 
 ## Configuration reference
-
-Chain the branch-specific builder methods onto `RectorConfig::configure()` in `.cache/agent-rector/rector.php`.
 
 ### PHP version & prepared sets (types, dead code, code quality)
 
@@ -102,9 +118,8 @@ Chain the branch-specific builder methods onto `RectorConfig::configure()` in `.
 
 ### Drupal deprecations & upgrade sets
 
-The project root must be a Drupal site with `drupal/core` in `vendor/`; a standalone module checkout has to sit inside one.
-
-For a site, fix what is deprecated on the installed `drupal/core`. Every rule is bound to the core version its deprecation landed in, backward-compatibility wrapping is off, and the set adds Drupal's file extensions and phpstan-drupal by itself:
+#### Drupal Sites (Custom Code)
+For custom modules and themes, fix deprecations for the installed Drupal core:
 
 ```php
 use DrupalRector\Set\DrupalSetList;
@@ -112,23 +127,40 @@ use DrupalRector\Set\DrupalSetList;
     ->withSets([DrupalSetList::COMPOSER_BASED])
 ```
 
-For a contrib module or theme that must keep working on older cores, list the major sets. Rewrites are wrapped in `DeprecationHelper::backwardsCompatibleCall()`. These sets add neither Drupal's file extensions nor phpstan-drupal, and without phpstan-drupal calls on `\Drupal::service()` results are missed. Run against the newest core the module supports: rules are skipped on a core older than their deprecation.
+#### Contrib Modules (Multi-Version BC Wrapping)
+For code that must maintain backward-compatibility with older cores using `DeprecationHelper::backwardsCompatibleCall()`, use the closure format to register `DrupalRectorSettings` with your module's minimum supported core version:
 
 ```php
+use DrupalRector\Services\DrupalRectorSettings;
 use DrupalRector\Set\Drupal10SetList;
 use DrupalRector\Set\Drupal11SetList;
+use Rector\Config\RectorConfig;
 
-    ->withSets([
+$projectRoot = getcwd();
+require_once $projectRoot . '/vendor/autoload.php';
+
+return static function (RectorConfig $rectorConfig) use ($projectRoot): void {
+    $rectorConfig->paths([
+        $projectRoot . '/web/modules/custom',
+    ]);
+    $rectorConfig->sets([
         Drupal10SetList::DRUPAL_10,
         Drupal11SetList::DRUPAL_11,
-    ])
-    ->withFileExtensions(['php', 'module', 'theme', 'install', 'profile', 'inc', 'engine'])
-    ->withPHPStanConfigs(array_filter([$projectRoot . '/vendor/mglaman/phpstan-drupal/extension.neon'], 'file_exists'))
+    ]);
+    $rectorConfig->fileExtensions(['php', 'module', 'theme', 'install', 'profile', 'inc', 'engine']);
+
+    // Set the lowest core version supported (matches core_version_requirement in .info.yml).
+    $rectorConfig->singleton(DrupalRectorSettings::class, fn () => (new DrupalRectorSettings())
+        ->enableBackwardCompatibility()
+        ->setMinimumCoreVersionSupported('10.3.0')
+    );
+
+    $phpstanDrupal = $projectRoot . '/vendor/mglaman/phpstan-drupal/extension.neon';
+    if (file_exists($phpstanDrupal)) {
+        $rectorConfig->phpstanConfigs([$phpstanDrupal]);
+    }
+};
 ```
-
-BC wrapping assumes the lowest supported core is `10.1.0`. To change it, `DrupalRectorSettings` has to be registered with `$rectorConfig->singleton()`, which the `configure()` builder does not offer: write the scratch config in the closure form (`return static function (RectorConfig $rectorConfig): void { ... };`) as drupal-rector's `rector.contrib.php` does, and call `setMinimumCoreVersionSupported()` there. This has no effect with the composer-based set, which registers its own settings.
-
-`withComposerBased(drupal: true)` loads the same composer-based set, but adds nothing instead of failing when drupal-rector is missing or older than 1.2; prefer `withSets()`. Do not use a bare `withComposerBased()` on a Drupal project: it also loads Rector's Symfony, PHPUnit and Twig sets, which follow the installed versions of those packages, not Drupal's. `withSetProviders(DrupalSetProvider::class)` is ignored since Rector 2.6.5.
 
 ### Symbol & signature renames
 
@@ -147,11 +179,9 @@ use Rector\Renaming\ValueObject\MethodCallRename;
 
 ### Custom `AbstractRector` rule
 
-When no built-in rule matches the structural pattern, write `.cache/agent-rector/CustomRule.php` and load it in `rector.php` with `require_once __DIR__ . '/CustomRule.php'` and `->withRules([\AgentRector\CustomRule::class])`.
+When no built-in rule matches the structural pattern, write `$RECTOR_DIR/CustomRule.php` and load it via `require_once __DIR__ . '/CustomRule.php'` and `->withRules([\AgentRector\CustomRule::class])`.
 
-`refactor()` must be **idempotent**: return `null` when a node does not match or is already in its target form. Rector re-runs all rules on a changed file until it stops changing, so a rule that matches its own output loops forever.
-
-Return the node when you changed it. Mutating the node and returning `null` drops the change. Return only `null`, a node, a non-empty array of nodes, or `PhpParser\NodeVisitor::REMOVE_NODE`; `[]` or any other int throws.
+`refactor()` must be **idempotent**: return the modified node, an array of replacement nodes, or `PhpParser\NodeVisitor::REMOVE_NODE` when transforming; return `null` when the node already matches the target state.
 
 ```php
 <?php
