@@ -138,21 +138,38 @@ use DrupalRector\Set\DrupalSetList;
 ```
 
 #### Contrib Modules (Multi-Version BC Wrapping)
-For code that must maintain backward-compatibility with older cores using `DeprecationHelper::backwardsCompatibleCall()`:
+For code that must maintain backward-compatibility with older cores using `DeprecationHelper::backwardsCompatibleCall()`, use the closure format to register `DrupalRectorSettings` with your module's minimum supported core version:
 
 ```php
+use DrupalRector\Services\DrupalRectorSettings;
 use DrupalRector\Set\Drupal10SetList;
 use DrupalRector\Set\Drupal11SetList;
+use Rector\Config\RectorConfig;
 
 $projectRoot = getcwd();
+require_once $projectRoot . '/vendor/autoload.php';
 
-return RectorConfig::configure()
-    ->withSets([
+return static function (RectorConfig $rectorConfig) use ($projectRoot): void {
+    $rectorConfig->paths([
+        $projectRoot . '/web/modules/custom',
+    ]);
+    $rectorConfig->sets([
         Drupal10SetList::DRUPAL_10,
         Drupal11SetList::DRUPAL_11,
-    ])
-    ->withFileExtensions(['php', 'module', 'theme', 'install', 'profile', 'inc', 'engine'])
-    ->withPHPStanConfigs(array_filter([$projectRoot . '/vendor/mglaman/phpstan-drupal/extension.neon'], 'file_exists'));
+    ]);
+    $rectorConfig->fileExtensions(['php', 'module', 'theme', 'install', 'profile', 'inc', 'engine']);
+
+    // Set the lowest core version supported (matches core_version_requirement in .info.yml).
+    $rectorConfig->singleton(DrupalRectorSettings::class, fn () => (new DrupalRectorSettings())
+        ->enableBackwardCompatibility()
+        ->setMinimumCoreVersionSupported('10.3.0')
+    );
+
+    $phpstanDrupal = $projectRoot . '/vendor/mglaman/phpstan-drupal/extension.neon';
+    if (file_exists($phpstanDrupal)) {
+        $rectorConfig->phpstanConfigs([$phpstanDrupal]);
+    }
+};
 ```
 
 ### Symbol & signature renames
