@@ -8,7 +8,7 @@ use DrupalRector\Tests\Rector\AbstractDrupalCoreRector\Stub\ClassConstFetchBCRec
 use Rector\Config\RectorConfig;
 
 return static function (RectorConfig $rectorConfig): void {
-    $rectorConfig->singleton(DrupalRectorSettings::class, fn () => (new DrupalRectorSettings())->setMinimumCoreVersionSupported('10.1.0'));
+    $rectorConfig->singleton(DrupalRectorSettings::class, static fn () => (new DrupalRectorSettings())->setMinimumCoreVersionSupported('10.1.0'));
 
     $rectorConfig->ruleWithConfiguration(ClassConstFetchBCRector::class, [
         new DrupalIntroducedVersionConfiguration('11.0.0'),

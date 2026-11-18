@@ -26,7 +26,7 @@ class DeprecationBase
         $rectorConfig->singleton(DrupalRectorSettings::class);
 
         if ($add_notice_config) {
-            $rectorConfig->singleton(AddCommentService::class, function () {
+            $rectorConfig->singleton(AddCommentService::class, static function () {
                 return new AddCommentService(true);
             });
         }

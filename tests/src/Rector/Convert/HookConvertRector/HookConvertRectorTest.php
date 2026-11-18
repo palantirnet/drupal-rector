@@ -158,7 +158,7 @@ CODE);
         $finder = new NodeFinder();
         $thisT = $finder->findFirst(
             $method->stmts ?? [],
-            fn (Node $n) => $n instanceof Node\Expr\MethodCall
+            static fn (Node $n) => $n instanceof Node\Expr\MethodCall
                 && $n->var instanceof Node\Expr\Variable
                 && $n->var->name === 'this'
                 && $n->name instanceof Identifier
@@ -188,7 +188,7 @@ CODE);
         $finder = new NodeFinder();
         $funcCall = $finder->findFirst(
             $method->stmts ?? [],
-            fn (Node $n) => $n instanceof Node\Expr\FuncCall
+            static fn (Node $n) => $n instanceof Node\Expr\FuncCall
         );
         $this->assertNull($funcCall, 'No bare t()/\t() FuncCall should survive the rewrite.');
     }
@@ -226,7 +226,7 @@ CODE);
         $finder = new NodeFinder();
         $thisCalls = $finder->find(
             $method->stmts ?? [],
-            fn (Node $n) => $n instanceof Node\Expr\MethodCall
+            static fn (Node $n) => $n instanceof Node\Expr\MethodCall
                 && $n->var instanceof Node\Expr\Variable
                 && $n->var->name === 'this'
                 && $n->name instanceof Identifier
