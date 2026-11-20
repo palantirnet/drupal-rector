@@ -196,6 +196,39 @@ it fixes what is deprecated on *your* installed core.
 > `DrupalSetProvider` can stay an empty class
 > (see [rectorphp/rector#9778](https://github.com/rectorphp/rector/issues/9778)).
 
+### Upstream PHP and PHPUnit rules (opt-in)
+
+`DrupalSetList::UPSTREAM_PHP_PHPUNIT` registers five Rector rules that are not part of any Drupal set. Load it next to
+the Drupal sets:
+
+```php
+return RectorConfig::configure()
+    ->withSets([
+        Drupal10SetList::DRUPAL_10,
+        Drupal11SetList::DRUPAL_11,
+        DrupalSetList::UPSTREAM_PHP_PHPUNIT,
+    ]);
+```
+
+| Rule | Rewrites |
+| --- | --- |
+| `ExplicitNullableParamTypeRector` | `Foo $x = null` to `?Foo $x = null` (PHP 8.4 deprecation) |
+| `RemoveReflectionSetAccessibleCallsRector` | removes `setAccessible()` calls |
+| `RenameCastRector` | `(boolean)`, `(integer)`, `(double)`, `(binary)` to `(bool)`, `(int)`, `(float)`, `(string)` (PHP 8.5 deprecation) |
+| `RemoveFuncCallRector` | removes `curl_close()`, `curl_share_close()`, `finfo_close()`, `imagedestroy()`, `xml_parser_free()` |
+| `UseSpecificWillMethodRector` | `->will($this->returnValue($x))` to `->willReturn($x)`, and the other `return*`/`throwException`/`onConsecutiveCalls` stubs |
+
+Backward compatibility: every rewrite runs on PHP 8.1 and PHPUnit 9.6 up to PHP 8.5 and PHPUnit 11.5, so the output fits code
+that supports Drupal 10.4 and later. `setAccessible()` is a no-op since PHP 8.1 and the removed functions have been no-ops
+since PHP 8.0, so do not use the set on code that still supports Drupal 9 or PHP 8.0 and older.
+
+`ExplicitNullableParamTypeRector` only runs when Rector's target PHP version is 8.4. That version normally follows the `php`
+constraint in `composer.json`, usually `>=8.1` for contrib, so the set raises the target to 8.4 when it is lower. The
+raised version applies to every rule that checks the PHP version, not only this one. An explicit `->withPhpVersion()` in
+your `rector.php` wins over the set; a version below 8.4 keeps the nullable rule off.
+
+`rector-phpunit` is bundled with `rector/rector`, so there is nothing extra to install.
+
 ### DrupalRectorSettings
 
 Both shipped configs include a `DrupalRectorSettings` block that controls two behaviours:

@@ -14,6 +14,7 @@ release-by-release.
 
 ### Added
 
+- **`DrupalSetList::UPSTREAM_PHP_PHPUNIT` (opt-in)** — registers five upstream Rector rules individually: `ExplicitNullableParamTypeRector`, `RemoveReflectionSetAccessibleCallsRector`, `RenameCastRector` (`boolean`/`integer`/`double`/`binary`), `RemoveFuncCallRector` (`curl_close`, `curl_share_close`, `finfo_close`, `imagedestroy`, `xml_parser_free`) and rector-phpunit's `UseSpecificWillMethodRector`. They fix PHP 8.4/8.5 deprecations and deprecated PHPUnit stub helpers, and the rewrites run on PHP 8.1+ and PHPUnit 9.6+. They are not in `COMPOSER_BASED` or any `Drupal*SetList`, because the PHP-version sets follow the `php` constraint in `composer.json` and so skip the 8.4 and 8.5 rules on most contrib. The set raises Rector's target PHP version to 8.4 when it is lower, which `ExplicitNullableParamTypeRector` needs; an explicit `->withPhpVersion()` wins.
 - **Agent skill for running Rector (`skills/rector/SKILL.md`)** — tells a coding agent how to run Rector on a PHP or Drupal project from an isolated install in `.cache/agent-rector`, without touching the project's `composer.json`. It covers the recommended Drupal config (`DrupalSetList::COMPOSER_BASED` for sites, the major sets with BC wrapping for contrib), a mandatory dry-run, cleanup and QA, and writing idempotent custom rules. By mxr576 ([#439](https://github.com/palantirnet/drupal-rector/issues/439), [#440](https://github.com/palantirnet/drupal-rector/pull/440))
 
 ### Fixed
