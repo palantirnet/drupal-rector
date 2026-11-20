@@ -400,8 +400,9 @@ digests:
   '3518527':
     status: implemented
     phase: '4'
-    class: ReplaceSessionWritesWithRequestSessionRector
+    class: ReplaceSessionSuperglobalWithRequestSessionRector
     digest_file: replace-deprecated-session-writes-with-drupal-request-3518527.php
+    note: Renamed from ReplaceSessionWritesWithRequestSessionRector. Now converts every access shape (write, read, ??, isset, empty, unset, nested, ++ and op=), without a BC wrapper; a key is converted completely or not at all.
   '3520946':
     status: implemented
     phase: '2'
