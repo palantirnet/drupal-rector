@@ -5,8 +5,7 @@ declare(strict_types=1);
 namespace DrupalRector\Tests\Rector\Convert\HookConvertRector;
 
 use DrupalRector\Tests\AbstractDrupalRectorTestCase;
-use DrupalRector\Tests\Rector\Convert\HookConvertRector\Stub\CapturingHookConvertRector;
-use Rector\PhpParser\Printer\BetterStandardPrinter;
+use DrupalRector\Tests\Rector\Convert\HookConvertRector\Stub\HookClassAssertions;
 
 /**
  * With importNames(), Rector 2.8 re-runs rules on the changed procedural file,
@@ -15,16 +14,14 @@ use Rector\PhpParser\Printer\BetterStandardPrinter;
  */
 class HookConvertRectorImportNamesTest extends AbstractDrupalRectorTestCase
 {
+    use HookClassAssertions;
+
     public function test(): void
     {
-        $this->doTestFile(__DIR__.'/fixture-import-names/hookconvertrector/import_names.module.inc');
-
-        $hookClass = $this->make(CapturingHookConvertRector::class)->printHookClass($this->make(BetterStandardPrinter::class));
-
-        $this->assertStringContainsString('class ImportNamesHooks', $hookClass);
-        $this->assertStringContainsString('use Drupal\Core\Url;', $hookClass);
-        $this->assertStringNotContainsString('use Drupal\hookconvertrector\Hook\ImportNamesHooks;', $hookClass);
-        $this->assertStringNotContainsString('use Drupal\Core\Hook\Attribute\LegacyHook;', $hookClass);
+        $this->doTestFileAndHookClass(
+            __DIR__.'/fixture-import-names/hookconvertrector/import_names.module.inc',
+            __DIR__.'/fixture-import-names/expected/import_names.php.inc',
+        );
     }
 
     public function provideConfigFilePath(): string
