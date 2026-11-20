@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace DrupalRector\Rector\Convert;
 
 use Composer\InstalledVersions;
+use DrupalRector\Services\DrupalRectorSettings;
 use PhpParser\Comment\Doc;
 use PhpParser\Modifiers;
 use PhpParser\Node;
@@ -57,6 +58,22 @@ class HookConvertRector extends AbstractRector implements DocumentedRuleInterfac
      */
     protected Node\Expr\StaticCall $drupalServiceCall;
 
+    /**
+     * Whether the file being converted gets a #[LegacyHook] wrapper.
+     *
+     * Decided per file in initializeHookClass(). The wrapper and the
+     * <module>.services.yml entry it relies on are one unit, so both follow
+     * this flag.
+     */
+    protected bool $useLegacyWrapper = false;
+
+    /**
+     * Whether the file being processed is left untouched.
+     *
+     * Decided per file in initializeHookClass().
+     */
+    protected bool $skipFile = false;
+
     private string $drupalCorePath = "\0";
 
     /**
@@ -66,7 +83,7 @@ class HookConvertRector extends AbstractRector implements DocumentedRuleInterfac
 
     private bool $isDryRun;
 
-    public function __construct(BetterStandardPrinter $printer)
+    public function __construct(BetterStandardPrinter $printer, private readonly DrupalRectorSettings $drupalRectorSettings)
     {
         $this->isDryRun = in_array('--'.Option::DRY_RUN, $_SERVER['argv'] ?? []) || in_array('-'.Option::DRY_RUN_SHORT, $_SERVER['argv'] ?? []);
         $this->printer = $printer;
@@ -145,6 +162,9 @@ CODE_SAMPLE
         if ($filePath !== $this->inputFilename) {
             $this->initializeHookClass();
         }
+        if ($this->skipFile) {
+            return null;
+        }
         if ($node instanceof Use_) {
             // Rector re-runs rules on a file while it keeps changing (2.8+), so
             // with importNames() a later pass also sees the imports added for
@@ -191,7 +211,7 @@ CODE_SAMPLE
                     $remove_node = NodeTraverser::REMOVE_NODE;
                 }
 
-                return str_starts_with($filePath, $this->drupalCorePath) ? $remove_node : $this->getLegacyHookFunction($node);
+                return $this->useLegacyWrapper ? $this->getLegacyHookFunction($node) : $remove_node;
             }
         }
 
@@ -218,6 +238,8 @@ CODE_SAMPLE
         $this->__destruct();
         $this->moduleDir = $this->getFile()->getFilePath();
         $this->inputFilename = $this->moduleDir;
+        $this->useLegacyWrapper = false;
+        $this->skipFile = false;
         // Find the relevant info.yml: it's either in the current directory or
         // one of the parents.
         while (($this->moduleDir = dirname($this->moduleDir)) && !($info = glob("$this->moduleDir/*.info.yml"))) {
@@ -225,6 +247,7 @@ CODE_SAMPLE
         if (!empty($info)) {
             $infoFile = reset($info);
             $this->module = basename($infoFile, '.info.yml');
+            $this->decideConversion($this->getFile()->getFilePath(), $infoFile);
             $filename = pathinfo($this->getFile()->getFilePath(), \PATHINFO_FILENAME);
             $hookClassName = ucfirst(CaseStringHelper::camelCase(str_replace('.', '_', $filename).'_hooks'));
             $counter = '';
@@ -244,6 +267,48 @@ CODE_SAMPLE
         }
     }
 
+    /**
+     * Decides, for the current file only, how it is converted.
+     *
+     * - Files in drupal/core: converted, procedural function removed.
+     * - Modules: the #[LegacyHook] wrapper and the services.yml entry are only
+     *   needed to keep running on Drupal < 11.1, so they are only emitted with
+     *   backwards compatibility enabled and a minimum supported core below
+     *   11.1.0.
+     * - Themes never get a wrapper (themes cannot register services). Removing
+     *   the procedural hook breaks the theme on Drupal < 11.3, so with backwards
+     *   compatibility enabled and a minimum below 11.3.0 the file is skipped.
+     */
+    private function decideConversion(string $filePath, string $infoFile): void
+    {
+        if (str_starts_with($filePath, $this->drupalCorePath)) {
+            return;
+        }
+        $backwardCompatible = $this->drupalRectorSettings->isBackwardCompatibilityEnabled();
+        $minimum = $this->drupalRectorSettings->getMinimumCoreVersionSupported();
+        if ($this->isTheme($filePath, $infoFile)) {
+            $this->skipFile = $backwardCompatible && version_compare($minimum, '11.3.0', '<');
+
+            return;
+        }
+        $this->useLegacyWrapper = $backwardCompatible && version_compare($minimum, '11.1.0', '<');
+    }
+
+    /**
+     * Whether the file belongs to a theme.
+     *
+     * Looks at the extension info.yml (which also covers .inc files included by
+     * a theme) and treats a .theme file as a theme regardless.
+     */
+    private function isTheme(string $filePath, string $infoFile): bool
+    {
+        if (pathinfo($filePath, \PATHINFO_EXTENSION) === 'theme') {
+            return true;
+        }
+
+        return preg_match('/^type:\s*[\'"]?theme[\'"]?\s*(#.*)?$/m', (string) @file_get_contents($infoFile)) === 1;
+    }
+
     public function __destruct()
     {
         if ($this->module && $this->hookClass->stmts) {
@@ -255,9 +320,11 @@ CODE_SAMPLE
                 @mkdir("$this->moduleDir/src");
                 @mkdir("$this->moduleDir/src/Hook");
 
-                file_put_contents("$this->moduleDir/src/Hook/$className.php", $this->printer->prettyPrintFile($hookClassStmts));
-                if (!str_starts_with($this->moduleDir, $this->drupalCorePath)) {
-                    static::writeServicesYml("$this->moduleDir/$this->module.services.yml", "$namespace\\$className");
+                $this->writeFile("$this->moduleDir/src/Hook/$className.php", $this->printer->prettyPrintFile($hookClassStmts));
+                // The services.yml entry belongs to the LegacyHook wrapper, so
+                // it follows the same per-file decision.
+                if ($this->useLegacyWrapper) {
+                    $this->writeServicesYml("$this->moduleDir/$this->module.services.yml", "$namespace\\$className");
                 }
             }
         }
@@ -449,7 +516,12 @@ CODE_SAMPLE
         return $node;
     }
 
-    protected static function writeServicesYml(string $fileName, string $fullyClassifiedClassName): void
+    protected function writeFile(string $fileName, string $contents): void
+    {
+        file_put_contents($fileName, $contents);
+    }
+
+    protected function writeServicesYml(string $fileName, string $fullyClassifiedClassName): void
     {
         $services = is_file($fileName) ? file_get_contents($fileName) : '';
         $id = "\n  $fullyClassifiedClassName:\n";
@@ -458,7 +530,7 @@ CODE_SAMPLE
                 $services .= "\nservices:";
             }
             $services .= "$id    class: $fullyClassifiedClassName\n    autowire: true\n";
-            file_put_contents($fileName, $services);
+            $this->writeFile($fileName, $services);
         }
     }
 
