@@ -83,7 +83,6 @@ use DrupalRector\Drupal11\Rector\Deprecation\ReplaceNonBoolAccessRector;
 use DrupalRector\Drupal11\Rector\Deprecation\ReplacePdoFetchConstantsRector;
 use DrupalRector\Drupal11\Rector\Deprecation\ReplaceRecipeRunnerInstallModuleRector;
 use DrupalRector\Drupal11\Rector\Deprecation\ReplaceSessionManagerDeleteRector;
-use DrupalRector\Drupal11\Rector\Deprecation\ReplaceSessionWritesWithRequestSessionRector;
 use DrupalRector\Drupal11\Rector\Deprecation\ReplaceSystemPerformanceGzipKeyRector;
 use DrupalRector\Drupal11\Rector\Deprecation\ReplaceThemeGetSettingRector;
 use DrupalRector\Drupal11\Rector\Deprecation\ReplaceTwigExtensionRector;
@@ -620,9 +619,9 @@ return static function (RectorConfig $rectorConfig): void {
     // https://www.drupal.org/node/3518914 (change record)
     // $_SESSION['key'] = $value deprecated in drupal:11.2.0.
     // Replaced by \Drupal::request()->getSession()->set('key', $value).
-    $rectorConfig->ruleWithConfigurationComposerVersionBound(ReplaceSessionWritesWithRequestSessionRector::class, [
-        new DrupalIntroducedVersionConfiguration('11.2.0'),
-    ], 'drupal/core', '>=11.2.0 <13.0.0');
+    // ReplaceSessionWritesWithRequestSessionRector is not registered: it only
+    // converted writes, so reads of the same key kept using $_SESSION and the
+    // value was split over two places. See #464.
 
     // https://www.drupal.org/node/3447794
     // https://www.drupal.org/node/3509245 (change record)
