@@ -49,8 +49,6 @@ use Rector\ValueObject\Application\File;
  */
 final class NestedRuleRunner
 {
-    private const MAX_PASSES = 10;
-
     private ?object $traverser = null;
 
     private function __construct(private readonly object $container)
@@ -106,13 +104,12 @@ final class NestedRuleRunner
     public function run(array $stmts, File $file): array
     {
         $this->traverser ??= $this->container->make(RectorNodeTraverser::class);
-        for ($pass = 0; $pass < self::MAX_PASSES; ++$pass) {
+        // Like Rector's own FileProcessor loop: no pass limit, stop once a
+        // pass records no change.
+        do {
             $before = count($file->getRectorWithLineChanges());
             $stmts = $this->traverser->traverse($stmts, $file);
-            if (count($file->getRectorWithLineChanges()) === $before) {
-                break;
-            }
-        }
+        } while (count($file->getRectorWithLineChanges()) !== $before);
 
         return $stmts;
     }
