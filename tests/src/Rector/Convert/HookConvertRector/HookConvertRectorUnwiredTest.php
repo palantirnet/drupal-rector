@@ -6,7 +6,7 @@ namespace DrupalRector\Tests\Rector\Convert\HookConvertRector;
 
 use DrupalRector\Tests\AbstractDrupalRectorTestCase;
 use DrupalRector\Tests\Rector\Convert\HookConvertRector\Stub\CapturingHookConvertRector;
-use Rector\PhpParser\Printer\BetterStandardPrinter;
+use DrupalRector\Tests\Rector\Convert\HookConvertRector\Stub\HookClassAssertions;
 
 /**
  * A plain `$rectorConfig->rule(HookConvertRector::class)` keeps its old
@@ -15,6 +15,8 @@ use Rector\PhpParser\Printer\BetterStandardPrinter;
  */
 class HookConvertRectorUnwiredTest extends AbstractDrupalRectorTestCase
 {
+    use HookClassAssertions;
+
     public function test(): void
     {
         // Rector's shared test container keeps afterResolving() callbacks of
@@ -23,12 +25,10 @@ class HookConvertRectorUnwiredTest extends AbstractDrupalRectorTestCase
         // there is one container per config, so a plain rule() stays unwired.
         $this->make(CapturingHookConvertRector::class)->useNestedRuleRunner(null);
 
-        $this->doTestFile(__DIR__.'/fixture-single-run/singlerun/single_run.module.inc');
-
-        $hookClass = $this->make(CapturingHookConvertRector::class)->printHookClass($this->make(BetterStandardPrinter::class));
-
-        $this->assertStringContainsString('format_size($bytes)', $hookClass);
-        $this->assertStringNotContainsString('SizeMarkup', $hookClass);
+        $this->doTestFileAndHookClass(
+            __DIR__.'/fixture-single-run/singlerun/single_run.module.inc',
+            __DIR__.'/fixture-single-run/expected/single_run_unwired.php.inc',
+        );
     }
 
     public function provideConfigFilePath(): string
