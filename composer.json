@@ -80,6 +80,7 @@
     },
     "require-dev": {
         "php": "^8.2",
+        "boundwize/structarmed": "^0.21.26",
         "cweagans/composer-patches": "^2.0",
         "friendsofphp/php-cs-fixer": "^3.95.1",
         "phpstan/extension-installer": "^1.4.3",

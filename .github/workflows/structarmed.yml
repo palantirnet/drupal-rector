@@ -1,0 +1,24 @@
+name: structarmed
+
+# This test will run on every pull request, and on every push on main branch.
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+    structarmed:
+      name: Architecture checks with StructArmed
+      runs-on: ubuntu-latest
+      steps:
+          -   uses: actions/checkout@v3
+          -   uses: shivammathur/setup-php@v2
+              with:
+                  php-version: 8.3
+                  coverage: none # disable xdebug, pcov
+                  tools: composer:v2
+                  extensions: zip
+
+          - run: composer install
+          - run: vendor/bin/structarmed analyse

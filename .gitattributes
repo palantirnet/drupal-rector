@@ -8,6 +8,7 @@
 /phpstan.neon           export-ignore
 /phpstan-baseline.neon  export-ignore
 /phpunit.xml            export-ignore
+/structarmed.php        export-ignore
 /tests                  export-ignore
 /fixtures               export-ignore
 /scripts                export-ignore

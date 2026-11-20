@@ -441,7 +441,7 @@ CODE_SAMPLE
     {
         $methodCall = new Node\Expr\MethodCall($this->drupalServiceCall, $this->getMethodName($node), self::convertParamsToArgs($node));
         $isVoid = $node->returnType instanceof Node\Identifier && $node->returnType->toString() === 'void';
-        $hasReturn = !$isVoid && (new NodeFinder())->findFirst([$node], fn (Node $n) => $n instanceof Node\Stmt\Return_ && $n->expr !== null);
+        $hasReturn = !$isVoid && (new NodeFinder())->findFirst([$node], static fn (Node $n) => $n instanceof Node\Stmt\Return_ && $n->expr !== null);
         $node->stmts = [$hasReturn ? new Node\Stmt\Return_($methodCall) : new Node\Stmt\Expression($methodCall)];
         // Mark this function as a legacy hook.
         $node->attrGroups[] = new Node\AttributeGroup([new Node\Attribute(new FullyQualified('Drupal\Core\Hook\Attribute\LegacyHook'))]);
@@ -469,6 +469,6 @@ CODE_SAMPLE
      */
     protected static function convertParamsToArgs(Function_ $node): array
     {
-        return array_map(fn (Node\Param $param) => new Node\Arg($param->var), $node->getParams());
+        return array_map(static fn (Node\Param $param) => new Node\Arg($param->var), $node->getParams());
     }
 }
