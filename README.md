@@ -270,16 +270,44 @@ $ vendor/bin/rector process web/modules/contrib/[YOUR_MODULE]
 
 You can find more information about Rector [here](https://github.com/rectorphp/rector).
 
-## Converting hooks to OOP hook classes (run as a separate pass)
+## Converting hooks to OOP hook classes
 
 Drupal Rector ships `HookConvertRector`, which converts procedural hook
 implementations (`mymodule_form_alter()`, …) into a `#[Hook]`-attributed class
-under `src/Hook/`. **This rule must be run on its own, as a second pass, after
-your normal deprecation run — never in the same configuration as the deprecation
-sets.**
+under `src/Hook/`. It can run in the same Rector run as the deprecation rules,
+or as a separate second pass.
 
-To convert hooks, run your deprecation pass first, then point Rector at the
-dedicated config that registers only `HookConvertRector`:
+### Same run as the deprecation rules
+
+Load the `HOOK_CONVERT` set next to your deprecation set:
+
+```php
+return RectorConfig::configure()
+    ->withSets([DrupalSetList::COMPOSER_BASED, DrupalSetList::HOOK_CONVERT]);
+```
+
+Deprecated calls inside a hook body are then fixed before the body is moved into
+the hook class. The set registers `HookConvertRector` and wires in the Rector
+container it needs for this (`config/hook-convert.php`); with a plain
+`$rectorConfig->rule(HookConvertRector::class)` the rule still works, but without
+the wiring it falls back to the two-pass behaviour below.
+
+One difference remains: the hook class keeps fully-qualified class names in the
+converted bodies, because Rector's name-import step only runs on the procedural
+file. Run your code style fixer over `src/Hook/` if you want them imported.
+
+**Why this needs a workaround.** Rector visits a function before the code inside
+it, and rules have no after-children hook. `HookConvertRector` copies the body
+into the new hook class when it sees the function, before the deprecation rules
+reached the body, and the new file is never processed by Rector. So the rule
+first runs the other active rules over the body with Rector's own traverser, in a
+loop until nothing changes. The Rector internals involved are isolated in
+`DrupalRector\Rector\Convert\NestedRuleRunner`.
+
+### Two passes
+
+Running it separately still works and needs no wiring: run your deprecation pass
+first, then point Rector at the config that registers only `HookConvertRector`:
 
 ```sh
 # Pass 1 — fix deprecations in place (your normal config)
@@ -290,14 +318,8 @@ $ vendor/bin/rector process web/modules/contrib/[YOUR_MODULE] \
     --config=vendor/palantirnet/drupal-rector/rector-hook-convert.php
 ```
 
-**Why two passes?** `HookConvertRector` moves each hook body into a brand-new
-`src/Hook/*Hooks.php` file that it writes directly to disk. Rector (2.x) cannot
-feed a newly-created file back through the rule pipeline within the same run, so
-a deprecated API call that lives inside a hook body would be copied into the new
-class **unchanged** if hook conversion ran together with the deprecation sets.
-Running deprecations first means the bodies are already fixed before they are
-moved. For this reason the example `rector.php` above intentionally does **not**
-register `HookConvertRector`.
+The example `rector.php` above intentionally does **not** register
+`HookConvertRector`.
 
 ## Development and contribution suggestions
 
