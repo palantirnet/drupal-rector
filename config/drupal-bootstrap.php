@@ -2,10 +2,12 @@
 
 declare(strict_types=1);
 
+use Composer\InstalledVersions;
+use DrupalFinder\DrupalFinderComposerRuntime;
 use DrupalRector\Services\DrupalRectorSettings;
 use Rector\Config\RectorConfig;
 
-/**
+/*
  * Composer-based selection defaults: PHPUnit bootstrap + settings.
  *
  * Standalone set imported by `config/composer-based.php` (see
@@ -50,11 +52,11 @@ return static function (RectorConfig $rectorConfig): void {
     // calls Composer\InstalledVersions::getInstallPath('drupal/core'), which
     // THROWS (not returns null) when the package is not installed, so this must
     // be guarded before the lookup.
-    if (! \Composer\InstalledVersions::isInstalled('drupal/core')) {
+    if (!InstalledVersions::isInstalled('drupal/core')) {
         return;
     }
 
-    $drupalFinder = new \DrupalFinder\DrupalFinderComposerRuntime();
+    $drupalFinder = new DrupalFinderComposerRuntime();
 
     $drupalRoot = $drupalFinder->getDrupalRoot();
     if (is_string($drupalRoot) && $drupalRoot !== '') {

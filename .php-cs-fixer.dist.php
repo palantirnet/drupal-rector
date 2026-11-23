@@ -4,12 +4,14 @@ $finder = (new PhpCsFixer\Finder())
     ->in([
         __DIR__.'/src',
         __DIR__.'/tests',
-        __DIR__.'/config/drupal-*',
+        __DIR__.'/config',
         __DIR__.'/scripts',
     ])
     ->exclude([
         'functional/hookconvertrector/fixture',
     ])
+    // Adapted from Drupal core's tests/bootstrap.php, keep it close to upstream.
+    ->notPath('drupal-phpunit-bootstrap-file.php')
 ;
 
 return (new PhpCsFixer\Config())

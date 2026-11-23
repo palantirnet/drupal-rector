@@ -105,6 +105,7 @@ use DrupalRector\Drupal12\Rector\Deprecation\AddSymfonyConstraintValidatorTypeDe
 use DrupalRector\Rector\Deprecation\ClassConstantToClassConstantRector;
 use DrupalRector\Rector\Deprecation\ConstantToClassConstantRector;
 use DrupalRector\Rector\Deprecation\FunctionCallRemovalRector;
+use DrupalRector\Rector\Deprecation\FunctionToFirstArgMethodRector;
 use DrupalRector\Rector\Deprecation\FunctionToServiceRector;
 use DrupalRector\Rector\Deprecation\FunctionToStaticRector;
 use DrupalRector\Rector\Deprecation\MethodToMethodWithCheckRector;
@@ -116,6 +117,7 @@ use DrupalRector\Rector\ValueObject\ClassConstantToClassConstantConfiguration;
 use DrupalRector\Rector\ValueObject\ConstantToClassConfiguration;
 use DrupalRector\Rector\ValueObject\DrupalIntroducedVersionConfiguration;
 use DrupalRector\Rector\ValueObject\FunctionCallRemovalConfiguration;
+use DrupalRector\Rector\ValueObject\FunctionToFirstArgMethodConfiguration;
 use DrupalRector\Rector\ValueObject\FunctionToServiceConfiguration;
 use DrupalRector\Rector\ValueObject\FunctionToStaticConfiguration;
 use DrupalRector\Rector\ValueObject\MethodToMethodWithCheckConfiguration;
@@ -124,7 +126,7 @@ use Rector\Composer\InstalledPackageResolver;
 use Rector\Config\RectorConfig;
 use Rector\Renaming\Rector\Name\RenameClassRector;
 
-/**
+/*
  * Every Drupal 10 and later drupal-rector rule, bound to the `drupal/core`
  * versions its deprecation applies to: from the version the deprecation was
  * introduced in (`>=11.4.0`) up to, but not including, the major after the one
@@ -611,8 +613,8 @@ return static function (RectorConfig $rectorConfig): void {
     // https://www.drupal.org/node/3494172
     // file_get_content_headers($file) deprecated in drupal:11.2.0, removed in drupal:12.0.0.
     // Replaced by $file->getDownloadHeaders().
-    $rectorConfig->ruleWithConfigurationComposerVersionBound(\DrupalRector\Rector\Deprecation\FunctionToFirstArgMethodRector::class, [
-        new \DrupalRector\Rector\ValueObject\FunctionToFirstArgMethodConfiguration('11.2.0', 'file_get_content_headers', 'getDownloadHeaders'),
+    $rectorConfig->ruleWithConfigurationComposerVersionBound(FunctionToFirstArgMethodRector::class, [
+        new FunctionToFirstArgMethodConfiguration('11.2.0', 'file_get_content_headers', 'getDownloadHeaders'),
     ], 'drupal/core', '>=11.2.0');
 
     // https://www.drupal.org/node/3518527
@@ -842,9 +844,9 @@ return static function (RectorConfig $rectorConfig): void {
     // https://www.drupal.org/node/3531945
     // node_type_get_description($node_type) deprecated in drupal:11.3.0, removed in drupal:12.0.0.
     // Replaced by $node_type->getDescription().
-    $rectorConfig->ruleWithConfigurationComposerVersionBound(\DrupalRector\Rector\Deprecation\FunctionToFirstArgMethodRector::class, [
-        new \DrupalRector\Rector\ValueObject\FunctionToFirstArgMethodConfiguration('11.3.0', 'comment_uri', 'permalink'),
-        new \DrupalRector\Rector\ValueObject\FunctionToFirstArgMethodConfiguration('11.3.0', 'node_type_get_description', 'getDescription'),
+    $rectorConfig->ruleWithConfigurationComposerVersionBound(FunctionToFirstArgMethodRector::class, [
+        new FunctionToFirstArgMethodConfiguration('11.3.0', 'comment_uri', 'permalink'),
+        new FunctionToFirstArgMethodConfiguration('11.3.0', 'node_type_get_description', 'getDescription'),
     ], 'drupal/core', '>=11.3.0');
 
     // https://www.drupal.org/node/3038908
