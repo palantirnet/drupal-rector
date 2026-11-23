@@ -35,7 +35,7 @@ jobs:
         with:
           php-version: 8.3
           coverage: none
-          tools: composer:v2
+          tools: composer:v2, cs2pr
           extensions: zip
 
       - name: 'Get composer cache directory'
@@ -53,4 +53,4 @@ jobs:
         run: composer install --no-interaction --no-progress --ansi
 
       - name: 'PHP CS Fixer validate'
-        run: composer check-style --ansi -- --ansi --show-progress=none
+        run: composer check-style --ansi -- --ansi --format=checkstyle --show-progress=none | cs2pr
