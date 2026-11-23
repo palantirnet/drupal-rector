@@ -1,4 +1,4 @@
-name: structarmed
+name: 'StructArmed'
 
 # This test will run on every pull request, and on every push on main branch.
 on:
@@ -7,18 +7,46 @@ on:
       - main
   pull_request:
 
-jobs:
-    structarmed:
-      name: Architecture checks with StructArmed
-      runs-on: ubuntu-latest
-      steps:
-          -   uses: actions/checkout@v3
-          -   uses: shivammathur/setup-php@v2
-              with:
-                  php-version: 8.3
-                  coverage: none # disable xdebug, pcov
-                  tools: composer:v2
-                  extensions: zip
+  # Allows running this workflow manually from the Actions tab.
+  workflow_dispatch:
 
-          - run: composer install
-          - run: vendor/bin/structarmed analyse
+permissions: {}
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  structarmed:
+    name: 'Architecture checks with StructArmed'
+    runs-on: ubuntu-latest
+    steps:
+      - name: 'Checkout'
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: 'Setup PHP'
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 8.3
+          coverage: none
+          tools: composer:v2
+          extensions: zip
+
+      - name: 'Get composer cache directory'
+        id: composer-cache
+        run: echo "dir=$(composer config cache-files-dir)" >> "$GITHUB_OUTPUT"
+
+      - name: 'Cache composer dependencies'
+        uses: actions/cache@v6
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ github.job }}-${{ hashFiles('composer.json') }}
+          restore-keys: ${{ runner.os }}-composer-${{ github.job }}-
+
+      - name: 'Install dependencies'
+        run: composer install --no-interaction --no-progress --ansi
+
+      - name: 'StructArmed validate'
+        run: vendor/bin/structarmed analyse --no-progress
