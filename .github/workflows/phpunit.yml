@@ -9,7 +9,6 @@ on:
     # Run tests every week (to check for rector changes)
     - cron: '0 0 * * 0'
   pull_request:
-    types: [opened, synchronize, reopened, closed]
 
   # Allows running this workflow manually from the Actions tab.
   workflow_dispatch:
