@@ -108,13 +108,27 @@ Done when `$RECTOR_DIR/*.php` scratch files are removed, `composer.json` and `co
 ### PHP version & prepared sets (types, dead code, code quality)
 
 ```php
+use Rector\Php81\Rector\Array_\ArrayToFirstClassCallableRector;
+
     ->withPhpSets()
     ->withPreparedSets(
         deadCode: true,
         codeQuality: true,
         typeDeclarations: true,
     )
+    ->withSkip([
+        // Keep array callables (#validate, #submit, #pre_render, #lazy_builder) serializable for FormCache and TrustedCallbackInterface.
+        ArrayToFirstClassCallableRector::class => [
+            '*.module',
+            '*/src/Hook/*',
+            '*/src/Form/*',
+            '*/src/Plugin/*',
+            '*/src/Controller/*',
+        ],
+    ])
 ```
+
+When `composer.json` `require.php` allows PHP `< 8.4`, also add `Rector\Php81\Rector\Property\ReadOnlyPropertyRector` and `Rector\Php82\Rector\Class_\ReadOnlyClassRector` to `withSkip()` on `['*/src/Form/*', '*/src/Plugin/*']` (`DependencySerializationTrait` base classes break on `readonly`).
 
 ### Drupal deprecations & upgrade sets
 
