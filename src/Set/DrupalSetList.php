@@ -26,4 +26,20 @@ final class DrupalSetList
      * include here.
      */
     public const COMPOSER_BASED = __DIR__.'/../../config/composer-based.php';
+
+    /**
+     * Five upstream Rector rules for PHP 8.4/8.5 deprecations and PHPUnit
+     * mock stubs, registered individually. Opt-in; not part of
+     * `COMPOSER_BASED` or any `Drupal*SetList` set.
+     *
+     * Every rewrite runs on PHP 8.1+ and PHPUnit 9.6+, so it fits code that
+     * supports Drupal 10.4 and later. It is not for code that still supports
+     * PHP 8.0 or older.
+     *
+     * The set raises Rector's target PHP version to 8.4 when it is lower, which
+     * `ExplicitNullableParamTypeRector` needs to run.
+     *
+     * @see \DrupalRector\Tests\Set\UpstreamPhpPhpunitSet\UpstreamPhpPhpunitSetTest
+     */
+    public const UPSTREAM_PHP_PHPUNIT = __DIR__.'/../../config/upstream-php-phpunit.php';
 }
